@@ -1,0 +1,174 @@
+﻿<style>
+   .displaydistribution{
+       display: none;
+    }
+</style>
+<div class="row">
+    <div class="col-md-3">
+        @await Html.PartialAsync("distributionheader")
+
+    </div>
+    <div class="col-md-9" id="copydistribution">
+        @await Html.PartialAsync("_copydistribution")
+
+    </div>
+    <div class="col-md-9 displaydistribution" id="synchronization">
+        @await Html.PartialAsync("_synchronization")
+
+    </div>
+    <div class="col-md-9 displaydistribution" id="machinedistribution">
+        @await Html.PartialAsync("_machinedistribution")
+
+    </div>
+</div>
+<script>
+    var storemapvaluesource = "";
+    var storemapcode = "";
+    var getheadervalue = "";
+
+    var storesm = "";
+    var remarksm = "";
+    var getselectedid = "";
+    var decsription = "";
+    var Sdecsription = "";
+    var dstore = "";
+    var vstore = "";
+    var code = "";
+    var Scode = "";
+    function GetDestinationStoreMap(id, name) {
+        decsription = name;
+        code = id;
+        $('#addfromheadertotabledestination').removeAttr('disabled');
+        $('#addfromheadertotabledestination').addClass('addfromtabletoheader');
+        $('#addfromtabletoheaderdestination').prop('disabled', true);
+        $('#addfromtabletoheaderdestination').removeClass('addfromtabletoheader');
+        getheadervalue = $(this).data('value');
+        storemapcode = $(this).data('types');
+        $(this).addClass('activestoremapbtn');
+    } 
+   
+    function MoveFromDTableToConsigneeUnit(store,des) {
+        dstore = store;
+        decsription = des;
+        $('#addfromheadertotabledestination').prop('disabled', true);
+        $('#addfromheadertotabledestination').removeClass('addfromtabletoheader');
+        $('#addfromtabletoheaderdestination').removeAttr('disabled');
+        $('#addfromtabletoheaderdestination').addClass('addfromtabletoheader');
+
+    }
+
+  
+    $(document).on("click", "#addfromheadertotabledestination", function () {
+        $(function () {
+            $.ajax({
+                url: '/Subsystems/GetstoremapDestination',
+                type: 'POST',
+                data: { code: code, desc: decsription, add: true }, // send the data object with the request
+                success: function (result) {
+                    $('#storemapData').html(result);
+                },
+                error: function () {
+                    console.log('Error occurred.');
+                }
+            });
+        });
+    }); 
+    $(document).on("click", "#addfromtabletoheaderdestination", function () {
+        $(function () {
+            $.ajax({
+                url: '/Subsystems/GetstoremapDestination',
+                type: 'POST',
+                data: { code: dstore, desc: decsription, add: false }, // send the data object with the request
+                success: function (result) {
+                    $('#storemapData').html(result);
+                },
+                error: function () {
+                    console.log('Error occurred.');
+                }
+            });
+        });
+    });
+   
+    
+    
+    
+    function MoveFromSTableToConsigneeUnit(store, des) {
+        vstore = store;
+        Sdecsription = des;
+        $('#addfromtabletoheadersource').removeAttr('disabled');
+        $('#addfromtabletoheadersource').addClass('addfromtabletoheader');
+        $('#addfromheadertotablesource').prop('disabled', true);
+        $('#addfromheadertotablesource').removeClass('addfromtabletoheader');
+    }
+    function GetsourceStoreMap(id, name) 
+    { 
+        Sdecsription = name;
+        Scode = id;
+        $('#addfromheadertotablesource').removeAttr('disabled');
+        $('#addfromheadertotablesource').addClass('addfromtabletoheader');
+        $('#addfromtabletoheadersource').prop('disabled', true);
+        $('#addfromtabletoheadersource').removeClass('addfromtabletoheader');
+        getheadervalue = $(this).data('value');
+        storemapcodesource = $(this).data('types');
+        $(this).addClass('activestoremapbtn');
+    }
+    $(document).on("click", "#addfromheadertotablesource", function () {
+        $(function () {
+            $.ajax({
+                url: '/Subsystems/GetstoremapSource',
+                type: 'POST',
+                data: { code: Scode, desc: Sdecsription, add: true }, // send the data object with the request
+                success: function (result) {
+                    $('#storemapData').html(result);
+                    $('#sub_Tab_nav_tab  a[href="#storemapsource"]').tab('show');
+                    $('#OrgunitdefForSource').removeClass('sourcePage');
+                    $('#OrgaunitdefForDestination').addClass('sourcePage');
+                    $('#@nameof(Model.storeType)').val("");
+                    $('#@nameof(Model.storeType)').val("#storemapsource");
+                },
+                error: function () {
+                    console.log('Error occurred.');
+                }
+            });
+        });
+    });
+    $(document).on("click", "#addfromtabletoheadersource", function () {
+        $(function () {
+            $.ajax({
+                url: '/Subsystems/GetstoremapSource',
+                type: 'POST',
+                data: { code: vstore, desc: Sdecsription, add: false }, // send the data object with the request
+                success: function (result) {
+                    $('#storemapData').html(result);
+                    $('#sub_Tab_nav_tab  a[href="#storemapsource"]').tab('show');
+                    $('#OrgunitdefForSource').removeClass('sourcePage');
+                    $('#OrgaunitdefForDestination').addClass('sourcePage');
+                    $('#@nameof(Model.storeType)').val("");
+                    $('#@nameof(Model.storeType)').val("#storemapsource");
+                },
+                error: function () {
+                    console.log('Error occurred.');
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    $(document).on("change", ".btnSourcedestinationdefaultvalue", function () {
+
+        if ($(this).prop("checked")) {
+            $(".btnSourcedestinationdefaultvalue").prop("checked", false);
+            $(this).prop("checked", true);
+
+        }
+    });
+    $(document).on("change", ".btnremoveSourcedestination", function () {
+
+        if ($(this).prop("checked")) {
+            $(".btnremoveSourcedestination").prop("checked", false);
+            $(this).prop("checked", true);
+
+        }
+    });
+</script>

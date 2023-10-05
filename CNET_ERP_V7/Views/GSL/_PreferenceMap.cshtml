@@ -1,0 +1,87 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_V7_Entities.DataModels;
+@using Newtonsoft.Json;
+@model GSLmodel;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var accountMaps = Model.accountMaps;
+    int count = 0;
+}
+<style>
+    .preferencegsltab {
+        height: 77vh;
+        overflow-y: scroll;
+    }
+
+    .prefrenceheader {
+        background-color: dodgerblue;
+    }
+</style>
+
+<div class="box box-primary">
+    <div class="box-body preferencegsltab">
+        <table id="Preference_account_map" class="table tree-load" style="background-color:#ffffff">
+            <thead>
+                <tr>
+                    <th>Sn</th>
+                    <th>Description</th>
+                    <th>Account Code</th>
+                    <th>Account Description</th>
+                    <th>Branch</th>
+                    <th>Remark</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in accountMaps)
+                {
+                    var comp = sharedHelpers.GetCompany();
+                    var comptin = comp?.Result?.Tin;
+                    var orgBranchList = await sharedHelpers.GetCompanyBranchsByTin(comptin);
+                    var branch = orgBranchList?.Where(x => x.Id == item.ConsigneeUnit)?.FirstOrDefault();
+
+                    var account = await sharedHelpers.GetAccountById(Convert.ToInt32(item.Account));
+                    count++;
+                    <tr>
+                        <td>@count</td>
+                        <td>@item.Description</td>
+                        <td>@item.Account</td>
+                        <td>@account?.FirstOrDefault()?.Description</td>
+                        <td>@branch?.Name</td>
+                        <td>@item.Reference</td>
+                        <td><a class="btn btn-social-icon btn-xs" onclick="EditGslaccountMapFunction('@item.Id')" data-toggle="modal"><i class="fa fa-edit"></i></a></td>
+                        <td><a href="#" class="btn btn-social-icon btn-xs btnDeleteAccountMap" data-code="@item.Id"><i class="fa fa-trash" style="color:red"></i></a></td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<script>
+    function EditGslaccountMapFunction(CODE) {
+        var code = CODE;
+         $.ajax({
+            type: "GET",
+            dataType: 'json',
+            url: '@Url.Action("GetAaccountmapBycode", "GSL")',
+            data: { code: code},
+           success: function (data) {
+                $('#@nameof(Model.preferencecodeforupdateaccmap)').val(data.id);
+               $('#@nameof(Model.accdescription)').val(data.description);
+               $('#@nameof(Model.accountmapdescription)').val(data.account).trigger('change');
+                $('#@nameof(Model.accountdescriptionorgunit)').val(data.orgunitcode).trigger('change');
+               $('#@nameof(Model.remark)').val(data.remark);
+               $('#accountmapModal').modal("show");
+            },
+        });
+    }
+
+  
+
+</script>

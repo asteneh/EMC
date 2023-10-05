@@ -1,0 +1,255 @@
+﻿@model Companymodel
+@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+    @{
+       var OrganizationUnitTypee = await sharedHelpers.GetSystemConstantByCat("Organization Unit Type");
+    var OrganizationUnitType = OrganizationUnitTypee.Where(x => x.IsActive == true).OrderBy(x => x.Index).ToList();
+    }
+
+<style>
+    .activeidSetting {
+        background-color: dodgerblue;
+        width: auto;
+    }
+
+    .mainsysType {
+        height: 76vh;
+        white-space: nowrap;
+        cursor: pointer;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    .idSetting {
+        cursor: pointer;
+        white-space: nowrap;
+    }
+</style>
+
+    <div class="box box-primary">
+
+        <div class="box-body ">
+            <div class="row">
+               <div style="border:1px solid #e5e5e5;" class="mainsysType col-md-2">
+                <table class="table table-sm" id="consineeUnit_Table" width="100%">
+                    <thead>
+                        <tr class="treegrid-3 treegrid-parent-1">
+                            <th colspan="2" style="border:1px solid #e5e5e5; background-color:lightgray"></th>
+
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in OrganizationUnitType)
+                        {
+                            <tr onclick="GetOUDList('@item.Id','@item.Description')">
+                                <td class="activeconsinee">
+                                    @if (item.Description == "Business Unit")
+                                    {
+                                        <i class="fa fa-archive"></i>
+                                    }
+                                    else if (item.Description == "Store")
+                                    {
+                                        <i class="fa fa-archive"></i>
+                                    }
+                                    else if (item.Description == "Branch")
+                                    {
+                                        <i class="fa fa-sitemap"></i>
+                                    }
+                                    else if (item.Description == "Department")
+                                    {
+                                        <i class="fa fa-bars"></i>
+                                    }
+                                    else if (item.Description == "Section/Division")
+                                    {
+                                        <i class="fa fa-share-alt-square"></i>
+                                    }
+                                    else if (item.Description == "Position")
+                                    {
+                                        <i class="fa fa-snowflake-o"></i>
+                                    }
+                                    else if (item.Description == "Project office")
+                                    {
+                                        <i class="fa fa-building-o"></i>
+                                    }
+                                    else if (item.Description == "Committee")
+                                    {
+                                        <i class="fa fa-compress"></i>
+                                    }
+                                    else if (item.Description == "Board")
+                                    {
+                                        <i class="fa fa-snowflake-o"></i>
+                                    }
+                                    else if (item.Description == "Role")
+                                    {
+                                        <i class="fa fa-slideshare"></i>
+                                    }
+                                    @item.Description
+                                </td>
+
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+                </div>
+
+                <div class="col-md-10" id="OrgunitDefNcontent">
+                    <div id="OrgunitDefnsection">
+                        @await Html.PartialAsync("_Organization_UnitDefination_List.cshtml")
+                    </div>
+                     <input asp-for="branchType" hidden  />
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    function GetOUDList(idd, OrgUnitDefDES) {
+        var head = false;
+        $('#@nameof(Model.branchcode)').val(idd);
+        $('#@nameof(Model.orglookupcode)').val(idd);
+        $('#@nameof(Model.organizationType)').val(idd);
+        $('#@nameof(Model.consigneeUnitName)').val(OrgUnitDefDES);
+        if (OrgUnitDefDES == "Branch") {
+            $('#ishead_office').show();
+            head = true;
+        }
+        else {
+            $('#ishead_office').hide();
+            head = false;
+        }
+        $.ajax({
+            type: "GET",
+            dataType: 'html',
+            url: '@Url.Action("Getorgunitcode", "Company")',
+            data: { orgunit: idd },
+
+            success: function (data) {
+                $('#OrgunitDefnsection').html(data);
+                $('#@nameof(Model.orgUnitDefSpec)').empty();
+                $('#@nameof(Model.orgUnitDefParent)').empty();
+                $.ajax({
+                    type: "GET",
+                    dataType: 'html',
+                    url: '@Url.Action("Getparent", "Company")',
+                    data: { orgunit: idd, headoffice: head },
+
+                    success: function (data) {
+
+                        $('#organizationDefncode').html(data);
+
+
+                    }
+                });
+
+            }
+        });
+    }
+
+    $(document).on("click", ".activeconsinee", function () {
+        $(".activeidSetting").removeClass("activeidSetting");
+        $(this).addClass('activeidSetting');
+    });
+
+
+    var OrgUnitDefcode = "";
+    var OrgUnitDefDES = "";
+    var head = false;
+    $('.navItemOrgUnit').click(function (e) {
+        $('.secondNav .navItemOrgUnit').removeClass('active');
+            $(this).addClass('active');
+
+        OrgUnitDefcode = $('#org_unit_def .active a').data('value');
+        OrgUnitDefDES = $('#org_unit_def .active a').data('types');
+
+        if (OrgUnitDefDES == "Branch") {
+            $('#ishead_office').show();
+            head = true;
+        }
+        else {
+            $('#ishead_office').hide();
+            head = false;
+        }
+
+            $.ajax({
+                type: "GET",
+                dataType: 'html',
+                url: '@Url.Action("Getorgunitcode", "Company")',
+                data: { orgunit: OrgUnitDefcode },
+
+                success: function (data) {
+                    $('#OrgunitDefnsection').html(data);
+
+                       $.ajax({
+                            type: "GET",
+                            dataType: 'html',
+                            url: '@Url.Action("Getparent", "Company")',
+                           data: { orgunit: OrgUnitDefcode,headoffice: head  },
+
+                            success: function (data) {
+
+                                $('#organizationDefncode').html(data);
+
+                                 $('#@nameof(Model.orglookupcode)').val(OrgUnitDefcode);
+                                 $('#@nameof(Model.organizationType)').val(OrgUnitDefcode);
+                                 $('#@nameof(Model.branchcode)').val(OrgUnitDefcode);
+
+                            }
+                         });
+
+                }
+            });
+
+        });
+
+
+    </script>
+    <script>
+    function DeleteOrgunitFunction(code) {
+        var branchcode = $('#@nameof(Model.branchcode)').val();
+         var unitDesc = $('#@nameof(Model.consigneeUnitName)').val();
+        swal({
+            title: "are you sure to delete this ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "POST",
+                        dataType: 'json',
+                        url: '@Url.Action("DeleteOrganizationUnit", "Company")',
+                        data: { code: code, desc: unitDesc },
+
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        success: function (data) {
+                            swal("", data.result, "success");
+                            if (data.checkstatus == true) {
+                                $.ajax({
+                                    type: "GET",
+                                    dataType: 'html',
+                                    url: '@Url.Action("Getorgunitcode", "Company")',
+                                    data: { orgunit: branchcode },
+
+                                    success: function (data) {
+                                        TreeFunction();
+                                        $('#OrgunitDefnsection').html(data);
+
+                                    }
+                                });
+                            }
+
+                        }
+                    });
+                }
+            });
+
+    }
+
+
+ </script>

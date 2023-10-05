@@ -1,0 +1,1168 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain;
+@using Newtonsoft.Json;
+@model Devicemodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var codemodel = Model.DeviceType;
+    int sysoldvalue = 1212121211;
+    var deviceConfig = await sharedHelpers.GetConfigurationByRefandPref(Model?.deviceId.ToString(), CNETConstants.DEVICE);
+}
+<style>
+    .sptablecontent {
+        border-collapse: collapse;
+        background-color: #fff;
+        width: 98%;
+        margin-left: 15px;
+    }
+
+        .sptablecontent .asth {
+            font-weight: bold;
+        }
+
+        .sptablecontent th, table td {
+            padding: 0px 0px !important;
+            border: 1px solid #ccc;
+        }
+
+        .sptablecontent th, table tr {
+            height: 3px;
+        }
+
+        .sptablecontent, .sptablecontent .sptablecontent td {
+            padding: 0px 0px !important;
+            border: 0px solid #ccc;
+        }
+
+            .sptablecontent [type=text], select {
+                width: 100%;
+            }
+
+            .sptablecontent [type=password] {
+                width: 100%;
+            }
+
+            .sptablecontent div {
+                width: 97%;
+            }
+
+    #daystyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    .Inputborder:focus {
+        border: 1px solid #1670BE;
+        box-shadow: 0 0 3px #1670BE;
+        outline-offset: 0px;
+        outline: none;
+    }
+
+    .Inputborder {
+        border: 1px solid #eee;
+        font-size: 13px !important;
+        height: 17px !important;
+        line-height: 2px !important;
+        text-emphasis-position: initial !important;
+        margin-top: 0px !important;
+        padding: 0px 0px !important;
+    }
+
+
+    .mainparent {
+        color: dodgerblue;
+        background-color: #eee;
+    }
+
+    .boderclr {
+        background-color: dodgerblue;
+    }
+
+    .vouproperty {
+        height: 94vh;
+        overflow-y: scroll;
+    }
+</style>
+<div class="box box-primary">
+    <br />
+
+    <div class="box-header with-border">
+        <div class="row">
+            <div class="col-md-11">
+                <div class="row">
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-1 control-labell"> Find</label>
+                        <div class="col-md-9">
+                            <input type="text" id="filterrsmsSetting" style="display:flex;width:100%;" class="form-control" placeholder="Search By Name">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body vouproperty">
+        @foreach (var item in deviceConfig)
+        {
+            switch (item.Attribute)
+            {
+                case "POS Value Rule":
+                    if (!string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                        Model.sms_POSValueRule = (enValueRule)Enum.Parse(typeof(enValueRule), item.CurrentValue, false);
+                    }
+                    break;
+                case "Print Discount & Additional Charge Per LineItem":
+                    Model.sms_printDiscountAdditionalChargePerLineItem = item.CurrentValue;
+                    break;
+                case "Select Automatic Shift Period":
+                    Model.sms_select_automatic_Shift_Period = item.CurrentValue;
+                    break;
+                case "XML Reconciliation":
+                    Model.sms_xML_Reconciliation = item.CurrentValue;
+                    break;
+                case "Enable Document Reference":
+                    Model.sms_enableDocumentReference = item.CurrentValue;
+
+                    break;
+                case "POS Trigger Article Removal":
+                    Model.sms_pOS_Trigger_Article_Removal = item.CurrentValue;
+                    break;
+                case "Need Credentials For Removal":
+                    Model.sms_need_Credentials_For_Removal = item.CurrentValue;
+
+                    break;
+                case "Item Selection":
+                    Model.sms_item_selection = item.CurrentValue;
+
+                    break;
+                case "Open Drawer After Print":
+                    Model.sms_openDrawerAfterPrint = item.CurrentValue;
+
+                    break;
+                case "Enable Auto Entry":
+                    Model.sms_enableAutoEntry = item.CurrentValue;
+
+                    break;
+                case "Default Payment":
+                    Model.sms_default_Payment = item.CurrentValue;
+                    break;
+                case "Enable Scale Encryption":
+                    Model.sms_Enable_Scale_Encryption = item.CurrentValue;
+                    break;
+                case "Code Length":
+                   if (!string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                        Model.sms_code_length = Convert.ToInt32(item.CurrentValue);
+
+                    }
+                    break;
+                case "Enable Hold Functionality":
+                    Model.sms_enableholdFunction = item.CurrentValue;
+
+                    break;
+                case "Clear Hold Before Closing":
+                    Model.sms_clearHoldBeforeClosing = item.CurrentValue;
+
+                    break;
+                case "Article Code Start":
+                    if (!string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                        Model.sms_article_code_start = Convert.ToInt32(item.CurrentValue);
+                    }
+                    break;
+                case "Article Code Length":
+                    if (!string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                        Model.sms_article_code_length = Convert.ToInt32(item.CurrentValue);
+                    }
+                    break;
+                case "Value Start":
+                    if (!string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                        Model.sms_value_start = Convert.ToInt32(item.CurrentValue);
+                    }
+
+                    break;
+                case "Value Length":
+                    if (!string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                        Model.sms_value_length = Convert.ToInt32(item.CurrentValue);
+                    }
+
+                    break;
+                case "Decimal Position":
+                    if (!string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                        Model.sms_decimal_position = Convert.ToInt32(item.CurrentValue);
+                    }
+
+                    break;
+                case "Enable Vocal Assistance":
+                    Model.sms_enable_vocal_Assistance = item.CurrentValue;
+                    break;
+                case "Language":
+                    Model.sms_language = item.CurrentValue;
+
+                    break;
+
+                case "Closing Frequency":
+                    Model.sms_closing_frequency = item.CurrentValue;
+                    break;
+                case "Accuracy Tolerance":
+                    if (!string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                        Model.sms_accuracy_Tolerance = Convert.ToInt32(item.CurrentValue);
+                    }
+
+                    break;
+                case "Summary Difference Tolerance":
+                    if (!string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                        Model.sms_summary_Difference_Tolerance = Convert.ToInt32(item.CurrentValue);
+                    }
+                    break;
+                case "Check Voucher Integrity":
+                    Model.sms_check_Voucher_Integrity = item.CurrentValue;
+
+                    break;
+                case "Fiscal Reconciliation":
+                    Model.sms_fiscalReconciliation = item.CurrentValue;
+                    break;
+                case "Zeroing Voucher":
+                    Model.sms_zeroing_Voucher = item.CurrentValue;
+
+                    break;
+                case "Summary Voucher":
+                    Model.sms_summary_Voucher = item.CurrentValue;
+
+                    break;
+                case "DownLoad EJ":
+                    Model.sms_downLoad_EJ = item.CurrentValue;
+
+                    break;
+                case "Enable CBE":
+                    Model.sms_enable_cbe = item.CurrentValue;
+
+                    break;
+                case "Capture Fiscal Information":
+                    Model.sms_capture_Fiscal_Information = item.CurrentValue;
+
+                    break;
+                case "Cash Customer":
+                    Model.sms_cash_Customer = item.CurrentValue;
+
+                    break;
+                case "POS Store":
+                    Model.sms_pOS_Store = item.CurrentValue;
+
+                    break;
+                case "Enable Value Factory":
+                    Model.sms_enableValueFactory = item.CurrentValue;
+
+                    break;  
+                case "Enable GSL Tax":
+                    Model.sms_enable_GSL_Tax = item.CurrentValue;
+
+                    break;
+                case "Day Closing":
+                    Model.sms_day_closing = item.CurrentValue;
+
+                    break;
+                case "Ignore zero price article":
+                    Model.sms_ignorezeropricearticle = item.CurrentValue;
+
+                    break;
+                case "POS Use Only Available Article":
+                    if (!string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                        Model.sms_POSUseOnlyAvailableArticle = (enrecuIgnorezeroprice_rticle)Enum.Parse(typeof(enrecuIgnorezeroprice_rticle), item.CurrentValue, false);
+                    }
+                    break;
+            }
+        }
+        <form id="PropertyFormDataForSms" method="post">
+
+            <table cellpadding="0" cellspacing="0" class="tree-loadsms sptablecontent" id="sms_table_setting">
+                <tr class="asth">
+                    <td></td>
+                    <td></td>
+
+                </tr>
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Closing  Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Accuracy Tolerance
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (Model.sms_accuracy_Tolerance == 0)
+                        {
+                            <input asp-for="sms_accuracy_Tolerance" id="accuracy_Tolerance" value="0" class="form-control" style="height:20px !important;" type="text" maxlength="10" onkeypress="return isarticleDesclength(event)" onInput="return edaccurateValueKeyPress(eve)" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="sms_accuracy_Tolerance" id="accuracy_Tolerance" value="@Model.sms_accuracy_Tolerance" class="form-control" style="height:20px !important;" onkeypress="return isarticleDesclength(event)" onInput="return edaccurateValueKeyPress(eve)" />
+
+                        }
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+
+                        Check Voucher Integrity
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_check_Voucher_Integrity" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Ignore zero price article
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_ignorezeropricearticle" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        POS Use Only Available Article
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_POSUseOnlyAvailableArticle" asp-items="Html.GetEnumSelectList<enrecuIgnorezeroprice_rticle>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Currency Conversion
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_Currency_Conversion" asp-items="Html.GetEnumSelectList<enrecuIgnorezeroprice_rticle>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr> 
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                          Enable Customer Selection 
+                     </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_EnableCustomerSelection" asp-items="Html.GetEnumSelectList<enrecuIgnorezeroprice_rticle>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        POS Value Rule
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_POSValueRule" asp-items="Html.GetEnumSelectList<enValueRule>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Need Credentials For Customer Discount
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_NeedCredentialsForCustomerDiscount" asp-items="Html.GetEnumSelectList<enNeedCredentials>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr> 
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                       Beneficiary User
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_BeneficiaryUser" asp-items="Html.GetEnumSelectList<enBeneficiaryUser>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+
+                    <td class="attributdata">
+                        Closing Frequency
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_closing_frequency" asp-items="Model.closing_frequencys" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+
+
+                    <td class="attributdata">
+                        DownLoad EJ
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_downLoad_EJ" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+
+                    <td class="attributdata">
+                        FiscalReconciliation
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_fiscalReconciliation" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Summary Difference Tolerance
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (Model.sms_summary_Difference_Tolerance == 0)
+                        {
+                            <input asp-for="sms_summary_Difference_Tolerance" id="summary_Difference_Tolerance" value="0" class="form-control" style="height:20px !important;" maxlength="10" onkeypress="return isarticleDesclength(event)" onInput="return edsummeryValueKeyPress(eve)" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="sms_summary_Difference_Tolerance" id="summary_Difference_Tolerance" value="@Model.sms_summary_Difference_Tolerance" maxlength="10" class="form-control" style="height:20px !important;" onInput="return edsummeryValueKeyPress(eve)" />
+
+                        }
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+
+                    <td class="attributdata">
+                        Summary Voucher
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_summary_Voucher" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+
+                    <td class="attributdata">
+                        XML Reconciliation
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_xML_Reconciliation" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+
+                    <td class="attributdata">
+                        Zeroing Voucher
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_zeroing_Voucher" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Holding Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+
+
+                    <td class="attributdata">
+                        Clear Hold Before Closing
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_clearHoldBeforeClosing" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Hold Functionality
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_enableholdFunction" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        POS Component Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Capture Fiscal Information
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_capture_Fiscal_Information" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Cash Coustomer
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#CashCustomerMap">
+                        @if (string.IsNullOrEmpty(Model.sms_cash_Customer))
+                        {
+                            <input asp-for="sms_cash_Customer" type="text" value="" id="cash_customer_valuesms" class="form-control" style="height:20px !important;" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="sms_cash_Customer" type="text" value="@Model.sms_cash_Customer" id="cash_customer_valuesms" cclass="form-control" style="height:20px !important;" />
+
+                        }
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Day Closing
+                    </td>
+                    <td class="attributcurrvalue">
+                        <div class="input-group">
+                            @if (string.IsNullOrEmpty(Model.sms_day_closing))
+                            {
+                                <input asp-for="sms_day_closing" id="display_day_closingfile" value="" class="form-control" style="height:20px !important;">
+                                <label for="day_closing_path" id="daystyle">...</label>
+
+                            }
+                            else
+                            {
+                                <input asp-for="sms_day_closing" id="display_day_closingfile" value="@Model.sms_day_closing" class="form-control" style="height:20px !important;">
+                                <label for="day_closing_path" id="daystyle">...</label>
+
+                            }
+                        </div>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+
+                    <td class="attributdata">
+                        Enable CBE
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_enable_cbe" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+
+                    <td class="attributdata">
+                        Enable Document Reference
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_enableDocumentReference" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+
+                    <td class="attributdata">
+                        Enable GSL Tax
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_enable_GSL_Tax" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+
+                    <td class="attributdata">
+                        Enable Value Factory
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_enableValueFactory" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+
+                    <td class="attributdata">
+                        Item Selection
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_item_selection" asp-items="Model.itemselection" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+
+                    <td class="attributdata">
+                        Need Credentials For Removal
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_need_Credentials_For_Removal" asp-items="Model.need_Credentials_For_Removals" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+
+                    <td class="attributdata">
+                        POS Trigger Article Removal
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_pOS_Trigger_Article_Removal" asp-items="Model.pOS_Trigger_Article_Removals" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+
+                    <td class="attributdata">
+                        Print Discount & Additional Charge Per LineItem
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_printDiscountAdditionalChargePerLineItem" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+
+                    <td class="attributdata">
+                        Select Automatic Shift Period
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_select_automatic_Shift_Period" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        POS Interface Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+
+                    <td class="attributdata">
+                        POS Store
+                    </td>
+
+                    <td class="attributdata" data-toggle="modal" data-id="1" data-target="#PosStorebtnsaveMap">
+                        @if (string.IsNullOrEmpty(Model.sms_pOS_Store))
+                        {
+                            <input asp-for="sms_pOS_Store" type="text" value="" id="pos_store_valuesms" class="form-control" style="height:20px !important;" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="sms_pOS_Store" type="text" value="@Model.sms_pOS_Store" id="pos_store_valuesms" class="form-control" style="height:20px !important;" />
+
+                        }
+                    </td>
+                </tr>
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Pos Process Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Default Payment
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_default_Payment" asp-items="Model.smsdefault_PaymentS" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Auto Entry
+                    </td>
+                    <td class="attributcurrvalue">
+
+                        <select asp-for="sms_enableAutoEntry" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+
+                    <td class="attributdata">
+                        Open Drawer After Print
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_openDrawerAfterPrint" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Scale Encryption
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Article Code Length
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (Model.sms_article_code_length == 0)
+                        {
+                            <input asp-for="sms_article_code_length" id="article_code_length" type="text" value="5" maxlength="10" class="form-control" style="height:20px !important;" onkeypress="return isarticleDesclength(event)" onInput="return edarticlecodeValueKeyPress(eve)" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="sms_article_code_length" id="article_code_length" type="text" maxlength="10" value="@Model.sms_article_code_length" class="form-control" style="height:20px !important;" onkeypress="return isarticleDesclength(event)" onInput="return edarticlecodeValueKeyPress(eve)" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Article Code Start
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (Model.sms_article_code_start == 0)
+                        {
+                            <input asp-for="sms_article_code_start" id="article_code_start" maxlength="10" type="text" value="0" class="form-control" style="height:20px !important;" onkeypress="return isarticleDesclength(event)" onInput="return edartstartValueKeyPress(eve)" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="sms_article_code_start" id="article_code_start" maxlength="10" type="text" value="@Model.sms_article_code_start" class="form-control" style="height:20px !important;" onkeypress="return isarticleDesclength(event)" onInput="return edartstartValueKeyPress(eve)" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Code Length
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (Model.sms_code_length == 0)
+                        {
+                            <input asp-for="sms_code_length" type="text" maxlength="10" id="code_length" value="18" class="form-control" style="height:20px !important;" onkeypress="return isarticleDesclength(event)" onInput="return edcodelengthValueKeyPress(eve)" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="sms_code_length" type="text" maxlength="10" id="code_length" value="@Model.sms_code_length" class="form-control" style="height:20px !important;" onkeypress="return isarticleDesclength(event)" onInput="return edcodelengthValueKeyPress(eve)" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Decimal Position
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (Model.sms_decimal_position == 0)
+                        {
+                            <input asp-for="sms_decimal_position" id="decimal_position" type="text" maxlength="10" value="3" class="form-control" style="height:20px !important;" onkeypress="return isarticleDesclength(event)" onInput="return edDECIMALPOSValueKeyPress(eve)" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="sms_decimal_position" id="decimal_position" type="text" maxlength="10" value="@Model.sms_decimal_position" class="form-control" style="height:20px !important;" onkeypress="return isarticleDesclength(event)" onInput="return edDECIMALPOSValueKeyPress(eve)" />
+
+                        }
+                    </td>
+                </tr>
+
+
+                <tr class="treegrid-parent-@sysoldvalue">
+
+                    <td class="attributdata">
+                        Enable Scale Encryption
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_Enable_Scale_Encryption" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Value Length
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (Model.sms_value_length == 0)
+                        {
+                            <input asp-for="sms_value_length" maxlength="10" id="value_length" type="text" value="4" class="form-control" style="height:20px !important;" onkeypress="return isarticleDesclength(event)" onInput="return edvaluelengthValueKeyPress(eve)" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="sms_value_length" maxlength="10" id="value_length" type="text" value="@Model.sms_value_length" class="form-control" style="height:20px !important;" onkeypress="return isarticleDesclength(event)" onInput="return edvaluelengthValueKeyPress(eve)" />
+
+                        }
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Value Start
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (Model.sms_value_start == 0)
+                        {
+                            <input asp-for="sms_value_start" maxlength="10" id="value_start" type="text" value="13" class="form-control" style="height:20px !important;" onkeypress="return isarticleDesclength(event)" onInput="return edvaluestartValueKeyPress(eve)" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="sms_value_start" maxlength="10" id="value_start" type="text" value="@Model.sms_value_start" class="form-control" style="height:20px !important;"onkeypress="return isarticleDesclength(event)" onInput="return edvaluestartValueKeyPress(eve)" />
+
+                        }
+                    </td>
+
+                </tr>
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Vocal Assistance Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Vocal Assistance
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_enable_vocal_Assistance" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Language
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sms_language" asp-items="Model.langugerms" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+            </table>
+                 <input asp-for="sms_devicecode" value="@Model.deviceId" hidden />
+
+                <input class="form-control" type="file" name="dayclosingpath" id="day_closing_path" style="display:none; visibility:hidden;" onchange="getdayclosingfile(this.value);">
+
+
+
+        </form>
+
+
+    </div>
+</div>
+<script>
+    $(function () {
+        $("#filterrsmsSetting").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#sms_table_setting > tbody > tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+<script>
+    function TreeFunctionproprty() {
+        $(document).ready(function () {
+            $('.tree-basic').treegrid();
+
+            $('.tree-loadsms').treegrid({
+                source: function (id, response) {
+                    if (id != 1) response(['']);
+                    else response(['']);
+                }
+            });
+
+        });
+    }
+    TreeFunctionproprty();
+</script>
+
+<script>
+
+    function isarticleDesclength(evt) {
+
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        else {
+
+            return true;
+        }
+
+    }
+
+    var edartcodeValue;
+    var Numartcodevalue;
+    var Numberartcodevalue;
+
+
+    var edartstartValue;
+    var Numartstartvalue;
+    var Numberartstartvalue;
+
+    var edaccurateValue;
+    var Numaccuratevalue;
+    var Numberaccuratevalue;
+
+    var edsummeryValue;
+    var Numsummeryvalue;
+    var Numbersummeryvalue;
+    function edsummeryValueKeyPress(e) {
+        edsummeryValue = document.getElementById("summary_Difference_Tolerance");
+         Numsummeryvalue = edsummeryValue.value;
+
+         
+        Numbersummeryvalue = Numsummeryvalue.substring(0,1);
+
+       
+        if (Numbersummeryvalue == 0) {
+            if (Numsummeryvalue.length > 1) {
+
+                Numsummeryvalue = Numsummeryvalue.substring(1);
+
+                $("#summary_Difference_Tolerance").val(Numsummeryvalue);
+            }
+          
+
+        }
+
+        return true;
+    }
+
+
+    function edaccurateValueKeyPress(e) {
+        edaccurateValue = document.getElementById("accuracy_Tolerance");
+        Numaccuratevalue = edaccurateValue.value;
+
+         
+        Numberaccuratevalue = Numaccuratevalue.substring(0,1);
+
+       
+        if (Numberaccuratevalue == 0) {
+            if (Numaccuratevalue.length > 1) {
+
+                Numaccuratevalue = Numaccuratevalue.substring(1);
+
+                $("#accuracy_Tolerance").val(Numaccuratevalue);
+            }
+
+        }
+
+        return true;
+    }
+   
+    
+
+    function edarticlecodeValueKeyPress(e) {
+        edartcodeValue = document.getElementById("article_code_length");
+        Numartcodevalue = edartcodeValue.value;
+
+         
+        Numberartcodevalue = Numartcodevalue.substring(0,1);
+
+       
+       
+        if (Numberartcodevalue == 0) {
+            if (Numartcodevalue.length > 1) {
+
+                Numartcodevalue = Numartcodevalue.substring(1);
+
+                $("#article_code_length").val(Numartcodevalue);
+            }
+
+        }
+
+        return true;
+    }
+    
+    
+    function edartstartValueKeyPress(e) {
+        edartstartValue = document.getElementById("article_code_start");
+        Numartstartvalue = edartstartValue.value;
+
+         
+        Numberartstartvalue = Numartstartvalue.substring(0,1);
+
+      
+       
+        if (Numberartstartvalue == 0) {
+            if (Numartstartvalue.length > 1) {
+
+                Numartstartvalue = Numartstartvalue.substring(1);
+
+                $("#article_code_start").val(Numartstartvalue);
+            }
+
+        }
+
+        return true;
+    }
+
+    var edcodelengValue;
+    var Numcodelengvalue;
+    var Numbercodelengvalue;
+
+
+    function edcodelengthValueKeyPress(e) {
+        edcodelengValue = document.getElementById("code_length");
+        Numcodelengvalue = edcodelengValue.value;
+
+         
+        Numbercodelengvalue = Numcodelengvalue.substring(0,1);
+
+      
+       
+        if (Numbercodelengvalue == 0) {
+            if (Numcodelengvalue.length > 1) {
+
+                Numcodelengvalue = Numcodelengvalue.substring(1);
+
+                $("#code_length").val(Numcodelengvalue);
+            }
+
+        }
+
+        return true;
+    }
+
+     var eddecimalpoValue;
+     var Numdecimalpovalue;
+     var Numberdecimalpovalue;
+    
+
+    function edDECIMALPOSValueKeyPress(e) {
+        eddecimalpoValue = document.getElementById("decimal_position");
+        Numdecimalpovalue = eddecimalpoValue.value;
+
+         
+        Numberdecimalpovalue = Numdecimalpovalue.substring(0,1);
+
+      
+       
+        if (Numberdecimalpovalue == 0) {
+            if (Numdecimalpovalue.length > 1) {
+
+                Numdecimalpovalue = Numdecimalpovalue.substring(1);
+
+                $("#decimal_position").val(Numdecimalpovalue);
+            }
+
+        }
+
+        return true;
+    }
+    
+    var edvaluelengthValue;
+    var Numvaluelengthvalue;
+    var Numbervaluelengthvalue;
+  
+    function edvaluelengthValueKeyPress(e) {
+        edvaluelengthValue = document.getElementById("value_length");
+        Numvaluelengthvalue = edvaluelengthValue.value;
+
+         
+        Numbervaluelengthvalue = Numvaluelengthvalue.substring(0,1);
+
+      
+       
+        if (Numbervaluelengthvalue == 0) {
+            if (Numvaluelengthvalue.length > 1) {
+
+                Numvaluelengthvalue = Numvaluelengthvalue.substring(1);
+
+                $("#value_length").val(Numvaluelengthvalue);
+            }
+
+        }
+
+        return true;
+    }
+
+    var edvaluestartValue;
+    var Numvvaluestartvalue;
+    var Numbervaluestartvalue;
+    
+    function edvaluestartValueKeyPress(e) {
+        edvaluestartValue = document.getElementById("value_start");
+        Numvvaluestartvalue = edvaluestartValue.value;
+
+         
+        Numbervaluestartvalue = Numvvaluestartvalue.substring(0,1);
+
+      
+       
+        if (Numbervaluestartvalue == 0) {
+            if (Numvvaluestartvalue.length > 1) {
+
+                Numvvaluestartvalue = Numvvaluestartvalue.substring(1);
+
+                $("#value_start").val(Numvvaluestartvalue);
+            }
+
+        }
+
+        return true;
+    }
+
+    
+</script>
+
+<script>
+
+    $('.attributdata').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        var value = $(this).text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).closest("tr").addClass('boderclr');
+        $('#deviceproperty').html(value);
+
+    });
+    $('.attributcurrvalue').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        var value = $(this).siblings().text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).siblings().addClass("boderclr");
+        $('#deviceproperty').html(value);
+
+    });
+    $("#devicesettingproperty").change(function () {
+        var value = $(this).select2('data')[0].text;
+        $(".boderclr").removeClass("boderclr");
+        $("input[name*='" + value + "']").addClass('boderclr');
+        $("input[name*='" + value + "']").closest("tr").addClass('boderclr');
+        $('#deviceproperty').html(value);
+    });
+
+
+</script>
+
+<script>
+    function getdayclosingfile(filename) {
+        $('#display_day_closingfile').val(filename);
+    }
+</script>
+
+

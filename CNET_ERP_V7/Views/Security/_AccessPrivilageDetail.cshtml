@@ -1,0 +1,62 @@
+﻿
+@model SecurityModel
+@using CNET_ERP_V7.Models.Security;
+@using Newtonsoft.Json;
+@{
+    var access = Model?.accessprivilage;
+}
+
+<style>
+    .createacount {
+        height: 80vh;
+        overflow-y: scroll
+    }
+    .accdesc{
+        white-space:nowrap;
+    }
+    #acccesstablebody tr
+    {
+        white-space:nowrap;
+    }
+</style>
+<div class="border createacount">
+    <div class="form-group form-group-sm">
+
+        <div class="col-md-6">
+            <button type="button" class="btn btn btn-outline-primary btn-sm" style="border:dotted; height:30px;" id="accesseselectallbtn">Select All</button>
+            <input asp-for="accessselectall" />
+
+        </div>
+        <form class="form-horizontal" id="accessmatrixNewFormData"  method="post">
+
+            <table id="accessprvilage_detail_List" class="table table-striped">
+                <thead class="accdesc">
+                    <tr>
+                        <th>Access</th>
+                        <th>Description</th>
+
+                    </tr>
+
+                </thead>
+                <tbody id="acccesstablebody">
+                    @if (access != null && access.Count() > 0)
+                    {
+                        foreach (var item in access)
+                        {
+                            <tr>
+                                <td> <input class="checkaccess" name="acesspriviligefuncCode[]" value="@item.FunctionId" type="checkbox" id="" @(Convert.ToBoolean(item?.Access) ? "checked" : "") onclick="return true" /></td>
+                                <td>@item?.Description</td>
+                            </tr>
+                        }
+                        
+                    }
+                </tbody>
+            </table>
+            <input asp-for="access_orgunitcode" value="@Model?.access_orgunitcode" hidden />
+            <input asp-for="funcCategory" value="@Model?.funcCategory" hidden />
+            <input asp-for="subsystemcompo" value="@Model?.subsystemcompo" hidden />
+  </form>
+
+ </div>
+</div>
+

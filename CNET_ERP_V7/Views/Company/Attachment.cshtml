@@ -1,0 +1,408 @@
+﻿@model Companymodel
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_V7_Domain.Domain.CommonSchema;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var attachementlist = await sharedHelpers.GetSystemConstantByCat("Attachment Catagory");
+}
+
+<style>
+    .insideNave {
+        margin-left: 0px;
+        border-right: solid dodgerblue 1px;
+        height: 70vh !important;
+        background: #5cb85c14;
+        padding: 0 !important;
+    }
+
+    .secondNav .nav-item.active {
+        background-color: #6dceeb !important;
+    }
+
+    .sidebar-men li > a {
+        position: relative;
+        background: #5cb85c05 !important;
+        border: white solid 0.05px !important;
+    }
+
+    #dispaly {
+        width: 100% !important;
+        height: 65vh !important;
+        border: #337ab7 0.5px solid;
+    }
+
+    ul {
+        list-style-type: none;
+    }
+</style>
+<div>
+    <div class="col-md-2 insideNave">
+        <ul class="sidebar-men secondNav tree " data-widget="tree" id="attachement_nav">
+
+            @foreach (var item in attachementlist)
+            {
+                <li class="treeview menu-open attachmentType nav-item" id="parent">
+                    <a href="@item.Description" data-toggle="tab" data-value="@item.Id" data-types="@item.Id" style="text-decoration-line:none!important" name="catagory">
+
+                        @if (item.Description == "Personal Photo")
+                        {
+                            <i class="fa fa-user"></i>
+                            <i class="fa fa-angle-left pull-right" style="visibility:hidden" id="@item.Id+1"></i>
+                        }
+                        else if (item.Description == "Passport")
+                        {
+                            <i class="fa fa-book"></i>
+                            <i class="fa fa-angle-left pull-right" style="visibility:hidden" id="@item.Id+1"></i>
+                        }
+                        else if (item.Description == "Company Logo")
+                        {
+                            <i class="fa fa-building-o"></i>
+                            <i class="fa fa-angle-left pull-right" style="visibility:hidden" id="@item.Id+1"></i>
+                        }
+                        else if (item.Description == "Reference Documents")
+                        {
+                            <i class="fa fa-file-o"></i>
+                            <i class="fa fa-angle-left pull-right" style="visibility:hidden" id="@item.Id+1"></i>
+                        }
+                        else if (item.Description == "Certificate")
+                        {
+                            <i class="fa fa-certificate"></i>
+                            <i class="fa fa-angle-left pull-right" style="visibility:hidden" id="@item.Id+1"></i>
+                        }
+                        else if (item.Description == "License")
+                        {
+                            <i class="fa fa-id-card-o"></i>
+                            <i class="fa fa-angle-left pull-right" style="visibility:hidden" id="@item.Id+1"></i>
+                        }
+                        else if (item.Description == "Picture")
+                        {
+                            <i class="fa fa-picture-o"></i>
+                            <i class="fa fa-angle-left pull-right" style="visibility:hidden" id="@item.Id+1"></i>
+
+                        }
+                        else if (item.Description == "Catalogue")
+                        {
+                            <i class="fa fa-bars"></i>
+                            <i class="fa fa-angle-left pull-right" style="visibility:hidden" id="@item.Id+1"></i>
+                        }
+                        else if (item.Description == "Manual")
+                        {
+                            <i class="fa fa-bars"></i>
+                            <i class="fa fa-angle-left pull-right" style="visibility:hidden" id="@item.Id+1"></i>
+                        }
+                        else if (item.Description == "Email")
+                        {
+                            <i class="fa fa-envelope"></i>
+                            <i class="fa fa-angle-left pull-right" style="visibility:hidden" id="@item.Id+1"></i>
+                        }
+                        else if (item.Description == "Trailer")
+                        {
+                            <i class="fa fa-envelope"></i>
+                            <i class="fa fa-angle-left pull-right" style="visibility:hidden" id="@item.Id+1"></i>
+                        }
+                        else if (item.Description == "Finger Print")
+                        {
+                            <i class="fa fa-hand-o-up"></i>
+                            <i class="fa fa-angle-left pull-right" style="visibility:hidden" id="@item.Id+1"></i>
+                        }
+                        else if (item.Description == "Poster Portrait")
+                        {
+                            <i class="fa fa-clipboard"></i>
+                            <i class="fa fa-angle-left pull-right" style="visibility:hidden" id="@item.Id+1"></i>
+                        }
+                        else if (item.Description == "Poster Landscape")
+                        {
+                            <i class="fa fa-clipboard"></i>
+                            <i class="fa fa-angle-left pull-right" style="visibility:hidden" id="@item.Id+1"></i>
+                        }
+                        <span class="labelcss">@item.Description</span>
+                    </a>
+
+                    <ul class="treeview-menu" style="padding-left:35px; background-color:white;" id="@item.Id">
+                    </ul>
+                </li>
+            }
+
+
+        </ul>
+
+        <input type="hidden" asp-for="attachmentcatagory" />
+        <input type="hidden" asp-for="attachmentreference" />
+        <input type="hidden" asp-for="attachmentcode" />
+        <input type="hidden" id="attachment_unique" />
+        <input asp-for="attachmentcodee" hidden />
+    </div>
+
+    <div class="col-md-10" id="Display_Attachment">
+        <div class="pull-right">
+            <button id="att_edit" type="button" class="btn btn-flat btn-primary btn-xs" onclick="EditAttachment()" style="visibility:hidden"><i class="fa fa-pencil">Edit</i></button>
+            <button id="att_cleare" type="button" class="btn btn-flat btn-primary btn-xs" onclick="CleareAttachment()" style="visibility:hidden"><i class="fa fa-remove">Clear</i></button>
+            <button id="att_delete" type="button" class="btn btn-danger btn-xs" onclick="DeleteCompanyAttachment()" style="visibility:hidden"><i class="fa fa-remove">Delete</i></button>
+        </div>
+        <iframe src="" id="dispaly"> </iframe>
+    </div>
+
+</div>
+
+<div class="modal fade" id="modal-attachemenet">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 style=" color:dodgerblue; font-weight:bold">
+                    <img src="~/images/Cnets.jpg" />
+                    New Attachement
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <button type="button" id="attachement_save" class="btn btn-app"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                        <div class="btn btn-app choose_file">
+                            <i style="color:darkblue" class="fa fa-folder-open-o"></i>
+                            <label for="file" class=" control-label">Browse</label>
+                            <input asp-for="file" style="width:100%;height:100%;display:none;"  class="form-control" />
+                        </div>
+                        <button type="button" class="btn btn-app"> <i style="color:darkblue" class="fa fa-qrcode"></i>Scanner</button>
+                        <button type="button" class="btn btn-app" id="btn_camera"><i style="color:darkblue" class="fa fa-camera"></i> Camera</button>
+                        <button type="button" class="btn btn-app"> <i style="color:darkblue" class="fa fa-sticky-note-o"></i>Edit</button>
+                        <button type="button" class="btn btn-app" id="datadismisall"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                    </div>
+
+                    <div class="col-md-12">
+                        <form class="form-horizontal">
+                            <div class="form-group form-group-sm">
+                                <label asp-for="url" class="col-md-1 control-label">url</label>
+                                <div class="col-md-4">
+                                    <input asp-for="url" class="form-control" placeholder="File url" readonly />
+                                </div>
+                                <label asp-for="attachmentdescription" class="col-md-2 control-label">Description</label>
+                                <div class="col-md-5">
+                                    <input asp-for="attachmentdescription" class="form-control " placeholder="Enter discription" />
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="image_preview">
+                        <iframe src="" id="dispaly_here" style="width:100%;height:290px"></iframe>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<script>
+
+    function EditAttachment() {
+        var ATTCode = $('#@nameof(Model.attachmentcode)').val();
+        var ATTref = $('#@nameof(Model.attachmentreference)').val();
+        var AttDesc = $('#@nameof(Model.attachmentdescription)').val();
+        var Attcategory = $('#@nameof(Model.attachmentcatagory)').val();
+        var ATTurl = $('#@nameof(Model.url)').val();
+
+        $('#@nameof(Model.attachmentcode)').val(ATTCode);
+        $('#@nameof(Model.attachmentreference)').val(ATTref);
+        $('#@nameof(Model.attachmentdescription)').val(AttDesc);
+        $('#@nameof(Model.url)').val(ATTurl);
+        $('#@nameof(Model.attachmentcatagory)').val(Attcategory);
+
+        var source = $('#dispaly_here');
+        var baseURL = window.location.origin;
+
+        source[0].src = baseURL + "/images/" + ATTurl;
+        source.parent()[0].load;
+
+        showNewAttachement();
+
+        var elem = document.getElementById("dispaly");
+
+        elem.src = "about:blank";
+        document.getElementById("att_edit").style.visibility = "hidden";
+        document.getElementById("att_delete").style.visibility = "hidden";
+        document.getElementById("att_cleare").style.visibility = "hidden";
+
+        console.log(ATTCode);
+        console.log(ATTref);
+        console.log(AttDesc);
+        console.log(Attcategory);
+        console.log(ATTurl);
+        Attachment_update()
+
+    }
+
+</script>
+
+<script>
+    function DeleteCompanyAttachment() {
+
+        var code = $('#attachmentcodee').val();
+        if (confirm('are you sure to delete this attachment?')) {
+            $.ajax({
+                type: "POST",
+                dataType: 'json',
+                url: '@Url.Action("DeleteAttachmentItem", "Company")',
+                data: { code: code },
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                success: function (data) {
+                      CleareAttachment()
+                    Attachment_update()
+                  
+                   
+                }
+            });
+        }
+    }
+
+</script>
+
+<script>
+    function CleareAttachment() {
+        var elem = document.getElementById("dispaly");
+
+        elem.src = "about:blank";
+
+        document.getElementById("att_edit").style.visibility = "hidden";
+        document.getElementById("att_delete").style.visibility = "hidden";
+        document.getElementById("att_cleare").style.visibility = "hidden";
+        cleareattachmentModal();
+    }
+
+</script>
+
+<script>
+
+    function showNewAttachement() {
+        $('#modal-attachemenet').modal({ backdrop: 'static', keyboard: false });
+    }
+
+    function cleareattachmentModal() {
+        $('#@nameof(Model.attachmentcode)').val("");
+        //  $('#@nameof(Model.attachmentcatagory)').val("")
+        $('#@nameof(Model.attachmentdescription)').val("");
+        $('#@nameof(Model.url)').val("");
+        $('#@nameof(Model.file)').val("")
+
+        var ATTurl = $('#@nameof(Model.url)').val();
+        var source = $('#dispaly_here');
+        var baseURL = window.location.origin;
+
+        source[0].src = ATTurl;
+        source.parent()[0].load;
+        $('#modal-attachemenet').modal('hide');
+    }
+
+    $('#datadismisall').click(function () {
+        $('#modal-attachemenet').modal('hide');
+        cleareattachmentModal();
+        //
+    });
+
+
+    $('.attachmentType').click(function (e) {
+        $('.secondNav .attachmentType').removeClass('active')
+        $(this).addClass('active')
+    });
+
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('.attachmentType').click(function (e) {
+            $('.secondNav .attachmentType').removeClass('active');
+            $(this).addClass('active');
+
+            var attachmentcategory = $('#attachement_nav .active a').data('value');;
+            console.log(attachmentcategory)
+
+            $('#@nameof(Model.attachmentcatagory)').val(attachmentcategory);
+
+        });
+    });
+</script>
+
+<script>
+    $('#attachement_save').click(function (e) {
+
+        if (true) {
+            var attachmentCatagory = $('#@nameof(Model.attachmentcatagory)').val();
+            var attachmentDescription = $('#@nameof(Model.attachmentdescription)').val();
+            var formdata = new FormData();
+            var files = $('#@nameof(Model.file)').get(0).files;
+
+            formdata.append("file", files[0]);
+            formdata.append("attachmentdescription", $('#@nameof(Model.attachmentdescription)').val());
+            formdata.append("attachmentcatagory", $('#@nameof(Model.attachmentcatagory)').val());
+            formdata.append("attachmentreference", $('#@nameof(Model.attachmentreference)').val());
+            formdata.append("attachmentcode", $('#@nameof(Model.attachmentcode)').val());
+            formdata.append("url", $('#@nameof(Model.url)').val());
+
+            // var filesize = files[0];
+            // console.log(attachmentDescription);
+
+            var FILE = document.getElementById("dispaly_here");
+            var Filecontent = FILE.contentDocument;
+            if (Filecontent != null && attachmentDescription) {
+                $.ajax({
+                    url: '@Url.Action("saveAttachemnt", "Company")',
+                    data: formdata,
+                    type: "POST",
+                    contentType: false, // Not to set any content header
+                    processData: false, // Not to process data
+                    success: function (data) {
+                        swal("", data.message, "success");
+                        Attachment_update();
+                    },
+
+                });
+                cleareattachmentModal();
+                $('#modal-attachemenet').modal('hide');
+
+            }
+            else {
+                swal("please fill the attachment properly", "error");
+            }
+
+        }
+
+    })
+
+</script>
+
+<script>
+
+    $('#@nameof(Model.file)').on("change", function () {
+
+        var files = $('#@nameof(Model.file)').get(0).files;
+
+        console.log(files);
+
+        var filename = files[0].name;
+        var baseURL = window.location.origin;
+        var URLL = baseURL + "/images/" + filename;
+        console.log(filename))
+        console.log(path)
+        $('#@nameof(Model.attachmentdescription)').val(filename.split('.', 1));
+        $('#@nameof(Model.url)').val(URLL);
+
+        var SRC = $('#dispaly_here');
+
+        SRC[0].src = URL.createObjectURL(this.files[0]);
+        SRC.parent()[0].load;
+
+    });
+
+</script>
+
+
+
+
+
+
+

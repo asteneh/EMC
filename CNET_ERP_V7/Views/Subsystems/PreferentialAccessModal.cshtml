@@ -1,0 +1,175 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.SettingSchema;
+@model VoucherSearchModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var Rgs = await sharedHelpers.GetRequriedGslbyVoucherdefandtype(Model?.documentType, 1834);
+
+         List<RequiredGsldetailDTO> RGSD = new List<RequiredGsldetailDTO>();
+        List<PreferenceDTO> pref = new List<PreferenceDTO>();
+        if (Rgs.Count() > 0)
+        {
+            foreach (var  req in Rgs)
+            {
+                //List<RequiredGSLDetail> Rd = UIProcessManager.SelectAllRequiredGSLDetail().Where(x => x.requiredGSL == req.code).ToList();
+            List<RequiredGsldetailDTO> Rd = await sharedHelpers.SelectRequiredGSLDetailByRequgsl(req.Id);
+                if (Rd.Count() > 0)
+                {
+                foreach (RequiredGsldetailDTO reqs in Rd)
+                    {
+                       var prefance = await sharedHelpers.GetpreferenceByreference(reqs.GslType);
+                        if (prefance != null)
+                        {
+                            pref.AddRange(prefance);
+                        }
+                    }
+                }
+
+            }
+        }
+
+      var organizationTypes = await sharedHelpers.GetsystemConstantById(Convert.ToInt32(Model?.documentType));
+
+
+      var PreferenceaccessList = pref?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Description }).ToArray();
+
+}
+
+<div class="modal fade" id="preferentialacessModal">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <img src="~/images/Cnets.jpg" alt="CNET" />
+                    <span>Preferential Access For @organizationTypes?.FirstOrDefault().Description</span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                </h5>
+
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form class="form-horizontal" id="PreferentialaccessNewFormData" onsubmit="return preferentialaccessNewFormFunction()" asp-controller="Subsystems" asp-action="CreatePreferentialaccess" method="post">
+                        <div class="col-md-12">
+                            <div>
+                                <button class="btn btn-app" type="reset" id="IssuedbtnNew"> <i class="fa fa-file-o"></i>New</button>
+                                <button type="submit" action="addRow" class="btn btn-app" id="PreferentialaccessNewsave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                                <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12" style="margin-top:25px">
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Preference</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="preferentialaccess" class="form-control select2" style="width:340px;">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="preferentialaccess"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Description</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="preferedescription" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="preferedescription"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Remark</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="prefereremark" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="prefereremark"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <input hidden asp-for="prefererecodeforupdate" />
+                        <input hidden asp-for="prefererecodefordeleted" />
+                        <input hidden asp-for="devicecode" />
+                        <input hidden asp-for="preferentialaccessVouchercodesetting" />
+
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+    
+    function preferentialaccessNewFormFunction() {
+        var preference =   $('#@nameof(Model.devicecode)').val();
+        var Vouchersettingpreferentila = $('#@nameof(Model.documentType)').val();
+
+        var $form = $('#PreferentialaccessNewFormData');
+        var data = $form.serialize();
+        var action = $('#PreferentialaccessNewFormData').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            success: function (data) {
+                swal("", data, "success");
+                submitfunctionpreferentialaccess(preference, Vouchersettingpreferentila);
+
+                ClearPreferentialModal();
+
+          },
+        });
+        return false;
+    };
+
+</script>
+
+<script>
+    $('#@nameof(Model.preferentialaccessVouchercodesetting)').val($('#@nameof(Model.documentType)').val());
+</script>
+<script>
+        $('#@nameof(Model.preferentialaccess)').select2({
+                    data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(PreferenceaccessList)),
+                    placeholder: "",
+                    allowClear: true
+
+        });
+
+</script>
+<script>
+    function showNewPREFERENCE() {
+        ClearPreferentialModal();
+        $('#preferentialacessModal').modal({ backdrop: 'static', keyboard: false });
+    }
+
+    var preference = "";
+    $(document).ready(function () {
+        $(".addpreferenceaccessnameLisearch").click(function () {
+            preference = $(this).attr('id');
+            $('#@nameof(Model.devicecode)').val(preference);
+            $('#preferentialaccessbtn').prop('disabled', false)
+        });
+    });
+    function ClearPreferentialModal() {
+                $('#@nameof(Model.prefererecodeforupdate)').val("");
+                $('#@nameof(Model.preferentialaccess)').val("").trigger('change');
+                $('#@nameof(Model.preferedescription)').val("");
+                $('#@nameof(Model.prefereremark)').val("");
+    }
+
+
+</script>

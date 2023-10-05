@@ -1,0 +1,880 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model Devicemodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var deviceTypes = await sharedHelpers.GetdeviceById(Model?.DeviceType);
+    var deviceTypecode = deviceTypes?.FirstOrDefault()?.Description;
+
+    var title = "Device - " + deviceTypes?.FirstOrDefault()?.Description;
+    ViewData["Title"] = title;
+}
+<style>
+    div.scroll {
+        height: 100vh;
+        overflow-x: hidden;
+        overflow-y: auto;
+        text-align: center;
+    }
+
+    .activeTab {
+        display: none;
+    }
+
+    .displayapp {
+        display: none;
+    }
+
+    .disableClick {
+        pointer-events: none;
+    }
+</style>
+
+<section class="content-header">
+    <h5>
+        @ViewData["Title"]
+    </h5>
+    <ol class="breadcrumb">
+        <li><a href=@Url.Action("Index","Home")><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#"><i class="fa fa-briefcase"></i> Device </a></li>
+        <li><a href="#"><i class="fa fa-briefcase"></i></a></li>
+        <li class="active"></li>
+    </ol>
+</section>
+
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-body">
+
+                    <div class="col-md-7">
+                        <div style="float:left;padding-top:1px">
+                            <a href="#" class="btn btn-app" id="btnNewdevice"> <i class="fa fa-plus-circle"></i>New</a>
+                            <a href="#"  class="btn btn-app" id="btnSavedeviceSetting"> <i class="fa fa-save"></i>Save</a>
+                        </div>
+                        <div class="col-md-6">
+                            <form asp-controller="Device" asp-action="searchorg" method="post" id="devicesearch" class="displayapp">
+                                <div class="form-inline">
+                                    <br />
+                                    <div style="display: inline; white-space: nowrap;">
+                                        <button class="btn btn-primary" style="padding: 5px 8px 5px 8px;" id="deviceTypesearch">Type</button>
+                                        <input type="hidden" asp-for="DeviceType" />
+
+                                        <select asp-for="devicesettingpropertyInindex" class="form-control select2" style="width:90%"></select>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="#" class="btn btn-app displayapp" id="btnDevicesettingImport"> <i class="fa fa-gear"></i>Import From<br> Reference</a>
+
+                        </div>
+                    </div>
+
+
+                </div>
+                <input type="hidden" id="selecteTab" value="" />
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+
+
+        <div class="col-md-12">
+            <div class="nav-tabs-custom">
+
+                @if (deviceTypes?.FirstOrDefault()?.Description == "IP TV Server")
+                {
+                    <ul class="nav nav-tabs" id="Preferencedevice_tab_nav">
+                        <li class="active"><a href="#DeviceMaintain" data-toggle="tab">Device Maintain</a></li>
+                        <li><a href="#DeviceSetting" data-toggle="tab">Device Setting</a></li>
+                        <li><a href="#IpTvmedia" data-toggle="tab">Media</a></li>
+                        <li><a href="#IpTvmovies" data-toggle="tab">Movies</a></li>
+
+                    </ul>
+                }
+                else
+                {
+                    <ul class="nav nav-tabs" id="Preferencedevice_tab_nav">
+                        <li class="active"><a href="#DeviceMaintain" data-toggle="tab">Device Maintain</a></li>
+                        <li><a href="#DeviceSetting" data-toggle="tab">Device Setting</a></li>
+
+                    </ul>
+                }
+
+               <div class="tab-content">
+
+                    <div class="active tab-pane" id="DeviceMaintain">
+                        <div class="row">
+                            <div class="col-md-12">
+                                @await Html.PartialAsync("Generaldevicemain")
+
+                            </div>
+                        </div>
+                    </div>
+
+                   <div class="tab-pane" id="DeviceSetting">
+                        <div class="row">
+                            <div class="col-md-12">
+                               
+                                    @await Html.PartialAsync("GeneraldeviceSetting")
+                            </div>
+                        </div>
+                    </div>
+                    @*
+                    <div class="tab-pane" id="IpTvmedia">
+                        <div class="row">
+                            <div class="col-md-12">
+                                @await Html.PartialAsync("GeneraliPtVMediaSetting")
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="IpTvmovies">
+                        <div class="row">
+                            <div class="col-md-12">
+                                @await Html.PartialAsync("GeneraliPtVMoviesSetting")
+
+                            </div>
+                        </div>
+                    </div>*@
+
+                    <!-- /.tab-pane -->
+
+                </div>
+
+
+
+
+                <!-- /.tab-pane -->
+                <!--</div>-->
+                @*<input type="hidden" id="selectedTab" value="" />*@
+
+            </div>
+        </div>
+    </div>
+
+</section>
+<!--/PosServiceChargModal-->
+@await Html.PartialAsync("accesscontrolDeviceModel")
+
+<!--/PosServiceChargModal-->
+<!--/posStoreModel-->
+@await Html.PartialAsync("DefaultArticelModel")
+<!--/posStoreModel-->
+<!--/posStoreModel-->
+@await Html.PartialAsync("posStoreModel")
+<!--/posStoreModel-->
+<!--/applicationbrabch-->
+@await Html.PartialAsync("branchModalMap")
+<!--/applicationbrabch-->
+<!--/applicationbrabch-->
+@await Html.PartialAsync("welcomeModel")
+<!--/applicationbrabch-->
+<!--/applicationbrabch-->
+@await Html.PartialAsync("ApplicableDiscountModal")
+<!--/applicationbrabch-->
+<!--/applicationbrabch-->
+@await Html.PartialAsync("ApplicableservicechargeModal")
+<!--/applicationbrabch-->
+<!--/applicationbrabch-->
+@await Html.PartialAsync("AutoadditemModal")
+<!--/applicationbrabch-->
+<!--/applicationbrabch-->
+@await Html.PartialAsync("DefaultcategoryModal")
+<!--/applicationbrabch-->
+@*<!--/applicationbrabch-->
+@await Html.PartialAsync("CashcustomerModel")
+<!--/applicationbrabch-->
+
+<!--/applicationbrabch-->
+@await Html.PartialAsync("accesscontrolModel")
+<!--/applicationbrabch-->
+<!--/applicationbrabch-->
+@await Html.PartialAsync("poscameraModel")
+<!--/applicationbrabch-->
+<!--/applicationbrabch-->
+@await Html.PartialAsync("defaultgslTypeModel")
+<!--/applicationbrabch-->
+<!--/applicationbrabch-->
+@await Html.PartialAsync("IptVmediaModel")
+<!--/applicationbrabch-->
+<!--/applicationbrabch-->
+@await Html.PartialAsync("IptvMoviesModel")
+<!--/applicationbrabch-->
+<!--/applicationbrabch-->
+@await Html.PartialAsync("MenudesignModal")
+<!--/applicationbrabch-->
+<!--/applicationbrabch-->
+@await Html.PartialAsync("Popuomodal")
+<!--/applicationbrabch-->
+
+<!--/PosServiceChargModal-->
+@await Html.PartialAsync("PosServiceChargModal")
+<!--/PosServiceChargModal-->*@
+
+<script>
+    var branchflag = false;
+    $(document).on("click", ".activedeconsinee", function () {
+        branchflag = true;
+    });
+    $('#btnNewdevice').bind("click", function () {
+        var selectedPage = $('#selecteTab').val();
+
+        if (selectedPage) {
+            switch (selectedPage) {
+                case "#DeviceMaintain":
+                    if (branchflag == true) {
+                        ClearDeviceMaintainModal();
+                        $('#devicemaintainmapmodal').modal({ backdrop: 'static', keyboard: false });
+                       
+                    }
+                    else {
+                        swal("", "please select branch", "error");
+                    }
+                    break;
+
+                case "#IpTvmedia":
+                    var mediaType = $('#device_media_list .active a').data('types');
+
+                    if (mediaType != null) {
+                        Media_Popup();
+                    }
+                    else {
+                        alert(" please select the media Type");
+                    }
+                    break;
+                case "#IpTvmovies":
+                    var movieType = $('#device_movie_list .active a').data('types');
+
+                    if (movieType != null) {
+                        Movie_Popup();
+                    }
+                    else {
+                        alert(" please select the Movie Type");
+                    }
+                    break;
+                case "#DeviceSetting":
+                    var movieType = $('#device_movie_list .active a').data('types');
+
+                    if (movieType != null) {
+                        Movie_Popup();
+                    }
+                    else {
+                        alert(" please select the Movie Type");
+                    }
+                    break;
+
+
+            }
+        }
+        else {
+            if (branchflag == true) {
+                ClearDeviceMaintainModal();
+                $('#devicemaintainmapmodal').modal({ backdrop: 'static', keyboard: false });
+               
+            }
+            else {
+                swal("", "please select the branch", "error");
+            }
+        }
+
+
+    });
+
+    $('#Preferencedevice_tab_nav li a').click(function (e) {
+        var selecteTab = e.target.attributes['href'].value;
+        $('#selecteTab').val(selecteTab);
+        if (selecteTab) {
+            switch (selecteTab) {
+
+                case "#DeviceMaintain":
+                    $('#btnNewdevice').show();
+                    $('#btnSavedeviceSetting').addClass('displayapp');
+                    $('#devicesearch').addClass('displayapp');
+                    $('#btnDevicesettingImport').addClass('displayapp');
+                    break;
+                case "#DeviceSetting":
+
+                    var Prefcode = '@Model?.DeviceType';
+                    $.ajax({
+                        type: "GET",
+                        dataType: 'html',
+                        url: '@Url.Action("GetmaintainedDevice", "Devices")',
+                        data: { Prefcode: Prefcode },
+                        success: function (data) {
+                            $('#maintainDeviceCintent').html(data);
+
+                        }
+                    });
+                    $('#btnNewdevice').hide();
+                    $('#btnSavedeviceSetting').removeClass('displayapp');
+                    $('#devicesearch').removeClass('displayapp');
+                    $('#btnDevicesettingImport').removeClass('displayapp');
+                    break;
+
+                case "#IpTvmedia":
+                    $('#btnNewdevice').show();
+                    $('#btnSaveDEVICEPROPERTY').addClass('displayapp');
+                    $('#btnNewdeviceSetting').addClass('displayapp');
+                    $('#btnSaveForOrderstation').addClass('displayapp');
+                    $('#devicesearch').addClass('displayapp');
+                    $('#btnDevicesettingImport').addClass('displayapp');
+
+                    break;
+                case "#IpTvmovies":
+                    $('#btnNewdevice').show();
+                    $('#btnSaveDEVICEPROPERTY').addClass('displayapp');
+                    $('#btnNewdeviceSetting').addClass('displayapp');
+                    $('#btnSaveForOrderstation').addClass('displayapp');
+                    $('#devicesearch').addClass('displayapp');
+                    $('#btnDevicesettingImport').addClass('displayapp');
+                    break;
+            }
+        }
+    });
+
+</script>
+
+<script>
+    $('#btnSavedeviceSetting').click(function () {
+
+        var SelcetdTab = $('#selecteTab').val();
+        var SubTab = $('#selecteSubTab').val();
+
+        if (SelcetdTab == "#DeviceSetting") {
+
+            if (SubTab == "" || SubTab == undefined || SubTab == "#deviceProperty") {
+                deviceCode = '@Model?.DeviceType';
+                if (deviceCode == "522") {
+                    var formData = $('#IptVFormData').serialize();
+                    $.ajax({
+                        url: '/Devices/SavingIpTVProperty',
+                        type: 'POST',
+                        data: formData,
+                        success: function (data) {
+                            if (data.cansave == true) {
+                                swal("", data.msg, "success");
+                            }
+                            else {
+                                swal("", data.msg, "error");
+                            }
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+
+                }
+                if (deviceCode == "515") {
+                    var formData = $('#PropertyFormDataForClient').serialize();
+                    $.ajax({
+                        url: '/Devices/SavingClientSettingProperty',
+                        type: 'POST',
+                        data: formData,
+                        success: function (data) {
+                            if (data.cansave == true) {
+                                swal("", data.msg, "success");
+                            }
+                            else {
+                                swal("", data.msg, "error");
+                            }
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+
+                }
+                else if (deviceCode == "PREFE000000016") {
+                    $('#domainFormData').submit();
+
+
+                }
+                else if (deviceCode == "520") {
+                    var formData = $('#PropertyFormDataForFile').serialize();
+                    $.ajax({
+                        url: '/Devices/SavingFileSettingProperty',
+                        type: 'POST',
+                        data: formData,
+                        success: function (data) {
+                            if (data.cansave == true) {
+                                swal("", data.msg, "success");
+                            }
+                            else {
+                                swal("", data.msg, "error");
+                            }
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+
+                }
+                else if (deviceCode == "521") {
+                    var formData = $('#PropertyFormDataForFtp').serialize();
+                    $.ajax({
+                        url: '/Devices/SavingFtpSettingProperty',
+                        type: 'POST',
+                        data: formData,
+                        success: function (data) {
+                            if (data.cansave == true) {
+                                swal("", data.msg, "success");
+                            }
+                            else {
+                                swal("", data.msg, "error");
+                            }
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+                }
+
+                else if (deviceCode == "519") {
+                    var formData = $('#PropertyFormDataForEmail').serialize();
+                    $.ajax({
+                        url: '/Devices/SavingEmailSettingProperty',
+                        type: 'POST',
+                        data: formData,
+                        success: function (data) {
+                            if (data.cansave == true) {
+                                swal("", data.msg, "success");
+                            }
+                            else {
+                                swal("", data.msg, "error");
+                            }
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+                }
+                else if (deviceCode == "525") {
+                    var formData = $('#PropertyFormDataForTeleg').serialize();
+                    $.ajax({
+                        url: '/Devices/SavingTelegSettingProperty',
+                        type: 'POST',
+                        data: formData,
+                        success: function (data) {
+                            if (data.cansave == true) {
+                                swal("", data.msg, "success");
+                            }
+                            else {
+                                swal("", data.msg, "error");
+                            }
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+                }
+                else if (deviceCode == "543") {
+                    var formData = $('#PropertyFormDataForRms').serialize();
+                    $.ajax({
+                        url: '/Devices/SavingrmsSettingProperty',
+                        type: 'POST',
+                        data: formData,
+                        success: function (data) {
+                            if (data.cansave == true) {
+                                swal("", data.msg, "success");
+                            }
+                            else {
+                                swal("", data.msg, "error");
+                            }
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+                 
+                }
+                else if (deviceCode == "538") {
+                    var formData = $('#PropertyFormDataForPms').serialize();
+                    $.ajax({
+                        url: '/Devices/SavingpmsSettingProperty',
+                        type: 'POST',
+                        data: formData,
+                        success: function (data) {
+                            if (data.cansave == true) {
+                                swal("", data.msg, "success");
+                            }
+                            else {
+                                swal("", data.msg, "error");
+                            }
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+                }
+                else if (deviceCode == "544") {
+                    var formData = $('#PropertyFormDataForSms').serialize();
+                    $.ajax({
+                        url: '/Devices/SavingrSMSSettingProperty',
+                        type: 'POST',
+                        data: formData,
+                        success: function (data) {
+                            if (data.cansave == true) {
+                                swal("", data.msg, "success");
+                            }
+                            else {
+                                swal("", data.msg, "error");
+                            }
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+                } 
+                else if (deviceCode == "609") {
+                    var formData = $('#PropertyFormDataForArcase').serialize();
+                    $.ajax({
+                        url: '/Devices/SavingrArcaseSettingProperty',
+                        type: 'POST',
+                        data: formData,
+                        success: function (data) {
+                            if (data.cansave == true)
+                            {
+                                swal("", data.msg, "success");
+                            }
+                            else{
+                                swal("", data.msg, "error");
+                            }
+                           
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+                }
+                else if (deviceCode == "532") {
+                    var formData = $('#PropertyFormDataForAccess').serialize();
+                    $.ajax({
+                        url: '/Devices/SavingAccessSettingProperty',
+                        type: 'POST',
+                        data: formData,
+                        success: function (data) {
+                            if (data.cansave == true) {
+                                swal("", data.msg, "success");
+                            }
+                            else {
+                                swal("", data.msg, "error");
+                            }
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+                }
+
+                else if (deviceCode == "535") {
+                    var formData = $('#PropertyFormDataFormobil').serialize();
+                    $.ajax({
+                        url: '/Devices/SavingmobilSettingProperty',
+                        type: 'POST',
+                        data: formData,
+                        success: function (data) {
+                            if (data.cansave == true) {
+                                swal("", data.msg, "success");
+                            }
+                            else {
+                                swal("", data.msg, "error");
+                            }
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+                }
+                else if (deviceCode == "533") {
+                    var formData = $('#PropertyFormDataForcinema').serialize();
+                    $.ajax({
+                        url: '/Devices/SavingcinemaSettingProperty',
+                        type: 'POST',
+                        data: formData,
+                        success: function (data) {
+                            if (data.cansave == true) {
+                                swal("", data.msg, "success");
+                            }
+                            else {
+                                swal("", data.msg, "error");
+                            }
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+                }
+                else if (deviceCode == "536") {
+                    var formData = $('#PropertyFormDataForNvs').serialize();
+                    $.ajax({
+                        url: '/Devices/SavingNvsSettingProperty',
+                        type: 'POST',
+                        data: formData,
+                        success: function (data) {
+                            if (data.cansave == true) {
+                                swal("", data.msg, "success");
+                            }
+                            else {
+                                swal("", data.msg, "error");
+                            }
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+                }
+                else if (deviceCode == "PREFE000000108") {
+                    $('#PropertyFormDataForamole').submit();
+
+                }
+
+                else if (deviceCode == "599") {
+
+                    var formData = $('#PropertyFormDataForfiscal').serialize();
+                    $.ajax({
+                        url: '/Devices/SavingfiscalSettingProperty',
+                        type: 'POST',
+                        data: formData,
+                        success: function (data) {
+                            if (data.cansave == true) {
+                                swal("", data.msg, "success");
+                            }
+                            else {
+                                swal("", data.msg, "error");
+                            }
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+
+
+                }
+                else if (deviceCode == "550") {
+                    var formData = $('#PropertyFormDataForOrderprinter').serialize();
+                    $.ajax({
+                        url: '/Devices/SavingOrderprinterSettingProperty',
+                        type: 'POST',
+                        data: formData,
+                        success: function (data) {
+                            if (data.cansave == true) {
+                                swal("", data.msg, "success");
+                            }
+                            else {
+                                swal("", data.msg, "error");
+                            }
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+                }
+                else if (deviceCode == "584") {
+                    var formData = $('#PropertyFormDataForDoor').serialize();
+                    $.ajax({
+                        url: '/Devices/SavingrDoorSettingProperty',
+                        type: 'POST',
+                        data: formData,
+                        success: function (data) {
+                            if (data.cansave == true) {
+                                swal("", data.msg, "success");
+                            }
+                            else {
+                                swal("", data.msg, "error");
+                            }
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+
+                }
+                else if (deviceCode == "579") {
+                    var formData = $('#PropertyFormDataForaccesscontro').serialize();
+                    $.ajax({
+                        url: '/Devices/SavingaccesscontroSettingProperty',
+                        type: 'POST',
+                        data: formData,
+                        success: function (data) {
+                            if (data.cansave == true) {
+                                swal("", data.msg, "success");
+                            }
+                            else {
+                                swal("", data.msg, "error");
+                            }
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+
+
+                }
+                else if (deviceCode == "PREFE000000109" || deviceCode == "PREFE000000125") {
+                    $('#PropertyFormDataFortelbirr').submit();
+
+                }
+                else if (deviceCode == "PREFE000000110") {
+                    $('#PropertyFormDataForsahay').submit();
+
+                }
+                else if (deviceCode == "PREFE000000112") {
+                    $('#PropertyFormDataForebirr').submit();
+
+                }
+                else if (deviceCode == "541") {
+                    var formData = $('#PropertyFormDataForreferencepos').serialize();
+                    $.ajax({
+                        url: '/Devices/SavingreferenceposSettingProperty',
+                        type: 'POST',
+                        data: formData,
+                        success: function (data) {
+                            if (data.cansave == true) {
+                                swal("", data.msg, "success");
+                            }
+                            else {
+                                swal("", data.msg, "error");
+                            }
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+                }
+                else if (deviceCode == "540") {
+                    var formData = $('#PropertyFormDataForrecurringpos').serialize();
+                    $.ajax({
+                        url: '/Devices/SavingrecurringeposSettingProperty',
+                        type: 'POST',
+                        data: formData,
+                        success: function (data) {
+                            if (data.cansave == true) {
+                                swal("", data.msg, "success");
+                            }
+                            else {
+                                swal("", data.msg, "error");
+                            }
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+
+
+                }
+                else if (deviceCode == "539") {
+                    var formData = $('#PropertyFormDataForSavingpremiumpos').serialize();
+                    $.ajax({
+                        url: '/Devices/SavingpremiumposSettingProperty',
+                        type: 'POST',
+                        data: formData,
+                        success: function (data) {
+                            if (data.cansave == true) {
+                                swal("", data.msg, "success");
+                            }
+                            else {
+                                swal("", data.msg, "error");
+                            } 
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+
+                }
+                else if (deviceCode == "542") {
+                    var formData = $('#PropertyFormDataForreservationpos').serialize();
+                    $.ajax({
+                        url: '/Devices/SavingreservationposSettingProperty',
+                        type: 'POST',
+                        data: formData,
+                        success: function (data) {
+                            if (data.cansave == true) {
+                                swal("", data.msg, "success");
+                            }
+                            else {
+                                swal("", data.msg, "error");
+                            }
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+
+                }
+                else if (deviceCode == "545") {
+                    var formData = $('#PropertyFormDataForTransport').serialize();
+                    $.ajax({
+                        url: '/Devices/SavingTransportSettingProperty',
+                        type: 'POST',
+                        data: formData,
+                        success: function (data) {
+                            if (data.cansave == true) {
+                                swal("", data.msg, "success");
+                            }
+                            else {
+                                swal("", data.msg, "error");
+                            }
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+
+                }
+                else if (deviceCode == "581") {
+                    var formData = $('#CameraFormData').serialize();
+                    $.ajax({
+                        url: '/Devices/SavingCameraSettiing',
+                        type: 'POST',
+                        data: formData,
+                        success: function (data) {
+                            if (data.cansave == true) {
+                                swal("", data.msg, "success");
+                            }
+                            else {
+                                swal("", data.msg, "error");
+                            }
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+                }
+            }
+            else if (SubTab == "#deviceOrderStationMapping") {
+
+                var type = $("#@nameof(Model.DeviceType)").val();
+                $("#@nameof(Model.navType)").val(type);
+
+                var formData = $('#OrderstationFormData').serialize();
+                $.ajax({
+                    url: '/Devices/SaveOrderstationdevice',
+                    type: 'POST',
+                    data: formData,
+                    success: function (data) {
+                        if (data.notesaved == true) {
+                            swal("", "This Assigned Before Not Saved" + data.increament, "error");
+                        }
+                        else {
+                            swal("", data.result, "success");
+                        }
+                    },
+                    error: function () {
+                        console.log('Error occurred.');
+                    }
+                });
+            }
+        }
+
+
+    });
+
+  
+</script>

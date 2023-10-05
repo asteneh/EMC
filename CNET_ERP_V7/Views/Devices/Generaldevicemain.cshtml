@@ -1,0 +1,64 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model Devicemodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+}
+
+<div class="row">
+    <div class="col-md-3">
+        @await Html.PartialAsync("_ConsineeUnitList")
+
+    </div>
+
+    <div class="col-md-9">
+        <div id="DeviceMaintainContent">
+            @await Html.PartialAsync("devicedetail")
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).on("click", ".btnDeletedevicedetail", function () {
+        var code = $(this).data('code');
+        var deviceCode = '@Model.DeviceType';
+        swal({
+            title: "are you sure to delete this ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "POST",
+                        dataType: 'json',
+                        url: '@Url.Action("DeletedevicedetailItem", "Devices")',
+                        data: { code: code },
+
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        success: function (data) {
+                            swal("", data, "success");
+                            $(function () {
+                                var code = $("#@nameof(Model.branchcodeforsave)").val();
+                                $.ajax({
+                                    url: '/Devices/getdevicedetailResult',
+                                    type: 'POST',
+                                    data: { code: code, deviceCode: deviceCode }, // send the data object with the request
+                                    success: function (result) {
+                                        $('#DeviceMaintainContent').html(result);
+                                    },
+                                    error: function () {
+                                        console.log('Error occurred.');
+                                    }
+                                });
+                            });
+
+                        }
+                    });
+                }
+            });
+    });
+</script>

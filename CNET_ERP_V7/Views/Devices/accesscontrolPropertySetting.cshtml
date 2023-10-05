@@ -1,0 +1,669 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain;
+@using Newtonsoft.Json;
+@model Devicemodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var codemodel = Model.DeviceType;;
+
+
+    int sysoldvalue = 1212121212;
+
+    var deviceConfig = await sharedHelpers.GetConfigurationByRefandPref(Model?.deviceId.ToString(), CNETConstants.DEVICE);
+}
+<style>
+    .sptablecontent {
+        border-collapse: collapse;
+        background-color: #fff;
+        width: 98%;
+        margin-left: 15px;
+    }
+
+        .sptablecontent .asth {
+            font-weight: bold;
+        }
+
+        .sptablecontent th, table td {
+            padding: 1px;
+            border: 1px solid #ccc;
+        }
+
+        .sptablecontent th, table tr {
+            height: 3px;
+        }
+
+        .sptablecontent, .sptablecontent .sptablecontent td {
+            border: 0px solid #ccc;
+        }
+
+            .sptablecontent select {
+                width: 100%;
+            }
+            .sptablecontent [type=text] {
+                width: 100%;
+            }
+
+            .sptablecontent div {
+                width: 97%;
+            }
+
+    #datastyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #detectorstyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+
+    .inputfield {
+        pointer-events: none;
+        opacity: 30;
+        width: 80%;
+        height: 16px !important;
+        padding: 0px 0px !important;
+        font-size: 13px !important;
+    }
+
+    .Inputborder:focus {
+        border: 1px solid #1670BE;
+        box-shadow: 0 0 3px #1670BE;
+        outline-offset: 0px;
+        outline: none;
+    }
+
+    .Inputborder {
+        border: 1px solid #eee;
+        font-size: 13px !important;
+        height: 17px !important;
+        line-height: 2px !important;
+        text-emphasis-position: initial !important;
+        margin-top: 0px !important;
+        padding: 0px 0px !important;
+    }
+
+
+    .mainparent {
+        color: dodgerblue;
+        background-color: #eee;
+    }
+
+    .boderclr {
+        background-color: dodgerblue;
+    }
+    .vouproperty {
+        height: 93vh;
+        overflow-y: scroll;
+    }
+</style>
+
+<div class="box box-primary">
+    <br />
+
+    <div class="box-header with-border">
+        <div class="row">
+            <div class="col-md-11">
+                <div class="row">
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-1 control-labell"> Find</label>
+                        <div class="col-md-9">
+                            <input type="text" id="filterraccessControlSetting" style="display:flex;width:100%;" class="form-control" placeholder="Search By Name">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body vouproperty">
+
+
+        @foreach (var item in deviceConfig)
+        {
+            switch (item.Attribute)
+            {
+                case "Print Discount & Additional Charge Per LineItem":
+                    Model.access_PrintDiscountAdditionalChargePerLineItem = item.CurrentValue;
+                    break;
+                case "ForceOpenRelay":
+                  if (!string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                         Model.acc_force_Open_Relay = float.Parse(item.CurrentValue);
+                    }
+                   
+                    break;
+                case "XML Reconciliation":
+
+                    Model.access_xML_Reconciliation = item.CurrentValue;
+                    break;
+                case "DisplayArticle":
+                    if (!string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                        Model.acc_display_Article = float.Parse(item.CurrentValue);
+                    }
+                    break;
+                case "ScheduleArticle":
+                    Model.acc_schedule_Article = item.CurrentValue;
+                    break;
+                case "Select Automatic Shift Period":
+                    Model.access_selectAutomaticShiftPeriod = item.CurrentValue;
+                    break;
+                case "Accuracy Tolerance":
+                    if (!string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                        Model.acc_AccuracyTolerance = float.Parse(item.CurrentValue);
+                    }
+                    break;
+                case "Summary Difference Tolerance":
+                    if (!string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                        Model.acc_SummaryDifferenceTolerance = float.Parse(item.CurrentValue);
+                    }
+                    break;
+                case "Check Voucher Integrity":
+                    Model.acc_check_Voucher_Integrity = item.CurrentValue;
+                    break;
+                case "Fiscal Reconciliation":
+                    Model.acc_fiscalReconciliation = item.CurrentValue;
+                    break;
+                case "Zeroing Voucher":
+                    Model.access_zeroing_Voucher = item.CurrentValue;
+                    break;
+                case "Summary Voucher":
+                    Model.access_summary_Voucher = item.CurrentValue;
+                    break;
+                case "DownLoad EJ":
+                    Model.acc_down_Load_EJ = item.CurrentValue;
+
+                    break;
+                case "Capture Fiscal Information":
+                    Model.access_capture_Fiscal_Information = item.CurrentValue;
+                    break;
+                case "DoorSensor":
+                    Model.acc_door_Sensor = item.CurrentValue;
+                    break;
+                case "Need Credentials For Removal":
+                    Model.aac_NeedCredentialsForRemoval = item.CurrentValue;
+                    break;
+                case "POS Trigger Article Removal":
+                    Model.aac_POSTriggerArticleRemoval = item.CurrentValue;
+                    break;
+                case "CameraOption":
+                    Model.acc_camera_Option = item.CurrentValue;
+                    break;
+                case "Closing Frequency":
+                    Model.access_closing_Frequency = item.CurrentValue;
+                    break;
+
+                case "POS Camera":
+                    Model.acc_pOS_Camera = item.CurrentValue;
+                    break;
+                case "Access Control Device":
+                    Model.access_Control_Device = item.CurrentValue;
+                    break;
+                case "Detector Xml Path":
+                    Model.acc_detector_Xml_Path = item.CurrentValue;
+
+                    break;
+                case "OCR Data Path":
+                    Model.acc_oCR_Data_Path = item.CurrentValue;
+
+                    break;
+                case "POS Store":
+                    Model.acc_pos_store = item.CurrentValue;
+
+                    break;
+                case "acc_Ignorezeropricearticle":
+                    Model.acc_ignorezeropricearticle = item.CurrentValue;
+
+                    break;
+            }
+        }
+        <form id="PropertyFormDataForAccess"  method="post">
+
+            <table cellpadding="0" cellspacing="0" class="sptablecontent tree-loadacCotrl" id="accesscontrol_table_setting">
+                <tr class="asth">
+                    <td></td>
+                    <td></td>
+
+                </tr>
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Access Control Device Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Access Control Device
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#accesscontrolModalMap">
+                        @if (string.IsNullOrEmpty(Model.access_Control_Device))
+                        {
+                            <input asp-for="access_Control_Device" type="text" value="" id="access_ControlDevice_Value" class="Inputborder" autocomplete="off" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="access_Control_Device" type="text" value="@Model.access_Control_Device" id="access_ControlDevice_Value" class="Inputborder"  autocomplete="off"/>
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        POS Value Rule
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="access_POSValueRule" asp-items="Html.GetEnumSelectList<enValueRule>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+              
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Detector Xml Path
+                    </td>
+                    <td class="attributcurrvalue">
+                        <div class="input-group">
+                            @if (string.IsNullOrEmpty(Model.acc_detector_Xml_Path))
+                            {
+                                <input asp-for="acc_detector_Xml_Path" id="display_detector_file" class="Inputborder">
+                                <label for="detector_xml_path" id="detectorstyle">...</label>
+
+                            }
+                            else
+                            {
+                                <input asp-for="acc_detector_Xml_Path" id="display_detector_file" value="@Model.acc_detector_Xml_Path" class="Inputborder">
+                                <label for="detector_xml_path" id="detectorstyle">...</label>
+
+                            }
+                        </div>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        OCR Data Path
+                    </td>
+                    <td class="attributcurrvalue">
+                        <div class="input-group">
+                            @if (string.IsNullOrEmpty(Model.acc_oCR_Data_Path))
+                            {
+                                <input asp-for="acc_oCR_Data_Path" id="display_ocrdata_file" value="" class="Inputborder">
+                                <label for="cor_data_path" id="datastyle">...</label>
+
+                            }
+                            else
+                            {
+                                <input asp-for="acc_oCR_Data_Path" id="display_ocrdata_file" value="@Model.acc_oCR_Data_Path" class="Inputborder">
+                                <label for="cor_data_path" id="datastyle">...</label>
+
+                            }
+                        </div>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        POS Camera
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#accesscontrolModalMap">
+                        @if (string.IsNullOrEmpty(Model.acc_pOS_Camera))
+                        {
+                            <input asp-for="acc_pOS_Camera" type="text" value="" id="mobil_pos_value" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="acc_pOS_Camera" type="text" value="@Model.acc_pOS_Camera" id="mobil_pos_value" class="Inputborder" />
+
+                        }
+                    </td>
+
+                </tr>
+                @{ sysoldvalue = sysoldvalue + 1; }
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Access Control Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Need Credentials For Customer Discount
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="access_NeedCredentialsForCustomerDiscount" asp-items="Html.GetEnumSelectList<enNeedCredentials>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Beneficiary User
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="access_BeneficiaryUser" asp-items="Html.GetEnumSelectList<enBeneficiaryUser>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Camera Option
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="acc_camera_Option" asp-items="Model.cameraoption" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Ignore zero price article
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="acc_ignorezeropricearticle" asp-items="Model.cameraoption" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+
+                        Display Article
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="acc_display_Article" type="text" class="Inputborder" />
+
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+
+                        Door Sensor
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="acc_door_Sensor" asp-items="Model.doorSensor" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+
+                        Force Open Relay
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="acc_force_Open_Relay" type="text" class="Inputborder" />
+
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Need Credentials For Removal
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="aac_NeedCredentialsForRemoval" asp-items="Model.need_Credentials_For_Removalsaccesses" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+
+                        POS Store
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (string.IsNullOrEmpty(Model.acc_pos_store))
+                        {
+                            <input asp-for="acc_pos_store" type="text" value="" id="pos_store_valuesms" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="acc_pos_store" type="text" value="@Model.acc_pos_store" id="pos_store_valuesms" class="Inputborder" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        POS Trigger Article Removal
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="aac_POSTriggerArticleRemoval" asp-items="Model.pOS_Trigger_Article_Removalsaracceses" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Schedule Article
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="acc_schedule_Article" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Select Automatic Shift Period
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="access_selectAutomaticShiftPeriod" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                @{ sysoldvalue = sysoldvalue + 1; }
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Closing Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Accuracy Tolerance
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="acc_AccuracyTolerance" value="@Model.acc_AccuracyTolerance" class="Inputborder" />
+
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        FiscalReconciliation
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="acc_fiscalReconciliation" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Check Voucher Integrity
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="acc_check_Voucher_Integrity" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Closing Frequency
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="access_closing_Frequency" asp-items="Model.closing_frequencys" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        DownLoad EJ
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="acc_down_Load_EJ" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Capture Fiscal Information
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="access_capture_Fiscal_Information" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Summary Difference Tolerance
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="acc_SummaryDifferenceTolerance" value="@Model.acc_SummaryDifferenceTolerance" class="Inputborder" />
+
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Summary Voucher
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="access_summary_Voucher" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        XML Reconciliation
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="access_xML_Reconciliation" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Zeroing Voucher
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="access_zeroing_Voucher" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                @{ sysoldvalue = sysoldvalue + 1; }
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        PoS Component Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Print Discount & Additional Charge Per LineItem
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="access_PrintDiscountAdditionalChargePerLineItem" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+
+            </table>
+
+                <input asp-for="access_devicecode" value="@Model.deviceId" hidden />
+
+                <input class="form-control" type="file" name="" id="detector_xml_path" style="display:none; visibility:hidden;" onchange="getdetectorfile(this.val);">
+                <input class="form-control" type="file" name="" id="cor_data_path" style="display:none; visibility:hidden;" onchange="getocrdatafile(this.value);">
+
+        </form>
+
+
+    </div>
+</div>
+<script>
+    $(function () {
+        $("#filterraccessControlSetting").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#accesscontrol_table_setting > tbody > tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+<script>
+    function TreeFunctionproprty() {
+        $(document).ready(function () {
+            $('.tree-basic').treegrid();
+
+            $('.tree-loadacCotrl').treegrid({
+                source: function (id, response) {
+                    if (id != 1) response(['']);
+                    else response(['']);
+                }
+            });
+
+        });
+    }
+    TreeFunctionproprty();
+</script>
+<script>
+    $('.attributdata').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).children('.inputfield').val();*/
+        var value = $(this).text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).closest("tr").addClass('boderclr');
+        $('#deviceproperty').html(value);
+
+    });
+    $('.attributcurrvalue').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).siblings().children('.inputfield').val();*/
+        var value = $(this).siblings().text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).siblings().addClass("boderclr");
+        $('#deviceproperty').html(value);
+
+    });
+    $("#propertysect").change(function () {
+        var value = $(this).select2('data')[0].text;
+        $(".boderclr").removeClass("boderclr");
+        $("input[name*='" + value + "']").addClass('boderclr');
+        $("input[name*='" + value + "']").closest("tr").addClass('boderclr');
+
+        $('#deviceproperty').html(value);
+    });
+
+</script>
+
+<script>
+    function getdetectorfile(filename) {
+        $('#display_detector_file').val(filename);
+    }
+</script>
+<script>
+    function getocrdatafile(filename) {
+        $('#display_ocrdata_file').val(filename);
+    }
+</script>

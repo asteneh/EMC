@@ -1,0 +1,196 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@model IdDefinitionModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+   
+    List<string> prifxsufix = new List<string>();
+    prifxsufix.Add("YY");
+    prifxsufix.Add("MO");
+    prifxsufix.Add("DATE");
+    prifxsufix.Add("DATE");
+    prifxsufix.Add("WEEK");
+    prifxsufix.Add("YYYY");
+    prifxsufix.Add("Period");
+    prifxsufix.Add("OU");
+    prifxsufix.Add("Device");
+    prifxsufix.Add("User");
+    prifxsufix.Add("Preference");
+
+}
+<style>
+    .datali{
+        display:none;
+    }
+</style>
+<div class="modal fade" id="IddefinitionModal" role="dialog">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 style=" color:dodgerblue; font-weight:bold">
+                    <img src="~/images/Cnets.jpg" />
+                    Id Definition
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+
+                    <form class="form-horizontal" id="iddefinitiondetailNewFormData" onsubmit="return iddefinitiondetailNewFormFunction()" asp-controller="IdDefinition" asp-action="SaveiddefinitionType" method="post">
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-app" id=""> <i style="color:darkblue" class="fa fa-sticky-note-o"></i>New</button>
+                            <button type="submit" class="btn btn-app" action="addRow" id="btniddefinitionsave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                            <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                        </div>
+
+                        <div class="col-md-12" style="margin-top:25px">
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="iden_description" class="col-md-3 control-label">Decription</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="iden_description" type="text" class="form-control" autocomplete="off" style="width:100%" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label class="col-md-3 control-label">Prefix</label>
+                                    <div class="col-md-4">
+                                        <input type="text" asp-for="iden_prefix" iden_prefix list="exampleList" class="form-control" style="width:100%">
+                                        <div hidden>
+                                            <datalist class="datali" id="exampleList" style="display:none; background-color:white">
+                                            </datalist>
+                                        </div>
+                                        
+                                       @* <select asp-for="iden_prefix" class="form-control select2" style="width:100%">
+                                            <option></option>
+
+                                        </select>*@
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="iden_prefixseparator" class="col-md-3 control-label">Prefix Separator</label>
+                                    <div class="col-md-4">
+                                        <input asp-for="iden_prefixseparator" type="text" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="iden_length" class="col-md-3 control-label">Length</label>
+                                    <div class="col-md-4">
+                                        <input asp-for="iden_length" type="number" value="5" min="2" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="iden_suffixseparator" class="col-md-3 control-label">Suffix Separator</label>
+                                    <div class="col-md-4">
+                                        <input asp-for="iden_suffixseparator" type="text" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="iden_suffix" class="col-md-3 control-label">Suffix</label>
+                                    <div class="col-md-4">
+                                        <select asp-for="iden_suffix" class="form-control select2" style="width:100%">
+                                            <option></option>
+
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="iden_remark" class="col-md-3 control-label">Remark</label>
+                                    <div class="col-md-7">
+                                        <textarea asp-for="iden_remark" style="width:100%; overflow:auto"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input asp-for="iden_code" hidden />
+                        <input asp-for="iden_component" hidden />
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+</div>
+
+ <script>
+    $('#exampleList').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(prifxsufix)),
+        placeholder: "",
+        tags: true,
+        allowClear: true
+
+    });
+
+    $('#@nameof(Model.iden_suffix)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(prifxsufix)),
+        placeholder: "",
+        allowClear: true
+
+    });
+
+    function iddefinitiondetailNewFormFunction() {
+        var type = $('#@nameof(Model.iden_component)').val();
+        var $form = $('#iddefinitiondetailNewFormData');
+        var data = $form.serialize();
+        var action = $('#iddefinitiondetailNewFormData').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            success: function (data) {
+                if (data.check == true) {
+                    swal("", data.result, "success");
+                    ClearideDefinitionModal();
+                    $(function () {
+                        $.ajax({
+                            url: '/IdDefinition/GetIdDefinitionList',
+                            type: 'POST',
+                            data: { type: type }, // send the data object with the request
+                            success: function (result) {
+                                $('#IddefinitonData').html(result);
+                            },
+                            error: function () {
+                                console.log('Error occurred.');
+                            }
+                        });
+                    });
+                }
+                else{
+                    swal("", data.result, "error");
+                }
+              
+               
+
+            },
+        });
+        return false;
+    };
+
+    function ClearideDefinitionModal() {
+            $('#@nameof(Model.iden_code)').val("");
+            $('#@nameof(Model.iden_description)').val("");
+            $('#@nameof(Model.iden_component)').val("");
+            $('#@nameof(Model.iden_prefix)').val("").trigger('change');
+            $('#@nameof(Model.iden_prefixseparator)').val("");
+            $('#@nameof(Model.iden_length)').val("5");
+            $('#@nameof(Model.iden_suffix)').val("").trigger('change');
+            $('#@nameof(Model.iden_suffixseparator)').val("");
+            $('#@nameof(Model.iden_remark)').val("");
+       
+    }
+
+ </script>

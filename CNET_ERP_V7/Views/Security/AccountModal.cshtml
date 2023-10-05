@@ -1,0 +1,317 @@
+﻿@model SecurityModel
+@using CNET_ERP_V7.Models.Security;
+@using CNET_V7_Domain.Domain.SecuritySchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_V7_Domain.Domain.ViewSchema;
+@using Newtonsoft.Json;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@inject CNET_ERP_V7.Common.AuthNavigation.AuthenticationManager _authenticationManager
+
+@{
+    var UserListl = await sharedHelpers.GetVoucherConsignee();
+    var UserList = UserListl?.Where(x => x.GslType == 26 || x.GslType == 37).ToList();
+
+    var UserListType =  UserList?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.FirstName }).ToArray();
+
+}
+
+<div class="modal fade" id="modal_CreateaccounttItems" role="dialog">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 style=" color:dodgerblue; font-weight:bold">
+                    <img src="~/images/Cnets.jpg" />
+                    Create Account
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+
+                    <form class="form-horizontal" id="createaccountdetailNewFormData" onsubmit="return createaccountdetailNewFormFunction()" asp-controller="Security" asp-action="createaccountdetail" method="post">
+                        <div class="col-md-12">
+                            <input asp-for="acc_updatepassword" hidden />
+                            <button type="button" class="btn btn-app" id="btnnewcreataeaccounList"> <i style="color:darkblue" class="fa fa-sticky-note-o"></i>New</button>
+                            <button type="submit" class="btn btn-app" action="addRow" id="btnLcreateaccountdetailSave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                            <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+
+                            <button type="button" class="btn btn-app" id="btnrestpassword"> <i style="color:darkblue" class="fa fa-undo fa-stack-2x"></i>Reset Password</button>
+
+                        </div>
+
+                        <div class="col-md-12" style="margin-top:25px">
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label  class="col-md-3 control-label">Employee</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="acc_Employee" class="form-control select2" style="width:100%">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="acc_Employee"></span>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="acc_username" class="col-md-3 control-label">User Name</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="acc_username" class="form-control" autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="acc_password" class="col-md-3 control-label">Password</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="acc_password" type="password" id="password" class="form-control" autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="acc_comfirmPassword" class="col-md-3 control-label"> Comfirm Password</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="acc_comfirmPassword" type="password" class="form-control" autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="acc_loggInstatus" class="col-md-3 control-label">Status</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="acc_loggInstatus" value="Never logged in" class="form-control" readonly autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Is Active</label>
+                                    <div class="col-md-1">
+                                        <input asp-for="acc_Isactive" checked />
+                                        <span asp-validation-for="acc_Isactive"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="acc_remark" class="col-md-3 control-label"> Remark</label>
+                                    <div class="col-md-7">
+                                        <textarea asp-for="acc_remark" style="width:100%; overflow:auto"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Password Form: ends -->
+                            <div class="row" id="pwd-container">
+
+                                <div class="col-sm-6 col-sm-offset-2" style="padding-top: 30px;">
+                                    <div class="pwstrength_viewport_progress" id="pwstrength_viewport_progress"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" asp-for="acc_loggedstatus" />
+                        <input type="hidden" asp-for="passwordcomplexity" />
+                        <input type="hidden" asp-for="enableusername" />
+                        <input type="hidden" asp-for="acc_usernamevalue" />
+                        <input hidden asp-for="acc_usernamecode" />
+                        <input type="hidden" asp-for="acc_Employeeenable" />
+                        <input type="hidden" asp-for="useraccountupdatecode" />
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        @*/.modal-content -*@
+    </div>
+
+</div>
+
+<script>
+    $('#@nameof(Model.acc_Employee)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(UserListType)),
+        allowClear: true,
+        placeholder: "",
+        dropdownAutoWidth: true
+
+    });
+     
+    $('#@nameof(Model.acc_Employee)').on("select2:select", function () {
+
+    var Empcode = $('#acc_Employee').val();
+
+    getEmployeeAccount(Empcode);
+    });
+
+    function getEmployeeAccount(Empcode) {
+
+        $("#password").prop('readonly', false);
+        $("#acc_comfirmPassword").prop('readonly', false);
+        var employee  = Empcode
+        $('#@nameof(Model.acc_Employeeenable)').val(employee);
+             $.ajax({
+                type: "POST",
+                dataType: 'json',
+                url: '@Url.Action("getUseraccount", "Security")',
+                 data: { employee: employee },
+
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                 success: function (data) {
+
+                     $('#@nameof(Model.acc_username)').val(data.result);
+                     $('#@nameof(Model.acc_loggedstatus)').val(data.loggedIn);
+                     $('#@nameof(Model.enableusername)').val(data.increament);
+                     $('#@nameof(Model.acc_usernamevalue)').val(data.result);
+                     $('#@nameof(Model.acc_usernamecode)').val(data.ucode);
+
+
+                      if (data.increament == true) {
+                         $("#acc_Employee").prop('readonly', true);
+                         $("#acc_username").prop('readonly', true);
+                          if (data.password != "") {
+                             $("#password").prop('readonly', true);
+                             $("#acc_comfirmPassword").prop('readonly', true);
+                             $('#@nameof(Model.acc_updatepassword)').val(data.password);
+
+                         }
+                          else {
+                             $("#password").prop('readonly', false);
+                              $("#acc_comfirmPassword").prop('readonly', false);
+                             }
+                     }
+
+                }
+            });
+    }
+    $(document).on("click", "#btnnewcreataeaccounList", function () {
+        ClearAccountMap();
+    });
+
+</script>
+<script>
+    function createaccountdetailNewFormFunction() {
+
+        var userval = $('#pwd-container').text();
+        $('#@nameof(Model.passwordcomplexity)').val(userval);
+
+        var $form = $('#createaccountdetailNewFormData');
+        var data = $form.serialize();
+        var action = $('#createaccountdetailNewFormData').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            success: function (data) {
+                if (data.correct == true) {
+                    swal("", data.result, "success")
+                  $.ajax({
+                    type: "GET",
+                    dataType: 'html',
+                    url: '@Url.Action("getAccountResult", "Security")',
+                    data: {},
+
+                    success: function (data) {
+                        $('#accountContent').html(data);
+                        ClearAccountMap();
+
+                    }
+                });
+                }
+                else {
+                    swal("", data.result, "error")
+                }
+          },
+        });
+        return false;
+    };
+
+
+      var usercode = "";
+    $('#btnrestpassword').click(function () {
+        usercode = $('#@nameof(Model.useraccountupdatecode)').val();
+
+          $.ajax({
+                type: "POST",
+                dataType: 'json',
+                url: '@Url.Action("ResetPassword", "Security")',
+                data: { CODE: usercode },
+
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                success: function (data) {
+                    swal("", data, "error")
+                    
+                }
+          });
+    });
+</script>
+
+<script>
+     $(document).on("click", ".btnDeleteuseraccount", function () {
+
+        var deletefield = $(this).data('code');
+
+        if (confirm('are you sure to delete this record?')) {
+
+            $.ajax({
+                type: "POST",
+                dataType: 'json',
+                url: '@Url.Action("Deleteuseraccount", "Security")',
+                data: { Id: deletefield },
+
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                success: function (data) {
+
+                    if (data.increment == true) {
+                        swal("", data.result, "success")
+                       $.ajax({
+                            type: "GET",
+                            dataType: 'html',
+                            url: '@Url.Action("getAccountResult", "Security")',
+                            data: {},
+
+                            success: function (data) {
+
+                                $('#accountContent').html(data);
+
+                            }
+                        });
+                    }
+                    else {
+                        swal("", data.result, "error")
+                    }
+
+                }
+            });
+
+        }
+  });
+
+ $('#modal_CreateaccounttItems').on('hidden.bs.modal', function () {
+
+            $("#acc_Employee").prop('readonly', false);
+            $("#acc_username").prop('readonly', false);
+            $("#password").prop('readonly', false);
+            $("#acc_comfirmPassword").prop('readonly', false);
+            $('#@nameof(Model.acc_loggInstatus)').val("Never logged in");
+        });
+
+   
+    function ClearAccountMap()
+    {
+        $('#@nameof(Model.acc_username)').val("");
+        $('#@nameof(Model.acc_loggedstatus)').val("");
+        $('#@nameof(Model.enableusername)').val("");
+        $('#@nameof(Model.acc_usernamevalue)').val("");
+        $('#@nameof(Model.acc_usernamecode)').val("");
+        $("#password").val("");
+        $('#@nameof(Model.acc_comfirmPassword)').val("");
+        $('#@nameof(Model.acc_Employee)').val("").trigger("change");
+        $("#acc_Employee").prop('readonly', false);
+        $("#acc_username").prop('readonly', false);
+        $("#password").prop('readonly', false);
+        $("#acc_comfirmPassword").prop('readonly', false);
+        $('#@nameof(Model.acc_loggInstatus)').val("Never logged in");
+    }
+</script>

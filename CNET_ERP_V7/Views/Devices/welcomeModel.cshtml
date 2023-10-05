@@ -1,0 +1,112 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model Devicemodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var VoucherTypeList = await sharedHelpers.GetSystemConstantByCat("Organization Unit Type");
+
+    //Select(x => new { x.type, x.description,x.code}).Distinct().ToList();
+
+}
+<style>
+    .modalbody {
+        position: relative;
+        padding: 20px;
+        height: 200px;
+        overflow-y: scroll;
+    }
+
+    .modaldialog {
+        width: 700px; /* New width for default modal */
+        height: 50%; /* New width for default modal */
+    }
+
+    .btnlength {
+        min-width: 100px;
+    }
+</style>
+<div class="modal fade" id="welcomepmsposbtnsaveMap">
+    <div class="modal-dialog modaldialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <span>Voucher Type LookUp</span>
+
+                </h5>
+
+            </div>
+            <div class="box-body">
+                <div class="modal-body modalbody">
+                    <div class="row">
+                        <form class="form-horizontal" id="IdentificationFormData" asp-action="EditIdentificationn" asp-controller="" method="post">
+
+
+                            <div class="col-md-12" style="margin-top:25px">
+
+                                <div class="row">
+
+                                    <div class="divTable">
+
+                                        <div class="col-md-8" style="margin-left:0px ;" id="div23">
+                                            <ul class="sidebar-men secondNav tree " data-widget="tree" id="attachement_nav">
+                                                @foreach (var item in VoucherTypeList)
+                                                {
+                                                    <li class="nav-item treeview menu-open attachmentType" id="parent">
+                                                        <a data-toggle="tab" data-value="@item.Description" data-types="@item.Id/@item.Description" id="a123" style="text-decoration-line:none!important" name="catagory" class="addwelcomevalue">
+                                                            <span class="labelcss" selectedValue="@item.Description">@item.Id/@item.Description</span>
+                                                        </a>
+
+                                                        <ul class="treeview-menu" style="padding-left:35px; background-color:white;" id="@item.Id">
+                                                        </ul>
+                                                    </li>
+                                                }
+
+                                            </ul>
+
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <button class="btn btn-default btn-sm btnlength" type="reset" id="welcomeemesgbtnsave">Ok</button>
+
+                    <button class="btn btn-default btn-sm btnlength" data-dismiss="modal" id="welcomedatadismisalbtn">Close</button>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+    var valueitem = "";
+    $(document).ready(function () {
+
+        $(".addwelcomevalue").click(function () {
+            valueitem = $(this).data("types");
+
+        });
+
+        $("#welcomeemesgbtnsave").click(function () {
+
+            $('#wel_come_message').val(valueitem);
+            $('#welcomedatadismisalbtn').trigger('click');
+
+        });
+
+    });
+
+</script>
+

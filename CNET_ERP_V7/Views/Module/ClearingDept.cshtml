@@ -1,0 +1,192 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model moduleModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var htmsmodule = await sharedHelpers.GetsystemConstantById(Model.subSyType);
+}
+<style>
+     .banktype {
+        height: 70vh;
+        overflow-y: scroll;
+    }
+    .cnetcomponentdetailnav{
+        white-space :nowrap;
+        cursor:pointer;
+    }
+</style>
+<div class="box box-primary">
+
+    <div class="box-body">
+        <div class="row">
+            <div class="col-md-3" style="margin-left:0px;border-right:solid black 1px">
+                <ul class="skin-blue sidebar-men secondNav banktype" data-widget="tree" id="cnet_compo">
+                   
+                        <li class="cnetcomponentdetailnav nav-item">
+                        <a href="#@htmsmodule.FirstOrDefault().Description" data-toggle="tab" data-value="@htmsmodule.FirstOrDefault().Id" data-types="@htmsmodule.FirstOrDefault().Id" style="text-decoration-line:none!important">
+
+                            <span class="labelcss">@htmsmodule.FirstOrDefault().Description</span>
+
+                            </a>
+                        </li>
+                </ul>
+            </div>
+            <div class="col-md-9">
+
+                @await Html.PartialAsync("Hrmslist.cshtml")
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    var centcompcode = "";
+   
+    $('.cnetcomponentdetailnav').click(function (e) {
+        $('.secondNav .cnetcomponentdetailnav').removeClass('active');
+
+        $(this).addClass('active')
+        centcompcode = $('#cnet_compo .active a').data('value');
+
+
+    });
+    function OrgunitdefNewFormFunction() {
+
+        var $form = $('#OrgunitdefNewFormData');
+        var data = $form.serialize();
+        var action = $('#OrgunitdefNewFormData').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            success: function (data) {
+                alert(data);
+                submitfunctionSubSystemdetail(centcompcode);
+
+                ClearorgunitModal();
+  },
+        });
+        return false;
+    };
+
+</script>
+
+<script>
+    var centcomp = "";
+    $(document).ready(function () {
+
+        $('.cnetcomponentdetailnav').click(function (e) {
+            $('.secondNav .cnetcomponentdetailnav').removeClass('active');
+
+            $(this).addClass('active')
+            centcomp = $('#cnet_compo .active a').data('value');
+           
+            submitfunctionSubSystemdetail(centcomp);
+        });
+
+        window.submitfunctionSubSystemdetail = function (centcomp) {
+
+            $.ajax({
+                type: "POST",
+                dataType: 'json',
+                url: '@Url.Action("OrganizationunitDetail", "Module")',
+                data: { subSYscode: centcomp},
+
+               
+                success: function (data) {
+                    $('#hrms_detail_List').DataTable().clear().draw();
+
+                    $.each(data, function (index, item) {
+
+                        $('#hrms_detail_List').DataTable().destroy();
+                        var mytable = $('#hrms_detail_List').DataTable({
+                            "paging": false,
+                            "lengthChange": false,
+                            "searching": false,
+                            "ordering": false,
+                            "info": false,
+                            "autoWidth": false,
+                            "retrieve": false,
+
+                        });
+                        var orgunitcodecode = item.orgunitDef == null ? "" : item.orgunitDef.code;
+                        
+                        var Edit = '<a class="btnUpdatesubsystemdetail btn btn-success btn-xs" data-code="' + item.code + '" data-orgdesc="' + orgunitcodecode + '" data-remark="' + item.remark + '" data-toggle="modal" data-target="#modal_cnetcompoModal"><i class="fa fa-edit"></i></a>';
+                        var Delete = '<a data-code="' + item.code + '" class="btnDeletesubsystemdetail btn btn-danger btn-xs"><i class="fa fa-trash"></i></a>';
+                        mytable.row.add([item.orgunitDef == null ? "" : item.orgunitDef.description,item.remark, Edit, Delete]);
+                        mytable.draw();
+                    });
+
+
+                },
+                error: function (x) {
+                    alert(x.responseText);
+
+                }
+            });
+        }
+
+    });
+
+   
+</script>
+
+<script>
+    $(document).on("click", ".btnUpdatesubsystemdetail", function () {
+        $("#btnSuubsystemdetailSave").attr("action", "updatePRT");
+
+        var code = $(this).data('code');
+        var desc = $(this).data('orgdesc');
+        var remark = $(this).data('remark');
+
+            $('#@nameof(Model.Org_unitcode)').val(code);
+            $('#@nameof(Model.Org_unit)').val(desc).trigger('change');
+            $('#@nameof(Model.Org_remark)').val(remark);
+
+
+     });
+
+    $(document).on("click", ".btnDeletesubsystemdetail", function () {
+
+         var deletebank = $(this).data('code');
+        var table = $('#hrms_detail_List').DataTable();
+         if (confirm('are you sure to delete this record?')) {
+
+             table
+                 .row($(this).parents('tr'))
+                 .remove()
+                 .draw();
+
+             $.ajax({
+                 type: "POST",
+                 dataType: 'json',
+                 url: '@Url.Action("Deleteorgunitdef", "Module")',
+                 data: { CODE: deletebank },
+
+                 contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                 success: function (data) {
+
+
+
+                 }
+             });
+         }
+
+
+      });
+
+
+
+    function ClearorgunitModal() {
+            $('#@nameof(Model.Org_unitcode)').val("");
+            $('#@nameof(Model.Org_unit)').val("").trigger('change');
+            $('#@nameof(Model.Org_remark)').val("");
+
+    }
+</script>

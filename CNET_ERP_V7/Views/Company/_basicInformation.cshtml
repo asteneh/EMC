@@ -1,0 +1,204 @@
+﻿@model Companymodel
+@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.CommonSchema;
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Cnetv7BufferHolder;
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var consignee = await sharedHelpers.GetCompany();
+    Model.businessType = consignee?.BusinessType;
+    Model.nationality = consignee?.Nationality;
+    Model.Currency = consignee?.DefaultCurrency;
+    Model.language = consignee?.DefaultLanguage;
+    var gsltax = await sharedHelpers.GetGslTaxByrefernce(consignee?.Id);
+    Model.tax = gsltax?.FirstOrDefault()?.Tax;
+    var businessType = await sharedHelpers.GetSystemConstantByCat("Business Type");
+    var businessTypeList = businessType?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Description }).ToArray();
+
+    var alltax = GeneralBufferHolder.AllTaxs.Where(x => x.Category == 1944).ToList();
+    var gettaxBycategoryType = alltax?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Description, name = t.Description?.ToString() }).ToArray();
+
+    var gettaxcenterBygsltype = await sharedHelpers.GetVoucherConsigneeList(40);
+    var gettaxcenterBygsltypeType = gettaxcenterBygsltype?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.FirstName }).ToArray();
+    Dictionary<string, string> findcountry = new Dictionary<string, string>() { { "requiredfields", "id,code,nationality" } };
+    var nationality = await sharedHelpers.GetDynamicData<List<CountryDTO>>("Country", findcountry);
+
+    var nationalityeType = nationality?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Nationality }).ToArray();
+
+    Dictionary<string, string> findlan = new Dictionary<string, string>() { { "requiredfields", "id,description" } };
+    var language = await sharedHelpers.GetDynamicData<List<LanguageDTO>>("Language", findlan);
+
+
+
+    var languageType = language?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Description }).ToArray();
+
+    var sleCurrency = GeneralBufferHolder.AllCurrencies;
+    var sleCurrencyeType = sleCurrency?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Description }).ToArray();
+    if (Model?.Currency == null)
+    {
+        Model.Currency = GeneralBufferHolder.AllCurrencies.Where(x => x.IsDefault == true)?.FirstOrDefault()?.Id; ;
+    }
+}
+<style>
+    .basicinfo {
+        height:25vh;
+
+    }
+</style>
+<fieldset class=" col-md-10 filedset form-group form-group-sm" style="border:0.5px solid #e5e5e5; width:100%;">
+   
+    <div class="box box-primary">
+        <legend class="text-sm" style="padding-left:10px; border-bottom: none; font-size:20px">Basic Information</legend>
+
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="row" style="margin-top:2px;">
+                     <label class="col-md-4 text-right control-label">Trade Name</label>
+                    <div class="col-lg-8 col-sm-12">
+                        <input asp-for="tradeName" value="@consignee?.FirstName" class="form-control" placeholder="Enter Trade Name" id="firstName" autocomplete="off" /><span asp-validation-for="tradeName"></span>
+                    </div>
+                </div>
+                <div class="row" style="margin-top:2px;">
+                     <label class="col-md-4 text-right control-label">Brand Name</label>
+                    <div class="col-lg-8 col-sm-12">
+                        <input asp-for="brandName" value="@consignee?.SecondName" class="form-control" placeholder="Enter Brand Name" id="middleName" autocomplete="off" /><span asp-validation-for="brandName"></span>
+                    </div>
+                </div>
+                    <div class="row" style="margin-top:2px;">
+                        <label class="col-md-4 text-right control-label">business Type</label>
+                        <div class="col-lg-8 col-sm-12">
+                        <select asp-for="businessType" class="form-control select2" width="100%">
+                            <option></option>
+                        </select><span asp-validation-for="businessType"></span>
+                        </div>
+                    </div>
+               
+
+                <div class="row">
+                    <label class="col-md-4 text-right control-label">Nationality</label>
+                    <div class="col-lg-8 col-sm-12">
+                        <select asp-for="nationality" class="form-control select2" width="100%">
+                            <option></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row" style="margin-top:2px;">
+                   <label class="col-md-4 text-right control-label">Date of Establishment</label>
+                    <div class="col-lg-8 col-sm-12">
+                        <input asp-for="DOB" value="@consignee?.StartDate" class="form-control" type="datetime" autocomplete="off">
+                    </div>
+                </div>
+                <div class="row" style="margin-top:2px;">
+                    <label class="col-md-4 text-right control-label">Is Active</label>
+                    <div class="col-lg-8 col-sm-12">
+                        <input type="checkbox" asp-for="isActive" checked="checked" class="form-check-input" id="isActive" />
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-6">
+
+                <div class="row" style="margin-top:1px;">
+                    <label class="col-md-3 text-right control-label">code</label>
+                    <div class="col-lg-9 col-sm-12">
+                       
+                        <input asp-for="code" class="form-control" placeholder="Enter code" value="@consignee?.Code" autocomplete="off" />
+                        <span asp-validation-for="code"></span>
+                    </div>
+                </div>
+                <div class="row" style="margin-top:-2px;">
+                    <label class="col-md-3 text-right control-label">Tin</label>
+                    <div class="col-lg-9 col-sm-12" style="margin-top:-2px;">
+                        <input asp-for="tin" class="form-control" placeholder="Enter Tin" maxlength="10" value="@consignee?.Tin" autocomplete="off" />
+                    </div>
+                </div>
+                <div class="row" style="margin-top:2px;">
+                    <label class="col-md-3 text-right control-label">Tax</label>
+                    <div class="col-lg-9 col-sm-12">
+                        <select asp-for="tax" class="form-control select2" width="100%">
+                            <option></option>
+                        </select><span asp-validation-for="tax"></span>
+                    </div>
+                </div>
+                <div class="row" style="margin-top:2px;">
+                    <label class="col-md-3 text-right control-label">Language</label>
+                    <div class="col-lg-9 col-sm-12">
+                        <select asp-for="language" class="form-control select2" width="100%">
+                            <option></option>
+                        </select><span asp-validation-for="language"></span>
+                    </div>
+                </div>
+                <div class="row" style="margin-top:2px;">
+                    <label class="col-md-3 text-right control-label">Currency</label>
+                    <div class="col-lg-9 col-sm-12">
+                        <select asp-for="Currency" class="form-control select2" width="100%">
+                            <option></option>
+                        </select><span asp-validation-for="Currency"></span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</fieldset>
+<script>
+    $(function () {
+        $('#@nameof(Model.DOB)').datepicker()
+
+    });
+</script>
+  <script>
+
+    $('#businessType').select2({
+        data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(businessTypeList)),
+        placeholder: "",
+        allowClear: true,
+    });
+
+    $('#@nameof(Model.tax)').select2({
+        data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(gettaxBycategoryType)),
+        placeholder: "",
+        allowClear: true,
+
+   }); 
+   $('#@nameof(Model.nationality)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(nationalityeType)),
+        placeholder: "",
+        allowClear: true,
+
+   }); 
+   $('#@nameof(Model.language)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(languageType)),
+        placeholder: "",
+        allowClear: true,
+
+   }); 
+   $('#@nameof(Model.Currency)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(sleCurrencyeType)),
+        placeholder: "",
+        allowClear: true,
+
+   });
+ </script>
+
+<script>
+    var firstInput = document.getElementsByName("tradeName")[0];
+    var secondInput = document.getElementsByName("brandName")[0];
+
+    function process(e) {
+        secondInput.value = e.target.value.replace(/\s/g, ' ');
+    }
+    firstInput.addEventListener("input", process);
+
+    $('#nationality').val('@Model?.nationality').trigger("change")
+    $('#businessType').val('@Model?.businessType').trigger("change")
+    $('#assigned').val('@Model?.assigned').trigger("change")
+    $('#language').val('@Model?.language').trigger("change")
+    $('#Currency').val('@Model?.Currency').trigger("change")
+    $('#tax').val('@Model?.tax').trigger("change")
+</script>

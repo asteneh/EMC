@@ -1,0 +1,262 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Cnetv7BufferHolder;
+@using Newtonsoft.Json;
+@model systemSettingModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    List<SystemConstantDTO> constantDTOs = new List<SystemConstantDTO>();
+    var name = Model?.name;
+    var category = Model?.category;
+    var sysconstant = await sharedHelpers.GetAllSytemConstants();
+    var sysconstantList = sysconstant.Where(x => x.ParentId == Convert.ToInt32(name)).ToList();
+
+    var ArticleTypes = await sharedHelpers.GetsystemConstantById(Convert.ToInt32(name));
+
+    var ObjectDefn = await sharedHelpers.GetSystemConstantByCat(ArticleTypes?.FirstOrDefault()?.ParentId == 3 ? "Article" : "Consignee");
+}
+<style>
+   
+    .vIdDefiniation {
+        height: 77vh;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    .vIdDefiniation {
+        white-space: nowrap
+    }
+
+    .vIdDefiniation {
+        overflow-y: auto; /* make the table scrollable if height is more than 200 px  */
+        height: 77vh /* gives an initial height of 200px to the table */
+    }
+
+        .vIdDefiniation th {
+            position: sticky; /* make the table heads sticky */
+            top: 0px; /* table head will be placed from the top of the table and sticks to it */
+        }
+
+    /*table {
+                border-collapse: collapse;*/ /* make the table borders collapse to each other */
+    /*width: 100%;
+            }*/
+
+    th,
+    td {
+        padding: 0 0 !important;
+        border: 1px solid #ccc;
+    }
+
+    th {
+        background-color: rgb(179, 236, 255)
+    }
+</style>
+<div class="border vIdDefiniation" style="border:1px solid #e5e5e5;">
+    @if (category == "Gsl Type List")
+    {
+        <table id="voucher_idSetting_table" class="table table-striped container-fluid" style="background-color:#ffffff" width="105%">
+            <thead>
+                <tr class="attendancesum">
+                    <th>Id</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>IsActive</th>
+                    <th>Remark</th>
+                    <th>edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (sysconstantList != null && sysconstantList.Count() > 0)
+                {
+                    foreach (var item in sysconstantList)
+                    {
+                        var cate = await sharedHelpers.GetsystemConstantById(Convert.ToInt32(name));
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.Description</td>
+                            <td>@cate?.FirstOrDefault()?.Description</td>
+                            <td> <input class="form-check-input" type="checkbox" id="" @(Convert.ToBoolean(item?.IsActive) ? "checked" : "") onclick="return false" /></td>
+                            <td>@item?.Remark</td>
+                            <td><a class="btn btn-social-icon btn-xs" onclick="EditGsltypeFunction('@item?.Id')" data-toggle="modal"><i class="fa fa-edit"></i></a></td>
+                        </tr>
+                    }
+                    
+                }
+            </tbody>
+        </table>
+    }
+    else if (category == "Voucher Definition")
+    {
+        <table id="voucher_idSetting_table" class="table table-striped container-fluid" style="background-color:#ffffff" width="105%">
+            <thead>
+                <tr class="attendancesum">
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Abbrivation</th>
+                    <th>ISO Document Number</th>
+                    <th>Is Active</th>
+                    <th>Jornal Type</th>
+                    <th>Is Line Item</th>
+                    <th>Remark</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (sysconstantList != null && sysconstantList.Count() > 0)
+                {
+                    foreach (var item in sysconstantList)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.Description</td>
+                            <td></td>
+                            <td></td>
+                            <td> <input class="form-check-input" type="checkbox" id="" @(Convert.ToBoolean(item?.IsActive) ? "checked" : "") onclick="return false" /></td>
+                            <td></td>
+                            <td></td>
+                            <td>@item?.Remark</td>
+                            <td><a class="btn btn-social-icon btn-xs" onclick="EditvoucherdefinitionFunction('@item?.Id')" data-toggle="modal"><i class="fa fa-edit"></i></a></td>
+                        </tr>
+                    }
+
+                }
+            </tbody>
+        </table>
+    }
+    else if (category == "List Of Device")
+    {
+        <table id="voucher_idSetting_table" class="table table-striped container-fluid" style="background-color:#ffffff" width="105%">
+            <thead>
+                <tr class="attendancesum">
+                    <th>Description</th>
+                    <th>Is Active</th>
+                    <th>Remark</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (sysconstantList != null && sysconstantList.Count() > 0)
+                {
+                    foreach (var item in sysconstantList)
+                    {
+                        <tr>
+                            <td>@item.Description</td>
+                            <td> <input class="form-check-input" type="checkbox" id="" @(Convert.ToBoolean(item?.IsActive) ? "checked" : "") onclick="return false" /></td>
+                            <td>@item?.Remark</td>
+                            <td><a class="btn btn-social-icon btn-xs" onclick="EditDeviceListFunction('@item?.Id')" data-toggle="modal"><i class="fa fa-edit"></i></a></td>
+                        </tr>
+                    }
+
+                }
+            </tbody>
+        </table>
+    }
+    else if (category == "Object State Definition")
+    { <table id="voucher_idSetting_table" class="table table-striped container-fluid" style="background-color:#ffffff" width="105%">
+            <thead>
+                <tr class="attendancesum">
+                    <th>Description</th>
+                    <th>Color</th>
+                    <th>Font</th>
+                    <th>Remark</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (ObjectDefn != null && ObjectDefn.Count() > 0)
+                {
+                    @foreach (var item in ObjectDefn)
+                    {
+                        <tr>
+                            <td>@item.Description</td>
+                          <td> <input class="form-check-input" type="color" value="@item.Value" onclick="return false" /></td>
+                            <td></td>
+                            <td>@item.Remark</td>
+                            <td><a class="btn-social-icon btn-xs" onclick="EditObjectstateDefnFunction('@item.Id')"><i class="fa fa-edit"></i></a></td>
+                            <td><a href="#" class="btn-social-icon btn-xs" onclick="DeleteObjectstateDefnFunction('@item.Id')"><i class="fa fa-trash"></i></a></td>
+                        </tr>
+                    }
+
+                }
+            </tbody>
+        </table>
+    }
+</div>
+<script>
+    function EditGsltypeFunction(CODE) {
+        var code = CODE;
+        $.ajax({
+            type: "GET",
+            dataType: 'json',
+            url: '@Url.Action("GetGslTypeBycode", "SystemConstant")',
+            data: { code: code },
+            success: function (data) {
+                $('#@nameof(Model.gsl_code)').val(data.code);
+                $('#@nameof(Model.gsl_description)').val(data.description);
+                $('#@nameof(Model.gsl_category)').val(data.category);
+                $('#@nameof(Model.gsl_isactive)').prop('checked', data.iasctive);
+                $('#@nameof(Model.gsl_remark)').val(data.remark);
+                $('#gsltypelistModal').modal({ backdrop: 'static', keyboard: false });
+            },
+        });
+    } 
+    
+    function EditvoucherdefinitionFunction(CODE) {
+        var code = CODE;
+        $.ajax({
+            type: "GET",
+            dataType: 'json',
+            url: '@Url.Action("GetvouvherdefinitionBycode", "SystemConstant")',
+            data: { code: code },
+            success: function (data) {
+                $('#@nameof(Model.vochr_code)').val(data.code);
+                $('#@nameof(Model.vochr_name)').val(data.name);
+                $('#@nameof(Model.parentId)').val(data.type).trigger('change');
+                $('#@nameof(Model.vochr_isactive)').prop('checked', data.iasctive);
+                $('#@nameof(Model.vochr_remark)').val(data.remark);
+                $('#voucherdefinitionModal').modal({ backdrop: 'static', keyboard: false });
+            },
+        });
+    }
+
+    function EditDeviceListFunction(CODE) {
+        var code = CODE;
+        $.ajax({
+            type: "GET",
+            dataType: 'json',
+            url: '@Url.Action("GetpreferecneBycode", "SystemConstant")',
+            data: { code: code },
+            success: function (data) {
+
+                $('#@nameof(Model.dev_code)').val(data.code);
+                $('#@nameof(Model.dev_description)').val(data.desc);
+                $('#@nameof(Model.dev_parent)').val(data.parent);
+                $('#@nameof(Model.dev_remark)').val(data.remark);
+                $('#@nameof(Model.dev_isactive)').prop('checked', data.isactive);
+
+                $('#DeviceListModal').modal({ backdrop: 'static', keyboard: false });
+            },
+        });
+    }
+    function EditObjectstateDefnFunction(CODE) {
+        var code = CODE;
+        $.ajax({
+            type: "GET",
+            dataType: 'json',
+            url: '@Url.Action("GetObjectstateDefnBycode", "SystemConstant")',
+            data: { code: code },
+            success: function (data) {
+                $('#@nameof(Model.object_code)').val(data.id);
+                $('#@nameof(Model.object_description)').val(data.description);
+                $('#@nameof(Model.object_type)').val(data.type);
+                $('#@nameof(Model.object_color)').val(data.color).trigger('change');
+                $('#@nameof(Model.object_font)').val(data.font).trigger('change');
+                $('#@nameof(Model.object_remark)').val(data.remark);
+                $('#objectStatedefinition_Modal').modal({ backdrop: 'static', keyboard: false });
+            },
+        });
+    }
+</script>

@@ -1,0 +1,109 @@
+﻿@model LicenseModel
+@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-body">
+                    <div style="float:left ;padding-top:1px">
+                        <a href="#" class="btn btn-app" id="btnLicNew"> <i class="fa fa-download"></i>Cloud Licence</a>
+                        <a href="#" class="btn btn-app" id=""> <i style="color:darkblue" class="fa fa-save"></i>Print</a>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-12">
+            @await Html.PartialAsync("General.cshtml")
+
+        </div>
+    </div>
+</section>
+<script>
+    var licencelist = false;
+
+    $(document).on("click", ".getLicenceType", function () {
+        licencelist = true;
+
+    });
+
+    $('#btnLicNew').bind("click", function () {
+
+        submitfunctionLicencecodeFromcloud();
+    });
+    window.submitfunctionLicencecodeFromcloud = function () {
+
+
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: '@Url.Action("getLicencecodeFromcloud", "Licence")',
+            data: {},
+
+
+            success: function (data) {
+
+                if (data.checknull == false) {
+                    alert("NOt data In the  Licence Server");
+                }
+                else {
+
+                    $('#popup_Licence_code').DataTable().clear().draw();
+
+
+                    $.each(data, function (index, item) {
+
+                        $('#popup_Licence_code').DataTable().destroy();
+                        var mytable = $('#popup_Licence_code').DataTable({
+                            "paging": false,
+                            "lengthChange": false,
+                            "searching": false,
+                            "ordering": false,
+                            "info": false,
+                            "autoWidth": false,
+                            "retrieve": false,
+
+                        });
+
+
+                        var Compcode = item.component == null ? "" : item.component.code
+                        var licencekey = '<input name="licenccodeList[]" value="' + item.licenseKey + '" readonly style="background-color:#fff0;border:0; visibility:hidden ;border:none;" />';
+                        var componentCode = '<input  name="componentcodeList[]" value="' + Compcode + '" readonly style="background-color:#fff0;border:0; visibility:hidden"/>';
+
+                        mytable.row.add([item.branch, item.expiryDate, item.component == null ? "" : item.component.description, licencekey, item.licenseKey, componentCode, item.deviceValue]);
+                        mytable.draw();
+
+
+                    });
+                    $('#modal_LicenceItems').modal();
+
+                }
+            },
+
+
+            error: function (x) {
+                alert(x.responseText);
+
+            }
+        })
+    }
+
+
+
+
+
+
+</script>
+
+
+
+
+

@@ -1,0 +1,580 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain;
+@using Newtonsoft.Json;
+@model moduleModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var organizationTypes = await sharedHelpers.GetsystemConstantById(Model.subSyType);
+
+    var _submoduleSetting = await sharedHelpers.GetConfigurationByRefandPref("HRMS Setting", CNETConstants.HUMAN_RESOURCE_MGT_SYS);
+    int oldvalue = 1111111111;
+
+}
+
+<style>
+    #sync_path {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    .custom-select {
+        max-height: 28px;
+        font-size: 13px;
+    }
+
+    .inputfield {
+        pointer-events: none;
+        opacity: 30;
+        width: 80%;
+        height: 16px !important;
+        padding: 0px 0px !important;
+        font-size: 13px !important;
+    }
+
+    .Inputborder:focus {
+        border: 1px solid #1670BE;
+        box-shadow: 0 0 3px #1670BE;
+        outline-offset: 0px;
+        outline: none;
+    }
+
+    .Inputborder {
+        border: 1px solid #eee;
+        font-size: 13px !important;
+        height: 17px !important;
+        line-height: 2px !important;
+        text-emphasis-position: initial !important;
+        margin-top: 0px !important;
+        padding: 0px 0px !important;
+    }
+
+
+    .mainparent {
+        color: dodgerblue;
+        background-color: #eee;
+    }
+
+    .boderclr {
+        background-color: dodgerblue;
+    }
+
+    .sptablecontent {
+        border-collapse: collapse;
+        background-color: #fff;
+        width: 98%;
+        margin-left: 15px;
+    }
+
+        .sptablecontent .asth {
+            font-weight: bold;
+        }
+
+        .sptablecontent th, table td {
+            padding: 1px;
+            border: 1px solid #ccc;
+        }
+
+        .sptablecontent, .sptablecontent .sptablecontent td {
+            border: 0px solid #ccc;
+        }
+
+            .sptablecontent [type=text], select {
+                width: 100%;
+            }
+
+            .sptablecontent div {
+                width: 97%;
+            }
+            .vouproperty{
+
+            }
+   
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="box box-primary">
+
+            <div class="box-header with-border">
+                <div class="row">
+                    <div class="col-md-11">
+                        <div class="row">
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-1 control-labell"> Find</label>
+                                <div class="col-md-9">
+                                    <select class="form-control select2" asp-for="hrmsPropertySetting"  style="width:100%"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="box-body vouproperty">
+                @foreach (var item in _submoduleSetting)
+                {
+                    switch (item.Attribute)
+
+                    {
+                        case "AttendanceAbsentRules":
+                            Model.hrms_attendanceAbsentRules = item.CurrentValue;
+                            break;
+                        case "Attendance Payroll Application":
+                            Model.hrms_Attendancepayrollapplication = item.CurrentValue;
+                            break;
+                        case "EarlyIn":
+                            Model.hrms_EarlyIn = item.CurrentValue;
+                            break;
+                        case "LateIn":
+                            Model.hrms_LateIn = item.CurrentValue;
+                            break;
+                        case "Absent":
+                            Model.hrms_Absent = item.CurrentValue;
+                            break;
+                        case "EarlyOut":
+                            Model.hrms_EarlyOut = item.CurrentValue;
+                            break;
+                        case "LateOut":
+                            Model.hrms_LateOut = item.CurrentValue;
+                            break;
+                        case "MinTimeBetweenLogs":
+                            Model.hrms_MinTimeBetweenLogs = item.CurrentValue;
+                            break;
+                        case "MachineReadingTime":
+                            Model.hrms_MachineReadingTime = item.CurrentValue;
+                            break;
+                        case "Attendance Sync Path":
+                            Model.hrms_AttendanceSyncPath = item.CurrentValue;
+                            break;
+                        case "MaxLates":
+                            Model.hrms_maxLates = item.CurrentValue;
+                            break;
+                        case "Payroll Period Offset":
+                            Model.hrms_PayrollPeriodOffset = item.CurrentValue;
+                            break;
+                        case "Attendance Analysis During Sync":
+                            Model.hrms_AttendanceAnalysisDuringSync = item.CurrentValue;
+                            break;
+                        case "Attendance Sync type":
+                            Model.hrms_AttendanceSynctype = item.CurrentValue;
+                            break;
+                        case "Sync In Organization":
+                            Model.hrms_SyncInOrganization = item.CurrentValue;
+                            break;
+
+                    }
+                }
+                <form id="producthrmsFormData" asp-controller="Module" asp-action="SavinghrmsProperty" method="post">
+
+
+                    <table cellpadding="0" cellspacing="0" class="sptablecontent tree_loadhrmsprop">
+                        <tr class="asth">
+                            <td></td>
+                            <td></td>
+
+                        </tr>
+
+                        <tr class="treegrid-@oldvalue mainparent">
+                            <td colspan="2">
+                                General Setting
+                            </td>
+                        </tr>
+
+
+                        <tr class="treegrid-parent-@oldvalue">
+
+                            <td class="attributdata">
+
+                                Absent
+                            </td>
+                            <td class="attributcurrvalue">
+                                @if (string.IsNullOrEmpty(Model.hrms_Absent))
+                                {
+                                    <input asp-for="hrms_Absent" value="00:00:00" id="@nameof(Model.hrms_Absent)" type="time" step="1" class="form-control" style="height: 20px !important;">
+
+                                }
+                                else
+                                {
+                                    <input asp-for="hrms_Absent" value="@Model.hrms_Absent" id="@nameof(Model.hrms_Absent)" type="time" step="1" class="form-control" style="height: 20px !important;">
+
+                                }
+
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Attendance Analysis During Sync
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="hrms_AttendanceAnalysisDuringSync" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder">
+                                </select>
+
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                AttendanceAbsentRules
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="hrms_attendanceAbsentRules" asp-items="Model.attendanceAbsentRule" class="form-control custom-select Inputborder">
+                                </select>
+
+                            </td>
+                        </tr>
+
+                        <tr class="treegrid-parent-@oldvalue">
+
+                            <td class="attributdata">
+                                EarlyIn
+                            </td>
+                            <td class="attributcurrvalue">
+                                @if (string.IsNullOrEmpty(Model.hrms_EarlyIn))
+                                {
+                                    <input asp-for="hrms_EarlyIn" value="00:00:00" id="@nameof(Model.hrms_EarlyIn)" type="time" step="1" onfocus="this.style.background='white'" class="form-control" style="height: 20px !important;">
+
+                                }
+                                else
+                                {
+                                    <input asp-for="hrms_EarlyIn" value="@Model.hrms_EarlyIn" id="@nameof(Model.hrms_EarlyIn)" type="time" step="1" onfocus="this.style.background='white'" class="form-control" style="height: 20px !important;">
+
+                                }
+
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+
+                            <td class="attributdata">
+                                EarlyOut
+                            </td>
+                            <td class="attributcurrvalue">
+                                @if (string.IsNullOrEmpty(Model.hrms_EarlyOut))
+                                {
+                                    <input asp-for="hrms_EarlyOut" value="00:00:00" id="@nameof(Model.hrms_EarlyOut)" type="time" step="1" onfocus="this.style.background='white'" class="form-control" style="height: 20px !important;">
+
+                                }
+                                else
+                                {
+                                    <input asp-for="hrms_EarlyOut" value="@Model.hrms_EarlyOut" id="@nameof(Model.hrms_EarlyOut)" type="time" step="1" onfocus="this.style.background='white'" class="form-control" style="height: 20px !important;">
+
+                                }
+
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+
+                            <td class="attributdata">
+                                LateIn
+                            </td>
+                            <td class="attributcurrvalue">
+                                @if (string.IsNullOrEmpty(Model.hrms_LateIn))
+                                {
+                                    <input asp-for="hrms_LateIn" value="00:00:00" id="@nameof(Model.hrms_LateIn)" type="time" step="1" onfocus="this.style.background='white'" class="form-control" style="height: 20px !important;">
+
+                                }
+                                else
+                                {
+                                    <input asp-for="hrms_LateIn" value="@Model.hrms_LateIn" id="@nameof(Model.hrms_LateIn)" type="time" step="1" onfocus="this.style.background='white'" class="form-control" style="height: 20px !important;">
+
+                                }
+
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+
+                            <td class="attributdata">
+                                LateOut
+                            </td>
+                            <td class="attributcurrvalue">
+                                @if (string.IsNullOrEmpty(Model.hrms_LateOut))
+                                {
+                                    <input asp-for="hrms_LateOut" value="00:00:00" id="@nameof(Model.hrms_LateOut)" type="time" step="1" class="form-control" style="height: 20px !important;">
+
+                                }
+                                else
+                                {
+                                    <input asp-for="hrms_LateOut" value="@Model.hrms_LateOut" id="@nameof(Model.hrms_LateOut)" type="time" step="1" class="form-control" style="height: 20px !important;">
+
+                                }
+
+                            </td>
+                        </tr>
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                MachineReadingTime
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="hrms_MachineReadingTime" asp-items="Model.machinreadingtype" class="form-control custom-select Inputborder">
+                                </select>
+
+                            </td>
+                        </tr>
+
+                        <tr class="treegrid-parent-@oldvalue">
+
+                            <td class="attributdata">
+                                MinTimeBetweenLogs
+                            </td>
+                            <td class="attributcurrvalue">
+                                @if (string.IsNullOrEmpty(Model.hrms_MinTimeBetweenLogs))
+                                {
+                                    <input asp-for="hrms_MinTimeBetweenLogs" value="00:00:00" id="hrmsMinTimeBetweenLogshrmsMinTimeBetweenLogs" type="time" step="1" class="form-control" style="height: 20px !important;">
+
+                                }
+                                else
+                                {
+                                    <input asp-for="hrms_MinTimeBetweenLogs" value="@Model.hrms_MinTimeBetweenLogs" id="hrmsMinTimeBetweenLogs" type="time" step="1" class="form-control" style="height: 20px !important;">
+
+                                }
+
+                            </td>
+                        </tr>
+
+                        @*//group Two*@
+
+                        @{oldvalue = oldvalue + 1;}
+
+                        <tr class="treegrid-@oldvalue mainparent">
+                            <td colspan="2">
+                                Attendance Sync Settings
+                            </td>
+                        </tr>
+
+                        <tr class="treegrid-parent-@oldvalue">
+
+                            <td class="attributdata">
+                                Attendance Sync Path
+                            </td>
+                            <td class="attributcurrvalue">
+                                <div class="input-group">
+
+                                    <input asp-for="hrms_AttendanceSyncPath" id="display_attendancesync_path" value="@Model.hrms_AttendanceSyncPath" onfocus="this.style.background='white'" class="form-control" style="height: 20px !important;">
+                                    <label for="attemance_syncpath" id="sync_path">...</label>
+
+                                </div>
+                            </td>
+
+
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Attendance Sync type
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="hrms_AttendanceSynctype" asp-items="Model.attendancesycntype" class="form-control custom-select Inputborder">
+                                </select>
+
+                            </td>
+                        </tr>
+
+                        <tr class="treegrid-parent-@oldvalue">
+
+                            <td class="attributdata">
+                                Sync In Organization
+                            </td>
+                            <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#HrmsSettingModal">
+
+                                <input asp-for="hrms_SyncInOrganization" id="syncInorg" class="form-control" style="height: 20px !important;">
+
+
+                            </td>
+                        </tr>
+
+
+                        @*//group Three*@
+                        @{oldvalue = oldvalue + 1;}
+
+                        <tr class="treegrid-@oldvalue mainparent">
+                            <td colspan="2">
+                                Leave Settings
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Validate Leave And Service Date
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="hrms_ValidateLeaveAndServiceDate" asp-items="Html.GetEnumSelectList<ValidateLeaveAndServiceDate>()" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+
+                        @*//group Four*@
+                        @{oldvalue = oldvalue + 1;}
+
+                        <tr class="treegrid-@oldvalue mainparent">
+                            <td colspan="2">
+                                Payroll Settings
+                            </td>
+                        </tr>
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Attendance Payroll Application
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="hrms_Attendancepayrollapplication" asp-items="Model.attendanceapp" class="form-control custom-select Inputborder">
+                                </select>
+
+                            </td>
+                        </tr> 
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Lates Include Early Checkout
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="hrms_LatesIncludeEarlyCheckout" asp-items="Html.GetEnumSelectList<ValidateLeaveAndServiceDate>()" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                MaxLates
+                            </td>
+                            <td class="attributcurrvalue">
+                                @*<input asp-for="" maxlength="10" value="0" onkeypress="return isNumber(event)" class="Inputborder">*@
+                                <input asp-for="hrms_maxLates" value="0" maxlength="10" onkeypress="return isNumberOnly(event)" class="form-control" style="height: 20px !important;">
+
+
+                            </td>
+                        </tr>
+
+                        <tr class="treegrid-parent-@oldvalue">
+
+                            <td class="attributdata">
+                                Payroll Dates
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="hrms_PayrollDates" asp-items="Html.GetEnumSelectList<enPayrollDates>()" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+
+                            <td class="attributdata">
+                                Payroll Period Offset
+                            </td>
+                            <td class="attributcurrvalue">
+
+                                <input asp-for="hrms_PayrollPeriodOffset" value="0" maxlength="10" onkeypress="return isNumberOnly(event)" class="form-control" style="height: 20px !important;">
+
+                            </td>
+                        </tr>
+
+                    </table>
+
+                    <input class="form-control" type="file" name="attendancepath" id="attemance_syncpath" style="display:none; visibility:hidden;" onchange="getattendancepathfile(this.value);">
+
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+  
+    function TreeFunctionHrmsproprty() {
+        $(document).ready(function () {
+            $('.tree-basic').treegrid();
+
+            $('.tree_loadhrmsprop').treegrid({
+                source: function (id, response) {
+                    if (id != 1) response(['']);
+                    else response(['']);
+                }
+            });
+
+        });
+    }
+    TreeFunctionHrmsproprty();
+
+
+
+</script>
+<script>
+
+
+    function isNumber(evt) {
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        else {
+
+            return true;
+        }
+
+    }
+    function isNumberOnly(evt) {
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        else {
+
+            return true;
+        }
+
+    }
+
+
+</script>
+
+<script>
+    function getattendancepathfile(filename) {
+        $('#display_attendancesync_path').val(filename);
+    }
+</script>
+
+<script>
+    var selectedCountry = "";
+
+    var row = ""
+
+    $("select.select2").change(function () {
+        selectedCountry = $(this).children("option:selected").text();
+
+        $(".bg-blue").removeClass("bg-blue");
+        //var row = $(".addvaluepropertyLisearch:contains(" + selectedCountry + "));
+        $("input[name*='" + selectedCountry + "']").addClass("bg-blue");
+      
+
+</script>
+<script>
+    $('.attributdata').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).children('.inputfield').val();*/
+        var value = $(this).text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).closest("tr").addClass('boderclr');
+        $('#HrmsSettingVal').html(value);
+
+    });
+    $('.attributcurrvalue').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).siblings().children('.inputfield').val();*/
+        var value = $(this).siblings().text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).siblings().addClass("boderclr");
+        $('#HrmsSettingVal').html(value);
+
+    });
+    $("#hrmsPropertySetting").change(function () {
+        var value = $(this).select2('data')[0].text;
+        $(".boderclr").removeClass("boderclr");
+        $("input[name*='" + value + "']").addClass('boderclr');
+        $("input[name*='" + value + "']").closest("tr").addClass('boderclr');
+
+        $('#HrmsSettingVal').html(value);
+    });
+
+</script>
+

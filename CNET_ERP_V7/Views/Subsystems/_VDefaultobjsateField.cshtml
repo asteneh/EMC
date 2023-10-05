@@ -1,0 +1,122 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@model VoucherSearchModel
+@{
+    var ArticleTypes = await sharedHelpers.GetsystemConstantById(Convert.ToInt32(Model.documentType));
+
+    var ObjectstatedefType = await sharedHelpers.GetSystemConstantByCat(ArticleTypes?.FirstOrDefault()?.ParentId == 3 ? "Article" : "Consignee");
+
+}
+<style>
+    .modalbody {
+        position: relative;
+        padding: 20px;
+        height: 200px;
+        overflow-y: scroll;
+    }
+
+    .modaldialog {
+        max-width: 700px; /* New width for default modal */
+    }
+
+    .btnlength {
+        min-width: 100px;
+    }
+    .activeidSetting {
+        background-color: dodgerblue;
+        width: auto;
+    }
+
+    .attachmentType{
+        list-style:none;
+    }
+
+  </style>
+<div class="modal fade" id="ObjectsateMapMOdal">
+    <div class="modal-dialog modaldialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <span>Voucher Type LookUp</span>
+
+                </h5>
+            </div>
+            <div class="box-body">
+                <div class="modal-body modalbody">
+                    <div class="row">
+                        <form class="form-horizontal" id="" asp-action="" asp-controller="" method="post">
+
+                            <div class="col-md-12" style="margin-top:25px">
+
+                                <div class="row">
+
+                                    <div class="divTable">
+
+                                        <div class="col-md-8" style="margin-left:0px ;" id="div23">
+                                            <ul class="sidebar-men secondNav tree " data-widget="tree" id="attachement_nav">
+                                                @foreach (var item in ObjectstatedefType)
+                                                {
+                                                    <li class="nav-item treeview menu-open attachmentType" id="parent">
+                                                        <a data-toggle="tab" data-value="@item.Description" data-types="@item.Id" id="a123" style="text-decoration-line:none!important" name="catagory" class="addDefaultobjectSate">
+                                                            <span class="labelcss" selectedValue="@item.Description">@item.Id/@item.Id</span>
+                                                        </a>
+
+                                                        <ul class="treeview-menu" style="padding-left:35px; background-color:white;" id="@item.Id">
+                                                        </ul>
+                                                    </li>
+                                                }
+
+                                            </ul>
+
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <button class="btn btn-default btn-sm btnlength" type="reset" id="defaultobjectsatebtnsave">Ok</button>
+
+                    <button class="btn btn-default btn-sm btnlength" id="defaultbjectstatedatadismis" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+    var valueitem = "";
+    $(document).ready(function () {
+        $(".attachmentType").click(function () {
+            $(".activeidSetting").removeClass("activeidSetting");
+            $(this).addClass('activeidSetting');
+
+        });
+        $(".addDefaultobjectSate").click(function () {
+            valueitem = $(this).data("types");
+
+        });
+
+        $("#defaultobjectsatebtnsave").click(function () {
+
+            $('#Default_object_state').val(valueitem);
+            $('#defaultbjectstatedatadismis').trigger('click');
+
+        });
+
+    });
+
+</script>
+

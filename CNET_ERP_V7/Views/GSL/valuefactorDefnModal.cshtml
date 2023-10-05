@@ -1,0 +1,144 @@
+﻿@model GSLmodel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+ 
+}
+
+<div class="modal fade" id="ValueFactorDefnModal">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <img src="~/images/Cnets.jpg" alt="CNET" />
+                    <span>Value Factor Definition</span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                </h5>
+
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form class="form-horizontal" id="valuefactordefnnitionNewFormData" onsubmit="return valuefactordefnnitionNewFormFunction()" asp-controller="GSL" asp-action="Createvaluefactordefnnition" method="post">
+                        <div class="col-md-12">
+                                <button class="btn btn-app" type="reset" id="IssuedbtnNew"> <i class="fa fa-file-o"></i>New</button>
+                                <button type="submit" action="addRow" class="btn btn-app" id="valuefactordefnnitionNewsave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                                <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                           
+                        </div>
+
+                        <div class="col-md-12" style="margin-top:25px">
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Description</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="valuDescription" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="valuDescription"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Value</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="valueDefnvalue" class="form-control" type="number" min="0" />
+                                        <span asp-validation-for="valueDefnvalue"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Is Percent</label>
+                                    <div class="col-md-1">
+                                        <input asp-for="valueIspercent" />
+                                        <span asp-validation-for="valueIspercent"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Remark</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="valueremark" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="valueremark"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <input hidden asp-for="codefordeletevalueDefn" />
+                        <input hidden asp-for="codeforupdatevalueDefn" />
+                        <input hidden asp-for="gslTypevalueDefn" />
+                        <input hidden asp-for="valueDefncodeforsave" />
+
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+    function valuefactordefnnitionNewFormFunction() {
+        var gslTYpeforvaluedefnarticle = '@Model.gslType';
+        var $form = $('#valuefactordefnnitionNewFormData');
+        var data = $form.serialize();
+        var action = $('#valuefactordefnnitionNewFormData').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            success: function (data) {
+                var valuedefini = $("#@nameof(Model.valueDefncodeforsave)").val();
+                swal("", data, "success");
+              $.ajax({
+                    type: "GET",
+                    dataType: 'html',
+                    url: '@Url.Action("getValueDefnByTypeandGslList", "GSL")',
+                      data: { type: valuedefini, gslcode: gslTYpeforvaluedefnarticle },
+
+                    success: function (data) {
+
+                        $('#ValueDefContent').html(data);
+                    }
+              });
+                Clearvaluefactor();
+
+
+            },
+        });
+        return false;
+    };
+
+</script>
+
+<script>
+    var defngsltype = '@Model.gslType'
+    $('#@nameof(Model.gslTypevalueDefn)').val(defngsltype);
+</script>
+<script>
+    var valudeflist = "";
+    $(document).on("click", ".valuefacordfnforarticle", function () {
+       valudeflist = $(this).attr('id');
+        $('#@nameof(Model.valueDefncodeforsave)').val(valudeflist);
+    });
+  
+    function Clearvaluefactor() {
+
+                $('#@nameof(Model.codeforupdatevalueDefn)').val("");
+                $('#@nameof(Model.valuDescription)').val("");
+                $('#@nameof(Model.valueDefnvalue)').val("");
+                $('#@nameof(Model.valueIspercent)').prop('checked', "");
+                $('#@nameof(Model.valueremark)').val("");
+    }
+</script>

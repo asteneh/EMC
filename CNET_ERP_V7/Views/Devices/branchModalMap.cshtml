@@ -1,0 +1,615 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Cnetv7BufferHolder;
+@using Newtonsoft.Json;
+@model Devicemodel
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var codemodel = Model.DeviceType;
+    var deviceTypes = await sharedHelpers.GetdeviceById(Model?.DeviceType);
+    var deviceTypecode = deviceTypes?.FirstOrDefault()?.Id;
+
+    var serverparentType = deviceTypes?.FirstOrDefault()?.ParentId;
+    var servername = deviceTypes?.FirstOrDefault()?.Description;
+
+    var baudrateList = GeneralBufferHolder.SystemConstants.Where(x => x.Category == "BaudRate").ToList();
+    var baudrateListType = baudrateList?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Description }).ToArray();
+
+    var connectionList = GeneralBufferHolder.SystemConstants.Where(x => x.Category == "Connection Type");
+    var connectionListType = connectionList?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Description }).ToArray();
+   
+    var deviceTypesdescrpition = deviceTypes?.FirstOrDefault()?.Description;
+    var deviceview = await sharedHelpers.SelectDevice();
+    var deviceviewList = deviceview.Where(x => x.IsActive == true).ToList();
+
+    var deviceviewListType = deviceviewList?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.MachineName }).ToArray();
+
+    List<SystemConstantDTO> servermodelList = new List<SystemConstantDTO>();
+
+    switch (deviceTypesdescrpition)
+    {
+        case "RMS POS":
+        case "Premium RMS POS":
+        case "DUTY FREE POS":
+        case "SMS POS":
+        case "PMS POS":
+        case "PHMS POS":
+        case "NVS POS":
+        case "Recurring POS":
+        case "Mobile POS":
+        case "cms pos":
+        case "Cinema POS":
+        case "Access Control POS":
+        case "Cinema Kiosk":
+        case "Reference Pos":
+        case "Reservation POS":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("POS Machine Model");
+            break;
+        case "Database Server":
+        case "Domain server":
+        case "IP TV Server*":
+        case "Application Server*":
+        case "VOD Server*":
+        case "File Server":
+        case "CNET Cloud Server":
+        case "Client Cloud Server":
+        case "Local Web Server":
+        case "License Server":
+        case "FTP Server":
+        case "Telegram Bot Server":
+        case "Email Server":
+        case "Virtual Server":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("Server Model");
+            break;
+        case "Desktop PC":
+        case "Laptop PC":
+        case "Thin Client PC":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("Computer Model");
+            break;
+        case "STB*":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("STB Model");
+            
+            break;
+        case "Check Printer":
+        case "Document Printer":
+        case "Journal Printer":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("Document Printer Model");
+            break;
+        case "Label Printer":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("Label Printer Model");
+            break;
+        case "Payroll Slip Printer":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("Order Printer Model");
+            break;
+        case "Label Printing Scale":
+        case "Price Computing Scale":
+        case "Barcode Scanner":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("Label Printing Scale Mode");
+            break;
+        case "Fingerprint Reader":
+        case "Fingerprint Attendance Machine":
+        case "Face Recognition Attendance Machine":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("Attendance Machine Model");
+            break;
+        case "Em Card Reader":
+        case "EM Card Issuer":
+        case "Mifare Card Reader":
+        case "Mifare Card Issuer":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("Card Reader Model");
+            break;
+        case "Passport Scanner":
+           servermodelList = await sharedHelpers.GetSystemConstantByCat("Passport Scanner Model");
+            break;
+        case "Sync. Stick*":
+        case "Smart phone*":
+        case "Tablet PC*":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("Mobile Devices Model");
+            break;
+        case "VFD POS Display":
+        case "LCD POS Display":
+        case "Price Checker":
+        case "KDS":
+        case "Waiter Screen":
+        case "FOMS Display":
+        case "Event Display":
+        case "Cinema Display":
+        case "Parking Display":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("Display Model");
+            break;
+        case "Fiscal Printer":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("Fiscal Printer Model");
+            break;
+        case "Cash Register":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("Cash Register Machine Model");
+            break;
+        case "Camera":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("Camera Model");
+            break;
+        case "Door Lock":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("Door Lock Model");
+
+            break;
+        case "Turn Style":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("Turn Style Model");
+            break;
+        case "Sensors":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("Sensor Model");
+          
+            break;
+        case "Relays":
+        case "Signature Tab":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("Relays Model");
+            break;
+        case "Access Controller":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("Access Controller Model");
+            break;
+        case "PBX":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("PBX Model");
+            break;
+        case "Network Switch":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("Network Switch Mode");
+
+            break;
+        case "Order Printer":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("Order Printer Model");
+
+            break;
+        case "Win Tab":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("Relays Model");
+
+            break;
+        case "SMS Gateway":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("Relays Model");
+
+            break;
+        case "Cash Drawer":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("Cash Drawer Model");
+            break;
+
+        case "M-Birr":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("M-Birr");
+            break;
+        case "Amole OTP":
+        case "Amole Gift Card":
+        case "Amole Cyber Source":
+        case "Hello Cash":
+        case "Tele Birr OTP":
+        case "Tele Birr USSD":
+        case "CBE Birr":
+        case "E-Birr":
+        case "Sahay":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("Payment Device");
+            break;
+        case "Access Point":
+        case "Core Switch":
+        case "Distribution Switch":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("Network Device Model");
+            break;
+        case "Arcade POS":
+            servermodelList = await sharedHelpers.GetSystemConstantByCat("Computer Model");
+            break;
+    }
+    var servermodelListType = servermodelList?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result {id = t.Id, text = t.Description }).ToArray();
+
+    var countryList = await sharedHelpers.GetAllCountries();
+
+    var countryListType = countryList?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Name }).ToArray();
+
+    List<string> EmailDeviceNames = new List<string> { "Payroll Dispatch Email",
+                "Reservation Confirmation Email",
+                "Report Email",
+                "Customer Service Email",
+                "Sales Email",
+                "Finance Email",
+                "Other Email" };
+   
+}
+<style>
+
+    .applicationserverclass {
+        width: 60%;
+        margin: auto;
+    }
+</style>
+
+<div class="modal fade" id="devicemaintainmapmodal">
+    <div class="modal-dialog applicationserverclass">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <img src="~/images/Cnets.jpg" alt="CNET" />
+                    <span>Device Maintain For @deviceTypes?.FirstOrDefault()?.Description</span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </h5>
+
+            </div>
+            <div class="modal-body">
+                <div class="row">
+
+                    <form class="form-horizontal" id="DevicemaintainNewFormData" method="post">
+                        <input asp-for="DeviceMaintanflage" hidden />
+                        <div class="col-md-12">
+                                <button class="btn btn-app" type="reset" id="IssuedbtnNew"> <i class="fa fa-file-o"></i>New</button>
+                                <a href="#" class="btn btn-app" id="btnSaveDevicemasintenance"> <i class="fa fa-save"></i>Save</a>
+                                <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                           
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6" style="margin-top:25px">
+                                @if (servername == "Email Server")
+                                {
+                                    <div class="row">
+                                        <div class="form-group form-group-sm">
+                                            <label class="col-md-3 control-label">Device Name</label>
+                                            <div class="col-md-8">
+                                                <select asp-for="Eamildevicename" class="form-control select2" style="width: 87%;">
+                                                    <option></option>
+                                                </select>
+                                                <span asp-validation-for="Eamildevicename"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="row">
+                                        <div class="form-group form-group-sm">
+                                            <label class="col-md-3 control-label">Device Name</label>
+                                            <div class="col-md-7">
+                                                <input asp-for="devicename" class="form-control" autocomplete="off" />
+                                                <span asp-validation-for="devicename"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                <div class="row">
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-md-3 control-label">Connection Type</label>
+                                        <div class="col-md-8">
+                                            <select asp-for="connctionTYpe" class="form-control select2" style="width: 87%;">
+                                                <option></option>
+                                            </select>
+                                            <span asp-validation-for="connctionTYpe"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-md-3 control-label">Host</label>
+                                        <div class="col-md-8">
+                                            <select asp-for="host" class="form-control select2" style="width: 87%;">
+                                                <optgroup class="def-cursor" label="Country" data-city="City">
+                                                    <option></option>
+                                                </optgroup>
+
+
+                                            </select>
+                                            <span asp-validation-for="host"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-md-3 control-label">Device Value</label>
+                                        <div class="col-md-7">
+                                            <input asp-for="devicevalue" class="form-control" autocomplete="off" />
+                                            <span asp-validation-for="devicevalue"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-md-3 control-label">Is Active</label>
+                                        <div class="col-md-1">
+                                            <input asp-for="Isactive" checked="checked" />
+                                            <span asp-validation-for="Isactive"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-md-3 control-label">Ip Addres</label>
+                                        <div class="col-md-7">
+                                            <input asp-for="ip_address" class="form-control" />
+                                            <span asp-validation-for="ip_address"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-md-3 control-label">Ip Port</label>
+                                        <div class="col-md-7">
+                                            <input asp-for="devie_Port" class="form-control" type="number" />
+                                            <span asp-validation-for="devie_Port"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-md-3 control-label">MAC</label>
+                                        <div class="col-md-7">
+                                            <input asp-for="device_mac" class="form-control" />
+                                            <span asp-validation-for="device_mac"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-md-3 control-label">Remark</label>
+                                        <div class="col-md-7">
+                                            <input asp-for="remark" class="form-control" style="height:120px;" autocomplete="off" />
+                                            <span asp-validation-for="remark"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6" style="margin-top:25px">
+                                <input asp-for="fixedassetTempid" value="" hidden />
+                                <div class="row">
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-md-3 control-label">Fixed AssET Id</label>
+                                        <div class="col-md-7">
+                                            <input asp-for="fixedassetid" class="form-control" value="" />
+                                            <span asp-validation-for="fixedassetid"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-md-3 control-label">Brand</label>
+                                        <div class="col-md-7">
+                                            <input asp-for="brand" class="form-control" />
+                                            <span asp-validation-for="brand"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-md-3 control-label">Generic</label>
+                                        <div class="col-md-7">
+                                            <input asp-for="generic" class="form-control" autocomplete="off" />
+                                            <span asp-validation-for="generic"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-md-3 control-label">Model</label>
+                                        <div class="col-md-8">
+                                            <select asp-for="model" class="form-control select2" style="width: 87%;">
+                                                <option></option>
+                                            </select>
+                                            <span asp-validation-for="model"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-md-3 control-label">Size</label>
+                                        <div class="col-md-7">
+                                            <input asp-for="size" class="form-control" autocomplete="off" />
+                                            <span asp-validation-for="size"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-md-3 control-label">Color</label>
+                                        <div class="col-md-7">
+                                            <input asp-for="color" class="form-control" type="color" />
+                                            <span asp-validation-for="color"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-md-3 control-label">Country</label>
+                                        <div class="col-md-8">
+                                            <select asp-for="country" class="form-control select2" style="width:87%;">
+                                                <option></option>
+                                            </select>
+                                            <span asp-validation-for="country"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-md-3 control-label">Maufacturer</label>
+                                        <div class="col-md-7">
+                                            <input asp-for="manufacturer" class="form-control" autocomplete="off" />
+                                            <span asp-validation-for="manufacturer"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-md-3 control-label">Baud Rate</label>
+                                        <div class="col-md-8">
+                                            <select asp-for="baud_rate" class="form-control select2" style="width:87%;">
+                                                <option></option>
+                                            </select>
+                                            <span asp-validation-for="baud_rate"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-md-3 control-label">Serial Port</label>
+                                        <div class="col-md-7">
+                                            <input asp-for="serial_port" class="form-control" type="number" />
+                                            <span asp-validation-for="serial_port"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <input asp-for="preferencecodeforsave" hidden />
+                        <input asp-for="branchcodeforsave" hidden />
+                        <input asp-for="parentcode" hidden />
+                        <input asp-for="branchservername" hidden />
+                        <input asp-for="fixedassetidupdate" hidden />
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<script>
+    $('#@nameof(Model.baud_rate)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(baudrateListType)),
+        placeholder: "Select Baud rate",
+        allowClear: true
+
+    });
+    $('#@nameof(Model.connctionTYpe)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(connectionListType)),
+        placeholder: "",
+        allowClear: true
+
+    });
+    $('#@nameof(Model.Eamildevicename)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(EmailDeviceNames)),
+        placeholder: "",
+        allowClear: true
+
+    });
+  
+    $('#@nameof(Model.model)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(servermodelListType)),
+        placeholder: "",
+        allowClear: true
+
+    });
+    $('#@nameof(Model.country)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(countryListType)),
+        placeholder: "",
+        allowClear: true
+
+    });
+    $('#@nameof(Model.host)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(deviceviewListType)),
+        placeholder: "",
+        allowClear: true
+    });
+</script>
+<script>
+    var updatecode = false;
+    var updatecodeafterupdate = false;
+    $(document).on("click", "#newdeviceforbranch", function () {
+        var assetvaluecodesave = $("#@nameof(Model.fixedassetTempid)").val();
+
+        $("#@nameof(Model.fixedassetid)").val(assetvaluecodesave);
+
+    });
+
+    var getbranchcoderet = "";
+    var getservercoderete = "";
+
+    $(document).on("click", ".activedeconsinee", function () {
+        getbranchcoderet = $(this).attr('id');
+        getservercoderete = '@Model?.DeviceType';
+        $("#@nameof(Model.preferencecodeforsave)").val(getservercoderete);
+      
+        var parenetItemcode = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(serverparentType));
+        var serverTYpename = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(servername));
+
+
+        $("#@nameof(Model.parentcode)").val(parenetItemcode);
+        $("#@nameof(Model.branchservername)").val(serverTYpename);
+    });
+</script>
+<script>
+    $(function () {
+        $('#btnSaveDevicemasintenance').click(function () {
+            var code = $("#@nameof(Model.branchcodeforsave)").val();
+            var deviceCode = '@Model?.DeviceType';
+            var formData = $('#DevicemaintainNewFormData').serialize();
+            $.ajax({
+                url: '/Devices/createDevices',
+                type: 'POST',
+                data: formData,
+                success: function (result) {
+                    if (result.isSaved == true) {
+                        swal("", result.data, "success");
+                      
+                            $.ajax({
+                                url: '/Devices/getdevicedetailResult',
+                                type: 'POST',
+                                data: { code: code, deviceCode: deviceCode }, // send the data object with the request
+                                success: function (result) {
+                                    $('#DeviceMaintainContent').html(result);
+                                    ClearDeviceMaintainModal()
+                                },
+                                error: function () {
+                                    console.log('Error occurred.');
+                                }
+                            });
+                    }
+                    else {
+                        swal("", result.data, "error");
+                    }
+
+                },
+                error: function () {
+                    console.log('Error occurred.');
+                }
+            });
+
+        });
+    });
+</script>
+
+<script>
+    function ClearDeviceMaintainModal() {
+        $('#@nameof(Model.fixedassetid)').val("");
+        $('#@nameof(Model.fixedassetidupdate)').val("");
+        $('#@nameof(Model.devicename)').val("");
+        $('#@nameof(Model.connctionTYpe)').val("").trigger('change');
+        $('#@nameof(Model.host)').val("").trigger('change');
+        $('#@nameof(Model.devicevalue)').val("");
+        $('#@nameof(Model.brand)').val("");
+        $('#@nameof(Model.model)').val("").trigger('change');
+        $('#@nameof(Model.baud_rate)').val("").trigger('change');
+        $('#@nameof(Model.remark)').val("");
+        $('#@nameof(Model.devie_Port)').val("");
+        $('#@nameof(Model.ip_address)').val("");
+        $('#@nameof(Model.device_mac)').val("");
+        $('#@nameof(Model.serial_port)').val("");
+        $('#@nameof(Model.DeviceMaintanflage)').val("");
+    }
+
+    $(document).on("click", ".Alldevicepropertysetting", function () {
+        var getdevicecode = $(this).data('types');
+        var devcode = '@Model?.DeviceType'
+        $('#@nameof(Model.posDevice)').val(getdevicecode);
+        $(".activeidSetting").removeClass("activeidSetting");
+        $(this).closest("tr").addClass('activeidSetting');
+        $.ajax({
+            url: '/Devices/currentPropertyvalue',
+            type: 'POST',
+            data: { id: getdevicecode,devcode: devcode },
+            success: function (result) {
+                $('#settingContent').html(result);
+            },
+            error: function () {
+                console.log('Error occurred.');
+            }
+        });
+    });
+</script>

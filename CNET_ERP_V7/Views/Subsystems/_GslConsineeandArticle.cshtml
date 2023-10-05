@@ -1,0 +1,276 @@
+﻿@using CNET_V7_Domain.Domain.ViewSchema;
+@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_ERP_V7.Common.Helpers;
+@model CNET_ERP_V7.Models.SubSytsemModel.VoucherSearchModel
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+}
+<style>
+
+    .onoffswitch {
+        position: relative;
+        width: 90px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+    }
+
+    .onoffswitch-checkbox {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .onoffswitch-label {
+        display: block;
+        overflow: hidden;
+        cursor: pointer;
+        border: 2px solid #999999;
+    }
+
+    .onoffswitch-inner {
+        display: block;
+        width: 200%;
+        margin-left: -100%;
+        transition: margin 0.3s ease-in 0s;
+    }
+
+        .onoffswitch-inner:before, .onoffswitch-inner:after {
+            display: block;
+            float: left;
+            width: 50%;
+            height: 30px;
+            padding: 0;
+            line-height: 30px;
+            font-size: 14px;
+            color: white;
+            font-family: Trebuchet, Arial, sans-serif;
+            font-weight: bold;
+            box-sizing: border-box;
+        }
+
+        .onoffswitch-inner:before {
+            content: "Yes";
+            padding-left: 10px;
+            background-color: #34A7C1;
+            color: #FFFFFF;
+        }
+
+        .onoffswitch-inner:after {
+            content: "No";
+            padding-right: 10px;
+            background-color: #EEEEEE;
+            color: #999999;
+            text-align: right;
+        }
+
+    .onoffswitch-switch {
+        display: block;
+        width: 18px;
+        margin: 6px;
+        background: #FFFFFF;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 56px;
+        border: 2px solid #999999;
+        transition: all 0.3s ease-in 0s;
+    }
+
+    .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+        margin-left: 0;
+    }
+
+    .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+        right: 0px;
+    }
+</style>
+
+
+
+<div class="modal fade" id="gslRequirementModelMapfroconsiandart">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <img src="~/images/Cnets.jpg" alt="CNET" />
+                    <span>Gsl Requirement For Job Order Voucher</span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                </h5>
+
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form class="form-horizontal" id="gslreqirementNewFormDatafroconandart" onsubmit="return artandconsineNewFormFunction()" asp-controller="Subsystems" asp-action="Creategslrequirementforconandart" method="post">
+                        <div class="col-md-12">
+                            <div>
+                                <button class="btn btn-app" type="reset" id="IssuedbtnNew"> <i class="fa fa-file-o"></i>New</button>
+                                <button type="submit" action="addRow" class="btn btn-app" id="gsrrequirementforconandartbtnNewsave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                                <button class="btn btn-app closebutnIngslreq" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12" style="margin-top:25px">
+                            <input asp-for="getparentselectedListforconsandart" hidden />
+                            <input asp-for="requriedGSLVouchercode" hidden />
+                            <input asp-for="requiredGSLeditcode" hidden />
+                            <input asp-for="remarpare" hidden />
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Description</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="descriptionforconandArt" class="form-control" type="text" autocomplete="off" />
+                                        <span asp-validation-for="descriptionforconandArt"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Index</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="indexforconandArt" class="form-control" min="0"  autocomplete="off"/>
+                                        <span asp-validation-for="indexforconandArt"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Is Mandatory</label>
+                                    <div class="col-md-7">
+                                        <div class="onoffswitch">
+                                            <input asp-for="isMandatoryforconandArt" type="checkbox" class="onoffswitch-checkbox" id="myonoffswitch" tabindex="0" checked>
+                                            <label class="onoffswitch-label" for="myonoffswitch">
+                                                <span class="onoffswitch-inner"></span>
+                                                <span class="onoffswitch-switch"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Need Consignee Unit</label>
+                                    <div class="col-md-1">
+                                        <input asp-for="NeedConsigneeUnit"  />
+                                        <span asp-validation-for="NeedConsigneeUnit"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Remark</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="remark" class="form-control" autocomplete="off"  />
+                                        <span asp-validation-for="remark"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+
+<script>
+    $(document).on("click", ".btngslchildUpdateUpdate", function () {
+        $("#gsrrequirementforconandartbtnNewsave").attr("action", "addRow");
+        var code = $(this).data('code');
+        var type = $(this).data('type');
+        var voucherdef = $(this).data('vouchedef');
+        var desc = $(this).data('desc');
+        var indexx = $(this).data('inde');
+        var ismand = $(this).data('isma');
+        $('#@nameof(Model.requiredGSLeditcode)').val(code);
+        $('#@nameof(Model.descriptionforconandArt)').val(desc);
+        $('#@nameof(Model.requriedGSLVouchercode)').val(voucherdef);
+        $('#@nameof(Model.indexforconandArt)').val(indexx);
+        $('#@nameof(Model.isMandatoryforconandArt)').val(ismand);
+
+    });
+</script>
+<script>
+
+    $(document).on("click", ".btnDeletegslreqchild", function () {
+        var vouchercode = $('#@nameof(Model.documentType)').val();
+        var codedel = $(this).data('code');
+        swal({
+            title: "are you sure to delete this ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                        $.ajax({
+                            type: "POST",
+                            dataType: 'json',
+                            url: '@Url.Action("Deletegslreqchild", "Subsystems")',
+                            data: { codee: codedel },
+                            success: function (data)
+                            {
+                               if (data.checklist == true) {
+                                    swal({
+                                    title: "are you sure to delete this ?" + data.increament,
+                                        icon: "warning",
+                                        buttons: true,
+                                        dangerMode: true,
+                                    })
+                                        .then((willDelete) => {
+                                            if (willDelete) {
+                                                $.ajax({
+                                                    type: "POST",
+                                                    dataType: 'json',
+                                                    url: '@Url.Action("Deletegslrequdetail", "Subsystems")',
+                                                    data: { codee: codedel },
+                                                    success: function (data) {
+                                                        if (data.checklist == true) {
+                                                            alert(data.checklist == true)
+                                                        }
+
+                                                    }
+                                                });
+                                            }
+                                        });
+                                }
+                             else{
+                                swal("", data.result, "success");
+                                    $.ajax({
+                                        type: "GET",
+                                        dataType: 'html',
+                                        url: '@Url.Action("Getgslrequirment", "Subsystems")',
+                                        data: { vouchercode: vouchercode },
+
+                                        success: function (data) {
+                                            $('#gslchildtype').html(data);
+
+                                        }
+                                    });
+                               }
+                            }
+                     });
+                }
+            });
+    });
+    function Cleararticlenadconsilne() {
+        $('#@nameof(Model.requiredGSLeditcode)').val("");
+        $('#@nameof(Model.descriptionforconandArt)').val("");
+        $('#@nameof(Model.indexforconandArt)').val("");
+        $('#@nameof(Model.isMandatoryforconandArt)').prop("checked", false);
+    }
+</script>
+

@@ -1,0 +1,707 @@
+﻿@using CNET_ERP_V7.Models.Security;
+@using CNET_V7_Domain;
+@using Newtonsoft.Json;
+@model SecurityModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var propertyList = await sharedHelpers.GetConfigurationByRefandPref("Security", CNETConstants.SECURITY_COMPONENT);
+    string complexpassword = null;
+    string PasswordHistory = null;
+    string ChangePassword = null;
+    string UseScreenLock = null;
+    string DisplayStyle = null;
+    string ShortKey = null;
+    string UserName = null;
+    string AttendedUsers = null;
+    string MaximumPassword = null;
+    string MinimumPassword = null;
+    string TrialBeforeLock = null;
+    string LockTime = null;
+    string PasswordExpiry = null;
+    string Screenlock = null;
+    
+    int secuoldvalue = 111111111;
+}
+<style type="text/css">
+    .sptablecontent {
+        border-collapse: collapse;
+        background-color: #fff;
+        width: 98%;
+        margin-left: 15px;
+    }
+
+        .sptablecontent .asth {
+            font-weight: bold;
+        }
+
+        .sptablecontent th, table td {
+            padding: 1px;
+            border: 1px solid #ccc;
+        }
+
+        .sptablecontent, .sptablecontent .sptablecontent td {
+            border: 0px solid #ccc;
+        }
+
+            .sptablecontent [type=text], select {
+                width: 100%;
+            }
+
+            .sptablecontent div {
+                width: 97%;
+            }
+
+    .prefrenceheader {
+        background-color: dodgerblue;
+    }
+
+
+    .inputfield {
+        pointer-events: none;
+        opacity: 30;
+        width: 80%;
+        height: 16px !important;
+        padding: 0px 0px !important;
+        font-size: 13px !important;
+    }
+
+    .Inputborder:focus {
+        border: 1px solid #1670BE;
+        box-shadow: 0 0 3px #1670BE;
+        outline-offset: 0px;
+        outline: none;
+    }
+
+    .Inputborder {
+        border: 1px solid #eee;
+        font-size: 13px !important;
+        height: 17px !important;
+        line-height: 2px !important;
+        text-emphasis-position: initial !important;
+        margin-top: 0px !important;
+        padding: 0px 0px !important;
+    }
+
+
+    .mainparent {
+        color: dodgerblue;
+        background-color: #eee;
+    }
+
+    .boderclr {
+        background-color: dodgerblue;
+    }
+</style>
+
+<div class="box box-primary">
+    <br />
+
+    <div class="box-header with-border">
+        <div class="row">
+            <div class="col-md-11">
+                <div class="row">
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-1 control-labell"> Find</label>
+                        <div class="col-md-9">
+                            <input type="text" id="filtersecuSetting" style="display:flex;width:100%;" class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="box-body">
+        @foreach (var item in propertyList)
+        {
+            switch (item.Attribute)
+
+            {
+                case "Enforce Complex Password":
+                    complexpassword = item.CurrentValue;
+
+                    break;
+                case "Enforce Password History":
+                    PasswordHistory = item.CurrentValue;
+
+
+                    break;
+                case "Maximum Password Age":
+                    MaximumPassword = item.CurrentValue;
+
+
+                    break;
+                case "Minimum Password Length":
+                    MinimumPassword = item.CurrentValue;
+                    break;
+                case "Trial Before Lock":
+                    Model.secu_TrialBeforeLock = item.CurrentValue;
+                    break;
+                case "Lock Time":
+                    LockTime = item.CurrentValue;
+
+
+                    break;
+                case "Password Expiry Notice":
+                    PasswordExpiry = item.CurrentValue;
+
+
+                    break;
+                case "Use Screen Lock":
+                    UseScreenLock = item.CurrentValue;
+
+
+                    break;
+                case "Lock Short Key":
+                    ShortKey = item.CurrentValue;
+
+
+                    break;
+                case "User Name Display Style":
+                    DisplayStyle = item.CurrentValue;
+
+
+                    break;
+                case "Populate User Name":
+                    UserName = item.CurrentValue;
+
+
+                    break;
+                case "Log Only Attended Users":
+                    AttendedUsers = item.CurrentValue;
+
+
+                    break;
+                case "Change Password At First Login":
+                    ChangePassword = item.CurrentValue;
+
+
+                    break;
+                case "Timing Before Screen lock":
+                    Screenlock = item.CurrentValue;
+
+
+                    break;
+
+            }
+        }
+
+        <form id="PropertyFormDataForSecurity" method="post">
+            <table cellpadding="0" cellspacing="0" class="sptablecontent tree_loadsecurityset" id="securitySetting_Table">
+                <tr class="asth">
+                    <td></td>
+                    <td></td>
+
+                </tr>
+
+                <tr class="treegrid-@secuoldvalue mainparent">
+                    <td colspan="2">
+                        password Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@secuoldvalue">
+                    <td class="attributdata">
+                        Change Password At First Login
+
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="secu_ChangePasswordAtFirstLogin" class="form-control custom-select Inputborder">
+
+                            @if (@ChangePassword == "True")
+                            {
+                                <option value="True">True</option>
+                                <option value="False">False</option>
+
+                            }
+                            else
+                            {
+                                <option value="False">False</option>
+                                <option value="True">True</option>
+                            }
+
+                        </select>
+
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@secuoldvalue">
+                    <td class="attributdata">
+                        Enforce Complex Password
+
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="secu_EnforceComplexPassword" class="form-control custom-select Inputborder">
+
+                            @if (@ChangePassword == "True")
+                            {
+                                <option value="True">True</option>
+                                <option value="False">False</option>
+
+                            }
+                            else
+                            {
+                                <option value="False">False</option>
+                                <option value="True">True</option>
+                            }
+
+                        </select>
+
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@secuoldvalue">
+                    <td class="attributdata">
+                        Enforce Password History
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="secu_EnforcePasswordHistory" class="form-control custom-select Inputborder">
+
+                            @if (@PasswordHistory == "True")
+                            {
+                                <option value="True">True</option>
+                                <option value="False">False</option>
+
+                            }
+                            else
+                            {
+                                <option value="False">False</option>
+                                <option value="True">True</option>
+                            }
+
+                        </select>
+
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@secuoldvalue">
+                    <td class="attributdata">
+                        Lock Short Key
+                    </td>
+                    <td class="attributcurrvalue">
+
+                        @if (@ShortKey == null)
+                        {
+                            <input asp-for="secu_LockShortKey" value="0" onfocus="this.style.background='white'" class="Inputborder" autocomplete="off">
+
+                        }
+                        else
+                        {
+
+                            <input asp-for="secu_LockShortKey" value="@ShortKey" onfocus="this.style.background='white'" class="Inputborder" autocomplete="off">
+                        }
+
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@secuoldvalue">
+                    <td class="attributdata">
+                        Lock Time
+                    </td>
+                    <td class="attributcurrvalue">
+
+                        @if (LockTime == null)
+                        {
+                            <input asp-for="secu_LockTime" value="0" min="0" max="255" maxlength="3" onkeypress="return isNumberlockTime(event)" class="Inputborder" onInput="return edValuelocktimePress(eve)" id="secuLockTime" >
+
+                        }
+                        else
+                        {
+                            <input asp-for="secu_LockTime" value="@LockTime" min="0" max="255" maxlength="3" onkeypress="return isNumberlockTime(event)" class="Inputborder" onInput="return edValuelocktimePress(eve)" id="secuLockTime">
+                        }
+
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@secuoldvalue">
+                    <td class="attributdata">
+                        Log Only Attended Users
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="secu_LogOnlyAttendedUsers" class="form-control custom-select Inputborder">
+                            @if (AttendedUsers == "True")
+                            {
+                                <option value="True">True</option>
+                                <option value="False">False</option>
+
+                            }
+                            else
+                            {
+                                <option value="False">False</option>
+                                <option value="True">True</option>
+                            }
+
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@secuoldvalue">
+                    <td class="attributdata">
+                        Maximum Password Age
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (MaximumPassword == null)
+                        {
+                            <input asp-for="secu_MaximumPasswordAge" maxlength="19" value="0" onkeypress="return isNumberpasswordage(event)" class="Inputborder" autocomplete="off">
+
+                        }
+                        else
+                        {
+                            <input asp-for="secu_MaximumPasswordAge" maxlength="19" value="@MaximumPassword" onkeypress="return isNumberpasswordage(event)" class="Inputborder" autocomplete="off">
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@secuoldvalue">
+                    <td class="attributdata">
+                        Minimum Password Length
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (MinimumPassword == null)
+                        {
+                            <input asp-for="secu_MinimumPasswordLength" maxlength="3" min="0" max="255" value="@MinimumPassword" onkeypress="return isNumberPasswordlength(event)" onInput="return edValuepasswordlengthPress(eve)" id="minimumpasswordlength" class="Inputborder" autocomplete="off">
+
+                        }
+                        else
+                        {
+                            <input asp-for="secu_MinimumPasswordLength" maxlength="3" min="0" max="255" value="@MinimumPassword" onkeypress="return isNumberPasswordlength(event)" onInput="return edValuepasswordlengthPress(eve)" id="minimumpasswordlength" class="Inputborder" autocomplete="off">
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@secuoldvalue">
+                    <td class="attributdata">
+
+                        Password Expiry Notice
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (PasswordExpiry == null)
+                        {
+                            <input asp-for="secu_PasswordExpiryNotice" value="@PasswordExpiry" maxlength="3" min="0" max="255" onkeypress="return isNumberPasswordNotice(event)" class="Inputborder" onInput="return edValuepasswordexpiryPress(eve)" id="passwordExpiry" autocomplete="off">
+
+                        }
+                        else
+                        {
+                            <input asp-for="secu_PasswordExpiryNotice" value="@PasswordExpiry" maxlength="3" min="0" max="25" onkeypress="return isNumberPasswordNotice(event)" class="Inputborder" onInput="return edValuepasswordexpiryPress(eve)" id="passwordExpiry" autocomplete="off">
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@secuoldvalue">
+                    <td class="attributdata">
+                        Populate User Name
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="secu_PopulateUserName" class="form-control custom-select Inputborder">
+                            @if (UserName == "True")
+                            {
+                                <option value="True">True</option>
+                                <option value="False">False</option>
+
+                            }
+                            else
+                            {
+                                <option value="False">False</option>
+                                <option value="True">True</option>
+                            }
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@secuoldvalue">
+                    <td class="attributdata">
+                        Timing Before Screen lock
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (Screenlock == null)
+                        {
+                            <input asp-for="secu_TimingBeforeScreenlock" maxlength="3" min="0" max="255" value="0" onkeypress="return isNumberscreenlock(event)" class="Inputborder" onInput="return edValueKeytimelockPress(eve)" id="timebeforlock" autocomplete="off">
+
+                        }
+                        else
+                        {
+                            <input asp-for="secu_TimingBeforeScreenlock" maxlength="3" min="0" max="255" value="@Screenlock" onkeypress="return isNumberscreenlock(event)" class="Inputborder" onInput="return edValueKeytimelockPress(eve)" id="timebeforlock" autocomplete="off">
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@secuoldvalue">
+                    <td class="attributdata">
+
+                        Trial Before Lock
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (!string.IsNullOrEmpty(Model.secu_TrialBeforeLock))
+                        {
+                            <input asp-for="secu_TrialBeforeLock" min="0" max="255" maxlength="3" value="@Model.secu_TrialBeforeLock" onkeypress="return isNumbertriallock(event)" class="Inputborder" onInput="return edValueKeytriallockPress(eve)" id="trialbeforelock" autocomplete="off">
+                        }
+                        else
+                        {
+                            <input asp-for="secu_TrialBeforeLock" min="0" max="255" maxlength="3" value="0" onkeypress="return isNumbertriallock(event)" class="Inputborder" onInput="return edValueKeytriallockPress(eve)" id="trialbeforelock" autocomplete="off">
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@secuoldvalue">
+                    <td class="attributdata">
+                        Use Screen Lock
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="secu_UseScreenLock" class="form-control custom-select Inputborder">
+                            @if (UseScreenLock == "True")
+                            {
+                                <option value="True">True</option>
+                                <option value="False">False</option>
+
+                            }
+                            else
+                            {
+                                <option value="False">False</option>
+                                <option value="True">True</option>
+                            }
+
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@secuoldvalue">
+
+                    <td class="attributdata">
+                        User Name Display Style
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="secu_UserNameDisplayStyle" class="form-control custom-select Inputborder">
+                            <option value="List">List</option>
+
+                        </select>
+                    </td>
+
+                </tr>
+            </table>
+
+        </form>
+    </div>
+</div>
+<script>
+    $(function () {
+        $("#filtersecuSetting").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#securitySetting_Table > tbody > tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+<script>
+
+    function TreeFunctionsetting() {
+        $(document).ready(function () {
+            $('.tree-basic').treegrid();
+
+            $('.tree_loadsecurityset').treegrid({
+                source: function (id, response) {
+                    if (id != 1) response(['']);
+                    else response(['']);
+                }
+            });
+
+        });
+    }
+    TreeFunctionsetting();
+
+    function isNumbertriallock(evt) {
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        else {
+
+            return true;
+        }
+
+    }
+
+    function isNumberlockTime(evt) {
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        else {
+
+            return true;
+        }
+
+    }
+
+    function isNumberscreenlock(evt) {
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        else {
+
+            return true;
+        }
+    }
+
+    function isNumberpasswordage(evt) {
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        else {
+
+            return true;
+        }
+    }
+
+    function isNumberPasswordNotice(evt) {
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        else {
+
+            return true;
+        }
+
+    }
+
+    function isNumberPasswordlength(evt) {
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        else {
+
+            return true;
+        }
+
+    }
+    function edValueKeylockPress(evt) {
+        edValue = document.getElementById("idNumberr");
+        Numvalue = edValue.value;
+        Numbervalue;
+        if (Numvalue.length == 10) {
+            Numbervalue = Numvalue;
+
+
+        }
+        if (Numvalue.length == 11) {
+            $("#idNumberr").val(Numbervalue + "-");
+
+        }
+
+        return true;
+
+    }
+
+    function edValuelocktimePress(evt) {
+        var lockValue = document.getElementById("secuLockTime");
+        var locknum = lockValue.value;
+
+        if (locknum > 255) {
+            $("#secuLockTime").val("255");
+        }
+
+
+        return true;
+
+    }
+
+    function edValuepasswordlengthPress(evt) {
+        var lockValue = document.getElementById("minimumpasswordlength");
+        var locknum = lockValue.value;
+
+        if (locknum > 255) {
+            $("#minimumpasswordlength").val("255");
+        }
+        return true;
+
+    }
+    function edValuepasswordexpiryPress(evt) {
+        var lockValue = document.getElementById("passwordExpiry");
+        var locknum = lockValue.value;
+
+        if (locknum > 255) {
+            $("#passwordExpiry").val("255");
+        }
+        return true;
+
+    }
+    function edValueKeytimelockPress(evt) {
+        var lockValue = document.getElementById("timebeforlock");
+        var locknum = lockValue.value;
+
+        if (locknum > 255) {
+            $("#timebeforlock").val("255");
+        }
+        return true;
+
+    }
+    function edValueKeytriallockPress(evt) {
+        var lockValue = document.getElementById("trialbeforelock");
+        var locknum = lockValue.value;
+
+        if (locknum > 255) {
+            $("#trialbeforelock").val("255");
+        }
+        return true;
+
+    }
+
+</script>
+<script>
+    var selectedCountry = "";
+
+    var row = ""
+
+    $("select.select2").change(function () {
+        selectedCountry = $(this).children("option:selected").text();
+
+        $(".bg-blue").removeClass("bg-blue");
+        //var row = $(".addvaluepropertyLisearch:contains(" + selectedCountry + "));
+        $("input[name*='" + selectedCountry + "']").addClass("bg-blue");
+        /*location.href = '#resp-table'*/
+    });
+
+
+</script>
+<script>
+    $('.attributdata').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).children('.inputfield').val();*/
+        var value = $(this).text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).closest("tr").addClass('boderclr');
+        $('#SecurityVal').html(value);
+
+    });
+    $('.attributcurrvalue').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).siblings().children('.inputfield').val();*/
+        var value = $(this).siblings().text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).siblings().addClass("boderclr");
+        $('#SecurityVal').html(value);
+
+    });
+    $("#securityPropertySelector").change(function () {
+        var value = $(this).select2('data')[0].text;
+        $(".boderclr").removeClass("boderclr");
+        $("input[name*='" + value + "']").addClass('boderclr');
+        $("input[name*='" + value + "']").closest("tr").addClass('boderclr');
+
+        $('#SecurityVal').html(value);
+    });
+</script>

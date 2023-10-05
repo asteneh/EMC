@@ -1,0 +1,367 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain;
+@using Newtonsoft.Json;
+@model Devicemodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var codemodel = Model.DeviceType;
+    int sysoldvalue = 1212121212;
+    var deviceConfig = await sharedHelpers.GetConfigurationByRefandPref(Model?.deviceId.ToString(), CNETConstants.DEVICE);
+}
+<<style>
+     .sptablecontent {
+         border-collapse: collapse;
+         background-color: #fff;
+         width: 98%;
+         margin-left: 15px;
+     }
+
+         .sptablecontent .asth {
+             font-weight: bold;
+         }
+
+         .sptablecontent th, table td {
+             padding: 0px !important;
+             border: 1px solid #ccc;
+         }
+
+
+
+         .sptablecontent, .sptablecontent .sptablecontent td {
+             border: 0px solid #ccc;
+             padding: 0px !important;
+         }
+
+             .sptablecontent [type=text], select {
+                 width: 100%;
+             }
+
+             .sptablecontent [type=password] {
+                 width: 100%;
+             }
+
+             .sptablecontent div {
+                 width: 97%;
+             }
+
+     #dampstyle {
+         position: absolute;
+         background-color: #eee;
+     }
+
+     .inputfield {
+         pointer-events: none;
+         opacity: 30;
+         width: 80%;
+         height: 16px !important;
+         padding: 0px 0px !important;
+         font-size: 13px !important;
+     }
+
+     .Inputborder:focus {
+         border: 1px solid #1670BE;
+         box-shadow: 0 0 3px #1670BE;
+         outline-offset: 0px;
+         outline: none;
+     }
+
+     .Inputborder {
+         border: 1px solid #eee;
+         font-size: 13px !important;
+         height: 17px !important;
+         line-height: 2px !important;
+         text-emphasis-position: initial !important;
+         margin-top: 0px !important;
+         padding: 0px 0px !important;
+     }
+
+
+     .mainparent {
+         color: dodgerblue;
+         background-color: #eee;
+     }
+
+     .boderclr {
+         background-color: dodgerblue;
+     }
+
+     .vouproperty {
+         height: 95vh;
+         overflow-y: scroll;
+     }
+
+     .boderclrclose {
+         border-color: ActiveBorder;
+     }
+     /*table {
+             border-collapse: collapse;*/ /* make the table borders collapse to each other */
+     /*width: 100%;
+         }*/
+
+</style>
+
+<div class="box box-primary">
+    <br />
+
+    <div class="box-header with-border">
+        <div class="row">
+            <div class="col-md-11">
+                <div class="row">
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-1 control-labell"> Find</label>
+                        <div class="col-md-9">
+                            <input type="text" id="filteaccessControlSetting" style="display:flex;width:100%;" class="form-control" placeholder="Search By Name">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body">
+
+        @foreach (var va in deviceConfig)
+        {
+            switch (va.Attribute)
+            {
+                case "Package Category":
+                   
+                        Model.contro_PackageCategory = va.CurrentValue;
+                    break;
+                case "Allow Mobile App Access":
+                    Model.contro_AllowMobileAppAccess = (enNeedCredentials)Enum.Parse(typeof(enNeedCredentials), va.CurrentValue, false);
+                    break;
+                case "Authentication Type":
+                    Model.contro_AuthenticationType = va.CurrentValue ;
+                    break;
+                case "Subscription Transaction":
+                    Model.contro_SubscriptionTransaction = va.CurrentValue;
+                    break;
+                case "CameraOption":
+                    Model.contro_CameraOption =  va.CurrentValue;
+                    break;
+                case "Access control Type":
+                    Model.contro_AccesscontrolType = va.CurrentValue;
+                    break;
+                case "Gate Type":
+                    Model.contro_GateType =  va.CurrentValue;
+                    break;
+                case "CardDespensorVersion":
+                    Model.contro_card_despensorversion = va.CurrentValue;
+                    break;
+                case "Exit Treshhold":
+                if (!string.IsNullOrEmpty(va.CurrentValue))
+                    {
+                        Model.contro_ExitTreshhold = Convert.ToInt32(va.CurrentValue);
+                    }
+          
+                    break;
+                case "Notify Before Date":
+                    if (!string.IsNullOrEmpty(va.CurrentValue))
+                    {
+                        Model.contro_NotifyBeforeDate = Convert.ToInt32(va.CurrentValue);
+                    }
+                    break;
+            }   
+        }
+        <form id="PropertyFormDataForaccesscontro"  method="post">
+           
+
+                <table cellpadding="0" cellspacing="0" class="sptablecontent tree-load" id="accesscontrol_settign_table">
+                    <tr class="asth">
+                        <td></td>
+                        <td></td>
+
+                    </tr>
+                    <tr class="treegrid-@sysoldvalue mainparent">
+                        <td colspan="2">
+                            Access Controller Setting
+                        </td>
+                    </tr>
+                    <tr class="treegrid-parent-@sysoldvalue">
+                        <td class="attributdata">
+                        Access control Type
+                        </td>
+                        <td class="attributcurrvalue">
+                            <select asp-for="contro_AccesscontrolType" asp-items="Model.controAccesscontrolType" class="form-control custom-select Inputborder">
+                            </select>
+                        </td>
+
+                    </tr>
+                    <tr class="treegrid-parent-@sysoldvalue">
+                        <td class="attributdata">
+                        Authentication Type
+                        </td>
+                        <td class="attributcurrvalue">
+                            <select asp-for="contro_AuthenticationType" asp-items="Model.controAuthencontrolType" class="form-control custom-select Inputborder">
+                            </select>
+                        </td>
+                    </tr>
+                    <tr class="treegrid-parent-@sysoldvalue">
+                        <td class="attributdata">
+                        Camera Option
+                        </td>
+                        <td class="attributcurrvalue">
+                            <select asp-for="contro_CameraOption" asp-items="Model.controCameraOption" class="form-control custom-select Inputborder">
+                            </select>
+                        </td>
+
+                    </tr>
+                    <tr class="treegrid-parent-@sysoldvalue">
+                        <td class="attributdata">
+                        Card Despensor Version
+                        </td>
+                        <td class="attributcurrvalue">
+                            <select asp-for="contro_card_despensorversion" asp-items="Model.controcard_despensorversion" class="form-control custom-select Inputborder">
+                            </select>
+                        </td>
+
+                    </tr>
+                    <tr class="treegrid-parent-@sysoldvalue">
+                        <td class="attributdata">
+                        Exit Threshold(In Minutes
+                        </td>
+                        <td class="attributcurrvalue">
+                            @if (Model.contro_ExitTreshhold == 0)
+                            {
+                                <input asp-for="contro_ExitTreshhold" type="text"  value="0" id="cash_customer_valuesms" class="Inputborder" />
+
+                            }
+                            else
+                            {
+                                <input asp-for="contro_ExitTreshhold" type="text" value="@Model.contro_ExitTreshhold" id="cash_customer_valuesms" class="Inputborder" />
+
+                            }
+                        </td>
+
+                    </tr> 
+                    <tr class="treegrid-parent-@sysoldvalue">
+                        <td class="attributdata">
+                         Package Category
+                        </td>
+                        <td class="attributcurrvalue">
+                        @if ( !string.IsNullOrEmpty(Model.contro_PackageCategory))
+                            {
+                            <input asp-for="contro_PackageCategory" type="text" value="0"  class="Inputborder" />
+
+                            }
+                            else
+                            {
+                            <input asp-for="contro_PackageCategory" type="text" value="@Model.contro_PackageCategory"  class="Inputborder" />
+
+                            }
+                        </td>
+
+                    </tr>
+                    <tr class="treegrid-parent-@sysoldvalue">
+                        <td class="attributdata">
+                        Allow Mobile App Access
+                        </td>
+                        <td class="attributcurrvalue">
+                            <select asp-for="contro_AllowMobileAppAccess" asp-items="Html.GetEnumSelectList<enNeedCredentials>()" class="form-control custom-select Inputborder">
+                            </select>
+                        </td>
+                    </tr>
+                    <tr class="treegrid-parent-@sysoldvalue">
+                        <td class="attributdata">
+
+                        Gate Type
+                        </td>
+                        <td class="attributcurrvalue">
+                            <select asp-for="contro_GateType" asp-items="Model.controGateType" class="form-control custom-select Inputborder">
+                            </select>
+                        </td>
+
+                    </tr>
+                    <tr class="treegrid-parent-@sysoldvalue">
+                        <td class="attributdata">
+
+                        Notify Before Date(In Days)
+                        </td>
+                        <td class="attributcurrvalue">
+                            @if (Model.contro_NotifyBeforeDate == 0)
+                            {
+                                <input asp-for="contro_NotifyBeforeDate" type="text"  value="0" id="cash_customer_valuesms" class="Inputborder" />
+
+                            }
+                            else
+                            {
+                                <input asp-for="contro_NotifyBeforeDate" type="text" value="@Model.contro_NotifyBeforeDate" id="cash_customer_valuesms" class="Inputborder" />
+
+                            }
+                        </td>
+
+                    </tr>
+
+                    <tr class="treegrid-parent-@sysoldvalue">
+                        <td class="attributdata">
+                        Subscription Transaction
+                        </td>
+                        <td class="attributcurrvalue">
+                            <select asp-for="contro_SubscriptionTransaction" asp-items="Model.controcardsubscription" class="form-control custom-select Inputborder">
+                            </select>
+                        </td>
+
+                    </tr>
+                </table>
+           
+
+            <input asp-for="controdevicecode" value="@Model.deviceId" hidden />
+
+            <input class="form-control" type="file" name="dayclosingpath" id="day_closing_path" style="display:none; visibility:hidden;" onchange="getdayclosingfile(this.value);">
+        </form>
+
+
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $("#filteaccessControlSetting").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#accesscontrol_settign_table > tbody > tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+<script>
+
+    $('.attributdata').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        //var value = $(this).children('.inputfield').val();
+        var value = $(this).text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).closest("tr").addClass('boderclr');
+        $('#deviceproperty').html(value);
+
+    });
+    $('.attributcurrvalue').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        //var value = $(this).siblings().children('.inputfield').val();
+        var value = $(this).siblings().text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).siblings().addClass("boderclr");
+        $('#deviceproperty').html(value);
+    });
+    $("#devicesettingproperty").change(function () {
+        var value = $(this).select2('data')[0].text;
+        $(".bg-blue").removeClass("bg-blue");
+        $("input[name*='" + value + "']").addClass('bg-blue');
+        $("input[name*='" + value + "']").closest("tr").addClass('bg-blue');
+        ('#deviceproperty').html(value);
+    });
+
+</script>
+
+<script>
+    function getdayclosingfile(filename) {
+        $('#display_day_closingfile').val(filename);
+    }
+</script>

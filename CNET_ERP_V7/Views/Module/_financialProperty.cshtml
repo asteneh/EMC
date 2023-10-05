@@ -1,0 +1,750 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain;
+@using Newtonsoft.Json;
+@model moduleModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var organizationTypes = await sharedHelpers.GetsystemConstantById(Model.subSyType);
+
+    var _submoduleSetting = await sharedHelpers.GetConfigurationByRefandPref("Accounting Setting", CNETConstants.FINANCIAL_MGT_SYS);
+
+    int oldvalue = 1111111115;
+}
+
+<style>
+    .custom-select {
+        max-height: 28px;
+        font-size: 13px;
+    }
+
+   
+
+    .sptablecontent {
+        border-collapse: collapse;
+        background-color: #fff;
+        width: 98%;
+        margin-left: 15px;
+    }
+
+        .sptablecontent .asth {
+            font-weight: bold;
+        }
+
+        .sptablecontent th, table td {
+            padding: 1px;
+            border: 1px solid #ccc;
+        }
+
+        .sptablecontent, .sptablecontent .sptablecontent td {
+            border: 0px solid #ccc;
+        }
+
+            .sptablecontent [type=text], select {
+                width: 100%;
+            }
+
+            .sptablecontent div {
+                width: 97%;
+            }
+
+
+    .inputfield {
+        pointer-events: none;
+        opacity: 30;
+        width: 80%;
+        height: 16px !important;
+        padding: 0px 0px !important;
+        font-size: 13px !important;
+    }
+
+    .Inputborder:focus {
+        border: 1px solid #1670BE;
+        box-shadow: 0 0 3px #1670BE;
+        outline-offset: 0px;
+        outline: none;
+    }
+
+    .Inputborder {
+        border: 1px solid #eee;
+        font-size: 13px !important;
+        height: 17px !important;
+        line-height: 2px !important;
+        text-emphasis-position: initial !important;
+        margin-top: 0px !important;
+        padding: 0px 0px !important;
+    }
+
+
+    .mainparent {
+        color: dodgerblue;
+        background-color: #eee;
+    }
+
+    .boderclr {
+        background-color: dodgerblue;
+    }
+</style>
+<div class="row">
+    <div class="col-md-12">
+
+    <div class="box box-primary">
+
+        <div class="box-header with-border">
+            <div class="row">
+                <div class="col-md-11">
+                    <div class="row">
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-1 control-labell"> Find</label>
+                            <div class="col-md-9">
+                                    <input type="text" id="filterfinanceSetting" style="display:flex;width:100%;" class="form-control" placeholder="Search By Name">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+ <div class="box-body vouproperty">
+        @foreach (var item in _submoduleSetting)
+            {
+                switch (item.Attribute)
+
+                    {
+                        case "Send As Master Stock Item":
+                            Model.finan_SendAsMasterStockItem = item.CurrentValue;
+                            break;
+                        case "Real Time Cost Management":
+                            Model.finan_RealTimeCostManagement = item.CurrentValue;
+                            break;
+                        case "Enforce Closing":
+                            Model.finan_EnforceClosing = item.CurrentValue;
+                            break;
+                        case "Closing Period":
+                            Model.finan_ClosingPeriod = item.CurrentValue;
+                            break;
+                        case "Closing Frequency":
+                            Model.finan_ClosingFrequency = item.CurrentValue;
+                            break;
+                        case "Interest Income Bank Reconcile Account":
+                            Model.finan_InterestIncomeBankReconcileAccount = item.CurrentValue;
+                            break;
+                        case "Service Charge Bank Reconcile Account":
+                            Model.finan_ServiceChargeBankReconcileAccount = item.CurrentValue;
+                            break;
+                        case "Default Payable Account":
+                            Model.finan_defaultpaymentaccount = item.CurrentValue;
+                            break;
+                        case "Default Receivable Account":
+                            Model.finan_defaultreceivableaccount = item.CurrentValue;
+                            break;
+                        case "Income Summary Account":
+                            Model.finan_incomesummaryaccount = item.CurrentValue;
+                            break;
+                        case "Closing Capital Account":
+                            Model.finan_Closingcapitalaccount = item.CurrentValue;
+                            break;
+                        case "Production Contra Account":
+                            Model.finan_ProductionContraAccount = item.CurrentValue;
+                            break;
+                        case "GIT Account":
+                            Model.finan_gitaccount = item.CurrentValue;
+                            break;
+                        case "Include Sales Return On StockLedger":
+                            Model.finan_IncludeSalesReturnOnStockLedger = item.CurrentValue;
+                            break;
+                        case "Consignee To Peachtree Selection Order":
+                            Model.finan_ConsigneeToPeachtreeSelectionOrder = item.CurrentValue;
+                            break;
+                        case "Include Stock Adjustment On StockLedger":
+                            Model.finan_IncludeStockAdjustmentOnStockLedger = item.CurrentValue;
+                            break;
+                        case "Production Flow":
+                            Model.finan_ProductionFlow = item.CurrentValue;
+                            break;
+                        case "PeachtreeVersion":
+                            Model.finan_PeachtreeVersion = item.CurrentValue;
+                            break;
+
+                        case "PeachtreeTaxAccount":
+                            Model.finan_PeachtreeTaxAccount = item.CurrentValue;
+                            break;
+                        case "PeachtreeServiceChargeAccount":
+                            Model.finan_PeachtreeServiceChargeAccount = item.CurrentValue;
+                            break;
+                        case "Cost Posting Method":
+                            Model.finan_CostPostingMethod = item.CurrentValue;
+                            break;
+                        case "Perpetual Cost Method":
+                            Model.finan_PerpetualCostMethod = item.CurrentValue;
+                            break;
+                        case "Stock Movement Cost Calculation":
+                            Model.finan_StockMovementCostCalculation = item.CurrentValue;
+                            break;
+                        case "Sales Journal Type":
+                            Model.finan_SalesJournalType = item.CurrentValue;
+                            break;
+                        case "Closing Mandatory":
+                            Model.finan_ClosingMandatory = item.CurrentValue;
+                            break;
+
+                        case "Show Balance On TrialBalance":
+                            Model.finan_ShowBalanceOnTrialBalance = item.CurrentValue;
+                            break;
+                        case "Beginning Period":
+                            Model.finan_BeginningPeriod = item.CurrentValue;
+                            break;
+                        case "Payroll Journal Posting Type":
+                            Model.finan_PayrollJournalPostingType = item.CurrentValue;
+                            break;
+                        case "Allow Zero Cost Posting":
+                            Model.finan_AllowZeroCostPosting = item.CurrentValue;
+                            break;
+                        case "Revenue Journal Type":
+                            Model.finan_RevenueJournalType = item.CurrentValue;
+                            break;
+                        case "Expense Journal Type":
+                            Model.finan_ExpenseJournalType = item.CurrentValue;
+                            break;
+
+        }
+            }
+            <form id="finanicialPropertyFormData" asp-controller="Module" asp-action="SavingfinancialProperty" method="post">
+
+                <table cellpadding="0" cellspacing="0" class="sptablecontent tree_loadfinan" id="finance_setting_table">
+                    <tr class="asth">
+                        <td></td>
+                        <td></td>
+
+                    </tr>
+
+                    <tr class="treegrid-@oldvalue mainparent">
+                        <td colspan="2">
+                            Closing Setting
+                        </td>
+                    </tr>
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+
+                                Closing Frequency
+                        </td>
+                        <td class="attributcurrvalue">
+                            <select asp-for="finan_ClosingFrequency" asp-items="Model.ClosingFrequency" class="form-control custom-select Inputborder">
+                            </select>
+                        </td>
+                    </tr>
+
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+                            Closing Period
+                        </td>
+                        <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#closingPeriodModal">
+                            <input asp-for="finan_ClosingPeriod" type="text"  id="financhclosing_period_type" class="Inputborder" readonly/>
+
+                        </td>
+                    </tr>
+
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+                            Enforce Closing
+                        </td>
+                        <td class="attributcurrvalue">
+                            <select asp-for="finan_EnforceClosing" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder">
+                            </select>
+                        </td>
+                    </tr>
+
+                    @*//group Tow*@
+
+                    @{oldvalue = oldvalue + 1;}
+
+                    <tr class="treegrid-@oldvalue mainparent">
+                        <td colspan="2">
+                            Default Account
+                        </td>
+                    </tr>
+
+                    <tr class="treegrid-parent-@oldvalue">
+
+                        <td class="attributdata">
+
+                            Closing Capital Account
+                        </td>
+                        <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#AccountModal">
+                            @if (string.IsNullOrEmpty(Model.finan_Closingcapitalaccount))
+                            {
+                                <input asp-for="finan_Closingcapitalaccount" type="text" value="00:00:00" id="financhclosing_capitalaccount" class="Inputborder" readonly />
+                            }
+                            else
+                            {
+                                <input asp-for="finan_Closingcapitalaccount" type="text"  value="@Model.finan_Closingcapitalaccount" id="financhclosing_capitalaccount" class="Inputborder" readonly />
+
+                            }
+
+                        </td>
+                    </tr>
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+                                Default Payable Account
+                        </td>
+                        <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#DefaultAccountModal">
+                            @if (string.IsNullOrEmpty(Model.finan_defaultpaymentaccount))
+                            {
+                                <input asp-for="finan_defaultpaymentaccount" id="payment_account" value="00:00:00" class="Inputborder" readonly>
+                            }
+                            else
+                            {
+                                <input asp-for="finan_defaultpaymentaccount" id="payment_account" value="@Model.finan_defaultpaymentaccount" class="Inputborder" readonly>
+                            }
+                        </td>
+                    </tr>
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+
+                            Default Receivable Account
+                        </td>
+                        <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#DefaultreceivableAccountModal">
+                            @if (string.IsNullOrEmpty(Model.finan_defaultreceivableaccount))
+                            {
+                                <input asp-for="finan_defaultreceivableaccount" value="00:00:00" id="recivable_account" class="Inputborder" readonly>
+
+                            }
+                            else
+                            {
+                                <input asp-for="finan_defaultreceivableaccount" value="@Model.finan_defaultreceivableaccount" id="recivable_account" class="Inputborder" readonly>
+                            }
+
+
+                        </td>
+                    </tr>
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+
+                                GIT Account
+                        </td>
+                        <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#GItAccountModal">
+                            @if (string.IsNullOrEmpty(Model.finan_gitaccount))
+                            {
+                                <input asp-for="finan_gitaccount" value="00:00:00" id="git_account" class="Inputborder" readonly>
+                            }
+                            else
+                            {
+                                <input asp-for="finan_gitaccount" value="@Model.finan_gitaccount" id="git_account" class="Inputborder" readonly>
+                            }
+
+
+                        </td>
+                    </tr>
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+                                Income Summary Account
+                        </td>
+                        <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#IncomesummAccountModal">
+                            @if (string.IsNullOrEmpty(Model.finan_incomesummaryaccount))
+                            {
+                                <input asp-for="finan_incomesummaryaccount" id="incomesummery_account" value="00:00:00" class="Inputborder" readonly>
+                            }
+                            else
+                            {
+                                <input asp-for="finan_incomesummaryaccount" id="incomesummery_account" value="@Model.finan_incomesummaryaccount" class="Inputborder" readonly>
+                            }
+                        </td>
+
+                    </tr>
+
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+                            Interest Income Bank Reconcile Account
+                        </td>
+                        <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#InterestIncomeAccountModal">
+                            @if (string.IsNullOrEmpty(Model.finan_InterestIncomeBankReconcileAccount))
+                            {
+                                <input asp-for="finan_InterestIncomeBankReconcileAccount" id="interst_account" value="00:00:00" class="Inputborder" readonly>
+                            }
+                            else
+                            {
+                                <input asp-for="finan_InterestIncomeBankReconcileAccount" id="interst_account" value="@Model.finan_InterestIncomeBankReconcileAccount" class="Inputborder" readonly>
+                            }
+                        </td>
+
+                    </tr>
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+
+                            Production Contra Account
+                        </td>
+                        <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#ProductionAccountModal">
+                            @if (string.IsNullOrEmpty(Model.finan_ProductionContraAccount))
+                            {
+                                <input asp-for="finan_ProductionContraAccount" id="production_account" value="00:00:00" class="Inputborder" readonly>
+                            }
+                            else
+                            {
+                                <input asp-for="finan_ProductionContraAccount" id="production_account" value="@Model.finan_ProductionContraAccount" class="Inputborder" readonly>
+                            }
+
+
+                        </td>
+                    </tr>
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+                            Service Charge Bank Reconcile Account
+                        </td>
+                        <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#SerivesAccountModal">
+                            @if (string.IsNullOrEmpty(Model.finan_ServiceChargeBankReconcileAccount))
+                            {
+                                <input asp-for="finan_ServiceChargeBankReconcileAccount" id="service_account" value="00:00:00" class="Inputborder" readonly>
+                            }
+                            else
+                            {
+                                <input asp-for="finan_ServiceChargeBankReconcileAccount" id="service_account" value="@Model.finan_ServiceChargeBankReconcileAccount" class="Inputborder" readonly>
+                            }
+
+
+
+                        </td>
+                    </tr>
+                    @*//group Three*@
+
+                    @{oldvalue = oldvalue + 1;}
+
+                    <tr class="treegrid-@oldvalue mainparent">
+                        <td colspan="2">
+                            General Settings
+                        </td>
+                    </tr>
+                    <tr class="treegrid-parent-@oldvalue">
+
+                        <td class="attributdata">
+
+
+                            Allow Zero Cost Posting
+                        </td>
+                        <td class="attributcurrvalue">
+                            <select asp-for="finan_AllowZeroCostPosting" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder">
+                            </select>
+
+                        </td>
+                    </tr>
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+    
+                            Beginning Period
+                        </td>
+                        <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#BeginModal">
+
+                            <input asp-for="finan_BeginningPeriod" id="beginning_period" class="Inputborder" readonly>
+
+
+                        </td>
+                    </tr>
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+
+                                Closing Mandatory
+                            </td>
+                        <td class="attributcurrvalue">
+                            <select asp-for="finan_ClosingMandatory" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder" required>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+
+                            Consignee To Peachtree Selection Order
+                        </td>
+                        <td class="attributcurrvalue">
+                            <input asp-for="finan_ConsigneeToPeachtreeSelectionOrder" value="0" maxlength="10" class="Inputborder" onkeypress="return isNumber(event)" >
+
+                        </td>
+                    </tr>
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+                            Cost Posting Method
+                        </td>
+                        <td class="attributcurrvalue">
+                                          
+                            <select asp-for="finan_CostPostingMethod" asp-items="Model.postmethod" class="form-control custom-select Inputborder">
+                            </select>
+                        </td>
+                    </tr>
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+                            Enable Cost Center
+                        </td>
+                        <td class="attributcurrvalue">
+
+                            <select asp-for="finan_enablecostcenter" asp-items="Model.postmethod" class="form-control custom-select Inputborder">
+                            </select>
+                        </td>
+
+                    </tr>
+
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+                            Expense Journal Type
+                        </td>
+                        <td class="attributcurrvalue">
+
+                            <select asp-for="finan_ExpenseJournalType" asp-items="Model.JornyType" class="form-control custom-select Inputborder">
+                            </select>
+                        </td>
+                    </tr>
+
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+                                Include Sales Return On StockLedger
+                            </td>
+                        <td class="attributcurrvalue">
+                            <select asp-for="finan_IncludeSalesReturnOnStockLedger" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder">
+                            </select>
+                        </td>
+                    </tr>
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+                            Include Stock Adjustment On StockLedger
+                        </td>
+                        <td class="attributcurrvalue">
+                            <select asp-for="finan_IncludeStockAdjustmentOnStockLedger" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder">
+                            </select>
+                        </td>
+                    </tr>
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+                                Payroll Journal Posting Type
+                        </td>
+                        <td class="attributcurrvalue">
+                            <select asp-for="finan_PayrollJournalPostingType" asp-items="Model.payyrollJourny" class="form-control custom-select Inputborder">
+                            </select>
+                        </td>
+                    </tr>
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+                            Perpetual Cost Method
+                        </td>
+                        <td class="attributcurrvalue">
+                            <select asp-for="finan_PerpetualCostMethod" asp-items="Model.costMethod" class="form-control custom-select Inputborder">
+                            </select>
+                        </td>
+                    </tr>
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+                            Production Flow
+                        </td>
+                        <td class="attributcurrvalue">
+                            <select asp-for="finan_ProductionFlow" asp-items="Model.productionflow" class="form-control custom-select Inputborder">
+                            </select>
+                        </td>
+                    </tr>
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+                                Real Time Cost Management
+                        </td>
+                        <td class="attributcurrvalue">
+                            <select asp-for="finan_RealTimeCostManagement" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder">
+                            </select>
+                        </td>
+                    </tr>
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+                                Revenue Journal Type
+                        </td>
+                        <td class="attributcurrvalue">
+                            <select asp-for="finan_RevenueJournalType" asp-items="Model.JornyType" class="form-control custom-select Inputborder">
+                            </select>
+                        </td>
+                    </tr>
+
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+                            Sales Journal Type
+                        </td>
+                        <td class="attributcurrvalue">
+                            <select asp-for="finan_SalesJournalType" asp-items="Model.salsesjoury" class="form-control custom-select Inputborder">
+                            </select>
+                        </td>
+                    </tr>
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+
+                            Show Balance On TrialBalance
+                        </td>
+                        <td class="attributcurrvalue">
+                            <select asp-for="finan_ShowBalanceOnTrialBalance" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder">
+                            </select>
+                        </td>
+                    </tr>
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+                                Stock Movement Cost Calculation
+                        </td>
+                        <td class="attributcurrvalue">
+                            <select asp-for="finan_StockMovementCostCalculation" asp-items="Model.stockmovment" class="form-control custom-select Inputborder">
+                            </select>
+                        </td>
+                    </tr>
+                    @{oldvalue = oldvalue + 1;}
+
+                    <tr class="treegrid-@oldvalue mainparent">
+                        <td colspan="2">
+                            Peachtree Settings
+                        </td>
+                    </tr>
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+
+                                Peachtree Service Charge Account
+                        </td>
+                        <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#PeachtreeAccountModal">
+
+                            <input asp-for="finan_PeachtreeServiceChargeAccount" id="peachtree" value="00:00:00" class="Inputborder" readonly>
+                        </td>
+                    </tr>
+
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+ 
+                                    Peachtree Version To Export
+                        </td>
+                        <td class="attributcurrvalue">
+                            <select asp-for="finan_PeachtreeVersion" asp-items="Model.peachtree" class="form-control custom-select Inputborder">
+                            </select>
+                        </td>
+                    </tr>
+
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+                                PeachtreeTaxAccount
+                        </td>
+                        <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#PeachtreeTaxAccountModal">
+
+                            <input asp-for="finan_PeachtreeTaxAccount" id="peachtreeTax" value="00:00:00" class="Inputborder" readonly>
+                        </td>
+                    </tr>
+                    <tr class="treegrid-parent-@oldvalue">
+                        <td class="attributdata">
+                                Send As Master Stock Item
+                        </td>
+                        <td class="attributcurrvalue">
+                            <select asp-for="finan_SendAsMasterStockItem" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder">
+                            </select>
+                        </td>
+                    </tr>
+
+                </table>
+
+            </form>
+        </div>
+     </div>
+    </div>
+ </div>
+
+<script>
+    $(function () {
+        $("#filterfinanceSetting").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#finance_setting_table > tbody > tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+<script>
+
+    function TreeFunctionaFinanceModule() {
+        $(document).ready(function () {
+            $('.tree-basic').treegrid();
+
+            $('.tree_loadfinan').treegrid({
+                source: function (id, response) {
+                    if (id != 1) response(['']);
+                    else response(['']);
+                }
+            });
+
+        });
+    }
+    TreeFunctionaFinanceModule();
+</script>
+
+
+<script>
+    $('#ware_StockBalanceServiceStarts').timepicker({ 'timeFormat': 'H:i' });
+
+    function TreeFunctionfinance() {
+        $(document).ready(function () {
+            $('.tree-basic').treegrid();
+
+            $('.tree_loadfinan').treegrid({
+                source: function (id, response) {
+                    if (id != 1) response(['']);
+                    else response(['']);
+                }
+            });
+
+        });
+    }
+    TreeFunctionfinance();
+
+
+</script>
+
+ <script>
+
+     function isNumber(evt) {
+         var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+         if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+             return false;
+         }
+         else {
+
+             return true;
+         }
+
+     }
+ </script>
+<script>
+    var selectedCountry = "";
+
+    var row = ""
+
+    $("select.select2").change(function () {
+        selectedCountry = $(this).children("option:selected").text();
+
+        $(".bg-blue").removeClass("bg-blue");
+        //var row = $(".addvaluepropertyLisearch:contains(" + selectedCountry + "));
+        $("input[name*='" + selectedCountry + "']").addClass("bg-blue");
+        /*location.href = '#resp-table'*/
+    });
+
+ </script>
+<script>
+    $('.attributdata').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).children('.inputfield').val();*/
+        var value = $(this).text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).closest("tr").addClass('boderclr');
+        $('#FinanicalSettingVal').html(value);
+
+    });
+    $('.attributcurrvalue').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).siblings().children('.inputfield').val();*/
+        var value = $(this).siblings().text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).siblings().addClass("boderclr");
+        $('#FinanicalSettingVal').html(value);
+
+    });
+    $("#FinancialPropertySetting").change(function () {
+        var value = $(this).select2('data')[0].text;
+        $(".boderclr").removeClass("boderclr");
+        $("input[name*='" + value + "']").addClass('boderclr');
+        $("input[name*='" + value + "']").closest("tr").addClass('boderclr');
+
+        $('#FinanicalSettingVal').html(value);
+    });
+   </script>
+

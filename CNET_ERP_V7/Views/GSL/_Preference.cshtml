@@ -1,0 +1,161 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_V7_Entities.DataModels;
+@using Newtonsoft.Json;
+@model GSLmodel;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var Preference = await sharedHelpers.GetpreferenceByreference(Model.gslType);
+   
+    var msg = Model.message;
+    var ArticleTypes = await sharedHelpers.GetsystemConstantById(Convert.ToInt32(Model.gslType));
+
+    var preferenceList = ArticleTypes?.FirstOrDefault()?.Id;
+    var categoryType = ArticleTypes?.FirstOrDefault()?.Category;
+
+    var Preferenceaccess = await sharedHelpers.GetpreferenceByreference(preferenceList);
+    var PreferenceaccessList = Preferenceaccess?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Description }).ToArray();
+
+   }
+<style>
+    .prefrenceheader {
+        background-color: dodgerblue;
+    }
+
+    .showafterclickpreferenceforparent {
+        display: none;
+    }
+
+    .predesc {
+        white-space:nowrap;
+    }
+
+    .parentidsettingtab{
+        height:80vh;
+        overflow-y:scroll;
+        overflow-x:hidden;
+    }
+
+    .preferential{
+        white-space:nowrap;
+        cursor:pointer;
+    }
+</style>
+<div class="box box-primary">
+    <div class="box-body parentidsettingtab">
+        <table id="preferentail_gssl_type" class="table  tree-load">
+            <thead>
+                <tr class="treegrid-3 treegrid-parent-1">
+                    <th>Description</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Preference != null && Preference.Count() > 0)
+                {
+                    @foreach (var item in Preference)
+                    {
+                        var ParentExist = Preference?.Any(x => x.Id == item.ParentId);
+                        if (item.ParentId == null|| ParentExist == false || item.Id == item.ParentId)
+                        {
+                            var parentDesc = Preference.Find(c => c.Id == item.ParentId)?.Description;
+                            var count = 1;
+                            <tr class="treegrid-@item.Id preferential preferentialParent" data-value="@count" data-types="@item.Id">
+                                <td class="predesc">
+                                    <a data-toggle="tab" style="text-decoration-line:none; color:black !important" name="catagory" id="@item.Id">
+                                        @item.Description
+                                    </a>
+                                </td>
+                                <td><a class=" btn btn-xs" onclick="EditPreferenceFunction('@item.Id')" data-toggle="modal"><i class="fa fa-edit"></i></a></td>
+                                <td><a href="#" class="btn btn-social-icon btn-xs preferencebtndelete" data-code="@item.Id"><i class="fa fa-trash" style="color:red"></i></a></td>
+
+
+                            </tr>
+                            var childs = Preference.Where(t => t.ParentId == item.Id && t.ParentId != t.Id).ToList();
+
+                            if (childs.Count() > 0)
+                            {
+                                @foreach (var childItem in childs)
+                                {
+                                    var ChildModel = new GSLmodel { prefcode = childItem.Id, prefparent = childItem.ParentId, prefdescription = childItem.Description, codeforgslTYpe = Model.gslType, TreeCount = count, };
+                                    @await Html.PartialAsync("_Preferencechild", ChildModel)
+                                    ;
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    <input type="checkbox" asp-for="prefCount" checked="checked" hidden/>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    function TreeFunction() {
+        $(document).ready(function () {
+            $('.tree-basic').treegrid();
+
+            $('.tree-load').treegrid({
+                source: function (id, response) {
+                    if (id != 1) response(['']);
+                    else response(['']);
+                }
+            });
+
+        });
+    }
+    TreeFunction();
+</script>
+<script>
+    $(document).on("click", ".preferential", function () {
+        $(".activeidSetting").removeClass("activeidSetting");
+        $(this).closest("tr").addClass('activeidSetting');
+    });
+
+
+    $(document).ready(function () {
+
+      var msg =   @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(msg));
+        if (msg != "" && msg != undefined) {
+            swal("", msg, "success");
+        }
+    });
+
+    function EditPreferenceFunction(CODE) {
+        var code = CODE;
+         $.ajax({
+            type: "GET",
+            dataType: 'json',
+            url: '@Url.Action("GetPreferenceBycode", "GSL")',
+            data: { code: code},
+             success: function (data) {
+                 $('#@nameof(Model.prefrencecodeforupdate)').val(data.id);
+                 $('#@nameof(Model.prefParent)').val(data.parent).trigger('change');
+                 $('#@nameof(Model.prefDescription)').val(data.description);
+                 $('#@nameof(Model.prefFont)').val(data.font).trigger('change');
+                 $('#@nameof(Model.prefshoppingcate)').val(data.obdefcode).trigger('change');
+               $('#preferenctilaModal').modal("show");
+            },
+        });
+    }
+
+  
+</script>
+
+<script>
+    $('#@nameof(Model.prefParent)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(PreferenceaccessList)),
+        placeholder: "select preference",
+        allowClear: true
+
+    });
+</script>
+
+
+
+
+

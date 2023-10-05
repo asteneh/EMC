@@ -1,0 +1,125 @@
+﻿@model CNET_ERP_V7.Models.FramworkModels.GlobalParamsModel
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    ViewData["Title"] = "Dashboard";
+}
+@{
+    
+    var personInfo = Model?.personInfo;
+    //var currentPeriod = await _uIProcessManager.GetPeriodByTypeAndDate(CNETConstantes.PERIOD_TYPE_ACCOUNTING, DateTime.Now);
+    var company_ = await sharedHelpers.GetCompany();
+    var company = company_?.FirstName;
+    //var accessLevel = await _uIProcessManager.GetRoleAccessLevel(personRole.role);
+    //var currentPeriodName = currentPeriod != null ? currentPeriod.periodName : "";
+
+}
+
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h5>
+        Dashboard
+    </h5>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <!-- Main row -->
+    <div class="row">
+        <!--<div class="col-md-3">-->
+        <!-- Profile Image -->
+        <!--<div class="box box-primary">
+                <div class="box-body box-profile">
+                    <img class="profile-user-img img-responsive img-circle" src="~/images/guest.png" alt="User profile picture">
+
+
+
+                    <p class="text-muted text-center text-sm">roleDefinition?.description</p>
+
+                    <a asp-controller="Login" asp-action="Logout" class="btn btn-primary btn-block"><b>Log out</b></a>
+                </div>
+            </div>
+        </div>-->
+        <!-- /.col -->
+        <div class="col-md-10">
+            <!-- Default box -->
+            <div class="box box-primary">
+                @*<div class="box-header with-border">
+                        <h3 class="box-title">Title</h3>
+
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                                    title="Collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
+                    </div>*@
+                <div class="box-body">
+                    @{
+                        if (company != null)
+                        {
+                            <h5>Welcome to <b>@company</b></h5>
+                        }
+                        else
+                        {
+                            <h5>Welcome</h5>
+                        }
+                    }
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Access Level: <b>20%</b></h6>
+                            <h6>Release Date: <b>06-04-2019  (V7.0.1.1)</b></h6>
+                            <h6>Accounting Period: <b>June </b></h6>
+
+                        </div>
+                        <div class="col-md-6">
+                            <h6 >Branch: <b><a data-toggle="modal" data-target="@*#branch-modal*@"><i class="fa fa-warning text-red"></i> <span class="text-red">Head OFFICE</span></a></b></h6>
+                            <h6>Current Date: <b>@String.Format("{0} G.C. /{1} E.C./", DateTime.Now.ToLongDateString(), DateTime.Now.ToString())</b></h6>
+                        </div>
+                        
+                    </div>
+
+                </div>
+                <!-- /.box-body -->
+                @*<div class="box-footer">
+                        Footer
+                    </div>*@
+                <!-- /.box-footer-->
+            </div>
+            <!-- /.box -->
+        </div>
+        <!-- /.col -->
+        <div class="col-md-2">
+            <!-- Profile Image -->
+            <img class="img-responsive" src="~/images/RED logo m-08.jpg" alt="CNET Software Technologies P.L.C" height="120" width="120" style=" background: #ff00000f;">
+            @*<div class="box">
+                    <div class="box-body">
+
+                    </div>
+                </div>*@
+            <!-- /.box -->
+        </div>
+        <!-- /.col -->
+        <div class="col-md-12">
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row (main row) -->
+
+</section>
+
+
+<script>
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        $($.fn.dataTable.tables(true)).DataTable()
+            .columns.adjust()
+    });
+</script>
+

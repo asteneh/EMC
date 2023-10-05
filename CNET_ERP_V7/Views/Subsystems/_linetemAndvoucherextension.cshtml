@@ -1,0 +1,129 @@
+﻿@using CNET_V7_Domain.Domain.ViewSchema;
+@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_ERP_V7.Common.Helpers;
+@model CNET_ERP_V7.Models.SubSytsemModel.VoucherSearchModel
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var Vextension = Model?.vExtension;
+
+    int count = 0;
+}
+<style>
+    .vIdDefiniation {
+        height: 77vh;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    .vIdDefiniation {
+        white-space: nowrap
+    }
+
+    .vIdDefiniation {
+        overflow-y: auto; /* make the table scrollable if height is more than 200 px  */
+        height: 77vh /* gives an initial height of 200px to the table */
+    }
+
+        .vIdDefiniation th {
+            position: sticky; /* make the table heads sticky */
+            top: 0px; /* table head will be placed from the top of the table and sticks to it */
+        }
+
+    /*table {
+                border-collapse: collapse;*/ /* make the table borders collapse to each other */
+    /*width: 100%;
+            }*/
+
+    th,
+    td {
+        padding: 0 0 !important;
+        border: 1px solid #ccc;
+    }
+
+    th {
+        background-color: rgb(179, 236, 255)
+    }
+</style>
+<div class="border vIdDefiniation" style="border:1px solid #e5e5e5;">
+    <table id="voucher_Extension_table" class="table table-striped container-fluid" style="background-color:#ffffff" width="105%">
+        <thead>
+            <tr class="attendancesum">
+                <th>Description</th>
+                <th>Is Mandatory</th>
+                <th>Datatype</th>
+                <th>Remark</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Vextension != null && Vextension.Count() > 0)
+            {
+                @foreach (var item in Vextension)
+                {
+                   
+                    <tr class="attendancesum">
+                        <td>@item.Descritpion</td>
+                        <td> <input class="form-check-input" type="checkbox" id="" @(Convert.ToBoolean(item?.IsMandatory) ? "checked" : "") onclick="return false" /></td>
+                        <td>@item.ExDataType</td>
+                        <td>@item?.Remark</td>
+                        <td><a class="btn btn-social-icon btn-xs" onclick="EditVoucherExtenFunction('@item?.Id')"><i class="fa fa-edit"></i></a></td>
+                        <td><a href="#" class="btn btn-social-icon btn-xs" onclick="DeletewVoucherExtenFunction('@item?.Id')"><i class="fa fa-trash"></i></a></td>
+
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    function EditVoucherExtenFunction(_id) {
+        var code = _id;
+        $.ajax({
+            type: "GET",
+            dataType: 'json',
+            url: '@Url.Action("GetVoucherExtensionId", "Subsystems")',
+            data: { code: code },
+            success: function (data) {
+                $('#@nameof(Model.coderefeforupdateforlineandvoucher)').val(data.id);
+                $('#@nameof(Model.descforlineandvoucher)').val(data.descrption);
+                $('#@nameof(Model.ismandaforlineandvoucher)').prop('checked', data.ismanu);
+                $('#@nameof(Model.Vindex)').val(data.index);
+                $('#@nameof(Model.datetimeforlineandvoucher)').val(data.exdate).trigger('change');
+                $('#@nameof(Model.remarkforlineandvoucher)').val(data.remark);
+                $('#LineandVoucherextensionJobOrderVoucher').modal("show");
+            },
+        });
+    }
+
+    function DeletewVoucherExtenFunction(CODE) {
+        var Vouchersettingpreferentila = $('#@nameof(Model.documentType)').val();
+        var getheader =    $('#@nameof(Model.headerType)').val();
+        swal({
+            title: "are you sure to delete this ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "POST",
+                        dataType: 'json',
+                        url: '@Url.Action("DeleteVoucherDefinition", "Subsystems")',
+                        data: { code: CODE},
+
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        success: function (data) {
+                            swal("", data, "success");
+                            submitfunctionforlineandvoucher(getheader, Vouchersettingpreferentila);
+
+                        }
+                    });
+                }
+            });
+
+    }
+
+</script>

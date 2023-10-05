@@ -1,0 +1,49 @@
+﻿@model SecurityModel
+@using CNET_ERP_V7.Models.Security;
+@using CNET_V7_Domain.Domain.SecuritySchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Newtonsoft.Json;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@inject CNET_ERP_V7.Common.AuthNavigation.AuthenticationManager _authenticationManager
+
+@{
+    var _sysdash = Model?._subsystemDashbord;
+}
+<style>
+    .createacount {
+        height: 80vh;
+        overflow-y: scroll
+    }
+</style>
+<div class="border createacount">
+    <form class="form-horizontal" id="systemdashboardNewFormData" method="post">
+        <table id="subdashboardprvilage_detail_List" class="table table-striped tree-load" style="background-color:#ffffff">
+            <thead>
+                <tr>
+                    <th>Access</th>
+                    <th>Functionaliy</th>
+                    <th>Description</th>
+                    <th>Type</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @if (_sysdash != null && _sysdash.Count() > 0)
+                {
+                    foreach (var item in _sysdash)
+                    {
+                        <tr>
+                            <td> <input class="form-check-input" name="subsysDashpriviligefuncCode[]" value="@item.FunctionId" type="checkbox" id="" @(Convert.ToBoolean(item?.Access) ? "checked" : "") onclick="return true" /></td>
+                            <td>@item?.Description</td>
+                            <td>@item?.Description</td>
+                            <td>@item?.CategoryDesc</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        <input asp-for="subsysrolecode" value="@Model?.subsysrolecode" hidden />
+    </form>
+</div>
+
+

@@ -1,0 +1,213 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model moduleModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var comp = sharedHelpers.GetCompany();
+    var comptin = comp?.Result?.Tin;
+    var orgunitDefnBranch = await sharedHelpers.GetCompanyBranchsByTin(comptin);
+   
+    var Itemarticle = await sharedHelpers.SelectArticleByGSLtype(11);
+
+    var pricedesc = await sharedHelpers.GetSystemConstantByCat("Price Description");
+
+}
+<style>
+    .modalbody {
+        position: relative;
+        padding: 20px;
+        height: 200px;
+        overflow-y: scroll;
+    }
+
+    .modaldialog {
+        max-width: 700px; /* New width for default modal */
+    }
+
+    .btnlength {
+        height: 50%;
+    }
+</style>
+<div class="modal fade" id="DefaultorgunitDefn">
+    <div class="modal-dialog modaldialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <span>Branch</span>
+                </h5>
+            </div>
+            <div class="box-body">
+                <div class="modal-body modalbody">
+                    <div class="row">
+                       <div class="col-md-12" style="margin-top:25px">
+
+                                <div class="row">
+
+                                    <div class="divTable">
+
+                                        <div class="col-md-8" style="margin-left:0px ;" id="">
+                                            <ul class="sidebar-men secondNav tree " data-widget="tree" id="">
+                                                @foreach (var item in orgunitDefnBranch)
+                                                {
+                                                <li class="nav-item treeview menu-open attachmentType" id="">
+                                                    <a data-toggle="tab" data-value="@item.Name" data-types="@item.Id/@item.Name" id="a123" style="text-decoration-line:none!important" name="catagory" class="addDefaultorgunitDefnItem">
+                                                        <span class="labelcss" selectedValue="@item.Name">@item.Id/@item.Name</span>
+                                                    </a>
+                                                </li>
+                                                }
+
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <button class="btn btn-default btn-sm btnlength" type="reset" id="defaultorgunitDefnselect">Ok</button>
+
+                    <button class="btn btn-default btn-sm btnlength" id="defaultorgunitDefdismissal" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="boxArticleModal">
+    <div class="modal-dialog modaldialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <span>Item</span>
+                </h5>
+            </div>
+            <div class="box-body">
+                <div class="modal-body modalbody">
+                    <div class="row">
+                        <div class="col-md-12" style="margin-top:25px">
+
+                            <div class="row">
+
+                                <div class="divTable">
+
+                                    <div class="col-md-8" style="margin-left:0px ;" id="">
+                                        <ul class="sidebar-men secondNav tree " data-widget="tree" id="">
+                                            @foreach (var item in Itemarticle)
+                                            {
+                                                <li class="nav-item treeview menu-open attachmentType" id="">
+                                                    <a data-toggle="tab" data-value="@item.Name" data-types="@item.Id/@item.Name" id="a123" style="text-decoration-line:none!important" name="catagory" class="addDefaultorgunitDefnItem">
+                                                        <span class="labelcss" selectedValue="@item.Name">@item.Id/@item.Name</span>
+                                                    </a>
+                                                </li>
+                                            }
+
+                                        </ul>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <button class="btn btn-default btn-sm btnlength" type="reset" id="takeawayboxselect">Ok</button>
+
+                    <button class="btn btn-default btn-sm btnlength" id="artilceboxdismissal" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="PriceTypeModal">
+    <div class="modal-dialog modaldialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <span>Price</span>
+                </h5>
+            </div>
+            <div class="box-body">
+                <div class="modal-body modalbody">
+                    <div class="row">
+                        <div class="col-md-12" style="margin-top:25px">
+
+                            <div class="row">
+
+                                <div class="divTable">
+
+                                    <div class="col-md-8" style="margin-left:0px ;" id="">
+                                        <ul class="sidebar-men secondNav tree " data-widget="tree" id="">
+                                            @foreach (var item in pricedesc)
+                                            {
+                                                <li class="nav-item treeview menu-open attachmentType" id="">
+                                                    <a data-toggle="tab" data-value="@item.Description" data-types="@item.Id /@item.Description" id="a123" style="text-decoration-line:none!important" name="catagory" class="addDefaultorgunitDefnItem">
+                                                        <span class="labelcss" selectedValue="@item.Description">@item.Id/@item.Description</span>
+                                                    </a>
+                                                </li>
+                                            }
+
+                                        </ul>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <button class="btn btn-default btn-sm btnlength" type="reset" id="PriceType_desriptionselect">Ok</button>
+
+                    <button class="btn btn-default btn-sm btnlength" id="priceTypedismissal" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+    var valueitem = "";
+    $(document).ready(function () {
+
+        $(".addDefaultorgunitDefnItem").click(function () {
+            valueitem = $(this).data("types");
+        });
+
+        $("#defaultorgunitDefnselect").click(function () {
+
+            $('#Default_organ_branch').val(valueitem);
+            $('#defaultorgunitDefdismissal').trigger('click');
+             valueitem = "";
+
+        });
+
+        $("#takeawayboxselect").click(function () {
+
+            $('#takeaway_articlebox').val(valueitem);
+            $('#artilceboxdismissal').trigger('click');
+            valueitem = "";
+        });
+        $("#PriceType_desriptionselect").click(function () {
+
+            $('#price_description_Type').val(valueitem);
+            $('#priceTypedismissal').trigger('click');
+            valueitem = "";
+        });
+
+    });
+
+</script>
+

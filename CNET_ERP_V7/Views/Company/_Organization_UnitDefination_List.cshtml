@@ -1,0 +1,138 @@
+﻿@model Companymodel
+@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+
+@{
+         var spacficOrg = Model?.organization_unit_type;
+        //var relationanndVouch = Model.vw_Vouchers;
+        var lookups = Model?.lookups;
+
+}
+<style>
+    .vIdDefiniation {
+        height: 77vh;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    .vIdDefiniation {
+        white-space: nowrap
+    }
+
+    .vIdDefiniation {
+        overflow-y: auto; /* make the table scrollable if height is more than 200 px  */
+        height: 77vh /* gives an initial height of 200px to the table */
+    }
+
+        .vIdDefiniation th {
+            position: sticky; /* make the table heads sticky */
+            top: 0px; /* table head will be placed from the top of the table and sticks to it */
+        }
+
+    /*table {
+                border-collapse: collapse;*/ /* make the table borders collapse to each other */
+    /*width: 100%;
+            }*/
+
+    th,
+    td {
+        padding: 0 0 !important;
+        border: 1px solid #ccc;
+    }
+
+    th {
+        background-color: rgb(179, 236, 255)
+    }
+</style>
+
+<div class="box-body vIdDefiniation">
+            <table class="table table-striped tree-load table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th>Descrption</th>
+                        <th>Name</th>
+                        <th>code</th>
+                        <th>Specialization</th>
+                        <th>Abbriviation</th>
+                        <th>Responsible Person</th>
+                        <th>Is Active</th>
+                        <th>IsOnline</th>
+                        <th>Ecommerce</th>
+                        <th>Remark</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                        <tbody>
+                    @if (spacficOrg != null && spacficOrg.Count() >0)
+                    {
+                        @foreach (var item in spacficOrg)
+                        {
+                                var ParentExist = spacficOrg?.Any(x => x?.Id == item?.ParentId);
+                                var parentDesc = spacficOrg.Find(c => c.Id == item?.ParentId)?.Id;
+
+                          if (string.IsNullOrEmpty(item?.ParentId.ToString()) || ParentExist == false || parentDesc == null || item.Id == item.ParentId)
+                                {
+                                    var specialzz = await sharedHelpers.GetsystemConstantById(item?.Specialization);
+                                    var specialz = specialzz?.FirstOrDefault()?.Description;
+                                    var specialzcode = specialzz?.FirstOrDefault()?.Id;
+
+
+                                   @* var resperson = relationanndVouch.Where(x => x.idNumber == item?.Id)?.FirstOrDefault()?.name;
+
+                                    var respersoncode = relationanndVouch?.Where(x => x.idNumber == item?.Id)?.FirstOrDefault()?.code;*@
+
+                                    <tr class="treegrid-@item?.Id">
+                                        <td>@item?.Name</td>
+                                        <td>@item?.Description</td>
+                                        <td>@item?.Id</td>
+                                        <td>@specialz</td>
+                                        <td>@item?.Abrivation</td>
+                                        <td></td>
+                                        <td> <input class="form-check-input" type="checkbox" id="" @(Convert.ToBoolean(item?.IsActive) ? "checked" : "") onclick="return false" /></td>
+                                        <td> <input class="form-check-input" type="checkbox" id="" @(Convert.ToBoolean(item?.IsOnline) ? "checked" : "") onclick="return false" /></td>
+                                        <td> <input class="form-check-input" type="checkbox" id="" @(Convert.ToBoolean(item?.Ecommerce) ? "checked" : "") onclick="return false" /></td>
+                                         <td>@item?.Remark</td>
+
+                                        <td><a href="#" class="btn btn-social-icon btn-xs btnUpdateorgunitdef" data-code="@item?.Id" data-desc="@item.Name" data-spe="@specialzcode" data-abb="@item.Abrivation" data-paren="@parentDesc" data-resp="" data-remm="@item.Remark" data-toggle="modal" data-target="#OrganizationUnitModal"><i class="fa fa-edit"></i></a></td>
+                                        <td><a href="#" class="btn btn-social-icon btn-xs btnDeleteorgunitdef" onclick="DeleteOrgunitFunction('@item.Id')" data-code="@item.Id"><i class="fa fa-trash"></i></a></td>
+
+                                    </tr>
+                                    var childs = spacficOrg?.Where(t => t.ParentId == item.Id && t.ParentId != t.Id).ToList();
+
+                                    if (childs?.Count > 0)
+                                    {
+                                        @foreach (var childItem in childs)
+                                        {
+                                            var ChildModel = new Companymodel { orgunitcode = childItem.Id, orgunitparent = childItem.ParentId, orgdescription = childItem.Description, orgname = childItem.Name,organization_unit_type = Model.organization_unit_type @*vw_Vouchers = Model.vw_Vouchers*@, lookups = Model.lookups };
+                                            @await Html.PartialAsync("_OrganizationUnitDefchild", ChildModel)
+                                            ;
+                                        }
+                                    }
+                                }
+                        }
+                    }
+                  
+                </tbody>
+            </table>
+        </div>
+
+<script>
+    function TreeFunction() {
+        $(document).ready(function () {
+            $('.tree-basic').treegrid();
+
+            $('.tree-load').treegrid({
+                source: function (id, response) {
+                    if (id != 1) response(['']);
+                    else response(['']);
+                }
+            });
+
+        });
+    }
+    TreeFunction();
+ </script>

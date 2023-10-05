@@ -1,0 +1,132 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_V7_Entities.DataModels;
+@using Newtonsoft.Json;
+@model GSLmodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var copyDis = Model?.distributions;
+}
+<style>
+    .vIdDefiniation {
+        height: 76vh;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    .vIdDefiniation {
+        white-space: nowrap
+    }
+
+    .vIdDefiniation {
+        overflow-y: auto; /* make the table scrollable if height is more than 200 px  */
+        height: 76vh /* gives an initial height of 200px to the table */
+    }
+
+        .vIdDefiniation th {
+            position: sticky; /* make the table heads sticky */
+            top: 0px; /* table head will be placed from the top of the table and sticks to it */
+        }
+
+    /*table {
+                        border-collapse: collapse;*/ /* make the table borders collapse to each other */
+    /*width: 100%;
+                    }*/
+
+    th,
+    td {
+        padding: 0 0 !important;
+        border: 1px solid #ccc;
+    }
+
+    th {
+        background-color: rgb(179, 236, 255)
+    }
+</style>
+
+
+<div class="border vIdDefiniation" style="border:1px solid #e5e5e5;">
+    <table id="copy_Distribution_table" class="table table-striped container-fluid" style="background-color:#ffffff" width="105%">
+        <thead>
+            <tr class="attendancesum">
+                <th>Copy</th>
+                <th>Destination</th>
+                <th>Printer</th>
+                <th>Edit</th>
+                <th>delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (copyDis != null && copyDis.Count() > 0)
+            {
+                @foreach (var item in copyDis)
+                {
+                    var look = await sharedHelpers.GetLookUpById(item.Index);
+                    var device = await sharedHelpers.GetConsigneeunitById(Convert.ToInt32(item.Destination));
+                    <tr class="attendancesum">
+                        <td>@look?.FirstOrDefault()?.Description</td>
+                        <td>@device?.FirstOrDefault()?.Name</td>
+                        <td>@item?.Remark</td>
+                        <td><a class="btn btn-social-icon btn-xs" onclick="EditGslCopyDisFunction('@item?.Id')" data-toggle="modal"><i class="fa fa-edit"></i></a></td>
+                        <td><a href="#" class="btn btn-social-icon btn-xs" onclick="DeletecopyDdisFunction('@item?.Id')"><i class="fa fa-trash"></i></a></td>
+
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function DeletecopyDdisFunction(CODE) {
+        var _idd = $('#@nameof(Model.distridutioName)').val();
+        var gslcode = $('#@nameof(Model.gslType)').val();
+        var code = CODE;
+        swal({
+            title: "are you sure to delete this ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "POST",
+                        dataType: 'json',
+                        url: '@Url.Action("deleteDistribution", "GSL")',
+                        data: { code: code },
+
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        success: function (data) {
+                            swal("", data, "success");
+                            submitfunctioncopydistributionarticle(_idd, gslcode);
+                        }
+                    });
+                }
+            });
+
+
+    }
+</script>
+
+<script>
+    function EditGslCopyDisFunction(_idd) {
+        $.ajax({
+            type: "GET",
+            dataType: 'json',
+            url: '@Url.Action("GetDistributionBycode", "GSL")',
+            data: { code: _idd },
+            success: function (data) {
+                $('#@nameof(Model.codeforupdatedistributionart)').val(data.code);
+                $('#@nameof(Model.copydisart)').val(data.index).trigger('change');
+                $('#@nameof(Model.destinatindisart)').val(data.destin).trigger('change');
+                $('#@nameof(Model.printerdisart)').val(data.remark).trigger('change');
+                $('#copydstributionModalarticle').modal("show");
+            },
+        });
+    }
+
+</script>
+
+

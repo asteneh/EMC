@@ -1,0 +1,196 @@
+﻿@model Companymodel
+@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var organizationIdentificationTypes = await sharedHelpers.GetLookUpByType("Organization Identification Type");
+    var organizationIdent = await sharedHelpers.GetIIdentification();
+    var company = await sharedHelpers.GetConsigneeByType(1);
+    var organizationIdentificationreference = organizationIdent.Where(x => x.Consignee == company?.FirstOrDefault()?.Id).ToList();
+
+    List<IdentificationDTO> iddefiniwithoutidsettingList = new List<IdentificationDTO>();
+
+    if (organizationIdentificationreference != null && organizationIdentificationreference.Count() > 0)
+    {
+        foreach (var item in organizationIdentificationreference)
+        {
+            if (organizationIdentificationTypes.Select(x => x.Description).Contains(item.Description))
+            {
+                iddefiniwithoutidsettingList.Add(new IdentificationDTO { Id = item.Id, Description = item.Description, IdNumber = item.IdNumber, Type = item.Type });
+
+            }
+        }
+    }
+    else
+    {
+        if (organizationIdentificationTypes != null && organizationIdentificationTypes.Count() > 0)
+        {
+            foreach (var item in organizationIdentificationTypes)
+            {
+                iddefiniwithoutidsettingList.Add(new IdentificationDTO { Id = 0, Description = item.Description, IdNumber = null, Type = item.Id });
+
+            }
+        }
+    }
+
+}
+
+<style type="text/css">
+    .sptable {
+        border: 1px solid #ccc;
+        border-collapse: collapse;
+        background-color: #fff;
+        /* width: 100%;*/
+    }
+
+        .sptable .asth {
+            background-color: #3c8dbc;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .sptable th, table td {
+            padding: 1px;
+            border: 1px solid #ccc;
+        }
+
+        .sptable, .sptable .sptable td {
+            border: 0px solid #ccc;
+        }
+
+            .sptable [type=text], select {
+                width: 100%;
+            }
+
+    .identificatinn {
+        height: 25vh;
+    }
+</style>
+<fieldset class=" col-md-10 filedset identificatinn form-group form-group-sm" style="border:0.5px solid #e5e5e5; width:100%; height:10%">
+
+    <div class="box box-primary">
+        <legend class="text-sm" style="padding-left:10px; border-bottom: none; font-size:20px">Identification</legend>
+        <div class="box-body">
+
+            <center> <p class="text-red" id="TINerrorMessage"></p></center>
+            @*<form id="" asp-action="" asp-controller="" method="post">*@
+
+            <table @*cellpadding="0" cellspacing="0"*@ class="sptable">
+                <tr class="asth">
+                    <td>Description</td>
+                    <td>Identification Number</td>
+                    <td>Type</td>
+                </tr>
+                @foreach (var item in iddefiniwithoutidsettingList)
+                {
+                    <input value="@item.Description" class="form-control" type="hidden" asp-for="identificationDescription" />
+                    <input value="@item.Id" class="form-control" type="hidden" asp-for="identificationcode" />
+                    <input value="@item.Type" class="form-control" type="hidden" asp-for="identificationType" />
+                    <input type="hidden" asp-for="companyNote" />
+                    <input type="hidden" asp-for="notecode" />
+
+                    <tr data-value="@item.Description" class="addressrow">
+
+                        <td>@item.Description</td>
+                        <td>
+                            @if (@item.Description == "TIN")
+                            {
+                                <a data-toggle="tab" data-value="@item.Description" data-types="@item.Id" style="text-decoration-line:none!important;" name="catagory" id="@item.Id" class="identificationID">
+
+                                    <input class="form-control identificationNum" id="idNumberr" min="10" maxlength="13" name="idNumber[]" value="@item.IdNumber" onkeypress="return isTinNumber(event)" onInput="return edValueKeyPress(eve)" style="height:25px;" autocomplete="off" />
+                                </a>
+                            }
+                            else
+                            {
+                                <a data-toggle="tab" data-value="@item.Description" data-types="@item.Id" style="text-decoration-line:none!important;" name="catagory" id="@item.Id" class="identificationID">
+
+                                    <input class="form-control" name="idNumber[]" value="@item.IdNumber" style="height:25px;" autocomplete="off" />
+                                </a>
+
+                            }
+
+                        </td>
+
+                        <td>@item.Description</td>
+
+                    </tr>
+
+                }
+            </table>
+
+            <input asp-for="tinmun" type="checkbox" hidden />
+            @*</form>*@
+            <br />
+            <br />
+
+        </div>
+    </div>
+</fieldset>
+
+<script>
+    $(function () {
+        $('#@nameof(Model.issueDate)').datepicker()
+        $('#@nameof(Model.expiryDate)').datepicker()
+
+    })
+</script>
+
+<script>
+    var ID = "";
+
+    function isTinNumber(evt) {
+
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
+            }
+            else {
+
+                return true;
+            }
+
+    }
+
+    var edValue;
+    var Numvalue;
+    var Numbervalue;
+    var defaultvalue;
+    var str;
+    var tinnumbool;
+    function edValueKeyPress(e) {
+
+         str = $("#idNumberr").val();
+
+        if (str.length == 10) {
+            defaultvalue = str;
+
+        }
+        if (str.length == 11) {
+            defaultvalue = str.substring(0,10);
+            Numbervalue = str.substring(10);
+            $("#idNumberr").val(defaultvalue + "-" + Numbervalue);
+        }
+        return true;
+    }
+    $("#idNumberr").mouseout(function () {
+
+         var strlen = $("#idNumberr").val();
+        if (strlen.length < 10) {
+            $("#TINerrorMessage").text("Invalid Input.Tin NUmber must be equal To or greater than 10").tooltip();
+
+            $("#@nameof(Model.tinmun)").prop('checked', true);
+            $("#@nameof(Model.compTin)").prop('checked', true);
+
+        }
+        else {
+            tinnumbool = false;
+            $("#TINerrorMessage").text("").popover();
+           $("#@nameof(Model.tinmun)").prop('checked', false);
+        }
+    });
+</script>
+

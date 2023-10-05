@@ -1,0 +1,188 @@
+﻿@*@model SecurityModel
+@using CNET_ERP_V7.Models.Security;
+@using CNET_V7_Domain.Domain.SecuritySchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Newtonsoft.Json;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@inject CNET_ERP_V7.Common.AuthNavigation.AuthenticationManager _authenticationManager
+@{
+    List<VoucherObject> VoucherWorkflowobj = new List<VoucherObject>();
+    List<VoucherObject> VoucherDefWorkflowobj = new List<VoucherObject>();
+    List<VoucherObject> listVoucherWorkflowobj = new List<VoucherObject>();
+  
+
+
+    var cnetcomp = await sharedHelpers.GetSytemConstants();
+
+
+    var voucherDefchild = await sharedHelpers.GetSystemConstantByCat("Transaction");
+    var voucherDefLiist = voucherDefchild?.GroupBy(x => x.Type).Select(y => y.First());
+
+    var cnetcompType = voucherDefchild?.Where(v => v.Type == "CoMP000000635").GroupBy(x => x.Type).Select(y => y.First());
+    var ComponentList = (from cnt in cnetcomp
+                         join vch in voucherDefLiist
+                            on cnt.Id equals vch.Type
+                         select new
+                         {
+                             cnt.Id,
+                             cnt.Description,
+                         }).ToList();
+    VoucherWorkflowobj = cnetcompType.Select(y => new VoucherObject
+    {
+        code = y.Type,
+        description = y.Type
+
+    }).ToList();
+
+    VoucherDefWorkflowobj = ComponentList.Select(y => new VoucherObject
+    {
+        code = y.code,
+        description = y.description
+
+    }).ToList();
+
+    listVoucherWorkflowobj.AddRange(VoucherWorkflowobj);
+    listVoucherWorkflowobj.AddRange(VoucherDefWorkflowobj);
+
+    var voucherDefList = listVoucherWorkflowobj?.Select(d => new CNET_ERP_V7.Models.SelectorModel.Select2Result()
+    {
+        text = "Sub System: " + d.description,
+        children = voucherDefchild?.Where(y => y.Type == d.code).Select(x => new CNET_ERP_V7.Models.SelectorModel.Select2Result() { id = x.Na.ToString() + "/" + d.description, text = x.name }).ToList()
+
+    }).ToArray();
+
+  
+}
+
+<style>
+    .createacount {
+        height: 80vh;
+        overflow-y: scroll
+    }
+
+    .select2-container--default .select2-results__group {
+        border: solid 0.3px lightgray;
+        cursor: grabbing;
+        margin-left: 5px;
+    }
+
+    .select2-results__options--nested > li {
+        background-color: #ecf0f5;
+        font-size: 14px;
+        margin-left: 15px;
+        border-left: solid 0.3px lightgray;
+        border-left: solid 0.3px lightgray;
+    }
+</style>
+<div class="row">
+    <div class="row">
+        <div class="form-group form-group-sm">
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="box-body basicinfo">
+                                <div class="row">
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-md-3 control-labell text-right ">Voucher Definition</label>
+                                        <div class="col-md-8">
+                                            <select class="form-control select2" asp-for="voucher_definition" style="width:100%">
+                                                <option></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="box-body">
+                                <div class="row">
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-md-2 control-labell">Remark</label>
+                                        <div class="col-md-8">
+                                            <input asp-for="voucher_remark" class="form-control" />
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-2 control-label"></label>
+                            <div class="col-md-2" style="margin-left:5px">
+                                <a role="button" id="addvoucherDashboardprivillegebtn" class="btn btn-secondary btn-flat" style="background-color:lightgray; width:100%; margin:0px; height:28px">
+                                     Add
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                   </div>
+                </div>
+            </div>
+        </div>
+</div>
+<div class="col-md-12">
+    <div class="border createacount">
+        <form class="form-horizontal" id="VoucerDashboardprivilegeNewFormData" asp-controller="Security" asp-action="saveVoucerDashboardprivilege" method="post">
+
+            <table id="voucherdashbardprvilage_detail_List" class="table table-striped tree-load" style="background-color:#ffffff">
+                <thead>
+                    <tr>
+                        <th>SN</th>
+                        <th>SubSystem</th>
+                        <th>Voucher Definition</th>
+                        <th>Remark</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <input asp-for="voucherdashrole" hidden />
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+
+    $(document).ready(function () {
+
+        $('#voucherdashbardprvilage_detail_List').DataTable({
+            "paging": false,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": false,
+            "info": false,
+            "autoWidth": true,
+            "retrieve": true,
+            "sDom": 'lfrtip'
+        });
+    });
+</script>
+
+<script>
+
+      $('#@nameof(Model.voucher_definition)').select2({
+        data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(voucherDefList)),
+        placeholder: "",
+          allowClear: true
+
+      });
+
+    $("body").on('click', '.select2-results__group', function () {
+        $(this).siblings().slideToggle("slow");
+    })
+</script>
+
+*@

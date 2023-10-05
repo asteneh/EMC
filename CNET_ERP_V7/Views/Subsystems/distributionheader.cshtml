@@ -1,0 +1,179 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@model VoucherSearchModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var organizationTypes = await sharedHelpers.GetsystemConstantById(Convert.ToInt32(Model.documentType));
+
+    var distributionList = await sharedHelpers.GetSystemConstantByCat("Distribution Type");
+
+}
+<style>
+
+    .parentfiekdformat {
+        background-color: #eee;
+        font-size: 18px;
+    }
+
+    .displaynone {
+        display: none;
+    }
+
+    .activeidSetting {
+        background-color: dodgerblue;
+        width: auto;
+    }
+
+    .mainsysType {
+        height: 76vh;
+        white-space: nowrap;
+        cursor: pointer;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    .idSetting {
+        cursor: pointer;
+        white-space: nowrap;
+    }
+</style>
+    <div class="box-body">
+
+        <input asp-for="getselecteddistributioncode" type="text" id="@nameof(Model.getselecteddistributioncode)" hidden />
+        <input hidden asp-for="VoucherSettingCode" />
+        <input hidden asp-for="distrutionType" />
+
+        <div class="box box-primary">
+            <input asp-for="filedformatcodeforheaderselection" type="text" id="@nameof(Model.filedformatcodeforheaderselection)" hidden />
+
+            <div style="border:1px solid #e5e5e5;" class="mainsysType">
+                <table class="table table-sm" id="VoucherFieldFormat_Table" width="100%">
+                    <thead>
+                        <tr class="treegrid-3 treegrid-parent-1">
+                            <th colspan="2" style="border:1px solid #e5e5e5; background-color:lightgray">Description</th>
+
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @if (distributionList != null && distributionList.Count() > 0)
+                        {
+
+                            @foreach (var item in distributionList)
+                            {
+                                <tr onclick="GetDistributiontById('@item.Id')" class="activeconsinee">
+                                    @if (item?.Description == "Copy Distribution")
+                                    {
+                                        <td>  <i class="fa fa-book"></i>@item?.Description</td>
+                                     
+                                    }
+                                    else if (item?.Description == "Synchronization")
+                                    {
+                                        <td> <i class="fa fa-book"></i>@item?.Description</td>
+                                       
+                                    }
+                                    else if (item?.Description == "Machine Distribution")
+                                    {
+                                        <td>  <i class="fa fa-building-o"></i>@item?.Description</td>
+                                      
+                                    }
+
+                                </tr>
+                            }
+                        }
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+    </div>
+
+@*<script>
+        $('#@nameof(Model.VoucherSettingCode)').val($('#@nameof(Model.PersonType)').val());
+    </script>*@
+
+<script>
+    function GetDistributiontById(code) {
+     
+        var vcode = $('#@nameof(Model.documentType)').val();
+        $('#@nameof(Model.distrutionType)').val(code);
+        switch (code) {
+            case "1578":
+                $('#copydistribution').removeClass('displaydistribution')
+                $('#synchronization').addClass('displaydistribution')
+                $('#machinedistribution').addClass('displaydistribution')
+                $('#copydistributionMap').removeClass('displaynone')
+                $('#synchronizationMap').addClass('displaynone')
+                $('#mechiinedistributionMap').addClass('displaynone')
+                $('#copydistributionMap').prop('disabled', false)
+                $(function () {
+                        $.ajax({
+                            url: '/Subsystems/getCopydistribution',
+                            type: 'POST',
+                        data: { id: code, vouchercode: vcode }, // send the data object with the request
+                            success: function (result) {
+                                $('#copydistribution').html(result);
+                            },
+                            error: function () {
+                                console.log('Error occurred.');
+                            }
+                        });
+                  });
+                break;
+                case "1580":
+                    $('#copydistribution').addClass('displaydistribution')
+                    $('#synchronization').removeClass('displaydistribution')
+                    $('#machinedistribution').addClass('displaydistribution')
+                    $('#copydistributionMap').addClass('displaynone')
+                    $('#synchronizationMap').removeClass('displaynone')
+                    $('#mechiinedistributionMap').addClass('displaynone')
+                       $(function () {
+                            $.ajax({
+                                url: '/Subsystems/getsynchronizarion',
+                                type: 'POST',
+                               data: { id: code, vouchercode: vcode }, // send the data object with the request
+                                success: function (result) {
+                                 $('#synchronization').html(result);
+                                },
+                                error: function () {
+                                    console.log('Error occurred.');
+                                }
+                            });
+                        });
+                    break;
+                 case "1579":
+                    $('#copydistribution').addClass('displaydistribution')
+                    $('#synchronization').addClass('displaydistribution')
+                    $('#machinedistribution').removeClass('displaydistribution')
+                    $('#copydistributionMap').addClass('displaynone')
+                    $('#synchronizationMap').addClass('displaynone')
+                    $('#mechiinedistributionMap').removeClass('displaynone')
+                  $(function () {
+                            $.ajax({
+                                url: '/Subsystems/getmachinedistribution',
+                                type: 'POST',
+                                data: { id: code, vouchercode: vcode }, // send the data object with the request
+                                success: function (result) {
+                                    $('#machinedistribution').html(result);
+                                },
+                                error: function () {
+                                    console.log('Error occurred.');
+                                }
+                            });
+                        });
+                    break;
+        }
+    }
+</script>
+
+
+    
+
+
+

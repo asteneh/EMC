@@ -1,0 +1,116 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_V7_Entities.DataModels;
+@using Newtonsoft.Json;
+@model GSLmodel;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var ValueFactors = Model.ValueFactors;
+}
+<style>
+    .parentfiekdformattab {
+        height: 90vh;
+        overflow-y: scroll;
+    }
+</style>
+<div class="box box-primary">
+
+    <div class="box-body parentfiekdformattab">
+        <table id="value_factor_definition" class="table table-striped tree-load mapstorefordestination" style="background-color:#ffffff">
+            <thead>
+                <tr>
+
+                    <th width="250px">Description</th>
+                    <th width="250px">Value</th>
+                    <th width="250px">Is Percent</th>
+                    <th width="250px">Remark</th>
+                    <th width="250px">Edit</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (ValueFactors != null && ValueFactors.Count() > 0)
+                {
+                    @foreach (var item in ValueFactors)
+                    {
+                        <tr>
+                            <td>@item.Description</td>
+                            <td>@item.Value</td>
+                            <td> <input class="form-check-input" type="checkbox" id="" @(Convert.ToBoolean(item.IsPercent) ? "checked" : "") onclick="return false" /></td>
+                            <td>@item.Remark</td>
+                            <td><a class="btn btn-social-icon btn-xs" onclick="EditValueFacFunction('@item.Id')" data-toggle="modal"><i class="fa fa-edit"></i></a></td>
+                            <td><a href="#" class="btn btn-social-icon btn-xs" onclick="DeleteValueFacFunction('@item.Id', '@item.Type', '@item.GslType')"><i class="fa fa-trash"></i></a></td>
+
+                        </tr>
+                    }
+                }
+               
+            </tbody>
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+   
+ function EditValueFacFunction(CODE) {
+        var code = CODE;
+         $.ajax({
+            type: "GET",
+            dataType: 'json',
+            url: '@Url.Action("GetValueFactBycode", "GSL")',
+            data: { code: code},
+           success: function (data) {
+                $('#@nameof(Model.codeforupdatevalueDefn)').val(data.id);
+               $('#@nameof(Model.valuDescription)').val(data.description);
+               $('#@nameof(Model.valueDefnvalue)').val(data.value);
+               $('#@nameof(Model.valueIspercent)').prop('checked', data.isPercent);
+               $('#@nameof(Model.valueremark)').val(data.remark);
+
+               $('#ValueFactorDefnModal').modal("show");
+            },
+        });
+    }
+
+    function DeleteValueFacFunction(CODE, type, typeList) {
+        var code = CODE;
+        var type = type;
+        var typelist = typeList
+        swal({
+            title: "are you sure to delete this ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "POST",
+                        dataType: 'json',
+                        url: '@Url.Action("deleteValueFacDefn", "GSL")',
+                        data: { code: code },
+
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        success: function (data) {
+                            swal("", data, "success");
+                            $.ajax({
+                                type: "GET",
+                                dataType: 'html',
+                                url: '@Url.Action("getValueDefnByTypeandGslList", "GSL")',
+                                data: { type: type, gslcode: typelist },
+
+                                success: function (data) {
+
+                                    $('#ValueDefContent').html(data);
+                                }
+                            });
+
+                        }
+                    });
+
+                }
+            });
+     };
+
+</script>

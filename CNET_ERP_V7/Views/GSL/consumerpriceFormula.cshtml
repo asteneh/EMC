@@ -1,0 +1,97 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model GSLmodel
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+
+<style>
+    .modaldialogprice {
+        width: 620px;
+    }
+</style>
+
+<div class="modal fade" id="consumePriceformulaMaoModal">
+    <div class="modal-dialog modaldialogprice">
+        <div class="modal-content">
+            <div class="box-body">
+                <div class="modal-body">
+                    <div class="row">
+                        <form class="form-horizontal" id="VoucherTaxFormData" method="post">
+
+
+                            <div class="col-md-12" style="margin-top:25px">
+
+                                <div class="row">
+
+                                    <div class="divTable">
+
+                                        <div class="col-md-6" style="margin-left:0px ;">
+                                            <ul class="sidebar-men secondNav tree " data-widget="tree" id="">
+
+                                                <li class="nav-item treeview menu-open attachmentType" id="ConsumerPriceFormulaModal">
+                                                    <a data-toggle="tab" data-value="" data-types="Send To OneNote 2013" style="text-decoration-line:none!important" name="catagory" class="addlabelprinteritem">
+                                                        <span class="labelcss" selectedValue="">Consumer Price Formula = Normal Price</span>
+                                                    </a>
+
+                                                    <ul class="treeview-menu" style="padding-left:35px; background-color:white;" id="">
+                                                    </ul>
+                                                </li>
+
+                                            </ul>
+
+
+                                        </div>
+                                        <br />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-md-1 control-label"></label>
+                                        <div class="col-md-3">
+                                            <select asp-for="price_oprationconsum" asp-items="Model.price_oprations" class="form-control select2 selectopration" style="width:340px;">
+                                                <option></option>
+                                            </select>
+                                            <span asp-validation-for="price_oprationconsum"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-md-1 control-label"></label>
+                                        <div class="col-md-3">
+                                            <input asp-for="valueItemcon" class="form-control" autocomplete="off" />
+                                            <span asp-validation-for="valueItemcon"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+                <div class="col-md-12">
+                    <button type="button" action="addRow" class="btn btn-default btn-sm" id="consumepriceformulabtnSave">Ok</button>
+                    <button class="btn btn-default btn-sm" id="consumpricedatadismis" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+    var normalvalue = "Normal Price";
+    var getpricrformulaID = ""
+    var selectedOpratioin = "";
+    $("select.selectopration").change(function () {
+        selectedOpratioin = $(this).children("option:selected").val();
+    });
+    $("#consumepriceformulabtnSave").click(function () {
+        var inputfiledvalu = $('#@nameof(Model.valueItemcon)').val();
+        $('#consumerPriceFormula').val(normalvalue + selectedOpratioin + inputfiledvalu)
+        $('#consumpricedatadismis').trigger('click');
+
+    });
+
+</script>

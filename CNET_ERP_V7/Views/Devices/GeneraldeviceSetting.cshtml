@@ -1,0 +1,56 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model Devicemodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var id = Model.deviceId;
+    var deviceTypes = await sharedHelpers.GetdeviceById(Model?.DeviceType);
+    var deviceTypecode = deviceTypes?.FirstOrDefault()?.Description;
+}
+<style>
+    .sourcePage {
+        display: none;
+    }
+</style>
+
+<div class="row">
+
+    <div class="col-md-2" id="servernameforWithoutparameter">
+        <div id="maintainDeviceCintent">
+            @await Html.PartialAsync("_serverdevicename")
+        </div>
+    </div>
+   @* <div class="col-md-2 sourcePage" id="servernameforparameter">
+        @await Html.PartialAsync("_serverdevicenameParameter")
+    </div>*@
+    <div class="col-md-10">
+        <div id="settingContent">
+            @await Html.PartialAsync("deviceSetting")
+        </div>
+    </div>
+    <input type="hidden" id="selecteSubTab" value="" />
+</div>
+
+
+
+<script>
+    function SelectOrderStationMap(stationdevice) {
+        var preference = $("#articleType").val();
+          var posDevice =  $('#@nameof(Model.posDevice)').val();
+        $(function () {
+            $.ajax({
+                url: '/Devices/GetOrderStationMap',
+                type: 'POST',
+                data: { stationdevice: stationdevice, preference: preference, posDevice: posDevice },
+                success: function (result) {
+                    $('#preferenceValue').html(result);
+                },
+                error: function () {
+                    console.log('Error occurred.');
+                }
+            });
+        });
+    }
+</script>
+ 

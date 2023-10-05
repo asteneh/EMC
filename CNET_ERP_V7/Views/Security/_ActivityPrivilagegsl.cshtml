@@ -1,0 +1,104 @@
+﻿@model SecurityModel
+@using CNET_ERP_V7.Models.Security;
+@using CNET_V7_Domain.Domain.SecuritySchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Newtonsoft.Json;
+@{
+    var rolegsl = Model?.rolegsl;
+}
+<style>
+    .createacount {
+        height: 80vh;
+        overflow-y: scroll
+    }
+</style>
+<div class="border createacount">
+    <table id="activityprvilage_detail_gslList" class="table table-striped tree-load" style="background-color:#ffffff">
+        <thead>
+            <tr>
+                <th>Activity Definition</th>
+                <th>Pass Key Require</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (rolegsl != null && rolegsl.Count() > 0)
+            {
+                foreach (var item in rolegsl)
+                {
+                    <tr> 
+                        <td>@item.Description</td>
+                        <td> <input class="form-check-input" value="@item.Id" type="checkbox" id="" @(Convert.ToBoolean(item?.NeedsPassCode) ? "checked" : "") onclick="return false" /></td>
+                        <td><a class="btn btn-social-icon btn-xs" onclick="EditgslRoleActivityFunction('@item?.Id')"><i class="fa fa-edit"></i></a></td>
+                        <td><a href="#" class="btn btn-social-icon btn-xs" onclick="DeletegRoleActivityFunction('@item?.Id')"><i class="fa fa-trash"></i></a></td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function EditgslRoleActivityFunction(_id) {
+        var code = _id;
+        $.ajax({
+            type: "GET",
+            dataType: 'json',
+            url: '@Url.Action("GetroleActivityById", "Security")',
+            data: { code: code },
+            success: function (data) {
+                $('#@nameof(Model.roleac_code)').val(data.code);
+                $('#@nameof(Model.activity_definition)').val(data.actidefn).trigger("change");
+                $('#@nameof(Model.activity_range)').val(data.range).trigger('change');
+                $('#@nameof(Model.activity_passkey)').prop('checked', data.passkey);
+                $('#@nameof(Model.activity_remark)').val(data.remark);
+
+                $('#modal_ActivityPrivilegeItems').modal("show");
+            },
+        });
+    }
+    function DeletegRoleActivityFunction(CODE) {
+        var roleTypeCode = $('#@nameof(Model.access_orgunitcode)').val();
+        var code = $('#@nameof(Model.activityType)').val();
+        swal({
+            title: "are you sure to delete this ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "POST",
+                        dataType: 'json',
+                        url: '@Url.Action("Deleteroleactivity", "Security")',
+                        data: { code: CODE },
+
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        success: function (data) {
+                            swal("", data, "success");
+                            submitfunctionactivityPrivilegegsl(code, roleTypeCode);
+
+
+                        }
+                    });
+                }
+            });
+
+    }
+ 
+    function Clearactivitydef(create) {
+        if (create == true) {
+            $('#@nameof(Model.roleac_code)').val("");
+            $('#@nameof(Model.activity_definition)').val("").trigger('change');
+            $('#@nameof(Model.activity_range)').val("").trigger('change');
+            $('#@nameof(Model.activity_passkey)').prop('checked', "");
+            $('#@nameof(Model.activity_remark)').val("").trigger('change');
+
+        }
+    }
+
+</script>
+
+

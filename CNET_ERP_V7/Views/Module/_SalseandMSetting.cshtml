@@ -1,0 +1,186 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain;
+@using Newtonsoft.Json;
+@model moduleModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var subSystemId = await sharedHelpers.GetsystemConstantById(Model.subSyType);
+
+}
+<style>
+
+
+
+    .Inputborderbrows {
+        border: 1px solid #eee;
+        width: 408px;
+    }
+
+    .labelwidth {
+        height: 15px;
+    }
+
+  /*  .inputfield {
+        border-top-style: hidden;
+        border-right-style: hidden;
+        border-left-style: hidden;
+        border-bottom-style: hidden;
+        background-color: #eee;
+        width: 350px;
+        font-size: 14px;
+        max-height: 25px;
+    }*/
+
+        .inputfield:focus {
+            outline: none;
+        }
+
+    .inputfield {
+        pointer-events: none;
+        opacity: 30;
+        width: 80%;
+        height: 16px !important;
+        padding: 0px 0px !important;
+        font-size: 13px !important;
+    }
+
+    .Inputborder:focus {
+        border: 1px solid #1670BE;
+        box-shadow: 0 0 3px #1670BE;
+        outline-offset: 0px;
+        outline: none;
+    }
+
+    .Inputborder {
+        border: 1px solid #eee;
+        font-size: 13px !important;
+        height: 17px !important;
+        line-height: 2px !important;
+        text-emphasis-position: initial !important;
+        margin-top: 0px !important;
+        padding: 0px 0px !important;
+    }
+
+
+    .mainparent {
+        color: dodgerblue;
+        background-color: #eee;
+    }
+
+    .boderclr {
+        background-color: dodgerblue;
+    }
+
+    #resp-table {
+        display: table;
+        overflow-y: scroll;
+    }
+
+    #resp-table-header {
+        display: table-header-group;
+        font-weight: bold;
+        font-size: 25px;
+    }
+
+    .table-header-cell {
+        display: table-cell;
+        padding: 5px;
+        text-align: justify;
+        border-bottom: 1px solid #eee;
+    }
+
+    #resp-table-body {
+        display: table-row-group;
+    }
+
+    .resp-table-row {
+        display: table-row;
+        margin-left: 20px;
+    }
+
+    .table-body-cell {
+        display: table-cell;
+        margin-left: 20px;
+    }
+
+    #resp-table-caption {
+        display: table-caption;
+        text-align: center;
+        font-size: 30px;
+        font-weight: bold;
+    }
+
+    .hiddebutn {
+        border: none;
+        resize: none;
+        outline: none;
+        margin: 0px;
+        width: 20px;
+        background-color: white;
+    }
+
+    .none {
+        display: none;
+    }
+
+    .custom-select {
+        max-height: 28px;
+        font-size: 13px;
+    }
+
+    .nopadding {
+        border: 1px solid #eee;
+        padding-left: 0px;
+        padding-right: 0px;
+        margin-left: 0px;
+        margin-right: 0px;
+        height: 25px;
+        width: 786px;
+    }
+
+    .parent1 {
+        width: 100%;
+    }
+
+    .vouproperty {
+        height: 96vh;
+        overflow-y: scroll;
+        overflow-x: scroll;
+        width: 100%;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="box box-primary">
+
+            <div class="box-header with-border">
+                <div class="row">
+                    <div class="col-md-11">
+                        <div class="row">
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-1 control-labell"> Find</label>
+                                <div class="col-md-9">
+                                    <select class="form-control select2" asp-for="subpeoperty" id="propertysect" style="width:100%"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               
+            </div>
+            <div class="box-body vouproperty">
+                 
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+

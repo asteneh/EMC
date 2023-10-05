@@ -1,0 +1,230 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_V7_Entities.DataModels;
+@using Newtonsoft.Json;
+@model GSLmodel;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+  
+    var comp = sharedHelpers.GetCompany();
+    var comptin = comp?.Result?.Tin;
+    var orgBranchList = await sharedHelpers.GetCompanyBranchsByTin(comptin);
+    var orgBranchListType = orgBranchList?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Name }).ToArray();
+
+    var controlaccountList = await sharedHelpers.GetAccount();
+    var controlaccountListType = controlaccountList?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Id + "   -  " + t.Description }).ToArray();
+
+
+}
+<style>
+    .preferentialParent{
+        cursor:pointer;
+    }
+</style>
+<div class="modal fade" id="accountmapModal">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <img src="~/images/Cnets.jpg" alt="CNET" />
+                    <span>Account Map</span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                </h5>
+
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form class="form-horizontal" id="accountmapNewFormData" onsubmit="return articleaccountmapNewFormFunction()" asp-controller="GSL" asp-action="createaccountmap" method="post">
+                        <div class="col-md-12">
+                                <button class="btn btn-app" type="reset" id="IssuedbtnNew"> <i class="fa fa-file-o"></i>New</button>
+                                <button type="submit" action="addRow" class="btn btn-app" id="articleiaccountmapbtnNewsave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                                <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                           
+                        </div>
+
+                        <div class="col-md-12" style="margin-top:25px">
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Description</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="accdescription" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="accdescription"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Account</label>
+                                    <div class="col-md-9">
+                                        <select asp-for="accountmapdescription" class="form-control select2" style="width:340px;">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="accountmapdescription"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Organization Unit</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="accountdescriptionorgunit" class="form-control select2" style="width:340px;">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="accountdescriptionorgunit"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Remark</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="remark" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="remark"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <input hidden asp-for="preferencecodeforupdateaccmap" />
+                        <input hidden asp-for="preferencecodeforupdateorgunit" />
+                        <input hidden asp-for="referencecode" />
+                        <input hidden asp-for="preferencecodefordeleteaccmap" />
+                        <input hidden asp-for="preferencecodefordeleteorgunit" />
+
+
+                        <input hidden asp-for="Prefcode" />
+
+
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<script>
+     $('#@nameof(Model.accountmapdescription)').select2({
+        data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(controlaccountListType)),
+        placeholder: "select preference",
+        allowClear: true
+
+     });
+    $('#@nameof(Model.accountdescriptionorgunit)').select2({
+        data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(orgBranchListType)),
+        placeholder: "",
+        allowClear: true
+
+    });
+</script>
+<script>
+    var preferencecode = "";
+    $(document).on("click", ".preferentialParent", function () {
+
+        preferencecode = $(this).data('types');
+          $.ajax({
+                type: "GET",
+                dataType: 'html',
+                url: '@Url.Action("getaccountmappreference", "GSL")',
+                data: { prefcode: preferencecode },
+
+                success: function (data) {
+
+                    $('#accountmapContent').html(data);
+                }
+           });
+
+            $('#@nameof(Model.referencecode)').val(preferencecode);
+            $('#@nameof(Model.Prefcode)').val(preferencecode);
+ });
+
+    function articleaccountmapNewFormFunction() {
+
+        var $form = $('#accountmapNewFormData');
+        var data = $form.serialize();
+        var action = $('#accountmapNewFormData').attr("action");
+        $.ajax({
+        type: "POST",
+        url: action,
+        data: data,
+        success: function (data) {
+                swal("", data, "success");
+
+                   $.ajax({
+                        type: "GET",
+                        dataType: 'html',
+                        url: '@Url.Action("getaccountmappreference", "GSL")',
+                      data: { prefcode: preferencecode },
+
+                        success: function (data) {
+
+                            $('#accountmapContent').html(data);
+                        }
+                   });
+            ClearaccountmapModal();
+
+
+        },
+        });
+        return false;
+    };
+</script>
+<script>
+  
+
+    $(document).on("click", ".btnDeleteaccountmap", function () {
+        var codeforaccount = $(this).data('code');
+        swal({
+            title: "are you sure to delete this ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "POST",
+                        dataType: 'json',
+                        url: '@Url.Action("Deleteacountmap", "GSL")',
+                        data: { code: codeforaccount },
+
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        success: function (data) {
+                                swal("", data.result, "success");
+                                $.ajax({
+                                    type: "GET",
+                                    dataType: 'html',
+                                    url: '@Url.Action("getaccountmappreference", "GSL")',
+                                    data: { prefcode: preferencecode },
+
+                                    success: function (data) {
+
+                                        $('#accountmapContent').html(data);
+                                    }
+                                });
+
+                        }
+                    });
+
+                }
+            });
+
+      });
+
+    function ClearaccountmapModal() {
+        $('#@nameof(Model.preferencecodeforupdateaccmap)').val("");
+        $('#@nameof(Model.accdescription)').val("");
+        $('#@nameof(Model.accountmapdescription)').val("").trigger('change');
+        $('#@nameof(Model.accountdescriptionorgunit)').val("").trigger('change');
+        $('#@nameof(Model.remark)').val("");
+    }
+</script>
+

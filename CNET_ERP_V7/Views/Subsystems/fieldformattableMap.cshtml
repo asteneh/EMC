@@ -1,0 +1,130 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@model VoucherSearchModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var FieldFormats = Model?.FieldFormats;
+    var filedTYpe = Model?.fieldType;
+    int count = 0;
+}
+<div class="box box-primary">
+
+    <div class="box-body parentfiekdformattab">
+        <table id="artcle_field_format_module" class="table table-striped tree-load" style="background-color:#ffffff">
+            <thead>
+                <tr>
+                    <th>SN</th>
+                    <th>Index</th>
+                    <th>Field</th>
+                    <th>Caption</th>
+                    <th>Width</th>
+                    <th>Color</th>
+                    @if (filedTYpe == 1617 || filedTYpe == 1621)
+                    {
+                        <th>Wrap Tex</th>
+                    }
+                    else
+                    {
+                        <th>Is Required</th>
+                    }
+                    <th>Remark</th>
+                    <th>Edit</th>
+                    <th>delete</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @if (FieldFormats != null && FieldFormats.Count() > 0)
+                {
+                    @foreach (var item in FieldFormats)
+                    {
+                        count++;
+                        <tr>
+                            <td>@count</td>
+                            <td>@item.Index</td>
+                            <td>@item.ObjectComponent</td>
+                            <td>@item.Caption</td>
+                            <td>@item.Width</td>
+                            <td> <input class="form-check-input" type="color" value="@item.Color" onclick="return false" /></td>
+                            <td> <input class="form-check-input" type="checkbox" @(Convert.ToBoolean(item?.IsRequired) ? "checked" : "") onclick="return false" /></td>
+                            <td>@item?.Remark</td>
+                            <td><a class="btnUpdatGSLList" onclick="EditfieldformatFunction('@item?.Id')" data-toggle="modal"><i class="fa fa-edit"></i></a></td>
+                            <td><a href="#" class="btn btn-social-icon btn-xs" onclick="DeletedfieldformatFunction('@item?.Id')" ><i class="fa fa-trash"></i></a></td>
+
+
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    function DeletedfieldformatFunction(_idd) {
+
+        var Vouchersettingfieldformat = $('#@nameof(Model.documentType)').val();
+        var fieldformat = $("#@nameof(Model.filedformatcodeforheadersave)").val();
+        swal({
+            title: "are you sure to delete this ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "POST",
+                        dataType: 'json',
+                        url: '@Url.Action("DeleteFiledformatarticle", "Subsystems")',
+                        data: { code: _idd },
+
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        success: function (data) {
+                            swal("", data, "success");
+                            $.ajax({
+                                url: '/Subsystems/getFieldformatResult',
+                                type: 'POST',
+                                data: { formattype: fieldformat, vouchercode: Vouchersettingfieldformat }, // send the data object with the request
+                                success: function (result) {
+                                    $('#VoucherFieldForatData').html(result);
+                                },
+                                error: function () {
+                                    console.log('Error occurred.');
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+
+    }
+       
+function EditfieldformatFunction(CODE) {
+        var code = CODE;
+
+        $.ajax({
+            type: "GET",
+            dataType: 'json',
+            url: '@Url.Action("GetGSLfiledformatBycode", "Subsystems")',
+            data: { code: code },
+            success: function (data) {
+
+                $('#@nameof(Model.code_feldformat)').val(data.code);
+                $('#@nameof(Model.fieldfrmat)').val(data.fieldComponent).trigger('change');
+                $('#@nameof(Model.widthfrmat)').val(data.width);
+                $('#@nameof(Model.indexfrmat)').val(data.index);
+                $('#@nameof(Model.fontfrmat)').val(data.font).trigger('change');
+                $('#@nameof(Model.colorfrmat)').val(data.color).trigger('change');
+                $('#@nameof(Model.captionfrmat)').val(data.caption);
+                $('#@nameof(Model.isrequiredfrmat)').prop('checked', data.isRequired);
+                $('#@nameof(Model.remarkfrmat)').val(data.remark);
+
+                $('#fildformatModelMap').modal("show");
+            },
+        });
+    }
+
+</script>

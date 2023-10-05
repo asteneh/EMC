@@ -1,0 +1,222 @@
+﻿@using CNET_V7_Domain.Domain.ViewSchema;
+@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_ERP_V7.Common.Helpers;
+@using Cnetv7BufferHolder;
+@model CNET_ERP_V7.Models.SubSytsemModel.VoucherSearchModel
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var gsltypeListbycat = await sharedHelpers.GetSytemConstantBytype("GSL Article");
+    var gsltypeListbycatType = gsltypeListbycat?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Description }).ToArray();
+
+    List<SystemConstantDTO> gsltypeList = GeneralBufferHolder.SystemConstants.Where(t => t.Type == "GSL Article" || t.Type == "GSL Consignee").ToList();
+ 
+    var gsltypeListType = gsltypeList?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Description }).ToArray();
+
+    var obgesatedetableden = await sharedHelpers.GetSytemConstantBytype("ObjectState Definition");
+    var obgesatedetable = obgesatedetableden.Where(x => x.Category == "Article" || x.Category == "Consignee").ToList();
+    var objectstateType = obgesatedetable?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Description }).ToArray();
+}
+<div class="modal fade" id="GslRequirementModelMap">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <img src="~/images/Cnets.jpg" alt="CNET" />
+                    <span>Gsl Requirement For Job Order Voucher</span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                </h5>
+
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form class="form-horizontal" id="gslrequirementforchildFormData" onsubmit="return artandconsinefortableNewFormFunction()" asp-controller="Subsystems" asp-action="creategslrequirementDetail" method="post">
+                        <div class="col-md-12">
+                            <div>
+                                <button class="btn btn-app" type="reset" id="IssuedbtnNew"> <i class="fa fa-file-o"></i>New</button>
+                                <button type="submit" action="addRow" class="btn btn-app" id="gslrequirementforchildbtnNewsave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                                <button class="btn btn-app closebutnIngslreq" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12" style="margin-top:25px">
+
+                            <div class="row" id="gslrequrementlistconsi">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Gsl</label>
+                                    <div class="col-md-9">
+                                        <select asp-for="gslreqconsi" class="form-control select2 gslrequrementlistconsi" style="width:340px;">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="gslreqconsi"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" id="gslrequrementlistarti">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Gsl</label>
+                                    <div class="col-md-9">
+                                        <select asp-for="gslreqarti" class="form-control select2 gslrequrementlistarti" style="width:340px;">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="gslreqarti"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Object State</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="objectsatereq" class="form-control select2" style="width:340px;">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="objectsatereq"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Remark</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="remarkreq" class="form-control" type="text" autocomplete="off" />
+                                        <span asp-validation-for="remarkreq"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input asp-for="requiredGSLDetailcodefrochid" hidden />
+                        <input asp-for="requiredGSLDetailcodeforedit" hidden />
+                        <input asp-for="requiredGSLDetailcodefordelete" hidden />
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+    var gslrequirementcild = "";
+    $(document).on("click", ".requiredGSLDetailListitem", function () {
+
+        gslrequirementcild = $(this).data('types');
+
+    });
+    function artandconsinefortableNewFormFunction() {
+    var code =  $('#@nameof(Model.requiredGSLDetailcodefrochid)').val();
+        var $form = $('#gslrequirementforchildFormData');
+        var data = $form.serialize();
+        var action = $('#gslrequirementforchildFormData').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            success: function (data) {
+                swal("", data, "success")
+                GetGslRequiredDetail(code);
+                Cleararticlenadconsilnechild();
+
+
+            },
+        });
+        return false;
+    };
+
+</script>
+<script>
+    var parentgsl = "";
+    var childgsl = "";
+    var childcode = "";
+    $(document).on("click", ".requiredGSLDetailListitemparent", function () {
+
+        parentgsl = $(this).data('value');
+        $('#showafterclickgslforchid').addClass('showafterclickgslforchid');
+        $('#showafterclickgslforparent').removeClass('showafterclickgslforchid');
+        $('#showafterclickgslforedit').addClass('showafterclickgslforchid');
+        $('#showafterclickgslfordelete').addClass('showafterclickgslforchid');
+        $(".activeidSetting").removeClass("activeidSetting");
+        $(this).closest("tr").addClass('activeidSetting');
+
+
+    });
+    $(document).on("click", ".requiredGSLDetailListitem", function () {
+
+        $('#showafterclickgslforchid').removeClass('showafterclickgslforchid');
+        $('#showafterclickgslforparent').addClass('showafterclickgslforchid');
+        $('#showafterclickgslforedit').removeClass('showafterclickgslforchid');
+        $('#showafterclickgslfordelete').removeClass('showafterclickgslforchid');
+        var gsltype =  $('#@nameof(Model.getparentselectedListforconsandart)').val();
+        switch (gsltype) {
+            case "1835":
+                $("#gslrequrementlistconsi").show();
+                $("#gslrequrementlistarti").hide();
+                $('#@nameof(Model.gslreqconsi)').select2({
+                    data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(gsltypeListType)),
+                    placeholder: "",
+                    allowClear: true
+
+                });
+                break;
+            case "1834":
+                $("#gslrequrementlistarti").show();
+                $("#gslrequrementlistconsi").hide();
+                $('#@nameof(Model.gslreqarti)').select2({
+                    data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(gsltypeListbycatType)),
+                    placeholder: "",
+                    allowClear: true
+
+                });
+                break;
+        }
+    });
+</script>
+
+<script>
+    $('#@nameof(Model.objectsatereq)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(objectstateType)),
+        placeholder: "",
+        allowClear: true
+
+    });
+</script>
+
+
+<script>
+    $(document).on("click", ".btnDeletegslrequirement", function () {
+
+        var deletegsl = $(this).data('code');
+        var table = $('#gsl_requiremenet').DataTable();
+        if (confirm('are you sure to delete this Field Format?')) {
+
+            table
+                .row($(this).parents('tr'))
+                .remove()
+                .draw()
+
+            $.ajax({
+                type: "POST",
+                dataType: 'json',
+                url: '@Url.Action("deletegslrequrmentItem", "Voucher")',
+                data: { requiredGSLDetailcodefordelete: deletegsl },
+
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                success: function (data) {
+                    swal("", data, "success")
+                }
+            });
+        }
+    });
+
+    function Cleararticlenadconsilnechild() {
+        $('#@nameof(Model.requiredGSLDetailcodeforedit)').val("");
+        $('#@nameof(Model.gslreqconsi)').val("").trigger('change');
+        $('#@nameof(Model.objectsatereq)').val("").trigger('change');
+        $('#@nameof(Model.remarkreq)').val("")
+    }
+</script>

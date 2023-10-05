@@ -1,0 +1,477 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model moduleModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var subsystemComp = await sharedHelpers.GetsystemConstantById(Model.subSyType);
+
+    var subsystemCompType = subsystemComp?.FirstOrDefault().Description?.Trim();
+    var subsystemCompdescType = subsystemCompType?.ToLower();
+    var title = "Module - " + subsystemComp?.FirstOrDefault().Description;
+
+    ViewData["Title"] = title;
+
+
+}
+<style>
+
+    .displayapp {
+        display: none;
+    }
+</style>
+<section class="content-header">
+    <h5>
+        @ViewData["Title"]
+    </h5>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#"><i class="fa fa-cart-plus"></i> Module</a></li>
+    </ol>
+</section>
+
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-body">
+                    <div class="col-md-7">
+                        <div style="float:left ;padding-top:1px">
+                            <a href="#" class="btn btn-app" id="btnNewSubsystemSetting"> <i class="fa fa-plus-circle"></i>New</a>
+
+                            <a href="#" class="btn btn-app" id="btnSavesubSystemPropertysetting"> <i class="fa fa-save"></i>Save</a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <input type="hidden" id="selectevouchTab" value="" />
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="nav-tabs-custom">
+                @if (subsystemCompType?.ToLower() == "human resource management system")
+                {
+                    <ul class="nav nav-tabs" id="Vouchersubsystem_tab_nav">
+                        <li class="active"><a href="#subSYSProperty" data-toggle="tab">Property</a></li>
+                        <li><a href="#cLearingDepartment" data-toggle="tab">Clearing Department</a></li>
+
+                    </ul>
+                }
+                else
+                {
+                    <ul class="nav nav-tabs" id="Vouchersubsystem_tab_nav">
+                        <li class="active"><a href="#subSYSProperty" data-toggle="tab">Property</a></li>
+
+                    </ul>
+                }
+
+                <div class="tab-content">
+                    @if (subsystemCompType?.ToLower() == "sales and marketing management system")
+                    {
+                        <div class="active tab-pane" id="subSYSProperty">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-7">
+                                        <div id="SandMMSSection">
+                                            @await Html.PartialAsync("_SalseandMSetting")
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                                            <span id="SubSettingVal" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                                            <h5 style="margin-left:10px;"></h5>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    }
+
+                    else if (subsystemCompType?.ToLower() == "warehouse management system")
+                    {
+                        <div class="active tab-pane" id="subSYSProperty">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-7">
+                                        @await Html.PartialAsync("_WareMSProperty")
+
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                                            <span id="WarehouseSettingVal" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                                            <h5 style="margin-left:10px;">Inventory Setting</h5>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    }
+                    else if (subsystemCompType?.ToLower() == "financial management system")
+                    {
+                        <div class="active tab-pane" id="subSYSProperty">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-7">
+                                        @await Html.PartialAsync("_financialProperty")
+
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                                            <span id="FinanicalSettingVal" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                                            <h5 style="margin-left:10px;"></h5>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else if (subsystemCompType?.ToLower() == "production management system")
+                    {
+
+                        <div class="active tab-pane" id="subSYSProperty">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-7">
+                                        @await Html.PartialAsync("_productionProperty")
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                                            <span id="productionSettingVal" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                                            <h5 style="margin-left:10px;"> Production Setting</h5>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    }
+                    else if (subsystemCompType?.ToLower() == "fixed asset management")
+                    {
+
+                        <div class="active tab-pane" id="subSYSProperty">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-7">
+                                        @await Html.PartialAsync("_FixedassetProperty")
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                                            <span id="FixedassetSettingVal" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                                            <h5 style="margin-left:10px;"> Production Setting</h5>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    }
+                    else if (subsystemCompType?.ToLower() == "property management system")
+                    {
+
+                        <div class="active tab-pane" id="subSYSProperty">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-7">
+                                        @await Html.PartialAsync("PMSsetting")
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                                            <span id="PropertySettingVal" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                                            <h5 style="margin-left:10px;"></h5>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    }
+                    else if (subsystemCompType?.ToLower() == "human resource management system")
+                    {
+
+                        <div class="active tab-pane" id="subSYSProperty">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-7">
+                                        @await Html.PartialAsync("_HrmsSetting")
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                                            <span id="HrmsSettingVal" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                                            <h5 style="margin-left:10px;"> HRMS Setting</h5>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    }
+                    else if (subsystemCompType?.ToLower() == "e-commerce management system")
+                    {
+
+                        <div class="active tab-pane" id="subSYSProperty">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-7">
+                                        @await Html.PartialAsync("ECommerceSettings")
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                                            <span id="ecommSettingVal" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                                            <h5 style="margin-left:10px;">ECommerce Setting</h5>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    }
+
+                    <div class=" tab-pane" id="cLearingDepartment">
+                        <div class="row">
+                            <div class="col-md-12">
+                                @await Html.PartialAsync("ClearingDept")
+
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <!-- /.tab-pane -->
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!--Issued Card Modal-->
+
+</section>
+
+<!--/finanical modall-->
+@await Html.PartialAsync("finanClosingfreModal")
+<!--./finanical modall-->
+<!--/closing modall-->
+@await Html.PartialAsync("closingperiodMap")
+<!--closing modall-->
+<!--/beginning modall-->
+@await Html.PartialAsync("Beginning_PeriodMap")
+<!--beginning modall-->
+<!--/Account modall-->
+@await Html.PartialAsync("ClosingCapitalAccountMap")
+<!--Account modall-->
+<!--/Account modall-->
+@await Html.PartialAsync("DefaultPaymentaccount")
+<!--Account modall-->
+<!--/Account modall-->
+@await Html.PartialAsync("Defaultreceivableaccount")
+<!--Account modall-->
+<!--/Account modall-->
+@await Html.PartialAsync("GItaccountModal")
+<!--Account modall-->
+<!--/Account modall-->
+@await Html.PartialAsync("IncomeSummaryAccount")
+<!--Account modall-->
+<!--/Account modall-->
+@await Html.PartialAsync("InterstIncomeaccount")
+<!--Account modall-->
+<!--/Account modall-->
+@await Html.PartialAsync("ProductionContraaccount")
+<!--Account modall-->
+<!--/Account modall-->
+@await Html.PartialAsync("Servicechargbank")
+<!--Account modall-->
+<!--/Account modall-->
+@await Html.PartialAsync("PeachtreeTaxAccount")
+<!--Account modall-->
+<!--/Account modall-->
+@await Html.PartialAsync("PeachtreeaccountModel")
+<!--Account modall-->
+<!--/HrmsSetting modall-->
+@await Html.PartialAsync("HrmsSettingModal")
+<!--Account modall-->
+<!--/HrmsSetting modall-->
+@await Html.PartialAsync("OrgubitModal")
+<!--Account modall-->
+<!--/HrmsSetting modall-->
+@await Html.PartialAsync("LabelPrinterModal")
+<!--Account modall-->
+<!--/HrmsSetting modall-->
+@await Html.PartialAsync("LostarticleModal")
+<!--Account modall-->
+<!--/ecommSetting modall-->
+@await Html.PartialAsync("OrgunitDefnModal")
+<!--ecommSetting modall-->
+
+
+<script>
+    var Subsystemcode = "";
+    $('#btnSavesubSystemPropertysetting').click(function () {
+        Subsystemcode = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(subsystemCompdescType));
+        if (Subsystemcode == "warehouse management system") {
+            $('#warehousePropertyFormData').submit();
+
+        }
+        else if (Subsystemcode == "financial management system") {
+            $('#finanicialPropertyFormData').submit();
+
+        }
+        else if (Subsystemcode == "production management system") {
+            $('#productPropertyFormData').submit();
+
+        }
+        else if (Subsystemcode == "fixed asset management") {
+            $('#fixedassetPropertyFormData').submit();
+
+        }
+        else if (Subsystemcode == "human resource management system") {
+            $('#producthrmsFormData').submit();
+
+        }
+        else if (Subsystemcode == "property management system") {
+            $('#PropertySettingFormData').submit();
+
+        }
+        else if (Subsystemcode == "e-commerce management system") {
+            $('#ecommercePropertyFormData').submit();
+
+        }
+    });
+
+    $('#warehousePropertyFormData').submit(function () {
+        var $form = $('#warehousePropertyFormData');
+        var data = $form.serialize();
+        var action = $(this).attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: function (data) {
+                swal("", data, "success");
+            },
+        });
+        return false;
+    });
+
+    $('#finanicialPropertyFormData').submit(function () {
+        var $form = $('#finanicialPropertyFormData');
+        var data = $form.serialize();
+        var action = $(this).attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: function (data) {
+                swal("", data, "success");
+            },
+        });
+        return false;
+    });
+
+    $('#productPropertyFormData').submit(function () {
+        var $form = $('#productPropertyFormData');
+        var data = $form.serialize();
+        var action = $(this).attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: function (data) {
+                swal("", data, "success");
+            },
+        });
+        return false;
+    });
+    $('#fixedassetPropertyFormData').submit(function () {
+        var $form = $('#fixedassetPropertyFormData');
+        var data = $form.serialize();
+        var action = $(this).attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: function (data) {
+                swal("", data, "success");
+            },
+        });
+        return false;
+    });
+    $('#producthrmsFormData').submit(function () {
+        var $form = $('#producthrmsFormData');
+        var data = $form.serialize();
+        var action = $(this).attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: function (data) {
+                swal("", data, "success");
+            },
+        });
+        return false;
+    });
+
+    $('#PropertySettingFormData').submit(function () {
+        var $form = $('#PropertySettingFormData');
+        var data = $form.serialize();
+        var action = $(this).attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: function (data) {
+                swal("", data, "success");
+            },
+        });
+        return false;
+    });
+
+    $('#ecommercePropertyFormData').submit(function () {
+        var $form = $('#ecommercePropertyFormData');
+        var data = $form.serialize();
+        var action = $(this).attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: function (data) {
+                swal("", data, "success");
+            },
+        });
+        return false;
+    });
+
+</script>
+<script>
+
+    $('#btnNewSubsystemSetting').bind("click", function () {
+
+        $('#modal_cnetcompoModal').modal();
+
+    });
+
+</script>

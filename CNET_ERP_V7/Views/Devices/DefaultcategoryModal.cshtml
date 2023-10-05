@@ -1,0 +1,291 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Cnetv7BufferHolder;
+@using Newtonsoft.Json;
+@model Devicemodel
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    List<string> mList = new List<string>();
+    List<string> posList = new List<string>();
+    List<string> priceList = new List<string>();
+    string  type = null;
+    var gsllst = GeneralBufferHolder.SystemConstants.Where(x => x.Type == "GSL Article" || x.Type == "GSL Consignee").ToList();
+    var perefenceList = await sharedHelpers.GetpreferenceByreference();
+    List<string> GSLTypelist = gsllst.Where(x => x.Id == 11 || x.Id == 2).Select(x => x.Id.ToString()).ToList();
+    var perefencecategory = perefenceList.Where(x => GSLTypelist.Contains(x.SystemConstant.ToString())).ToList();
+    foreach (var val in perefencecategory)
+    {
+        var Articletype = await sharedHelpers.GetdeviceById(Convert.ToInt32(val.SystemConstant));
+        mList.Add(val.Id + "/" + val.Description + "/" + Articletype?.FirstOrDefault()?.Description);
+    }
+    var Company = await sharedHelpers.GetCompany();
+    var orgdef = GeneralBufferHolder.AllConsineeUnit.Where(x => x.Type == 1727 && x.Consignee == Company?.Id).ToList();// UIProcessManager.GetStoreByType(CNETConstantes.ORG_UNIT_TYPE_STORE).ToList();
+    foreach (var val in orgdef)
+    {
+        posList.Add(val.Description);
+    }
+    var PriceTypeLookup = GeneralBufferHolder.SystemConstants.Where(c => c.Category == "Price Description").ToList();
+    foreach (var val in PriceTypeLookup)
+    {
+        priceList.Add(val.Description);
+    }
+}
+<style>
+    .modalbody {
+        position: relative;
+        padding: 20px;
+        height: 200px;
+        overflow-y: scroll;
+    }
+
+    .modaldialog {
+        width: 700px; /* New width for default modal */
+        height: 50%; /* New width for default modal */
+    }
+
+    .btnlength {
+        min-width: 100px;
+    }
+</style>
+<div class="modal fade" id="DefaultCategorymodal">
+    <div class="modal-dialog modaldialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <span>Default Category</span>
+                </h5>
+            </div>
+            <div class="box-body">
+                <div class="modal-body modalbody">
+                    <div class="row">
+                        <form class="form-horizontal" id="" asp-action="" asp-controller="" method="post">
+
+                            <div class="col-md-12" style="margin-top:25px">
+
+                                <div class="row">
+
+                                    <div class="divTable">
+
+                                        <div class="col-md-8" style="margin-left:0px ;" id="div23">
+                                            <ul class="sidebar-men secondNav tree " data-widget="tree" id="attachement_nav">
+                                                @foreach (var item in mList)
+                                                {
+                                                    <li class="nav-item treeview menu-open attachmentType" id="parent">
+                                                        <a data-toggle="tab" data-value="@item" data-types="@item" id="a123" style="text-decoration-line:none!important" name="catagory" class="addcashcustomervalue">
+                                                            <span class="labelcss" selectedValue="@item">@item</span>
+                                                        </a>
+
+                                                        <ul class="treeview-menu" style="padding-left:35px; background-color:white;" id="@item">
+                                                        </ul>
+                                                    </li>
+                                                }
+
+                                            </ul>
+
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <button class="btn btn-default btn-sm btnlength" type="reset" id="Defaultcategorysave">Ok</button>
+
+                    <button class="btn btn-default btn-sm btnlength" id="Defaultcategorydatadismisbtn" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="premPOSStoremodal">
+    <div class="modal-dialog modaldialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <span>POS Store</span>
+                </h5>
+            </div>
+            <div class="box-body">
+                <div class="modal-body modalbody">
+                    <div class="row">
+                        <form class="form-horizontal" id="" asp-action="" asp-controller="" method="post">
+
+                            <div class="col-md-12" style="margin-top:25px">
+
+                                <div class="row">
+
+                                    <div class="divTable">
+
+                                        <div class="col-md-8" style="margin-left:0px ;" id="div23">
+                                            <ul class="sidebar-men secondNav tree " data-widget="tree" id="attachement_nav">
+                                                @foreach (var item in posList)
+                                                {
+                                                    <li class="nav-item treeview menu-open attachmentType" id="parent">
+                                                        <a data-toggle="tab" data-value="@item" data-types="@item" id="a123" style="text-decoration-line:none!important" name="catagory" class="addcashcustomervalue">
+                                                            <span class="labelcss" selectedValue="@item">@item</span>
+                                                        </a>
+                                                        <ul class="treeview-menu" style="padding-left:35px; background-color:white;" id="@item">
+                                                        </ul>
+                                                    </li>
+                                                }
+
+                                            </ul>
+
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <button class="btn btn-default btn-sm btnlength" type="reset" id="preminmposstoresave">Ok</button>
+
+                    <button class="btn btn-default btn-sm btnlength" id="posstoredatadismisbtn" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="premPriceTypemodal">
+    <div class="modal-dialog modaldialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <span>Price Type</span>
+                </h5>
+            </div>
+            <div class="box-body">
+                <div class="modal-body modalbody">
+                    <div class="row">
+                        <form class="form-horizontal" id="" asp-action="" asp-controller="" method="post">
+
+                            <div class="col-md-12" style="margin-top:25px">
+
+                                <div class="row">
+
+                                    <div class="divTable">
+
+                                        <div class="col-md-8" style="margin-left:0px ;" id="div23">
+                                            <ul class="sidebar-men secondNav tree " data-widget="tree" id="attachement_nav">
+                                                @foreach (var item in priceList)
+                                                {
+                                                    <li class="nav-item treeview menu-open attachmentType" id="parent">
+                                                        <a data-toggle="tab" data-value="@item" data-types="@item" id="a123" style="text-decoration-line:none!important" name="catagory" class="addcashcustomervalue">
+                                                            <span class="labelcss" selectedValue="@item">@item</span>
+                                                        </a>
+                                                        <ul class="treeview-menu" style="padding-left:35px; background-color:white;" id="@item">
+                                                        </ul>
+                                                    </li>
+                                                }
+
+                                            </ul>
+
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <button class="btn btn-default btn-sm btnlength" type="reset" id="preminmpricetypesave">Ok</button>
+
+                    <button class="btn btn-default btn-sm btnlength" id="pricetypedatadismisbtn" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<script>
+    var valueitem = "";
+    var appdiscount = "";
+    $(document).ready(function () {
+
+        $(".attributcurrvalue").click(function () {
+            appdiscount = $(this).data("id");
+        });
+        $(".addcashcustomervalue").click(function () {
+            valueitem = $(this).data("types");
+
+        });
+
+        $("#Defaultcategorysave").click(function () {
+            if (appdiscount == "1") {
+                $('#Delivery_Default_category_value').val(valueitem);
+            }
+            else if (appdiscount == "2") {
+                $('#Fast_Transaction_Default_category_value').val(valueitem);
+            }
+            else if (appdiscount == "3") {
+                $('#Room_Service_Default_category_value').val(valueitem);
+            }
+            else if (appdiscount == "4") {
+                $('#Tab_Default_category_value').val(valueitem);
+            }
+            else if (appdiscount == "5") {
+                $('#Table_Default_category_value').val(valueitem);
+            }
+            else if (appdiscount == "6") {
+                $('#Takeaway_Default_category_value').val(valueitem);
+            }
+            $('#Defaultcategorydatadismisbtn').trigger('click');
+            $('.sidebar-men li.active').removeClass('active');
+
+        });
+
+    });
+
+</script>
+<script>
+    var valueitem = "";
+    $(document).ready(function () {
+        $(".addcashcustomervalue").click(function () {
+            valueitem = $(this).data("types");
+        });
+        $("#preminmposstoresave").click(function () {
+            $('#premium_pos_store').val(valueitem);
+            $('#posstoredatadismisbtn').trigger('click');
+        });
+    });
+</script>
+<script>
+    var valueitem = "";
+    $(document).ready(function () {
+        $(".addcashcustomervalue").click(function () {
+            valueitem = $(this).data("types");
+        });
+        $("#preminmpricetypesave").click(function () {
+            $('#premium_price_type').val(valueitem);
+            $('#pricetypedatadismisbtn').trigger('click');
+        });
+    });
+</script>

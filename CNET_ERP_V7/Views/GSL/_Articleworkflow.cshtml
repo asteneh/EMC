@@ -1,0 +1,95 @@
+﻿@model GSLmodel
+@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var workFlow = Model.vw_WorkFlows;
+    int count = 0;
+}
+
+    <style>
+        .workheight {
+            height: 70vh;
+            overflow-y: scroll;
+            overflow-x: scroll;
+        }
+    </style>
+
+    <div class="box box-primary">
+
+        <div class="box-body workheight">
+            <table id="article_Work_flow" class="table table-striped tree-load" style="background-color:#ffffff">
+                <thead>
+                    <tr>
+                        <th>SN</th>
+                        <th>Description</th>
+                        <th>Is Manual</th>
+                        <th>Object State</th>
+                        <th>Required Time</th>
+                        <th>Index</th>
+                        <th>Max Repated</th>
+                        <th>Sequence</th>
+                        <th>Remark</th>
+                        <th>edit</th>
+                        <th>delete</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                        @if (workFlow != null && workFlow.Count() > 0)
+                        {
+                            @foreach (var item in workFlow)
+                            {
+                                var Objectstate = await sharedHelpers.GetsystemConstantById(Convert.ToInt32(item.ObjectStateDefinition));
+                                var activity = await sharedHelpers.GetsystemConstantById(item.Description);
+                                count++;
+                                bool sequence = Convert.ToBoolean(item.Sequence);
+                                <tr>
+                                    <td>@count</td>
+                                    <td>@activity?.FirstOrDefault().Description</td>
+                                    <td> <input class="form-check-input" type="checkbox" id="" @(item.IsManual ? "checked" : "") onclick="return false" /></td>
+                                    <td>@item.Osddescription</td>
+                                    <td>@item.RequiredTime?.ToString("N2")</td>
+                                    <td>@item.Index</td>
+                                    <td>@item.MaxRepeat</td>
+                                    <td> <input class="form-check-input" type="checkbox" id="" @(sequence ? "checked" : "") onclick="return false" /></td>
+                                    <td>@item.Remark</td>
+                                    <td><a class="btn btn-social-icon btn-xs" onclick="EditworkflowFunction('@item.Id')" data-toggle="modal"><i class="fa fa-edit"></i></a></td>
+                                    <td><a href="#" class="btn btn-social-icon btn-xs btnDeletetearticleworkflow" data-code="@item.Id"><i class="fa fa-trash"></i></a></td>
+
+                                </tr>
+                            }
+                        }
+                   
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+<script>
+   function EditworkflowFunction(CODE) {
+     var code = CODE;
+       $.ajax({
+            type: "GET",
+            dataType: 'json',
+            url: '@Url.Action("GeTworkflowbycode", "GSL")',
+            data: { code: code},
+           success: function (data) {
+               $('#@nameof(Model.codewrflart)').val(data.code);
+               $('#@nameof(Model.descriptionwrflart)').val(data.descriptionname).trigger('change');
+               $('#@nameof(Model.isManualwrflart)').prop('checked', data.ismanual);
+               $('#@nameof(Model.objectStateDefinitionwrflart)').val(data.objectstat).trigger('change');
+               $('#@nameof(Model.requiredTimewrflart)').val(data.requiredtime);
+               $('#@nameof(Model.timeFactorwrflart)').val(data.timefactor).trigger('change');
+               $('#@nameof(Model.indexwrflart)').val(data.index);
+               $('#@nameof(Model.maxRepeatwrflart)').val(data.maxrepeat);
+               $('#@nameof(Model.sequencewrflart)').prop('checked', data.sequence);
+               $('#@nameof(Model.isPrintwrflart)').prop('checked', data.isprint);
+               $('#@nameof(Model.remarkwrflart)').val(data.remark);
+                $('#articleworkflowMdalMap').modal("show");
+            },
+        });
+        }
+    </script>

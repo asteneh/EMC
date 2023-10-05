@@ -1,0 +1,145 @@
+﻿@model SecurityModel
+@using CNET_ERP_V7.Models.Security;
+@using CNET_V7_Domain.Domain.SecuritySchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Newtonsoft.Json;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@inject CNET_ERP_V7.Common.AuthNavigation.AuthenticationManager _authenticationManager
+
+@{
+    var UserList = await sharedHelpers.GetUser();
+
+    var UserempList = UserList?.Where(c => c.IsActive == true);
+    var UserListType = UserempList?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.UserName }).ToArray();
+
+    var mMember = Model?.mMembers;
+
+    var sn = 0;
+
+}
+<style>
+ 
+    .usermem{
+        white-space:nowrap;
+    }
+</style>
+<div class="createacount">
+    <table id="Usermemeber_detail_List" class="table table-striped" style="background-color:#ffffff">
+        <thead>
+            <tr>
+                <th>SN</th>
+                <th>User Name</th>
+                <th>Employee Name</th>
+                <th>Address</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (mMember != null && mMember.Count() > 0)
+            {
+                @foreach (var item in mMember)
+                {
+                    sn++;
+                    <tr class="usermem">
+                        <td>@sn</td>
+                        <td>@item.userName</td>
+                        <td>@item.EmployeeName</td>
+                        <td>@item.Address</td>
+                        <td><a class="btn btn-social-icon btn-xs" onclick="EditUserRoleMapperFunction('@item.userRoleMaperId')"><i class="fa fa-edit"></i></a></td>
+                        <td width="10px"><a class="btnDeleteUserRole btn btn-social-icon btn-xs" onclick="btnDeleteUserRole('@item.userRoleMaperId')"><i class="fa fa-trash" style="color:red"></i></a></td>
+
+                    </tr>
+                }
+            }
+           
+            </tbody>
+    </table>
+
+</div>
+<script>
+    $('#@nameof(Model.mem_username)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(UserListType)),
+        placeholder: ""
+    });
+</script>
+<script>
+    function EditUserRoleMapperFunction(_id) {
+        var code = _id;
+        $.ajax({
+            type: "GET",
+            dataType: 'json',
+            url: '@Url.Action("GetUserroleMapperById", "Security")',
+            data: { code: code },
+                success: function (data)
+                {
+                       $('#@nameof(Model.useraccountupdatecode)').val(data.id);
+                       $('#@nameof(Model.mem_username)').val(data.user).trigger('change');
+                       $('#@nameof(Model.mem_employeename)').val(data.employe);
+                       $('#@nameof(Model.mem_Address)').val("");
+                    $('#modal_usermemebership').modal("show");
+                }
+       });
+     }
+   
+  function btnDeleteUserRole(CODE) 
+  {
+        var orgunitcode = $('#@nameof(Model.mem_orgunitcode)').val();
+        swal({
+            title: "are you sure to delete this ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "POST",
+                        dataType: 'json',
+                        url: '@Url.Action("Deleteuserrole", "Security")',
+                        data: { code: CODE},
+
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        success: function (data) {
+                            swal("", data, "success");
+                            submitfunctionUserrole(orgunitcode)
+
+
+                        }
+                    });
+                }
+            });
+
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+
+        $("select.select2").change(function () {
+            var selectedCountry = $(this).children("option:selected").val();
+            $.ajax({
+                type: "POST",
+                dataType: 'json',
+                url: '@Url.Action("getNemeandAdd", "Security")',
+                 data: { Id: selectedCountry },
+
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                 success: function (data) {
+                  
+                     $('#@nameof(Model.mem_employeename)').val(data.result);
+                     $('#@nameof(Model.mem_Address)').val(data.address);
+                    
+
+                }
+            });
+        });
+
+    });
+        
+</script>
+
+
+
+
+

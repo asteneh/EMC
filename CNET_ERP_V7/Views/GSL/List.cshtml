@@ -1,0 +1,565 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using Newtonsoft.Json;
+@model GSLmodel
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var deviceTypes = await sharedHelpers.GetdeviceById(Model?.gslType);
+    var deviceTypecode = deviceTypes?.FirstOrDefault()?.Description;
+    var title = "Voucher -" + deviceTypes?.FirstOrDefault()?.Description;
+    ViewData["Title"] = title;
+}
+@*<link rel="stylesheet" href="~/css/vendor.css" asp-append-version="true" />
+<script src="~/js/vendor.js" asp-append-version="true"></script>*@
+<style>
+    .displayapp {
+        display: none;
+    }
+
+    div.scroll {
+        height: 100vh;
+        overflow-x: hidden;
+        overflow-y: auto;
+        text-align: center;
+    }
+
+    .activetab {
+        display: none
+    }
+
+    .displayapp {
+        display: none;
+    }
+</style>
+<section class="content-header">
+    <h5>
+        @ViewData["Title"]
+    </h5>
+    <ol class="breadcrumb">
+        <li><a href=@Url.Action("Index","Home")><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#"><i class="fa fa-briefcase"></i> gSL</a></li>
+        <li class="active"></li>
+    </ol>
+</section>
+
+
+<section class="content">
+    <form method="POST" id="GslSettingForm">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box">
+                    <div class="box-body">
+                        <div style="float:left ;padding-top:1px">
+
+                            <a href="#" class="btn btn-app " id="btnSavePropertysetting"> <i class="fa fa-save"></i>Save</a>
+                            <a href="#" class="btn btn-app displayapp" id="btnNewGslSetting"> <i class="fa fa-plus-circle"></i>New</a>
+                            <a href="#" class="btn btn-app displayapp" id="relationdetail"> <i class="fa fa-plus-circle"></i>Relation Details</a>
+
+                        </div>
+                        <div id="GslSearchForm">
+                            <div class="col-md-6">
+                                    <div class="form-inline">
+                                        <br />
+                                        <div style="display: inline; white-space: nowrap;">
+                                        <button id="show-GSL" class="btn btn-primary" style="padding: 5px 8px 5px 8px;">Type</button>
+                                            @*<input type="hidden" asp-for="PersonCode" />*@
+                                            <input type="hidden" asp-for="gslType" />
+
+                                            <select asp-for="GslTypeList" class="form-control select2" style="width:90%"></select>
+                                        </div>
+                                    </div>
+
+                            </div>
+                            <div class="col-md-4">
+                                <a href="#" class="btn btn-app" id="btninportfrom"> <i class="fa fa-gear"></i>Import From<br> Reference</a>
+                              
+                            </div>
+                        </div>
+
+                    </div>
+                    <input type="hidden" id="selectevouchTab" value="" />
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="nav-tabs-custom">
+
+                            <ul class="nav nav-tabs" id="GslArticle_tab_nav">
+                                <li class="active"><a href="#ArticleProperty" data-toggle="tab">Property</a></li>
+                                <li><a href="#ArticleIdSetting" data-toggle="tab">Id Setting</a></li>
+                                <li><a href="#ArticleWorkFlow" data-toggle="tab">WorkFlow</a></li>
+                                <li><a href="#ArticleAcccountRequirement" data-toggle="tab">Account Requirement</a></li>
+                                <li><a href="#ArticlePreferences" data-toggle="tab">Preferences</a></li>
+                                <li><a href="#ArticleValueFactorDefinition" data-toggle="tab">Value Factor Definition</a></li>
+                                <li><a href="#ArticleFieldFormat" data-toggle="tab">Field Format</a></li>
+                                <li><a href="#ArticleDistribution" data-toggle="tab">Distribution</a></li>
+
+                            </ul>
+
+
+                            <div class="tab-content">
+
+                                <div class="active tab-pane" id="ArticleProperty">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="col-md-7">
+                                                <div id="Propertyarticlesection">
+                                                    @await Html.PartialAsync("_GslProperty.cshtml")
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-5">
+                                                <div class="box" style="background-color: #f7ba5bc4; height: 100vh;">
+                                                    <span id="gslVal" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                                                    <h5 style="margin-left:10px;">Gsl Setting</h5>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="ArticleIdSetting">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            @await Html.PartialAsync("_GslIdSetting")
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="ArticleWorkFlow">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div id="gslWorkflowCoontent">
+                                                @await Html.PartialAsync("_Articleworkflow")
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="ArticleAcccountRequirement">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div id="gslaccrequContent">
+                                                @await Html.PartialAsync("_articleaccountrequirement")
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="ArticlePreferences">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            @await Html.PartialAsync("PreferenceGeneral.cshtml")
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="ArticleValueFactorDefinition">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            @await Html.PartialAsync("GeneralValue")
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="ArticleFieldFormat">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            @await Html.PartialAsync("GeneralFildformat")
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="ArticleDistribution">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            @await Html.PartialAsync("artDistributinGeneral")
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- /.tab-pane -->
+
+                            </div>
+                            <!-- /.tab-pane -->
+                            <!--</div>-->
+                            <input type="hidden" id="selectedGslTab" value="" />
+                            <input type="hidden" id="selectedGslTabForSave" value="" />
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+
+<!--/GslDobjectState-->
+@await Html.PartialAsync("_GslDobjectState")
+<!--./GslDobjectState-->
+<!--/_GslDefaultTaxSetting-->
+@await Html.PartialAsync("_GslDefaultTaxSetting")
+<!--./_GslDefaultTaxSetting-->
+
+<!--/_GslDefaultTaxSetting-->
+@await Html.PartialAsync("_GslLabelPrinting")
+<!--./_GslDefaultTaxSetting-->
+<!--/propertyMap-->
+@await Html.PartialAsync("consumerpriceFormula")
+<!--./propertyMap-->
+<!--/propertyMap-->
+@await Html.PartialAsync("discountPriceformul")
+<!--./propertyMap-->
+<!--/propertyMap-->
+@await Html.PartialAsync("onholidayformula")
+<!--./propertyMap-->
+<!--/propertyMap-->
+@await Html.PartialAsync("qtypriceforrmula")
+<!--./propertyMap-->
+<!--/propertyMap-->
+@await Html.PartialAsync("retailpriceformula")
+<!--./propertyMap-->
+
+<!--/propertyMap-->
+@await Html.PartialAsync("_IdSettingModal")
+<!--./propertyMap-->
+<!--/propertyMap-->
+@await Html.PartialAsync("wholepriceformula")
+<!--/propertyMap-->
+@await Html.PartialAsync("articleworkflowModal")
+<!--./propertyMap-->
+<!--/propertyMap-->
+@await Html.PartialAsync("DefaultTaxModalproperty")
+<!--./propertyMap-->
+<!--./propertyMap-->
+<!--/propertyMap-->
+@await Html.PartialAsync("articleaccountrequirementModal")
+<!--./propertyMap-->
+<!--/propertyMap-->
+@await Html.PartialAsync("AccountMapModal")
+<!--./propertyMap-->
+<!--/propertyMap-->
+@await Html.PartialAsync("copydistributionarticleModal")
+<!--./propertyMap-->
+<!--/propertyMap-->
+@await Html.PartialAsync("ArticlemachinedistributionMapModal")
+<!--./propertyMap-->
+<!--/propertyMap-->
+@await Html.PartialAsync("ArtFieldformatMapModal")
+<!--./propertyMap-->
+<!--/propertyMap-->
+@await Html.PartialAsync("valuefactorDefnModal")
+<!--./propertyMap-->
+<!--/propertyMap-->
+@await Html.PartialAsync("preferentialMapModal")
+<!--./propertyMap-->
+<!--/propertyMap-->
+<div id="prefmodelMap">
+    @await Html.PartialAsync("PreferencepictureModal", new GSLmodel() { gslType = Model.gslType })
+
+</div>
+<!--./propertyMap-->
+<!--/propertyMap-->
+@await Html.PartialAsync("defaultobjectsateModal")
+<!--./propertyMap-->
+
+<script>
+    $(function () {
+        $('#btnSavePropertysetting').click(function () {
+            var selectedPage = $('#selectedGslTab').val();
+            if (selectedPage == "#ArticleDistribution") {
+                var formData = $('#GslSettingForm').serialize();
+                $.ajax({
+                    url: '/Gsl/CreatesynchroforDiscarticle',
+                    type: 'POST',
+                    data: formData,
+                    success: function (result) {
+                        swal("", result, "success");
+                    },
+                    error: function () {
+                        console.log('Error occurred.');
+                    }
+                });
+            }
+            else    
+            {
+                var vouchercode = $('#@nameof(Model.gslType)').val();
+                $("#documentType").val(vouchercode);
+                $("#voucherType").val(vouchercode);
+                var formData = $('#GslSettingForm').serialize();
+                $.ajax({
+                    url: '/Gsl/SavingArticleProperty',
+                    type: 'POST',
+                    data: formData,
+                    success: function (result) {
+                        swal("", result, "success");
+                    },
+                    error: function () {
+                        console.log('Error occurred.');
+                    }
+                });
+            }
+           
+        });
+    });
+</script>
+<script>
+    var Treedepth = 0;
+    var accoumodel = false;
+    var prefmodel = false;
+    var distributionsyncgsl = false;
+    var distributioncopygsl = false;
+    var distributionmachinegsl = false;
+    var articleidsettingModal = false;
+
+
+    var propertyImport = false;
+    var workflowImport = false;
+    var filedformatImport = false;
+
+    $(document).on("click", "#Preference_account_map", function () {
+        accoumodel = true;
+        prefmodel = false;
+    });
+    $(document).on("click", ".preferentialParent", function () {
+        accoumodel = false;
+
+        Treedepth = $(this).data('value');
+        if (Treedepth == 4) {
+            alert("Maximum Tree Depth!");
+            prefmodel = false;
+        }
+        else {
+            prefmodel = true;
+        }
+    });
+
+    $('#btnNewGslSetting').bind("click", function () {
+        var selectedPage = $('#selectedGslTab').val();
+
+        if (selectedPage) {
+            switch (selectedPage) {
+                case "#ArticleIdSetting":
+                    var articleidsettingModal =  $('#@nameof(Model.organizationundefart)').val();
+                    if (articleidsettingModal != "0" && articleidsettingModal != undefined) {
+                        CrearIdSettingTab();
+                        $('#articleIdsettingModelMap').modal({ backdrop: 'static', keyboard: false });
+                    }
+                    else {
+                        swal("", "please select branch", "error");
+                    }
+                    accoumodel = false;
+                    prefmodel = false;
+                    break;
+
+                case "#ArticleWorkFlow":
+                    CleararticleworkflowModal();
+                    $('#articleworkflowMdalMap').modal({ backdrop: 'static', keyboard: false });
+
+                    accoumodel = false;
+                    prefmodel = false;
+                    break;
+                case "#ArticleFieldFormat":
+                    ClearfieldformatarticleModal();
+                    var gslfildformat = $('#@nameof(Model.filedformatcodeforheadersaveart)').val();
+                    if (gslfildformat != null) {
+                        $('#artfildformatModelMap').modal({ backdrop: 'static', keyboard: false });
+                    }
+                    else {
+                        swal("", "please select document Type", "error");
+                    }
+                    accoumodel = false;
+                    prefmodel = false;
+                    break;
+                case "#ArticleValueFactorDefinition":
+                    Clearvaluefactor();
+                    var valuefac = $('#@nameof(Model.valueDefncodeforsave)').val();
+                    if (valuefac != null) {
+                        $('#ValueFactorDefnModal').modal({ backdrop: 'static', keyboard: false });
+                    }
+                    else {
+                        swal("", "please select value factor Type", "error");
+                    }
+                    accoumodel = false;
+                    prefmodel = false;
+                    break;
+                case "#ArticleDistribution":
+                    var distr = $('#@nameof(Model.distridutioName)').val();
+                    if (distr == "1578") {
+                        ClearcopydistributiionModalarticle();
+                        $('#copydstributionModalarticle').modal({ backdrop: 'static', keyboard: false });
+                    }
+                    else if (distr == "1579") {
+                        ClearmacinedistributiionarticleModal();
+                        $('#machinedistributionModalRticle').modal({ backdrop: 'static', keyboard: false });
+
+                    }
+                    else {
+                        swal("", "please select distribution type", "error");
+                    }
+                    accoumodel = false;
+                    prefmodel = false;
+                    break;
+                case "#ArticleAcccountRequirement":
+                    CleararticleaccrequModal();
+                    $('#articleacccontrolModelMap').modal({ backdrop: 'static', keyboard: false });
+                    accoumodel = false;
+                    prefmodel = false;
+                    break;
+                case "#ArticlePreferences":
+                        //var prefCode = $('#@nameof(Model.prefCount)').val();
+                        //if (prefCode == "true")
+                        //{
+                        //    $('#preferenctilaModal').modal();
+                        //}
+                        //else{
+                                if (accoumodel == true) {
+                                   
+                                      $('#accountmapModal').modal({ backdrop: 'static', keyboard: false });
+                                }
+                                else {
+                                     ClearprefModal();
+                                      $('#preferenctilaModal').modal({ backdrop: 'static', keyboard: false });
+
+                                 }
+                        
+                    break;
+
+            }
+        }
+    });
+
+
+    $('#GslArticle_tab_nav li a').click(function (e) {
+
+        var gslcode = '@Model.gslType';
+        var selecteTab = e.target.attributes['href'].value;
+        $('#selectedGslTab').val(selecteTab);
+        $('#selectedGslTabForSave').val(selecteTab);
+        if (selecteTab) {
+            switch (selecteTab) {
+
+                case "#ArticleProperty":
+                    $('#btnSavePropertysetting').show();
+                    $('#btnArticleImport').show();
+                    $('#btnNewGslSetting').addClass('displayapp');
+                    $('#GslSearchForm').show();
+                    propertyImport = true;
+                    workflowImport = false;
+                    filedformatImport = false;
+
+                    break;
+                case "#ArticleIdSetting":
+                    $('#btnSavePropertysetting').hide();
+                    $('#btnArticleImport').hide();
+                    $('#btnNewGslSetting').removeClass('displayapp');
+                    $('#GslSearchForm').hide();
+
+                    break;
+                case "#ArticleWorkFlow":
+                    GetGslWorkFlow(gslcode)
+                    propertyImport = false;
+                    workflowImport = true;
+                    filedformatImport = false;
+                    $('#btnSavePropertysetting').hide();
+                    $('#btnArticleImport').show();
+                    $('#btnNewGslSetting').removeClass('displayapp');
+                    $('#GslSearchForm').show();
+                    break;
+                case "#ArticleAcccountRequirement":
+                    GetAccountrequirement(gslcode);
+                    $('#btnSavePropertysetting').hide();
+                    $('#btnArticleImport').hide();
+                    $('#btnNewGslSetting').removeClass('displayapp');
+                    $('#GslSearchForm').hide();
+                    break;
+
+                case "#ArticlePreferences":
+                    GetPreference(gslcode);
+                    $('#btnSavePropertysetting').hide();
+                    $('#btnArticleImport').hide();
+                    $('#btnNewGslSetting').removeClass('displayapp');
+                    $('#GslSearchForm').hide();
+                    break;
+                case "#ArticleValueFactorDefinition":
+                    $('#btnSavePropertysetting').hide();
+                    $('#btnArticleImport').hide();
+                    $('#btnNewGslSetting').removeClass('displayapp');
+                    $('#GslSearchForm').hide();
+                    break;
+                case "#ArticleFieldFormat":
+                    propertyImport = false;
+                    workflowImport = false;
+                    filedformatImport = true;
+                    $('#btnSavePropertysetting').hide();
+                    $('#btnArticleImport').show();
+                    $('#btnNewGslSetting').removeClass('displayapp');
+                    $('#GslSearchForm').show();
+                    break;
+
+                case "#ArticleDistribution":
+                    $('#btnSavePropertysetting').show();
+                    $('#btnArticleImport').hide();
+                    $('#btnNewGslSetting').removeClass('displayapp');
+                    $('#GslSearchForm').hide();
+
+                    break;
+                case "#GSLAddressMap":
+                    $('#btnSavePropertysetting').show();
+                    $('#btnArticleImport').hide();
+                    $('#btnNewgslSetting').addClass('displayapp');
+                    $('#SearchgslForm').hide();
+
+                    break;
+            }
+        }
+
+    });
+
+    function GetGslWorkFlow(gslcode) {
+        $.ajax({
+            type: "GET",
+            dataType: 'html',
+            url: '@Url.Action("getWorkflowList", "GSL")',
+            data: { gslcode: gslcode },
+
+            success: function (data) {
+
+                $('#gslWorkflowCoontent').html(data);
+            }
+        });
+    }  
+    function GetAccountrequirement(gslcode) {
+        $.ajax({
+            type: "GET",
+            dataType: 'html',
+            url: '@Url.Action("getaccrequireList", "GSL")',
+            data: { gslcode: gslcode },
+
+            success: function (data) {
+
+                $('#gslaccrequContent').html(data);
+            }
+        });
+    } 
+    function GetPreference(gslcode) {
+        $.ajax({
+            type: "GET",
+            dataType: 'html',
+            url: '@Url.Action("getGetPreferenceList", "GSL")',
+            data: { gslcode: gslcode },
+
+            success: function (data) {
+
+                $('#preferenceContent').html(data);
+            }
+        });
+    }
+    
+
+</script>

@@ -1,0 +1,33 @@
+﻿
+<div class="border banktype">
+    <table id="hrms_detail_List" class="table table-striped tree-load" style="background-color:#ffffff">
+        <thead>
+            <tr>
+                <th>Organization Unit Definition</th>
+                <th>Remark</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <span id="hrmsdetail"></span>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        $('#hrms_detail_List').DataTable({
+            "paging": false,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": false,
+            "info": false,
+            "autoWidth": true,
+            "retrieve": true,
+            "sDom": 'lfrtip'
+        });
+    });
+</script>

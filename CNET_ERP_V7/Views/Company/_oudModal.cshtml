@@ -1,0 +1,66 @@
+﻿@model Companymodel
+@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var branchType = Model?.branchType;
+    List<SystemConstantDTO> OrganizationUnitType = new List<SystemConstantDTO>();
+    if (branchType == 1718)
+    {
+        OrganizationUnitType = await sharedHelpers.GetSystemConstantByCat("Business Unit Specialization");
+    }
+    else
+    {
+        OrganizationUnitType = await sharedHelpers.GetSystemConstantByCat("Organization Unit Specialization");
+    }
+    
+    var specializationList = OrganizationUnitType?.Select(s => new CNET_ERP_V7.Models.SelectorModel.Select2Result
+    {
+        id = s.Id,
+        text = s.Description
+    });
+
+    var orgunitdefListTYpe = Model?.parentcode;
+
+    var IsHeadOffice = Model?.headoffice;
+
+    var orgunitdefunitListTYpe = orgunitdefListTYpe?.Select(s => new CNET_ERP_V7.Models.SelectorModel.Select2Result
+    {
+        id = s.Id,
+        text = s.Name
+    });
+
+    var responsibleperson = await sharedHelpers.GetVoucherConsigneeList(26);
+    var responsiblepersonList = responsibleperson?.GroupBy(x => x.Id)?.Select(y => y.First()).ToList();
+
+    var responsiblepersonListTYpe = responsiblepersonList?.Select(s => new CNET_ERP_V7.Models.SelectorModel.Select2Result
+    {
+        id = s.Id,
+        text = s.FirstName
+    });
+
+}
+
+
+<script>
+    $('#@nameof(Model.orgUnitDefSpec)').select2({
+        data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(specializationList)),
+        placeholder: ""
+
+    });
+    $('#@nameof(Model.orgUnitDefParent)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(orgunitdefunitListTYpe)),
+        placeholder: ""
+
+    });
+
+    $('#@nameof(Model.orgUnitDefResperson)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(responsiblepersonListTYpe)),
+        placeholder: ""
+
+    });
+  
+
+</script>

@@ -1,0 +1,647 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using Newtonsoft.Json;
+@model VoucherSearchModel
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var Voucherdifinition = await sharedHelpers.GetSytemConstantBytype("Transaction");
+    var VoucherdifinitionType = Voucherdifinition?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Description }).ToArray();
+    var deviceTypes = await sharedHelpers.GetdeviceById(Model?.documentType);
+    var deviceTypecode = deviceTypes?.FirstOrDefault()?.Description;
+    var title = "Voucher -" + deviceTypes?.FirstOrDefault()?.Description;
+    ViewData["Title"] = title;
+}
+<style>
+    .displayapp{
+        display:none;
+    }
+</style>
+
+<section class="content-header">
+    <h5>
+        @ViewData["Title"]
+    </h5>
+    <ol class="breadcrumb">
+        <li><a href=@Url.Action("Index","Home")><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#"><i class="fa fa-briefcase"></i> Modules</a></li>
+        <li class="active"></li>
+    </ol>
+</section>
+<section class="content">
+    <form  method="POST" id="VoucherSettingForm">
+    <div class="row">
+            <div class="col-md-12">
+                <div class="box">
+                    <div class="box-body">
+                            <div style="float:left ;padding-top:1px">
+
+                                <a href="#" class="btn btn-app" id="btnSavePropertysetting"> <i class="fa fa-save"></i>Save</a>
+                                <a href="#" class="btn btn-app displayapp" id="btnNewVoucherSetting"> <i class="fa fa-plus-circle"></i>New</a>
+                              @*  <a href="#" class="btn btn-app displayapp" id="relationdetail"> <i class="fa fa-plus-circle"></i>Relation Details</a>*@
+
+                            </div>
+                      
+                            <div id="SearchForm">
+                                    <div class="col-md-6">
+                                           <div class="form-inline">
+                                                <br />
+                                                <div style="display: inline; white-space: nowrap;">
+                                                    <button id="show-per" class="btn btn-primary" style="padding: 5px 8px 5px 8px;">Type</button>
+
+                                                    @*<input type="hidden" asp-for="PersonCode" />*@
+                                                    <input type="hidden" asp-for="documentType" />
+                                                    <select asp-for="VoucherSettingCodelist" class="form-control select2" style="width:90%">
+                                                        <option></option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                              
+                                         </div>
+                                <div class="col-md-4">
+                                    <a href="#" class="btn btn-app" id="btninportfrom"> <i class="fa fa-gear"></i>Import From<br> Reference</a>
+                                    @*<a href="#" class="btn btn-app" id="btnPropertyprint"> <i class="fa fa-print" aria-hidden="true"></i>Print</a>*@
+
+                                </div>
+                            </div>
+                    </div>
+                    <input type="hidden" id="selectevouchTab" value="" />
+                </div>
+            </div>
+            <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs" id="VoucherSetting-tab-nav">
+                            <li class="active"><a href="#Property" data-toggle="tab">Property</a></li>
+                            <li><a href="#IdSetting" data-toggle="tab">Id Setting</a></li>
+                            <li><a href="#WorkFlow" data-toggle="tab">WorkFlow</a></li>
+                            <li><a href="#GSLRequirement" data-toggle="tab">GSL Requirement</a></li>
+                            <li><a href="#TermsandConditions" data-toggle="tab">Terms and Conditions</a></li>
+                            <li><a href="#References" data-toggle="tab">References</a></li>
+                            <li><a href="#PreferentialAccess" data-toggle="tab">Preferential Access</a></li>
+                            <li><a href="#StoreMap" data-toggle="tab">Store Map</a></li>
+                            <li><a href="#FieldFormat" data-toggle="tab">Field Format</a></li>
+                            <li><a href="#Distribution" data-toggle="tab">Distribution</a></li>
+
+                        </ul>
+                        <div class="tab-content">
+                            <div class="active tab-pane" id="Property">
+                                <br>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="col-md-7">
+                                                <div id="PropertySection">
+                                                @await Html.PartialAsync("_VoucherProperty.cshtml")
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-5">
+                                            <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                                                <span id="VoucherVal" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                                                <h5 style="margin-left:10px;">Voucher Setting</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane" id="IdSetting">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        @await Html.PartialAsync("_VoucherIdSetting.cshtml")
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="WorkFlow">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div id="VoucherWorkflowContent">
+                                            @await Html.PartialAsync("_VoucherWorkflow.cshtml")
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                                <div class="tab-pane" id="GSLRequirement">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                           @await Html.PartialAsync("_voucherGslrequiremenet.cshtml")
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="TermsandConditions">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                            <div id="VoucherTermDefnContent">
+                                                @await Html.PartialAsync("TermandCondition")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="References">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                            @await Html.PartialAsync("GeneralReference.cshtml")
+                                    </div>
+                                </div>
+                            </div>
+                                <div class="tab-pane" id="PreferentialAccess">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            @await Html.PartialAsync("preferentilaheader")
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="StoreMap">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div id="storemapData">
+                                                @await Html.PartialAsync("mapstoregeneral")
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="FieldFormat">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            @await Html.PartialAsync("Generalfieldformat")
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="Distribution">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            @await Html.PartialAsync("Generaldistribution")
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            <!-- /.tab-pane -->
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>    
+</section>
+
+
+<!--/VoucherTypeLookupMap-->
+@await Html.PartialAsync("VoucherTypeLookupMap")
+<!--./VoucherTypeLookupMap-->
+@await Html.PartialAsync("_VDefaultobjsateField")
+<!--/UserPeriodmodel-->
+@await Html.PartialAsync("UserPeriodmodel")
+<!--./UserPeriodmodel-->
+<!--_DefaultPaymentModal-->
+@await Html.PartialAsync("_DefaultPaymentModal")
+<!--_DefaultPaymentModal-->
+<!--_VoucherTaxType-->
+@await Html.PartialAsync("_VoucherTaxType")
+<!--_VoucherTaxType--
+
+>
+<!--IdSettingModal-->
+@await Html.PartialAsync("_IdSettingModal")
+<!--IdSettingModal-->
+
+<!--IdSettingModal-->
+@await Html.PartialAsync("_workflowModal")
+<!--IdSettingModal-->
+
+<!--IdSettingModal-->
+@await Html.PartialAsync("_GslConsineeandArticle")
+<!--IdSettingModal-->
+
+<!--IdSettingModal-->
+@await Html.PartialAsync("_Gsl_requiremenctMapmodal")
+<!--IdSettingModal-->
+<!--copydistributiomMapModal-->
+@await Html.PartialAsync("TermandconditionMapModal")
+<!--copydistributiomMapModal-->
+<!--Gsl_requiremenctMapmodal-->
+@await Html.PartialAsync("referemceNestedMap")
+<!--Gsl_requiremenctMapmodal-->
+<!--Gsl_requiremenctMapmodal-->
+@await Html.PartialAsync("referenceModalforlineandvouextension")
+<!--Gsl_requiremenctMapmodal-->
+<!--copydistributiomMapModal-->
+@await Html.PartialAsync("PreferentialAccessModal")
+<!--copydistributiomMapModal-->
+<!--Gsl_requiremenctMapmodal-->
+@await Html.PartialAsync("fieldformatMapmodal")
+<!--Gsl_requiremenctMapmodal-->
+<!--copydistributiomMapModal-->
+@await Html.PartialAsync("machinedistributionMapModal")
+<!--copydistributiomMapModal-->
+@await Html.PartialAsync("copydistributiomMapModal")
+<!--copydistributiomMapModal-->
+<script>
+    $('#@nameof(Model.VoucherSettingCodelist)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(VoucherdifinitionType)),
+        placeholder: "",
+        allowClear: true
+
+    });
+</script>
+<script>
+   
+
+    $(function () {
+        $('#btnSavePropertysetting').click(function () {
+            var selectedPage = $('#selectevouchTab').val();
+            if (selectedPage == "#Distribution") {
+                var formData = $('#VoucherSettingForm').serialize();
+                $.ajax({
+                    url: '/Subsystems/SaveSynchronization',
+                    type: 'POST',
+                    data: formData,
+                    success: function (result) {
+                        swal("", result, "success");
+                    },
+                    error: function () {
+                        console.log('Error occurred.');
+                    }
+                });
+           }
+            else if (selectedPage == "#StoreMap") {
+                var storemp = $('#@nameof(Model.storeType)').val();
+                var formData = $('#VoucherSettingForm').serialize();
+                if (storemp == "#storemapsource") {
+                    $.ajax({
+                        url: '/Subsystems/CreateStoremapSource',
+                        type: 'POST',
+                        data: formData,
+                        success: function (result) {
+                            swal("", result, "success");
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+                }
+                else {
+                    $.ajax({
+                        url: '/Subsystems/CreateStoremapdestination',
+                        type: 'POST',
+                        data: formData,
+                        success: function (result) {
+                            swal("", result, "success");
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+                }
+               
+           } 
+           else{
+                var vouchercode = $('#@nameof(Model.documentType)').val();
+                $("#documentType").val(vouchercode);
+                $("#voucherType").val(vouchercode);
+                var formData = $('#VoucherSettingForm').serialize();
+                $.ajax({
+                    url: '/Subsystems/SaveConfig',
+                    type: 'POST',
+                    data: formData,
+                    success: function (result) {
+                        swal("", result, "success");
+                    },
+                    error: function () {
+                        console.log('Error occurred.');
+                    }
+                });
+           }
+           
+        });
+    });
+</script>
+
+<script>
+    var gslremtparent = false;
+    var gslremtchild = false;
+    var referencetype = "";
+    var distributionsync = false;
+    var distributioncopy = false;
+    var distributionmachine = false;
+    var idsettingModal = false;
+    $(document).on("click", ".requiredGSLDetailListitemparent", function () {
+        gslremtparent = true;
+        gslremtchild = false;
+    });
+    $(document).on("click", ".requiredGSLDetailListitem", function () {
+        gslremtparent = false;
+        gslremtchild = true;
+    });
+   
+    $(document).on("click", ".activerefrence", function () {
+        referencetype = $(this).data('value');
+    });
+    
+    $(document).on("click", "#btnNewVoucherSetting", function () {
+        var selectedPage = $('#selectevouchTab').val();
+
+        if (selectedPage) {
+            switch (selectedPage) 
+            {
+                case "#IdSetting":
+                  
+                    var branch = $('#@nameof(Model.organizationundefper)').val();
+                    if (branch != "0" && branch != undefined) {
+                        ClearIdSettingModal()
+                        $('#IdsettingModelMap').modal({ backdrop: 'static', keyboard: false });
+                    }
+                    else {
+                        swal("", "please select branch", "error");
+                    }
+                    gslremtparent = false;
+                    gslremtchild = false;
+                    break;
+                case "#WorkFlow":
+                    showNewWORKFLOW();
+                    gslremtparent = false;
+                    gslremtchild = false;
+                    break;
+                case "#PreferentialAccess":
+                    showNewPREFERENCE();
+                    gslremtparent = false;
+                    gslremtchild = false;
+                    break;
+                case "#FieldFormat":
+                    var fildformat = $("#@nameof(Model.filedformatcodeforheaderselection)").val();
+                    if (fildformat != null) {
+                        ClearFieldFormatModal();
+                        $('#fildformatModelMap').modal({ backdrop: 'static', keyboard: false });
+                    }
+                    else {
+                        swal("", "please select document Type", "error");
+                    }
+                    gslremtparent = false;
+                    gslremtchild = false;
+                    break;
+                case "#References":
+                    if (referencetype == "Nested" || referencetype == "Internal Reference") {
+                        ClearreferentialModal();
+                        $('#Nesteds_ForJobOrderVoucher').modal({ backdrop: 'static', keyboard: false });
+                    }
+                    else if (referencetype == "LineItem Extension" || referencetype == "Voucher Extension") {
+                        ClearreferentialvoucherModal();
+                        $('#LineandVoucherextensionJobOrderVoucher').modal({ backdrop: 'static', keyboard: false });
+                    }
+                    else {
+                        swal("", "please select reference type", "error");
+                    }
+                    gslremtparent = false;
+                    gslremtchild = false;
+                    break;
+                case "#Distribution":
+                    var distributioncopy = $('#@nameof(Model.distrutionType)').val();
+                    if (distributioncopy == "1578") {
+                        ClearcopydistributiionModal();
+                        $('#copydistributionModal').modal({ backdrop: 'static', keyboard: false });
+                    }
+                    else if (distributioncopy == "1579") {
+                        ClearmacinedistributiionModal();
+                        $('#machinedistributionModal').modal({ backdrop: 'static', keyboard: false });
+                    }
+                    else
+                    {
+                        swal("", "please select distribution type", "error");
+                    }
+            
+                gslremtparent = false;
+                gslremtchild = false;
+            break;
+                case "#GSLRequirement":
+
+            if (gslremtparent == true) {
+                  $('#gslRequirementModelMapfroconsiandart').modal({ backdrop: 'static', keyboard: false });
+                  Cleararticlenadconsilne();
+
+            }
+            else if (gslremtchild == true) {
+                        $('#GslRequirementModelMap').modal({ backdrop: 'static', keyboard: false });
+                        Cleararticlenadconsilnechild();
+            }
+            break;
+                 case "#TermsandConditions":
+                    Cleartermsandcondidtions();
+                    $('#termandconditionModal').modal({ backdrop: 'static', keyboard: false });
+                    gslremtparent = false;
+                    gslremtchild = false;
+                break;
+ 
+           }
+         } 
+    });
+   
+    $('#VoucherSetting-tab-nav li a').click(function (e) {
+        var vouchercode = $('#@nameof(Model.documentType)').val();
+        var selecteTab = e.target.attributes['href'].value;
+        $('#selectevouchTab').val(selecteTab);
+        if (selecteTab) {
+            switch (selecteTab) {
+
+                case "#Property":
+                    $('#btnSavePropertysetting').show();
+                    $('#SearchForm').show();
+                    $('#btnNewVoucherSetting').addClass('displayapp');
+                    $('#relationdetail').addClass('displayapp');
+                    break;
+                case "#IdSetting":
+                    $('#btnNewVoucherSetting').removeClass('displayapp');
+                    $('#btnSavePropertysetting').hide();
+                    $('#SearchForm').hide();
+                   
+                    break;
+                case "#WorkFlow":
+                    var refe = $('#@nameof(Model.documentType)').val();
+                    GetWorkFlowByRef(refe)
+                    $('#btnSavePropertysetting').hide();
+                    $('#SearchForm').show();
+                    $('#btnNewVoucherSetting').removeClass('displayapp');
+                    break;
+                case "#GSLRequirement":
+                    importpropertydata = false;
+                    importworkflowdata = false;
+                    importfieldformatdata = false;
+                    $('#btnSavePropertysetting').hide();
+                    $('#SearchForm').hide();
+                    $('#btninportfrom').hide();
+                    $('#btnPropertyprint').show();
+                    $('#btnpIdsettingrint').show();
+                    $('#btnSavedistributionsynchronization').addClass('displayapp');
+                    $('#btnNewVoucherSetting').removeClass('displayapp');
+                    $('#btnSavestoremap').addClass('displayapp');
+                    $('#relationdetail').addClass('displayapp');
+                    break;
+                case "#TermsandConditions":
+                    var refe = $('#@nameof(Model.documentType)').val();
+                    GetTerandCondition(refe);
+                    importpropertydata = false;
+                    importworkflowdata = false;
+                    importfieldformatdata = false;
+                    $('#btnSavePropertysetting').hide();
+                    $('#SearchForm').hide();
+                    $('#btninportfrom').hide();
+                    $('#btnPropertyprint').hide();
+                    $('#btnpIdsettingrint').hide();
+                    $('#btnNewIdsetting').hide();
+                    $('#btnNewworkflow').hide();
+                    $('#btnNewVoucherSetting').removeClass('displayapp');
+                    $('#btnSavedistributionsynchronization').addClass('displayapp');
+                    $('#btnSavestoremap').addClass('displayapp');
+                    $('#relationdetail').addClass('displayapp');
+                    break;
+                case "#References":
+                    importpropertydata = false;
+                    importworkflowdata = false;
+                    importfieldformatdata = false;
+                    $('#btnSavePropertysetting').hide();
+                    $('#SearchForm').hide();
+                    $('#btninportfrom').hide();
+                    $('#btnPropertyprint').hide();
+                    $('#btnpIdsettingrint').hide();
+                    $('#btnNewIdsetting').hide();
+                    $('#btnNewworkflow').hide();
+                    $('#btnNewVoucherSetting').removeClass('displayapp');
+                    $('#btnSavedistributionsynchronization').addClass('displayapp');
+                    $('#btnSavestoremap').addClass('displayapp');
+                    $('#relationdetail').removeClass('displayapp');
+
+                    break;
+                case "#PreferentialAccess":
+                    importpropertydata = false;
+                    importworkflowdata = false;
+                    importfieldformatdata = false;
+                    $('#btnSavePropertysetting').hide();
+                    $('#SearchForm').hide();
+                    $('#btninportfrom').hide();
+                    $('#btnPropertyprint').hide();
+                    $('#btnpIdsettingrint').hide();
+                    $('#btnNewIdsetting').hide();
+                    $('#btnNewworkflow').hide();
+                    $('#btnNewVoucherSetting').removeClass('displayapp');
+                    $('#btnSavedistributionsynchronization').addClass('displayapp');
+                    $('#btnSavestoremap').addClass('displayapp');
+                    $('#relationdetail').addClass('displayapp');
+
+                    break;
+                case "#StoreMap":
+                    var refe = $('#@nameof(Model.documentType)').val();
+                    GetStoremap(refe);
+                    $('#btnSavePropertysetting').show();
+                    $('#SearchForm').hide();
+                    $('#btnNewVoucherSetting').addClass('displayapp');
+                    $('#relationdetail').addClass('displayapp');
+
+                    break;
+                case "#FieldFormat":
+                    importpropertydata = false;
+                    importworkflowdata = false;
+                    importfieldformatdata = true;
+                    $('#btnSavePropertysetting').hide();
+                    $('#SearchForm').show();
+                    $('#btninportfrom').show();
+                    $('#btnPropertyprint').hide();
+                    $('#btnpIdsettingrint').hide();
+                    $('#btnNewIdsetting').hide();
+                    $('#btnNewworkflow').hide();
+                    $('#btnNewVoucherSetting').removeClass('displayapp');
+                    $('#btnSavedistributionsynchronization').addClass('displayapp');
+                    $('#btnSavestoremap').addClass('displayapp');
+                    $('#relationdetail').addClass('displayapp');
+                    break;
+                case "#Distribution":
+                    importpropertydata = false;
+                    importworkflowdata = false;
+                    importfieldformatdata = false;
+                    $('#btnSavePropertysetting').show();
+                    $('#SearchForm').hide();
+                    $('#btnNewVoucherSetting').removeClass('displayapp');
+                    $('#relationdetail').addClass('displayapp');
+
+                    break;
+
+            }
+        }
+
+    });
+
+    function GetWorkFlowByRef(refe)
+    {
+        $(function () {
+            $.ajax({
+                url: '/Subsystems/GetWorkFlowsByreference',
+                type: 'POST',
+                data: {code: refe}, // send the data object with the request
+                success: function (result) {
+                    $('#VoucherWorkflowContent').html(result);
+                },
+                error: function () {
+                    console.log('Error occurred.');
+                }
+            });
+        });
+    } 
+    function GetTerandCondition(refe) {
+        $(function () {
+            $.ajax({
+                url: '/Subsystems/gettermsandcoditionsResult',
+                type: 'POST',
+                data: {code: refe}, // send the data object with the request
+                success: function (result) {
+                    $('#VoucherTermDefnContent').html(result);
+                },
+                error: function () {
+                    console.log('Error occurred.');
+                }
+            });
+        });
+    }  
+    function GetStoremap(refe) {
+        $(function () {
+            $.ajax({
+                url: '/Subsystems/GetAllstoremap',
+                type: 'POST',
+                data: {code: refe}, // send the data object with the request
+                success: function (result) {
+                    $('#storemapData').html(result);
+                },
+                error: function () {
+                    console.log('Error occurred.');
+                }
+            });
+        });
+    }
+
+</script>
+
+<script>
+    $(document).on("click", '#btninportfrom', function () {
+        var ID = $('#VoucherSettingCodelist').val();
+            $.ajax({
+                type: "GET",
+                dataType: 'html',
+                url: '@Url.Action("GetPropertyByVoucherDefinition", "Subsystems")',
+                data: { id: ID },
+
+                success: function (data) {
+
+                    $('#PropertySection').html(data);
+                }
+            });
+    });
+</script>
+

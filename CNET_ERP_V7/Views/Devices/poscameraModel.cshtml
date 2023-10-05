@@ -1,0 +1,112 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model Devicemodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var codemodel = Model.DeviceType;
+
+    //var VoucherTypeList = await _uiProccessManager.GetdeviceViewByPreference(CNETConstantes.camera);
+
+}
+<style>
+    .modalbody {
+        position: relative;
+        padding: 20px;
+        height: 200px;
+        overflow-y: scroll;
+    }
+
+    .modaldialog {
+        width: 700px; /* New width for default modal */
+        height: 50%; /* New width for default modal */
+    }
+
+    .btnlength {
+        min-width: 100px;
+    }
+</style>
+<div class="modal fade" id="cameraposModalMap">
+    <div class="modal-dialog modaldialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <span>Voucher Type LookUp</span>
+
+                </h5>
+
+            </div>
+            <div class="box-body">
+                <div class="modal-body modalbody">
+                    <div class="row">
+                        <form class="form-horizontal" id="IdentificationFormData" asp-action="EditIdentificationn" asp-controller="" method="post">
+
+
+                            <div class="col-md-12" style="margin-top:25px">
+
+                                <div class="row">
+
+                                    <div class="divTable">
+
+                                        <div class="col-md-8" style="margin-left:0px ;" id="div23">
+                                            <ul class="sidebar-men secondNav tree " data-widget="tree" id="attachement_nav">
+                                              @*  @foreach (var item in VoucherTypeList)
+                                                {
+                                                    <li class="nav-item treeview menu-open attachmentType" id="parent">
+                                                        <a data-toggle="tab" data-value="@item.name" data-types="@item.code/@item.name" id="a123" style="text-decoration-line:none!important" name="catagory" class="mobilPosvalue">
+                                                            <span class="labelcss" selectedValue="@item.name">@item.code/@item.name</span>
+                                                        </a>
+
+                                                        <ul class="treeview-menu" style="padding-left:35px; background-color:white;" id="@item.code">
+                                                        </ul>
+                                                    </li>
+                                                }*@
+
+                                            </ul>
+
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <button class="btn btn-default btn-sm btnlength" type="reset" id="mobilposbtnsave">Ok</button>
+
+                    <button class="btn btn-default btn-sm btnlength" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+    var valueitem = "";
+    $(document).ready(function () {
+
+        $(".mobilPosvalue").click(function () {
+            valueitem = $(this).data("types");
+
+        });
+
+        $("#mobilposbtnsave").click(function () {
+
+            $('#mobil_pos_value').val(valueitem);
+            console.log(valueitem);
+        });
+
+    });
+
+</script>
+

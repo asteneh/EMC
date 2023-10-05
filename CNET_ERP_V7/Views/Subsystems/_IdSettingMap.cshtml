@@ -1,0 +1,246 @@
+﻿<style>
+    .vIdDefiniation {
+        height: 77vh;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    .vIdDefiniation {
+        white-space: nowrap
+    }
+
+    .vIdDefiniation {
+        overflow-y: auto; /* make the table scrollable if height is more than 200 px  */
+        height: 77vh /* gives an initial height of 200px to the table */
+    }
+
+        .vIdDefiniation th {
+            position: sticky; /* make the table heads sticky */
+            top: 0px; /* table head will be placed from the top of the table and sticks to it */
+        }
+
+    /*table {
+                border-collapse: collapse;*/ /* make the table borders collapse to each other */
+    /*width: 100%;
+            }*/
+
+    th,
+    td {
+        padding: 0 0 !important;
+        border: 1px solid #ccc;
+    }
+
+    th {
+        background-color: rgb(179, 236, 255)
+    }
+</style>
+
+@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_V7_Domain.Domain.ViewSchema;
+@using CNET_V7_Entities.DataModels;
+@using Newtonsoft.Json;
+@model VoucherSearchModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var idsettingbyorgunit = await sharedHelpers.SelectIdsettingByConsUnitandRefe(Model?.cosigneeCode, Model?.documentType);
+
+    var iddefinitionList = await sharedHelpers.GetIddefinition();
+
+    var iden = new  List<IddensettingDTO>();
+    var iddefinition = iddefinitionList?.Where(x => x?.SystemConstant == 5).ToList();
+    if (idsettingbyorgunit != null && idsettingbyorgunit.Count() > 0)
+    {
+        var BranchIdDefinition = (from idde in iddefinitionList
+                                  join idSe in idsettingbyorgunit
+                                  on idde?.Id equals idSe?.IdDefinition
+                                  select new
+                                  {
+                                      idSe?.Id,
+                                      idSe?.Reference,
+                                      idSe?.StartFrom,
+                                      idSe?.IdDefinition,
+                                      idSe?.IsFlexible,
+                                      idSe?.Device,
+                                      idSe?.ConsigneeUnit,
+                                      idSe?.CurrentValue,
+                                      idSe?.Remark,
+                                      idde?.Description
+
+                                  }).ToList();
+        if (BranchIdDefinition !=  null && BranchIdDefinition.Count() > 0)
+        {
+            foreach (var item in BranchIdDefinition)
+            {
+                iden.Add(new IddensettingDTO
+                {
+                  Id = item.Id,
+                  Reference = item.Reference,
+                  StartFrom = item.StartFrom,
+                  IdDefinition = item.IdDefinition,
+                  IsFlexible = item.IsFlexible,
+                  Device = item.Device,
+                  OrganizationUnit = item.ConsigneeUnit,
+                  CurrentValue = item.CurrentValue,
+                  Remark = item.Remark,
+                  Description = item.Description,
+
+                });
+            }
+        }
+
+    }
+
+    var deviceList = await sharedHelpers.SelectAllDeviceByOrganizationalUnitDefinition(Model.cosigneeCode);
+
+
+    var Idseting = await sharedHelpers.SelectIdSetting();
+
+    List<IddefinitionDTO> ListId = new List<IddefinitionDTO>();
+    foreach (var values in iddefinitionList)
+    {
+
+        if (!Idseting.Any(x => x.IdDefinition == values.Id))
+        {
+            ListId.Add(values);
+        }
+    }
+    var iddefiniwithoutidsettingListType = ListId?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Description }).Distinct().ToArray();
+
+
+
+    List<ViewDeviceByReferenceDTO> Listdevice = new List<ViewDeviceByReferenceDTO>();
+    if (deviceList != null && deviceList.Count() > 0)
+    {
+            foreach (var v in deviceList)
+            {
+                var prefdescrption = await sharedHelpers.GetsystemConstantById(Convert.ToInt32(v.Preference));
+                if (prefdescrption != null)
+                    v.Manufacturer = prefdescrption.FirstOrDefault().Description;
+                Listdevice.Add(v);
+            }
+        }
+    
+
+    var deviceListType = Listdevice?.Select(async d => new CNET_ERP_V7.Models.SelectorModel.Select2Result()
+            {
+                text = "Category: " + d.Manufacturer,
+                children =  deviceList.Where(y => y.Article == d.Article ).Select(x => new CNET_ERP_V7.Models.SelectorModel.Select2Result() { id = x.Article, text = x.Name }).ToList()
+
+            }).ToArray();
+
+    var deviceListtType = deviceList?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Name }).Distinct().ToArray();
+
+}
+
+   
+<div class="border vIdDefiniation" style="border:1px solid #e5e5e5;">
+    <table id="voucher_idSetting_table" class="table table-striped container-fluid" style="background-color:#ffffff" width="105%">
+        <thead>
+            <tr class="attendancesum">
+                <th>Id Definition</th>
+                <th>Device</th>
+                <th>Start From</th>
+                <th>Current Value</th>
+                <th>Is Flexible</th>
+                <th>Remark</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (iden != null && iden.Count() > 0)
+            {
+                @foreach (var item in iden)
+                {
+                    var device = await sharedHelpers.SelectDeviceBYId(item?.Device);
+                    <tr class="attendancesum">
+                      <td>@item?.Description</td>
+                       <td>@device?.FirstOrDefault()?.Description</td>
+                       <td>@item?.StartFrom</td>
+                       <td>@item?.CurrentValue</td>
+                        <td> <input class="form-check-input" type="checkbox" id="" @(Convert.ToBoolean(item?.IsFlexible) ? "checked" : "") onclick="return false" /></td>
+                        <td>@item?.Remark</td>
+                        <td><a class="btn btn-social-icon btn-xs" onclick="EditIdsettingFunction('@item?.Id')" data-toggle="modal"><i class="fa fa-edit"></i></a></td>
+                        <td><a href="#" class="btn btn-social-icon btn-xs" onclick="DeleteIdsettingFunction('@item?.Id')"><i class="fa fa-trash"></i></a></td>
+
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    $('#@nameof(Model.id_definitionper)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(iddefiniwithoutidsettingListType)),
+        placeholder: "",
+        allowClear: true,
+    
+
+    });
+    $('#@nameof(Model.deviceper)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(deviceListtType)),
+        placeholder: "Select Device",
+        allowClear: true,
+    });
+</script>
+
+<script>
+    function DeleteIdsettingFunction(CODE)
+    {
+        var code = CODE;
+        var Vouchersettingidsetting = $('#@nameof(Model.documentType)').val();
+        var branch = $('#@nameof(Model.organizationundefper)').val();
+        swal({
+            title: "are you sure to delete this ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "POST",
+                        dataType: 'json',
+                        url: '@Url.Action("DeleteIdsetting", "Subsystems")',
+                        data: { CODE: code },
+
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        success: function (data) {
+                            swal("", data, "success");
+                            GetIdDefinitionList(branch, Vouchersettingidsetting)
+
+
+                        }
+                    });
+                }
+            });
+        
+        
+   }
+</script>
+
+<script>
+    function EditIdsettingFunction(CODE) {
+        var code = CODE;
+        $.ajax({
+            type: "GET",
+            dataType: 'json',
+            url: '@Url.Action("GetIdsettingBycode", "Subsystems")',
+            data: { code: code },
+            success: function (data) {
+                var iddefinition = $("<option selected='selected'></option>").val(data.iddefn).text(data.iddeDes)
+                $("#id_definitionper").append(iddefinition).trigger('change')
+                $('#@nameof(Model.code_idsetting)').val(data.code);
+                $('#@nameof(Model.deviceper)').val(data.device).trigger('change');
+                $('#@nameof(Model.start_Fromper)').val(data.starfrom);
+                $('#@nameof(Model.iS_flexibleper)').prop('checked', data.isflixiable);
+                $('#@nameof(Model.remarkper)').val(data.remark);
+
+                $('#IdsettingModelMap').modal("show");
+            },
+        });
+    }
+ 
+ </script>

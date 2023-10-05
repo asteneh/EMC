@@ -1,0 +1,430 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain;
+@using Newtonsoft.Json;
+@model Devicemodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var codemodel = Model.DeviceType;
+
+    int sysoldvalue = 1212121212;
+    var deviceConfig = await sharedHelpers.GetConfigurationByRefandPref(Model?.deviceId.ToString(), CNETConstants.DEVICE);
+
+}
+<style>
+    .sptablecontent {
+        border-collapse: collapse;
+        background-color: #fff;
+        width: 98%;
+        margin-left: 15px;
+    }
+
+        .sptablecontent .asth {
+            font-weight: bold;
+        }
+
+        .sptablecontent th, table td {
+            padding: 0px !important;
+            border: 1px solid #ccc;
+        }
+
+
+
+        .sptablecontent, .sptablecontent .sptablecontent td {
+            border: 0px solid #ccc;
+            padding: 0px !important;
+        }
+
+            .sptablecontent [type=text], select {
+                width: 100%;
+            }
+
+            .sptablecontent [type=password] {
+                width: 100%;
+            }
+
+            .sptablecontent div {
+                width: 97%;
+            }
+
+    #dampstyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    .inputfield {
+        pointer-events: none;
+        opacity: 30;
+        width: 80%;
+        height: 16px !important;
+        padding: 0px 0px !important;
+        font-size: 13px !important;
+    }
+
+    .Inputborder:focus {
+        border: 1px solid #1670BE;
+        box-shadow: 0 0 3px #1670BE;
+        outline-offset: 0px;
+        outline: none;
+    }
+
+    .Inputborder {
+        border: 1px solid #eee;
+        font-size: 13px !important;
+        height: 17px !important;
+        line-height: 2px !important;
+        text-emphasis-position: initial !important;
+        margin-top: 0px !important;
+        padding: 0px 0px !important;
+    }
+
+
+    .mainparent {
+        color: dodgerblue;
+        background-color: #eee;
+    }
+
+    .boderclr {
+        background-color: dodgerblue;
+    }
+
+    .vouproperty {
+        height: 95vh;
+        overflow-y: scroll;
+    }
+
+    .boderclrclose {
+        border-color: ActiveBorder;
+    }
+    /*table {
+            border-collapse: collapse;*/ /* make the table borders collapse to each other */
+    /*width: 100%;
+        }*/
+
+</style>
+
+<div class="box box-primary">
+    <br />
+
+    <div class="box-header with-border">
+        <div class="row">
+            <div class="col-md-11">
+                <div class="row">
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-1 control-labell"> Find</label>
+                        <div class="col-md-9">
+                            <input type="text" id="filterdoorlockSetting" style="display:flex;width:100%;" class="form-control" placeholder="Search By Name">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body vouproperty">
+        @foreach (var va in deviceConfig)
+        {
+            switch (va.Attribute)
+            {
+                case "Ela System URL":
+                    @*   Model.door_ela = va.CurrentValue.ToString();*@
+
+                    break;
+                case "MOllY Encoder Type":
+
+                    Model.door_MOllYEncoderType =  va.CurrentValue;
+
+                    break;
+                case "Deluns Encoder Type":
+
+                    Model.door_DelunsEncoderType = va.CurrentValue;
+
+                    break;
+                case "Unlock Deadbolt":
+                    Model.door_UnlockDeadbolt = va.CurrentValue;
+
+                    break;
+                case "Unlock public Doors":
+
+                    Model.door_UnlockpublicDoors = va.CurrentValue;
+
+                    break;
+                case "Adel System":
+                    Model.door_AdelSystem =  va.CurrentValue;
+
+                    break;
+                case "Host":
+                    Model.door_Host = va.CurrentValue;
+                    break;
+                case "User":
+                    Model.door_User = va.CurrentValue;
+                    break;
+                case "Adel Encoder Type":
+                    Model.door_AdelEncoderType = va.CurrentValue;
+
+                    break;
+                case "TM ENcoder":
+                    Model.door_TMENcoder = va.CurrentValue;
+
+                    break;
+                case "BETECH Encoder Type":
+                  Model.door_BETECHEncoderType =  va.CurrentValue;
+
+                    break;
+                case "System Password":
+                    Model.door_SystemPassword = va.CurrentValue;
+                    break;
+                case "Encoder Address":
+                if (!string.IsNullOrEmpty(va.CurrentValue))
+                    {
+                        Model.door_EncoderAddress = Convert.ToInt32(va.CurrentValue);
+                    }
+                    break;
+            }
+        }
+        <form id="PropertyFormDataForDoor" method="post">
+
+            <table cellpadding="0" cellspacing="0" class="sptablecontent tree_doorload" id="doolock_setting_table">
+                <tr class="asth">
+                    <td></td>
+                    <td></td>
+
+                </tr>
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Adel
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Adel Encoder Type
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="door_AdelEncoderType" asp-items="Model.doorAdelEncoderType" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Adel System
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="door_AdelSystem" asp-items="Model.doorAdelSystem" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Host
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="door_Host" value="@Model.door_Host" class="Inputborder" />
+
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        TM ENcode
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="door_TMENcoder" asp-items="Model.doorTmencoder" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        User
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="door_User" value="@Model.door_User" class="Inputborder" />
+
+                    </td>
+
+                </tr>
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        BE-TECH
+                    </td>
+                </tr>
+
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        BETECH Encoder Type
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="door_BETECHEncoderType" asp-items="Model.doorBETECHEncoderType" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+
+                        System Password
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="door_SystemPassword" value="@Model.door_SystemPassword" class="Inputborder" />
+                    </td>
+                </tr>
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Deluns
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Deluns Encoder Type
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="door_DelunsEncoderType" asp-items="Model.doorDelunsEncoderType" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Unlock Deadbolt
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="door_UnlockDeadbolt" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Unlock public Doors
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="door_UnlockpublicDoors" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Molly
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        MOllY Encoder Type
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="door_MOllYEncoderType" asp-items="Model.doorMOllYEncoderType" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Vin Card
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Encoder Address
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (Model.door_EncoderAddress == 0)
+                        {
+                            <input asp-for="door_EncoderAddress" type="text"  value="0" class="Inputborder encoderaddressinput" maxlength="10" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="door_EncoderAddress" type="text"  value="@Model." class="Inputborder encoderaddressinput" maxlength="10"/>
+
+                        }
+                    </td>
+
+                </tr>
+            </table>
+
+            <input asp-for="doordevicecode" value="@Model.deviceId" hidden />
+
+        </form>
+
+
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $("#filterdoorlockSetting").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#doolock_setting_table > tbody > tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+<script>
+
+
+    function TreeFunctiondoor() {
+        $(document).ready(function () {
+            $('.tree-basic').treegrid();
+
+            $('.tree_doorload').treegrid({
+                source: function (id, response) {
+                    if (id != 1) response(['']);
+                    else response(['']);
+                }
+            });
+
+        });
+    }
+    TreeFunctiondoor();
+
+    $('.encoderaddressinput').on('input', function () {
+        this.value = this.value.replace(/(?!^-)[^0-9.]/g, "").replace(/(\..*)\./g, '$1');
+    });
+    $('.attributdata').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        //var value = $(this).children('.inputfield').val();
+        var value = $(this).text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).closest("tr").addClass('boderclr');
+        $('#deviceproperty').html(value);
+
+    });
+    $('.attributcurrvalue').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        //var value = $(this).siblings().children('.inputfield').val();
+        var value = $(this).siblings().text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).siblings().addClass("boderclr");
+        $('#deviceproperty').html(value);
+
+    });
+    $("#devicesettingproperty").change(function () {
+        var value = $(this).select2('data')[0].text;
+        $(".bg-blue").removeClass("bg-blue");
+        $("input[name*='" + value + "']").addClass("bg-blue");
+        $(this).siblings().addClass("bg-blue");
+        $('#VoucherVal').html(value);
+    });
+
+</script>
+<script>
+    function getdayclosingfile(filename) {
+        $('#display_day_closingfile').val(filename);
+    }
+</script>

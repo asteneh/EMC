@@ -1,0 +1,26 @@
+﻿
+<style>
+    .voucherreferenceitemlist{
+        display:none;
+    }
+</style>
+<div class="row">
+    <div class="col-md-3">
+        @await Html.PartialAsync("_referenceheader")
+
+    </div>
+
+
+    <div class="col-md-9" id="referenceMapItem">
+        @await Html.PartialAsync("_referenceMap")
+
+    </div>
+    <div class="col-md-9 voucherreferenceitemlist" id="InnternalreferenceItem">
+        @await Html.PartialAsync("_Innternalreference")
+
+    </div>
+    <div class="col-md-9 voucherreferenceitemlist" id="linetemAndvoucherextensionItem">
+        @await Html.PartialAsync("_linetemAndvoucherextension")
+
+    </div>
+</div>

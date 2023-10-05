@@ -1,0 +1,133 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@model GSLmodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var ArticleTypes = await sharedHelpers.GetsystemConstantById(Convert.ToInt32(Model.gslType));
+}
+<style>
+    .idsettingbox {
+        width: 60%;
+    }
+</style>
+
+<div class="modal fade" id="articleIdsettingModelMap">
+    <div class="modal-dialog idsettingbox ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <img src="~/images/Cnets.jpg" alt="CNET" />
+                    <span>ID Setting For @ArticleTypes?.FirstOrDefault().Description</span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </h5>
+
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form class="form-horizontal" id="articleidsettingNewFormData" onsubmit="return articleIdsettingNewFormFunction()" asp-controller="GSL" asp-action="createIdsettingarticle" method="post">
+                        <div class="col-md-12">
+                                <button class="btn btn-app" type="reset" id="IssuedbtnNew"> <i class="fa fa-file-o"></i>New</button>
+                                <button type="submit" action="addRow" class="btn btn-app" id="articleidSettingbtnNewsave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                                <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                           
+                        </div>
+
+                        <div class="col-md-12" style="margin-top:25px">
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Id Definition</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="id_definitionart" class="form-control select2" style="width:100%;">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="id_definitionart"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Device</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="deviceart" class="form-control select2" style="width:100%;">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="deviceart"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Start From</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="start_Fromart" class="form-control"  />
+                                        <span asp-validation-for="start_Fromart"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Is Flexible</label>
+                                    <div class="col-md-1">
+                                        <input asp-for="iS_flexibleart" />
+                                        <span asp-validation-for="iS_flexibleart"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Remark</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="remarkart" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="remarkart"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input hidden asp-for="organizationundefart" />
+                        <input hidden asp-for="code_idsettingart" />
+                        <input hidden asp-for="VoucherSettigForIdsettingart" />
+                        <input asp-for="idsettingdelcodeart" type="text" hidden />
+                        <input asp-for="gslcategory" type="text" hidden />
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+    var codeitem = '@Model.gslType';
+    $('#@nameof(Model.VoucherSettigForIdsettingart)').val(codeitem);
+
+</script>
+<script>
+    var orgunitart = "";
+    $(document).on("click", ".articleaddvalueidsettingsearch", function () {
+        orgunitart = $(this).attr('id');
+        $('#@nameof(Model.organizationundefart)').val(orgunitart);
+    });
+</script>
+<script>
+    $(document).on("click", "#btnNewgslSetting", function () {
+        CrearIdSettingTab();
+       
+    });
+
+
+  function CrearIdSettingTab()
+  {
+        $('#@nameof(Model.code_idsettingart)').val("");
+        $('#@nameof(Model.id_definitionart)').val("").trigger('change');
+        $('#@nameof(Model.deviceart)').val("").trigger('change');
+        $('#@nameof(Model.start_Fromart)').val("");
+        $('#@nameof(Model.iS_flexibleart)').prop('checked', "");
+        $('#@nameof(Model.remarkart)').val("");
+  }
+</script>
+
+

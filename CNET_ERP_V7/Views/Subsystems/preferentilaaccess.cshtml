@@ -1,0 +1,120 @@
+﻿@using CNET_V7_Domain.Domain.ViewSchema;
+@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_ERP_V7.Common.Helpers;
+@model CNET_ERP_V7.Models.SubSytsemModel.VoucherSearchModel
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var prefacce = Model?.accessDTOs;
+}
+<style>
+    .vIdDefiniation {
+        height: 77vh;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    .vIdDefiniation {
+        white-space: nowrap
+    }
+
+    .vIdDefiniation {
+        overflow-y: auto; /* make the table scrollable if height is more than 200 px  */
+        height: 77vh /* gives an initial height of 200px to the table */
+    }
+
+        .vIdDefiniation th {
+            position: sticky; /* make the table heads sticky */
+            top: 0px; /* table head will be placed from the top of the table and sticks to it */
+        }
+
+    /*table {
+                    border-collapse: collapse;*/ /* make the table borders collapse to each other */
+    /*width: 100%;
+                }*/
+
+    th,
+    td {
+        padding: 0 0 !important;
+        border: 1px solid #ccc;
+    }
+
+    th {
+        background-color: rgb(179, 236, 255)
+    }
+</style>
+<div class="border vIdDefiniation" style="border:1px solid #e5e5e5;">
+    <table id="voucher_Extension_table" class="table table-striped container-fluid" style="background-color:#ffffff" width="105%">
+        <thead>
+            <tr class="attendancesum">
+                <th>Preferential</th>
+                <th>Description</th>
+                <th>Remark</th>
+                <th>Edit</th>
+                <th>delete</th>
+        </thead>
+        <tbody>
+            @if (prefacce != null && prefacce.Count() > 0)
+            {
+                @foreach (var item in prefacce)
+                {
+                    var prefcode = await sharedHelpers.GetpreferenceById(item.Preference);
+                    <tr class="attendancesum">
+                        <td>@prefcode?.FirstOrDefault()?.Description</td>
+                        <td>@item.Description</td>
+                        <td>@item?.Remark</td>
+                        <td><a class="btn btn-social-icon btn-xs" onclick="EditPrefrentialFunction('@item?.Id')"><i class="fa fa-edit"></i></a></td>
+                        <td><a href="#" class="btn btn-social-icon btn-xs" onclick="DeletePrefrentialFunction('@item?.Id')"><i class="fa fa-trash"></i></a></td>
+
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    function EditPrefrentialFunction(_id) {
+        var code = _id;
+        $.ajax({
+            type: "GET",
+            dataType: 'json',
+            url: '@Url.Action("GetPreferentailAccessById", "Subsystems")',
+            data: { code: code },
+            success: function (data) {
+                $('#@nameof(Model.prefererecodeforupdate)').val(data.id);
+                $('#@nameof(Model.preferentialaccess)').val(data.pref).trigger('change');
+                $('#@nameof(Model.preferedescription)').val(data.descrption);
+                $('#@nameof(Model.prefereremark)').val(data.rema);
+
+                $('#preferentialacessModal').modal("show");
+            },
+        });
+    }
+    function DeletePrefrentialFunction(id) {
+        var preference = $('#@nameof(Model.devicecode)').val();
+        var Vouchersettingpreferentila = $('#@nameof(Model.documentType)').val();
+        swal({
+            title: "are you sure to delete this ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "POST",
+                        dataType: 'json',
+                        url: '@Url.Action("DeletePreferentilaAccess", "Subsystems")',
+                        data: { code: id },
+                        success: function (data) {
+                            swal("", data, "success");
+                            submitfunctionpreferentialaccess(preference, Vouchersettingpreferentila);
+
+                        }
+                    });
+                }
+            });
+
+    }
+
+</script>

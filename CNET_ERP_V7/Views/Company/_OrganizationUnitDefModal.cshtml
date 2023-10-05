@@ -1,0 +1,231 @@
+﻿@model Companymodel
+@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+
+}
+
+<div class="modal fade" id="OrganizationUnitModal">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <img src="~/images/Cnets.jpg" alt="CNET" />
+                    <span>Organization Unit</span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form class="form-horizontal" id="orgunitDefnNewFormData" onsubmit="return orgunitDefnNewFormFunction()" asp-controller="Company" asp-action="SaveOrganizationUnit" method="post">
+                        <div class="col-md-12">
+                            <button class="btn btn-app" type="reset" id="organizationaddressbtnnew"> <i class="fa fa-file-o"></i>New</button>
+                            <button type="submit" action="addRow" class="btn btn-app" id="organizationUnitDefinationSave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                            <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                        </div>
+
+
+                        <div class="form-horizontal" style="margin-top:25px">
+                            <div class="form-group  form-group-sm">
+                                <label asp-for="consigneCode" class="col-md-3 control-label">Code</label>
+                                <div class="col-md-8">
+                                    <input asp-for="consigneCode" type="text" class="form-control" autocomplete="off" />
+                                </div>
+                            </div> 
+                            <div class="form-group  form-group-sm">
+                                <label asp-for="consigneName" class="col-md-3 control-label">Name</label>
+                                <div class="col-md-8">
+                                    <input asp-for="consigneName" type="text" class="form-control" autocomplete="off" />
+                                </div>
+                            </div>
+                            <div class="form-group  form-group-sm">
+                                <label asp-for="orgUnitDefDesc" class="col-md-3 control-label">Description</label>
+                                <div class="col-md-8">
+                                    <textarea asp-for="orgUnitDefDesc" style="width:100%; overflow:auto" class="form-control"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group  form-group-sm">
+                                <label asp-for="orgUnitDefParent" class="col-md-3 control-label">Parent</label>
+                                <div class="col-md-8">
+                                    <select asp-for="orgUnitDefParent" id="orgUnitDefParent" class="form-control select2" style="width:100%">
+                                        <option></option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group  form-group-sm">
+                                <label asp-for="orgUnitDefSpec" class="col-md-3 control-label">Specialization</label>
+                                <div class="col-md-8">
+                                    <select asp-for="orgUnitDefSpec" class="form-control select2" style="width:100%">
+                                        <option></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group  form-group-sm">
+                                <label asp-for="orgUnitDefResperson" class="col-md-3 control-label">Responsible Person</label>
+                                <div class="col-md-8">
+                                    <select asp-for="orgUnitDefResperson" class="form-control select2" style="width:100%">
+                                        <option></option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group  form-group-sm">
+                                <label asp-for="orgUnitDefAbbrivation" class="col-md-3 control-label">Abbreviation</label>
+                                <div class="col-md-8">
+                                    <input asp-for="orgUnitDefAbbrivation" type="text" class="form-control" autocomplete="off" />
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-3 control-label text right">Ecommerce</label>
+                                <div class="col-md-1">
+                                    <input asp-for="ecommerce" type="checkbox" />
+                                    <span asp-validation-for="ecommerce"></span>
+                                </div>
+                                <label class="col-md-2 control-label text right">Is Online</label>
+                                <div class="col-md-1">
+                                    <input asp-for="isonline" type="checkbox" />
+                                    <span asp-validation-for="isonline"></span>
+                                </div>
+                                <label class="col-md-2 control-label text right">Is Active</label>
+                                <div class="col-md-1">
+                                    <input asp-for="isActiveb" type="checkbox" />
+                                    <span asp-validation-for="isActiveb"></span>
+                                </div>
+                            </div>
+                            @*@if (@IsHeadOffice == true)
+                                {*@
+                            <div class="form-group  form-group-sm" id="ishead_office">
+                                <label asp-for="is_headoffice" class="col-md-3 control-label">Is Head Office</label>
+                                <div class="col-md-1">
+                                    <input asp-for="is_headoffice" type="checkbox" />
+                                </div>
+                            </div>
+
+                            <div class="form-group  form-group-sm">
+                                <label asp-for="orgUnitDefRemark" class="col-md-3 control-label"> Remark</label>
+                                <div class="col-md-8">
+                                    <textarea asp-for="orgUnitDefRemark" style="width:100%; overflow:auto" class="form-control"></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+                        <input asp-for="organizationType" hidden />
+                        <input asp-for="organizationunitcode" hidden />
+                        <input asp-for="orglookupcode" hidden />
+                        <input asp-for="branchcode" hidden />
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<script>
+    function orgunitDefnNewFormFunction() {
+        @*var head = '@Model.headoffice';
+        var boolValue = head.toLowerCase() == 'true' ? true : false;*@
+
+        var lookupcode = $('#@nameof(Model.orglookupcode)').val();
+        var $form = $('#orgunitDefnNewFormData');
+        var data = $form.serialize();
+        var action = $('#orgunitDefnNewFormData').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            /*dataType: 'html',*/
+            data: data,
+            success: function (data) {
+
+                if (data.reloaddata == true) {
+                    swal("", data.result,"success");
+                    $.ajax({
+                        type: "GET",
+                        dataType: 'html',
+                        url: '@Url.Action("Getorgunitcode", "Company")',
+                          data: { orgunit: lookupcode },
+
+                        success: function (data) {
+                            TreeFunction();
+                            $('#OrgunitDefnsection').html(data);
+
+                         $.ajax({
+                            type: "GET",
+                            dataType: 'html',
+                            url: '@Url.Action("Getparent", "Company")',
+                             data: { orgunit: lookupcode},
+
+                            success: function (data) {
+
+                                $('#organizationDefncode').html(data);
+
+                                $('#@nameof(Model.orglookupcode)').val(lookupcode);
+                                $('#@nameof(Model.organizationType)').val(lookupcode);
+
+                            }
+                         });
+                        }
+                    });
+
+                   ClearOrgunitdefModal();
+
+                }
+                else{
+                    swal("", data.result, "error");
+                }
+            },
+        });
+        return false;
+    };
+</script>
+<script>
+
+    $(document).on("click", ".btnUpdateorgunitdef", function () {
+        $("#organizationUnitDefinationSave").attr("action", "updatePRT");
+
+            var code = $(this).data('code');
+            var desc = $(this).data('desc');
+            var special = $(this).data('spe');
+            var responsible = $(this).data('resp');
+            var abber = $(this).data('abb');
+            var remark = $(this).data('remm');
+            var parentcode = $(this).data('paren');
+
+            $('#@nameof(Model.organizationunitcode)').val(code);
+            $('#@nameof(Model.orgUnitDefDesc)').val(desc);
+            $('#@nameof(Model.orgUnitDefParent)').val(parentcode).trigger('change');
+            $('#@nameof(Model.orgUnitDefSpec)').val(special).trigger('change');
+            $('#@nameof(Model.orgUnitDefResperson)').val(responsible).trigger('change');
+            $('#@nameof(Model.orgUnitDefAbbrivation)').val(abber).trigger('change');
+            $('#@nameof(Model.orgUnitDefRemark)').val(remark);
+     });
+
+    $(document).on("click", "#btnNeworgunit", function () {
+        ClearOrgunitdefModal();
+    });
+    function ClearOrgunitdefModal() {
+            $('#@nameof(Model.consigneCode)').val("");
+             $('#@nameof(Model.organizationunitcode)').val("");
+             $('#@nameof(Model.orgUnitDefDesc)').val("");
+             $('#@nameof(Model.consigneName)').val("");
+             $('#@nameof(Model.orgUnitDefSpec)').val("").trigger('change');
+             $('#@nameof(Model.orgUnitDefResperson)').val("").trigger('change');
+             $('#@nameof(Model.orgUnitDefAbbrivation)').val("");
+             $('#@nameof(Model.orgUnitDefParent)').val("").trigger('change');
+             $('#@nameof(Model.orgUnitDefRemark)').val("");
+             $('#@nameof(Model.ecommerce)').prop("checked", false);
+             $('#@nameof(Model.isonline)').prop("checked", false);
+             $('#@nameof(Model.isActiveb)').prop("checked", false);
+    }
+</script>

@@ -1,0 +1,152 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_V7_Entities.DataModels;
+@using Newtonsoft.Json;
+@model Companymodel;
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers;
+@{
+    var bank = Model?.BankAccountDetai;
+}
+<style>
+    .vIdDefiniation {
+        height: 77vh;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    .vIdDefiniation {
+        white-space: nowrap
+    }
+
+    .vIdDefiniation {
+        overflow-y: auto; /* make the table scrollable if height is more than 200 px  */
+        height: 77vh /* gives an initial height of 200px to the table */
+    }
+
+        .vIdDefiniation th {
+            position: sticky; /* make the table heads sticky */
+            top: 0px; /* table head will be placed from the top of the table and sticks to it */
+        }
+
+    /*table {
+                        border-collapse: collapse;*/ /* make the table borders collapse to each other */
+    /*width: 100%;
+                    }*/
+
+    th,
+    td {
+        padding: 0 0 !important;
+        border: 1px solid #ccc;
+    }
+
+    th {
+        background-color: rgb(179, 236, 255)
+    }
+</style>
+
+
+<div class="border vIdDefiniation" style="border:1px solid #e5e5e5;">
+    <table id="voucher_idSetting_table" class="table table-striped container-fluid" style="background-color:#ffffff" width="105%">
+        <thead>
+            <tr class="attendancesum">
+                <th>Description</th>
+                <th>Type</th>
+                <th>Bank</th>
+                <th>Branch</th>
+                <th>Number</th>
+                <th>Remark</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (bank != null && bank.Count() > 0)
+            {
+                @foreach (var item in bank)
+                {
+                    var type = await sharedHelpers.GetsystemConstantById(item?.Type);
+                    var branch = await sharedHelpers.GetConsigneeunitById(Convert.ToInt32(item?.ConsigneeUnit));
+                    var Bank = await sharedHelpers.GetConsigneeById(Convert.ToInt32(branch?.FirstOrDefault()?.Consignee));
+                    <tr class="attendancesum">
+                        <td>@item?.Description</td>
+                        <td>@type?.FirstOrDefault()?.Description</td>
+                        <td>@Bank?.FirstOrDefault()?.FirstName</td>
+                        <td>@branch?.FirstOrDefault()?.Name</td>
+                        <td>@item?.AccountNo</td>
+                        <td>@item?.Remark</td>
+                        <td><a class="btn btn-social-icon btn-xs" onclick="EditBankdetailFunction('@item?.Id')" data-toggle="modal"><i class="fa fa-edit"></i></a></td>
+                        <td><a href="#" class="btn btn-social-icon btn-xs" onclick="DeleteBankdetailFunction('@item?.Id')"><i class="fa fa-trash"></i></a></td>
+
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function DeleteBankdetailFunction(CODE) {
+        var code = CODE;
+        swal({
+            title: "are you sure to delete this ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "POST",
+                        dataType: 'json',
+                        url: '@Url.Action("DeleteBankAccountDetail", "Company")',
+                        data: { code: code },
+
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        success: function (data) {
+                            var idd = $('#@nameof(Model.bankAccountDetailCatagory)').val();
+                            $(function () {
+                                $.ajax({
+                                    url: '/Company/OrganizationBankDetail',
+                                    type: 'POST',
+                                    data: { code: idd }, // send the data object with the request
+                                    success: function (result) {
+                                        $('#BankDetalData').html(result);
+                                    },
+                                    error: function () {
+                                        console.log('Error occurred.');
+                                    }
+                                });
+                            });
+                        }
+                    });
+                }
+            });
+
+
+    }
+</script>
+
+<script>
+    function EditBankdetailFunction(CODE) {
+        var code = CODE;
+        $.ajax({
+            type: "GET",
+            dataType: 'json',
+            url: '@Url.Action("GetBankAccountDetailById", "Company")',
+            data: { code: code },
+            success: function (data) {
+                $('#@nameof(Model.bankAccountDetailCodeforEdit)').val(data.id);
+                $('#@nameof(Model.bankAccountDetailDesc)').val(data.description);
+                $('#@nameof(Model.bankAccountDetailType)').val(data.type).trigger('change');
+                $('#@nameof(Model.bankAccountDetailBank)').val(data.bankk).trigger('change');
+                $('#@nameof(Model.bankAccountDetailACCnum)').val(data.accnom);
+                $('#@nameof(Model.bankAccountDetailRemark)').val(data.remark);
+
+                $('#modal-BankDetail').modal("show");
+            },
+        });
+    }
+
+</script>
+

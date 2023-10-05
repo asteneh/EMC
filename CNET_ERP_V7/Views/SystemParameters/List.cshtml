@@ -1,0 +1,247 @@
+﻿@using CNET_ERP_V7.Models.Security;
+@using Newtonsoft.Json;
+@model systemSettingModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var syssetting = await sharedHelpers.GetsystemConstantById(Model?.sysType);
+    var comp = sharedHelpers.GetCompany();
+    var comptin = comp?.Result?.Tin;
+    var consineeunit = await sharedHelpers.GetCompanyBranchsByTin(comptin);
+    var orgunitDefnBranch = consineeunit?.DistinctBy(y => y.Name).ToList();
+
+    var title = "System Setting - " + syssetting?.FirstOrDefault().Description;
+    ViewData["Title"] = title;
+}
+<style>
+    .mainsysType {
+        height: 70vh;
+        white-space: nowrap;
+        cursor: pointer;
+        overflow-y:scroll;
+        overflow-x:hidden;
+    }
+
+    .activeidSetting {
+        background-color: dodgerblue;
+        width: auto;
+    }
+</style>
+
+<section class="content-header">
+    <h5>
+        @ViewData["Title"]
+    </h5>
+    <ol class="breadcrumb">
+        <li><a href=@Url.Action("Index","Home")><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#"><i class="fa fa-briefcase"></i> System Setting </a></li>
+        <li class="active">@syssetting?.FirstOrDefault().Description</li>
+        <li class="active"></li>
+    </ol>
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-body">
+                    <div class="col-md-8">
+                        <div style="float:left ;padding-top:1px">
+                            <a href="#" class="btn btn-app" id="btnSaveSystemParameters"> <i class="fa fa-save"></i>Save</a>
+                            <a href="#" class="btn btn-app" id=""> <i class="fa fa-print" aria-hidden="true"></i>Print</a>
+
+                        </div>
+                        <div class="col-md-5">
+                            <form asp-controller="" asp-action="" method="post" id="SearchForm">
+                                <div class="form-inline">
+                                    <br />
+
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+
+                </div>
+                <input type="hidden" id="selectesecurityTab" value="" />
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs" id="SystemParameter_tab_nav">
+                    <li class="active"><a href="#SystemProperty" data-toggle="tab">System Parameters</a></li>
+                    <li><a href="#CompanyWorkingHours" data-toggle="tab">Company Working Hours</a></li>
+
+                </ul>
+                <div class="tab-content">
+                    <div class="active tab-pane" id="SystemProperty">
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-7">
+
+                                    @await Html.PartialAsync("_systemProperty.cshtml")
+
+                                </div>
+
+                                <div class="col-md-5">
+                                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                                        <span id="SystemParaVal" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                                        <h5 style="margin-left:10px;" id="parentParaVal">
+                                        </h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="CompanyWorkingHours">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-3 mainsysType" style="margin-left:0px;">
+                                    <div style="border:1px solid #e5e5e5;" class="mainsysType">
+                                        <table class="table table-border" id="consineeUnit_Table" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th colspan="2" style="border:1px solid #e5e5e5; background-color:lightgray">Description</th>
+
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                @foreach (var item in orgunitDefnBranch)
+                                                {
+                                                    <tr onclick="GetCompanyworkingHourById('@item.Id')">
+                                                        <td width="20px" style="border:none !important"></td>
+                                                        <td style="height:15px !important" class="activeconsineeunit">
+                                                            @item.Name
+                                                        </td>
+
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-md-9" style="margin-left:0px;">
+                                    <div class="workingHourContent">
+                                        @await Html.PartialAsync("_companyworkinghours.cshtml")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.tab-pane -->
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!--Issued Card Modal-->
+</section>
+@await Html.PartialAsync("Defaultdiscount.cshtml")
+
+<script>
+    function GetCompanyworkingHourById(id) {
+        $('#@nameof(Model.workinghourorgunitDefn)').val(id);
+       $.ajax({
+            url: '/SystemParameters/GetCompanyworkingHour',
+            type: 'POST',
+            data: { id: id },
+            success: function (result) {
+                $('#workhourContent').html(result);
+            },
+            error: function () {
+
+            }
+        });
+    }
+</script>
+<script>
+    $(document).on("click", ".activeconsineeunit", function () {
+
+        $(".activeidSetting").removeClass("activeidSetting");
+        $(this).addClass('activeidSetting');
+    });
+
+    var systemproperty = false;
+    var companyworkinghour = false;
+    $('#SystemParameter_tab_nav li a').click(function (e) {
+
+        var selecteTab = e.target.attributes['href'].value;
+        switch (selecteTab) {
+            case "#SystemProperty":
+                systemproperty = true;
+                companyworkinghour = false;
+                break;
+            case "#CompanyWorkingHours":
+
+                systemproperty = false;
+                companyworkinghour = true;
+                break;
+
+        }
+    });
+    $('#btnSaveSystemParameters').click(function () {
+        if (systemproperty == true) {
+            $('#PropertyFormDatasystempara').submit();
+        }
+        else if (companyworkinghour == true) {
+
+            $('#systemparameterNewFormData').submit();
+
+        }
+        else {
+            $('#PropertyFormDatasystempara').submit();
+        }
+
+    });
+
+    $('#PropertyFormDatasystempara').submit(function () {
+        var $form = $('#PropertyFormDatasystempara');
+        var data = $form.serialize();
+        var action = $(this).attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: function (data) {
+                swal("", data, "success");
+            },
+        });
+        return false;
+    });
+
+    $('#systemparameterNewFormData').submit(function () {
+        var $form = $('#systemparameterNewFormData');
+        var data = $form.serialize();
+        var action = $(this).attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: function (data) {
+                swal("", data.created, "success");
+                $.ajax({
+                    type: "GET",
+                    dataType: 'html',
+                    url: '@Url.Action("Getcompanyworkhours", "SystemParameteres")',
+                    data: {},
+
+                    success: function (data) {
+
+                        $('#workhourContent').html(data);
+                    }
+                });
+
+            },
+        });
+        return false;
+    });
+</script>
+
+

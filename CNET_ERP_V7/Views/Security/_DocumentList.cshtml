@@ -1,0 +1,154 @@
+﻿@model SecurityModel
+@using CNET_ERP_V7.Models.Security;
+@using CNET_V7_Domain.Domain.SecuritySchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Newtonsoft.Json;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@inject CNET_ERP_V7.Common.AuthNavigation.AuthenticationManager _authenticationManager
+@{
+    var mainDoc = Model?.documentpriv;
+    var docReportType = mainDoc?.GroupBy(x => x.SubSystemComponent).Select(y => y.First()).ToList();
+}
+<style type="text/css">
+    .sptable {
+        border: 1px solid #ccc;
+        border-collapse: collapse;
+        background-color: #fff;
+        width: 100%;
+    }
+
+        .sptable .asth {
+            background-color: #3c8dbc;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .sptable th, table td {
+            padding: 1px;
+            border: 1px solid #ccc;
+        }
+
+        .sptable, .sptable .sptable td {
+            border: 0px solid #ccc;
+        }
+
+            .sptable [type=text], select {
+                width: 100%;
+            }
+    .createacount {
+        height: 80vh;
+        overflow-y: scroll
+    }
+
+    .backtable {
+        background: green;
+    }
+
+    .backtablecheck {
+        background: green;
+    }
+
+    .backtableuncheck {
+        background: white;
+    }
+
+    .sunchildDco{
+        display:none;
+    }
+</style>
+<div class="box box-primary">
+    <div class="box-body createacount">
+        <form class="form-horizontal" id="documentaccessmatrixNewFormData"  method="post">
+
+            <table>
+                <thead>
+                    <tr class="">
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (docReportType != null && docReportType?.Count() > 0)
+                    {
+                      @foreach (var item in docReportType)
+                       {
+                            var neatedchild = mainDoc?.Where(t => t.SubSystemComponent == item.SubSystemComponent).ToList();
+
+                            <tr>
+                                <td style="width:4px;" class="childdoctoggleBtn1 fa fa-plus-square text-info">
+                                </td>
+                                <td class="accessprivilege" colspan="2">
+                                       @item.SubSystemDesc
+                                </td>
+                            </tr>
+                            <tr class="sunchildDco">
+                                <td style="width:4%;"></td>
+                                <td>
+                                    <table>
+                                        <thead>
+                                            <tr class="">
+                                                <th>Access</th>
+                                                <th>Description</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="">
+                                            @foreach (var childitem in neatedchild)
+                                            {
+                                                <tr accessprivilege accesses" style="opacity:1.5">
+                                                    <td> <input class="checkedDoc" name="documentpriviligefuncCode[]" value="@childitem.FunctionId" type="checkbox" id="" @(Convert.ToBoolean(childitem?.Access) ? "checked" : "") onclick="return true" /></td>
+                                                     <td>
+                                                        @childitem?.Description
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                       }
+                    }
+                </tbody>
+            </table>
+            <input asp-for="docRolecode" value="@Model?.docRolecode" hidden />
+            <input asp-for="Docategory" value="@Model?.Docategory" hidden />
+        </form>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        $('.childdoctoggleBtn1').on('click', function () {
+            if ($(this).parent('tr').next('tr').is(":visible")) {
+
+                $(this).removeClass("fa fa-minus-square")
+                $(this).addClass("fa fa-plus-square")
+                $(this).parent('tr').next('tr').toggle("fast", function () {
+                });
+            }
+            else if ($(this).parent('tr').next('tr').not(":visible")) {
+                $(this).parent('tr').next('tr').toggle("fast", function () {
+                });
+                $(this).removeClass("fa fa-plus-square")
+                $(this).addClass("fa fa-minus-square")
+                //$(this).parent('tr').next('tr').removeClass("attendancesession")
+            }
+
+        });
+
+ });
+    var checkinputfiled = "";
+
+    $(document).on("change", ".checkedDoc", function () {
+
+        checkinputfiled = $(this).is(":checked");
+        if (checkinputfiled == true) {
+            $(this).closest("tr").removeClass('backtableuncheck');
+            $(this).closest("tr").addClass('backtablecheck');
+        }
+        else {
+            $(this).closest("tr").removeClass('backtablecheck');
+            $(this).closest("tr").addClass('backtableuncheck');
+        }
+    });
+   
+</script>

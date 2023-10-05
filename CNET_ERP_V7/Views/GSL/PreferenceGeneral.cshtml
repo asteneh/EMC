@@ -1,0 +1,108 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.AccountingSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_V7_Entities.DataModels;
+@using Newtonsoft.Json;
+@model GSLmodel;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    List<AccountMapDTO> accountMaps = new List<AccountMapDTO>();
+    string message = "";
+}
+
+<div class="row">
+    <div class="col-md-3" id="preferenceContent">
+        @await Html.PartialAsync("_Preference")
+    </div>
+    <div class="col-md-9">
+        <div class="nav-tabs-custom ">
+            <ul class="nav nav-tabs" id="main-tab-navv">
+
+                <li class="active">
+                    <a href="#prefacountmap" data-toggle="tab" data-value="Destination" data-types="" class="getselecteddestinationorsource">
+                        Account Map
+                    </a>
+                </li>
+                <li>
+                    <a href="#preferencepicture" data-toggle="tab" data-value="Source" data-types="" class="getselecteddestinationorsource">
+                        Picture
+                    </a>
+
+                </li>
+            </ul>
+
+        </div>
+        <div class="tab-content">
+            <div class="active tab-pane" id="prefacountmap">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="accountmapContent">
+                            @await Html.PartialAsync("_PreferenceMap", new GSLmodel() { accountMaps = accountMaps })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="preferencepicture">
+                <div class="row">
+                    <div class="col-md-12">
+                        @await Html.PartialAsync("_Preferencepicture")
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    var gslcode = '@Model.gslType';
+    var result = "";
+    var preferencecode = "";
+    var preferencedescription = "";
+    $(document).on("click", ".preferentialParent", function () {
+
+        preferencecode = $(this).data('types');
+        preferencedescription = $(this).data('value');
+
+        $('#@nameof(Model.referencecode)').val(preferencecode);
+        $('#@nameof(Model.prefParent)').val(preferencecode).trigger('change');
+ });
+
+    function PreferentilaChildCreatorNewFormFunction() {
+
+        var $form = $('#PreferentilaChildCreatorNewFormData');
+        var data = $form.serialize();
+        var action = $('#PreferentilaChildCreatorNewFormData').attr("action");
+           $.ajax({
+         type: "POST",
+         url: action,
+         data: data,
+            success: function (data)
+            {
+                if (data.check == true) {
+                    $("#prefParent").empty();
+                    swal("", data.result, "success");
+                    ClearprefModal();
+                    GetPreference(gslcode);
+                }
+                else{
+                    swal("", data.result, "error");
+                }
+               
+            },
+
+        });
+        return false;
+    };
+
+    function ClearprefModal() {
+
+         $('#@nameof(Model.prefrencecodeforupdate)').val("");
+         $('#@nameof(Model.prefParent)').val("").trigger('change');
+         $('#@nameof(Model.prefDescription)').val("");
+         $('#@nameof(Model.prefshoppingcate)').val("").trigger('change');
+
+    }
+</script>

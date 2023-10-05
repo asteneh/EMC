@@ -1,0 +1,337 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Newtonsoft.Json;
+@model systemSettingModel
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+}
+
+<div class="modal fade" id="gsltypelistModal" role="dialog">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 style=" color:dodgerblue; font-weight:bold">
+                    <img src="~/images/Cnets.jpg" />
+                    Gsl Type List
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+
+                    <form class="form-horizontal" id="GslTypeListdetailNewFormData" onsubmit="return GslTypeListdetailNewFormFunction()" asp-controller="SystemConstant" asp-action="SavegslType" method="post">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-app" action="addRow" id="btngslTypeSave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                            <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                        </div>
+
+
+                        <div class="col-md-12" style="margin-top:25px">
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="gsl_code" class="col-md-3 control-label">Code</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="gsl_code" type="text" class="form-control" readonly autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div><br />
+
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="gsl_description" class="col-md-3 control-label">Description</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="gsl_description" type="text" class="form-control" autocomplete="off" />
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-3 control-label text right">Is Active</label>
+                                <div class="col-md-1">
+                                    <input asp-for="gsl_isactive" type="checkbox" />
+                                    <span asp-validation-for="gsl_isactive"></span>
+                                </div>
+
+
+                            </div>
+
+
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="gsl_remark" class="col-md-3 control-label"> Remark</label>
+                                    <div class="col-md-7">
+                                        <textarea asp-for="gsl_remark" style="width:100%; overflow:auto" autocomplete="off"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <input asp-for="gsl_category" hidden />
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+</div>
+
+<div class="modal fade" id="voucherdefinitionModal" role="dialog">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 style=" color:dodgerblue; font-weight:bold">
+                    <img src="~/images/Cnets.jpg" />
+                    Voucher Definition
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+
+                    <form class="form-horizontal" id="voucherDefndetailNewFormData" onsubmit="return voucherDefndetailNewFormFunction()" asp-controller="SystemConstant" asp-action="SavevoucherDefn" method="post">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-app" action="addRow" id="btnvoucherTypeSave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                            <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                        </div>
+                        <input asp-for="parentId" hidden />
+
+                        <div class="col-md-12" style="margin-top:25px">
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="vochr_code" class="col-md-3 control-label">Code</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="vochr_code" type="text" class="form-control" readonly autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div><br />
+
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="vochr_type" class="col-md-3 control-label">Type</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="vochr_type" class="form-control select2" style="width:100%">
+                                            <option></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="vochr_default" class="col-md-3 control-label">Default Name</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="vochr_default" type="text" class="form-control" autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div><br />
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="vochr_name" class="col-md-3 control-label">Name</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="vochr_name" type="text" class="form-control" autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div><br />
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label text right">Is Line Item</label>
+                                    <div class="col-md-1">
+                                        <input asp-for="vochr_isllineItem" type="checkbox" />
+                                        <span asp-validation-for="vochr_isllineItem"></span>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label text right">Is Active</label>
+                                    <div class="col-md-1">
+                                        <input asp-for="vochr_isactive" type="checkbox" />
+                                        <span asp-validation-for="vochr_isactive"></span>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="vochr_jornaltype" class="col-md-3 control-label">Jornal Type</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="vochr_jornaltype" class="form-control select2" style="width:100%">
+                                            <option></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="vochr_abbriviation" class="col-md-3 control-label">Abbriviation</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="vochr_abbriviation" style="width:100%; overflow:auto" autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="vochr_isodocunum" class="col-md-3 control-label">ISO Document Number</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="vochr_isodocunum" style="width:100%; overflow:auto" autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="vochr_remark" class="col-md-3 control-label">Remark</label>
+                                    <div class="col-md-7">
+                                        <textarea asp-for="vochr_remark" style="width:100%; overflow:auto" autocomplete="off"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <input asp-for="conponent_type" hidden />
+                        <input asp-for="vochrdefncode" hidden />
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+</div>
+<div class="modal fade" id="DeviceListModal" role="dialog">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 style=" color:dodgerblue; font-weight:bold">
+                    <img src="~/images/Cnets.jpg" />
+                    Device
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+
+                    <form class="form-horizontal" id="DeviceListdetailNewFormData" onsubmit="return DeviceListdetailNewFormFunction()" asp-controller="SystemConstant" asp-action="SavedeviceType" method="post">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-app" action="addRow" id="btndeviceSave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                            <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                        </div>
+
+
+                        <div class="col-md-12" style="margin-top:25px">
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="dev_description" class="col-md-3 control-label">Decription</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="dev_description" type="text" class="form-control" autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div><br />
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="dev_reference" class="col-md-3 control-label">Reference</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="dev_reference" type="text" class="form-control" autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div><br />
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label text right">Is Active</label>
+                                    <div class="col-md-1">
+                                        <input asp-for="dev_isactive" type="checkbox" />
+                                        <span asp-validation-for="dev_isactive"></span>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="dev_remark" class="col-md-3 control-label">Remark</label>
+                                    <div class="col-md-7">
+                                        <textarea asp-for="dev_remark" style="width:100%; overflow:auto"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <input asp-for="dev_code" hidden />
+                        <input asp-for="dev_parent" hidden />
+                        <input asp-for="prefcode" hidden />
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+</div>
+<div class="modal fade" id="objectStatedefinition_Modal" role="dialog">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 style=" color:dodgerblue; font-weight:bold">
+                    <img src="~/images/Cnets.jpg" />
+                    Object State Definition For
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+
+                    <form class="form-horizontal" id="objectstatedetailNewFormData" onsubmit="return objectstatedetailNewFormFunction()" asp-controller="SystemConstant" asp-action="SaveobjectDefn" method="post">
+                        <div class="col-md-12">
+                            <button class="btn btn-app" type="reset" id="ObjectstateDefnbtnNew"> <i class="fa fa-file-o"></i>New</button>
+                            <button type="submit" action="addRow" class="btn btn-app" id="ObjectstateDefnbtnsave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                            <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+
+                        </div>
+
+
+                        <div class="col-md-12" style="margin-top:25px">
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="object_description" class="col-md-3 control-label">Description</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="object_description" type="text" class="form-control" autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div><br />
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Color</label>
+                                    <div class="col-md-4">
+                                        <input asp-for="object_color" class="form-control" type="color" />
+                                        <span asp-validation-for="object_color"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="object_font" class="col-md-3 control-label">Font</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="object_font" class="form-control select2" style="width:100%">
+                                            <option></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="object_remark" class="col-md-3 control-label">Remark</label>
+                                    <div class="col-md-7">
+                                        <textarea asp-for="object_remark" style="width:100%; overflow:auto" autocomplete="off"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input asp-for="object_code" hidden />
+                        <input asp-for="object_type" hidden />
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+</div>

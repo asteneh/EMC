@@ -1,0 +1,104 @@
+﻿@model Companymodel
+@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    List<ConsigneeUnitDTO> roleOrganizationUnitDefinition = new List<ConsigneeUnitDTO>();
+    var currentCompanyOrgUnits = new List<int>();// GetIorgUnitDefins();
+    var organization = await sharedHelpers.GetConsigneeByType(1);
+    var orgunitdef = await sharedHelpers.GetConsigneeunit();
+    if (organization != null && organization.Count() > 0)
+    {
+        var getorganizationunit = orgunitdef.Where(x => x.Consignee == organization?.FirstOrDefault()?.Id);
+        currentCompanyOrgUnits = getorganizationunit.Select(o => o.Consignee).ToList();
+        roleOrganizationUnitDefinition = orgunitdef.Where(o => o.Type == 1725 && currentCompanyOrgUnits.Contains(o.Consignee)).OrderBy(o => o.Name).ToList();
+    }
+    else
+    {
+        roleOrganizationUnitDefinition = orgunitdef.Where(o => o.Type == 1725).OrderBy(o => o.Name).ToList();
+    }
+}
+
+
+
+<style>
+    .activeidSetting {
+        background-color: dodgerblue;
+        width: auto;
+    }
+
+    .mainsysType {
+        height: 76vh;
+        white-space: nowrap;
+        cursor: pointer;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    .idSetting {
+        cursor: pointer;
+        white-space: nowrap;
+    }
+</style>
+
+
+<div class="box-body">
+    <div style="border:1px solid #e5e5e5;" class="mainsysType">
+        <table class="table table-sm" id="GslIdSetting_table" width="100%">
+            <thead>
+                <tr class="treegrid-3 treegrid-parent-1">
+                    <th colspan="2" style="border:1px solid #e5e5e5; background-color:lightgray">Description</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in roleOrganizationUnitDefinition)
+                {
+                    <tr onclick="GetJobDescription('@item.Id')">
+                        <td width="20px" style="border:none !important"></td>
+                        <td class="activejobDesc">
+                            @item.Name
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+
+    $(document).on("click", ".activejobDesc", function () {
+
+        $(".activeidSetting").removeClass("activeidSetting");
+        $(this).addClass('activeidSetting');
+      
+    });
+    function GetJobDescription(_idd) {
+        $('#@nameof(Model.job_orgUnitDefn)').val(_idd);
+        $.ajax({
+            type: "GET",
+            dataType: 'html',
+            url: '@Url.Action("JobdescriptionList", "Company")',
+            data: { idd: _idd },
+
+            success: function (data) {
+
+                $('#JobDescriptionData').html(data);
+
+            }
+        });
+    
+    }
+
+</script>
+
+
+

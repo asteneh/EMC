@@ -1,0 +1,320 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_V7_Entities.DataModels;
+@using Newtonsoft.Json;
+@model GSLmodel;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var attachemntList = await sharedHelpers.GetSystemConstantByCat("sharedHelpers");
+    var attachemntListpicture = attachemntList.Where(p => p.Id == 1448).ToList();
+}
+
+<div class="row">
+    <div class="box box-primary">
+        
+          <button type="button" style="margin-left:10px" class="btn btn-box-tool btn-default"  data-toggle="modal" data-target="#modal_attachemenetgsl">
+            <i style="color:dodgerblue" class="fa fa-plus-circle">New</i>
+        </button>
+        @*<button type="button" style="margin-left:10px" class="btn btn-box-tool btn-default showafterclickgslforchid" id="showafterclickgslforchid" data-toggle="modal" data-target="#GslRequirementModelMap">
+                <i style="color:dodgerblue" class="fa fa-plus-circle">New</i>
+            </button>*@
+    </div>
+    <div class="col-md-2" style="margin-left:0px ;border-right:solid black 1px">
+        <ul class="sidebar-men secondNav tree " data-widget="tree" id="attachement_nav_gsl">
+            @foreach (var item in attachemntListpicture)
+            {
+                <li class="treeview menu-open attachmentType nav-item" id="parentgsl">
+                    <a href="@item.Description" data-toggle="tab" data-value="@item.Id" data-types="@item.Id" style="text-decoration-line:none!important" name="catagory">
+
+                        @if (item.Description == "Picture")
+                        {
+                            <i class="fa fa-user"></i>
+                            <i class="fa fa-angle-left pull-right" style="visibility:hidden" id="@item.Id+1"></i>
+                        }
+                       
+                        <span class="labelcss">@item.Description</span>
+                    </a>
+
+                    <ul class="treeview-menu" style="padding-left:35px; background-color:white;" id="@item.Id">
+                    </ul>
+                </li>
+            }
+        </ul>
+
+        <input type="hidden" asp-for="gsl_attachmentcatagory" />
+        <input type="hidden" asp-for="gsl_attachmentreference" />
+        <input type="hidden" asp-for="gsl_attachmentcode" />
+       
+    </div>
+
+    <div class="col-md-10" id="Display_Attachment_GSL">
+        <div class="pull-right">
+            <button id="att_edit_gsl" type="button" class="btn btn-flat btn-primary btn-xs" onclick="EditAttachment()" style="visibility:hidden"><i class="fa fa-pencil">Edit</i></button>
+            <button id="att_cleare_gsl" type="button" class="btn btn-flat btn-primary btn-xs" onclick="CleareAttachment()" style="visibility:hidden"><i class="fa fa-remove">Clear</i></button>
+            <button id="att_delete_gsl" type="button" class="btn btn-danger btn-xs" onclick="DeleteAttachment()" style="visibility:hidden"><i class="fa fa-remove">Delete</i></button>
+        </div>
+        <iframe src="" id="dispaly_gsl_attachment" style="width:100%;height:400px"> </iframe>
+    </div>
+
+</div>
+
+<div class="modal fade" id="modal_attachemenetgsl">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 style=" color:dodgerblue; font-weight:bold">
+                    <img src="~/images/Cnets.jpg" />
+                    New Attachement
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <button type="button" id="attachement_save_GSL" class="btn btn-app"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                        <div class="btn btn-app choose_file">
+                            <i style="color:darkblue" class="fa fa-folder-open-o"></i>
+                            <label asp-for="gsl_file" class=" control-label">Browse</label>
+                            <input asp-for="gsl_file" style="width:100%;height:100%" class="form-control" />
+                        </div>
+                        <button type="button" class="btn btn-app"> <i style="color:darkblue" class="fa fa-qrcode"></i>Scanner</button>
+                        <button type="button" class="btn btn-app" id="btn_camera"><i style="color:darkblue" class="fa fa-camera"></i> Camera</button>
+                        <button type="button" class="btn btn-app"> <i style="color:darkblue" class="fa fa-sticky-note-o"></i>Edit</button>
+                        <button type="button" class="btn btn-app" id="gsl_datadismisal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                    </div>
+
+                    <div class="col-md-12">
+                        <form class="form-horizontal">
+                            <input hidden="hidden" asp-for="gsl_organizationCode" />
+                            <input hidden="hidden" asp-for="gsl_preferentialcode" />
+                            <div class="form-group form-group-sm">
+                                <label asp-for="gsl_url" class="col-md-1 control-label">url</label>
+                                <div class="col-md-4">
+                                    <input asp-for="gsl_url" class="form-control" placeholder="File url" readonly />
+                                </div>
+                                <label asp-for="gsl_attachmentdescription" class="col-md-2 control-label">Description</label>
+                                <div class="col-md-5">
+                                    <input asp-for="gsl_attachmentdescription" class="form-control " placeholder="Enter discription" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="image_preview">
+                        <iframe src="" id="dispaly_gslattach_here" style="width:100%;height:290px"></iframe>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<script>
+
+    function EditAttachment()
+    {
+        var ATTCode = $('#@nameof(Model.gsl_attachmentcode)').val();
+        var ATTref = $('#@nameof(Model.gsl_attachmentreference)').val();
+        var AttDesc = $('#@nameof(Model.gsl_attachmentdescription)').val();
+        var Attcategory = $('#@nameof(Model.gsl_attachmentcatagory)').val();
+        var ATTurl = $('#@nameof(Model.gsl_url)').val();
+
+        $('#@nameof(Model.gsl_attachmentcode)').val(ATTCode);
+        $('#@nameof(Model.gsl_attachmentreference)').val(ATTref);
+        $('#@nameof(Model.gsl_attachmentdescription)').val(AttDesc);
+        $('#@nameof(Model.gsl_url)').val(ATTurl);
+        $('#@nameof(Model.gsl_attachmentcatagory)').val(Attcategory);
+
+        var source = $('#dispaly_gslattach_here');
+        var baseURL = window.location.origin;
+
+        source[0].src = baseURL + "/images/" + ATTurl;
+        source.parent()[0].load;
+
+        showNewAttachement();
+
+        var elem = document.getElementById("dispaly_gsl_attachment");
+
+        elem.src ="about:blank";
+        document.getElementById("att_edit").style.visibility = "hidden";
+        document.getElementById("att_delete").style.visibility = "hidden";
+        document.getElementById("att_cleare").style.visibility = "hidden";
+
+        console.log(ATTCode);
+        console.log(ATTref);
+        console.log(AttDesc);
+        console.log(Attcategory);
+        console.log(ATTurl);
+        Attachment_update()
+
+    }
+
+</script>
+
+<script>
+    function DeleteAttachment()
+    {
+        var datastorage = {}
+
+        datastorage.attachmentcode = $('#@nameof(Model.gsl_attachmentcode)').val();
+        datastorage.url = $('#@nameof(Model.gsl_url)').val();
+
+        if (confirm('are you sure to delete this attachment?'))
+        {
+            $.ajax({
+                url: '@Url.Action("DeleteAttachment", "GSL")',
+                data: datastorage,
+                type: "POST",
+                dataType: 'json',
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                success: function (data) {
+                     CleareAttachment()
+                     Attachment_update()
+                }
+            });
+        }
+    }
+</script>
+
+<script>
+    function CleareAttachment() {
+        var elem = document.getElementById("dispaly_gsl_attachment");
+
+        cleareattachmentModal();
+
+        elem.src = "about:blank";
+
+        document.getElementById("att_edit_gsl").style.visibility = "hidden";
+        document.getElementById("att_delete_gsl").style.visibility = "hidden";
+        document.getElementById("att_cleare_gsl").style.visibility = "hidden";
+
+    }
+
+</script>
+
+<script>
+
+    function cleareattachmentModal()
+    {
+        $('#@nameof(Model.gsl_attachmentcode)').val("");
+    //  $('#@nameof(Model.gsl_attachmentcatagory)').val("")
+        $('#@nameof(Model.gsl_attachmentdescription)').val("");
+        $('#@nameof(Model.gsl_url)').val("");
+        $('#@nameof(Model.gsl_file)').val("")
+
+        var ATTurl = $('#@nameof(Model.gsl_url)').val();
+        var source = $('#dispaly_gslattach_here');
+        var baseURL = window.location.origin;
+
+        source[0].src = ATTurl;
+        source.parent()[0].load;
+    }
+
+
+    $('.attachmentType').click(function (e) {
+        $('.secondNav .attachmentType').removeClass('active')
+        $(this).addClass('active')
+    });
+
+</script>
+
+<script>
+
+    var attachmentcategory = "";
+    var preferentialcode = "";
+    $(document).on("click", ".preferentialParent", function () {
+
+        preferentialcode = $(this).data('value');
+        
+        $('#@nameof(Model.gsl_preferentialcode)').val(preferentialcode);
+
+
+    });
+   
+
+    $('#attachement_save_GSL').click(function (e) {
+
+        if (true)
+        {
+
+            $('#@nameof(Model.gsl_attachmentcatagory)').val(attachmentcategory);
+            var attachmentDescription = $('#@nameof(Model.gsl_attachmentdescription)').val();
+            var formdata = new FormData();
+            var files = $('#@nameof(Model.gsl_file)').get(0).files;
+
+            formdata.append("gsl_file", files[0]);
+            formdata.append("gsl_attachmentdescription", $('#@nameof(Model.gsl_attachmentdescription)').val());
+            formdata.append("gsl_attachmentcatagory", $('#@nameof(Model.gsl_attachmentcatagory)').val());
+            formdata.append("gsl_attachmentcode", $('#@nameof(Model.gsl_attachmentcode)').val());
+            formdata.append("gsl_url", $('#@nameof(Model.gsl_url)').val());
+            formdata.append("gsl_preferentialcode", $('#@nameof(Model.gsl_preferentialcode)').val());
+
+           // var filesize = files[0];
+           // console.log(attachmentDescription);
+
+            var FILE = document.getElementById("dispaly_gslattach_here");
+            var Filecontent = FILE.contentDocument;
+            if (Filecontent != null && attachmentDescription)
+            {
+                    $.ajax({
+                        url: '@Url.Action("saveAttachemnt", "GSL")',
+                        data: formdata, prefcode: preferentialcode,
+                        type: "POST",
+                        contentType: false, // Not to set any content header
+                        processData: false, // Not to process data
+                        success: function (data)
+                        {
+                            alert(data.message);
+                            Attachment_update();
+                        },
+
+                    });
+                cleareattachmentModal();
+                $('#modal_attachemenetgsl').modal('hide');
+                console.log(preferentialcode);
+            }
+            else
+            {
+                alert("please fill the attachment properly");
+            }
+
+        }
+
+    })
+
+</script>
+
+<script>
+
+    $('#@nameof(Model.gsl_file)').on("change", function () {
+
+        var files = $('#@nameof(Model.gsl_file)').get(0).files;
+
+        console.log(files);
+
+        var filename = files[0].name;
+        var baseURL = window.location.origin;
+        var URLL = baseURL + "/images/" + filename;
+
+        $('#@nameof(Model.gsl_attachmentdescription)').val(filename);
+        $('#@nameof(Model.gsl_url)').val(URLL);
+
+        var SRC = $('#dispaly_gslattach_here');
+
+        SRC[0].src = URL.createObjectURL(this.files[0]);
+        SRC.parent()[0].load;
+
+    });
+
+</script>
+
+
+
+
+
+
+

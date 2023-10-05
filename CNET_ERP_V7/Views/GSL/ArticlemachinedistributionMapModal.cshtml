@@ -1,0 +1,190 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_V7_Entities.DataModels;
+@using Newtonsoft.Json;
+@model GSLmodel;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var machinedeviceList = await sharedHelpers.GetdeviceByConnecType(1549);
+    var machinedeviceListType = machinedeviceList?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.MachineName }).ToArray();
+
+}
+<div class="modal fade" id="machinedistributionModalRticle">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <img src="~/images/Cnets.jpg" alt="CNET" />
+                    <span>Machine Distribution</span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                </h5>
+
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form class="form-horizontal" id="machimedistributionarticleNewFormData" onsubmit="return machineDistributionarticleNewFormFunction()" asp-controller="GSL" asp-action="CreatemachineDistributionarticle" method="post">
+                        <div class="col-md-12">
+                            <div class="box">
+                                <button class="btn btn-app" type="reset" id="IssuedbtnNew"> <i class="fa fa-file-o"></i>New</button>
+                                <button type="submit" action="addRow" class="btn btn-app" id="machinedistributionarticleNewsave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                                <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12" style="margin-top:25px">
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Description</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="descriptionmachart" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="descriptionmachart"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Device</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="devicemachart" class="form-control select2" style="width:340px;" id="@nameof(Model.devicemachart)">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="devicemachart"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Remark</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="remaarkmachart" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="remaarkmachart"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <input hidden asp-for="codefordeletedistributionart" />
+                        <input hidden asp-for="codeforselectedistributionmachart" />
+                        <input hidden asp-for="codeforupdatemachinedistributionart" />
+                        <input hidden asp-for="gslTypecodeCodeforMachineart" />
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<script>
+    var getdistributionmacine = "";
+    $(document).ready(function () {
+        $(".distributionselectionforarticle").click(function () {
+
+            getdistributionmacine = "1579";
+
+
+        });
+    });
+
+    function machineDistributionarticleNewFormFunction() {
+        var _idd = $('#@nameof(Model.distridutioName)').val();
+        var gslcode = $('#@nameof(Model.gslType)').val();
+        var $form = $('#machimedistributionarticleNewFormData');
+        var data = $form.serialize();
+        var action = $('#machimedistributionarticleNewFormData').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            success: function (data) {
+              
+                swal("", data, "success");
+                submitfunctionsynchronizationarticle(_idd, gslcode);
+                 ClearmacinedistributiionarticleModal();
+
+          },
+        });
+        return false;
+    };
+
+</script>
+<script>
+    var gsltypeformach = '@Model.gslType';
+    $('#@nameof(Model.gslTypecodeCodeforMachineart)').val(gsltypeformach);
+</script>
+<script>
+        $('#@nameof(Model.devicemachart)').select2({
+                    data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(machinedeviceListType)),
+                    placeholder: "device",
+                    allowClear: true
+
+                });
+</script>
+<script>
+var getdistribution = "";
+    $(document).ready(function () {
+        $(".distributionselection").click(function () {
+            getdistribution = $(this).data('types');
+            console.log(getdistribution+"machine");
+            switch (getdistribution) {
+
+                case "1579":
+                    $('#@nameof(Model.codeforselectedistributionmachart)').val("1579");
+
+                          break;
+
+            }
+
+        });
+    });
+</script>
+
+<script>
+
+    $(document).on("click", ".btndeletemachinedistributionarticle", function () {
+
+        var deletedistrart = $(this).data('code');
+        console.log(deletedistrart + "deletedis");
+        var table = $('#article_machinedistributionfor_distribution').DataTable();
+        if (confirm('are you sure to delete this Distribution?')) {
+
+            table
+                .row($(this).parents('tr'))
+                .remove()
+                .draw();
+
+            $.ajax({
+                type: "POST",
+                dataType: 'json',
+                url: '@Url.Action("deleteDistributioncopyartilce", "GSL")',
+                data: { codefordeletedistributionart: deletedistrart },
+
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                success: function (data) {
+
+
+
+                }
+            });
+
+        }
+    });
+</script>
+<script>
+    function ClearmacinedistributiionarticleModal() {
+
+                $('#@nameof(Model.codeforupdatemachinedistributionart)').val("");
+                $('#@nameof(Model.descriptionmachart)').val("");
+                $('#@nameof(Model.devicemachart)').val("").trigger('change');
+                $('#@nameof(Model.remaarkmachart)').val("");
+    }
+
+
+</script>

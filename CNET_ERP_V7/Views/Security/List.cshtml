@@ -1,0 +1,350 @@
+﻿@using CNET_ERP_V7.Models.Security;
+@using Newtonsoft.Json;
+@model SecurityModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var AlluserRoleMaper = await sharedHelpers.GetConsigneeByType1(1725);
+    var AlluserRoleMaperList = AlluserRoleMaper?.OrderBy(o => o.Description).ToList();
+
+    var AlluserRoleMaperType = AlluserRoleMaperList?.Select(s => new CNET_ERP_V7.Models.SelectorModel.Select2Result
+            {
+                id = s.Id,
+                text = s.Description
+            });
+    var title = "System Setting - " + "Security";
+    ViewData["Title"] = title;
+}
+<style>
+    .displayapp {
+        display: none;
+    }
+</style>
+<section class="content-header">
+    <h5>
+        @ViewData["Title"]
+    </h5>
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-body">
+                    <div class="col-md-8">
+                        <div style="float:left ;padding-top:1px">
+                            <a href="#" class="btn btn-app" id="btnNewsecuritySetting"> <i class="fa fa-plus-circle"></i>New</a>
+                            <a href="#" class="btn btn-app" id="btnSaveSecuritysetting"> <i class="fa fa-save"></i>Save</a>
+                            <a href="#" class="btn btn-app" id=""> <i class="fa fa-print" aria-hidden="true"></i>Print</a>
+                        </div>
+                    </div>
+
+                </div>
+                <input type="hidden" id="selectesecurityTab" value="" />
+                <input type="hidden" id="MainTab" value="" />
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs" id="SecuritySetting_tab_nav">
+                    <li class="active"><a href="#SecurityProperty" data-toggle="tab">Property</a></li>
+                    <li><a href="#User_Account" data-toggle="tab">User Account</a></li>
+                    <li><a href="#Role_Management" data-toggle="tab">Role Management</a></li>
+
+                </ul>
+                <div class="tab-content">
+                    <div class="active tab-pane" id="SecurityProperty">
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-7">
+                                    @await Html.PartialAsync("_secuProperty.cshtml")
+                                </div>
+
+                                <div class="col-md-5">
+                                    <div class="box" style="background-color: #f7ba5bc4; height:80vh;">
+                                        <span id="SecurityVal" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                                        <h5 style="margin-left:10px;">Password Setting</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="User_Account">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="nav-tabs-custom">
+                                    <ul class="nav nav-tabs" id="main_tab_navv">
+                                        <li class="active"><a href="#CreateAccount" data-toggle="tab">Create Account</a></li>
+                                        <li><a href="#ChangePassword" data-toggle="tab">Change Password</a></li>
+
+                                    </ul>
+
+                                </div>
+                                <div class="tab-content">
+                                    <div class="active tab-pane" id="CreateAccount">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div id="accountContent">
+                                                    @await Html.PartialAsync("_CreateAccount.cshtml")
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane" id="ChangePassword">
+                                        <div class="row">
+                                            <div class="col-md-12">
+
+                                                @await Html.PartialAsync("_ChangePassword.cshtml")
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="tab-pane" id="Role_Management">
+                        <div class="row">
+                            <div class="col-md-12">
+                                @await Html.PartialAsync("_GeneralRoleManagement.cshtml")
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Issued Card Modal-->
+    <!--/AccountMap-->
+    @await Html.PartialAsync("AccountModal")
+    <!--./AccountMap-->
+    <!--/UserMembership-->
+    @await Html.PartialAsync("UserMembershipModal")
+    <!--./UserMembership-->
+</section>
+<script>
+    $('#@nameof(Model.OrgUnitDefn)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(AlluserRoleMaperType)),
+        placeholder: ""
+    });
+</script>
+<script>
+    $('#btnNewsecuritySetting').bind("click", function () {
+       
+        $('#btnrestpassword').hide();
+        var selectedPage = $('#selectesecurityTab').val();
+        var mainPage = $('#MainTab').val();
+        var rolesubTab =  $('#selectesecurityRoleTab').val();
+        if (mainPage == "#User_Account")
+        {
+            if (selectedPage) {
+                switch (selectedPage) {
+                    case "#CreateAccount":
+                        ClearAccountMap();
+                        $('#modal_CreateaccounttItems').modal({ backdrop: 'static', keyboard: false });
+
+                        break;
+                    case "#ChangePassword":
+                           ClearChangPasswordModal();
+                        $('#modal_changpassword').modal({ backdrop: 'static', keyboard: false });
+                        break;
+
+                }
+            }
+            else {
+                ClearAccountMap();
+                $('#modal_CreateaccounttItems').modal({ backdrop: 'static', keyboard: false });
+            }
+
+        }
+        else if (mainPage == "#Role_Management") {
+
+            if (rolesubTab == "#Activity_Privilege") {
+                Clearactivitydef();
+                $('#modal_ActivityPrivilegeItems').modal({ backdrop: 'static', keyboard: false });
+            }
+            else{
+                ClearUserMemberModal();
+                $('#modal_usermemebership').modal({ backdrop: 'static', keyboard: false });
+            }
+        }
+    });
+
+    $('#main_tab_navv li a').click(function (e) {
+
+        var selecteTab = e.target.attributes['href'].value;
+        $('#selectesecurityTab').val(selecteTab);
+
+
+    });
+    $('#SecuritySetting_tab_nav li a').click(function (e) {
+
+        var selecteTab = e.target.attributes['href'].value;
+        $('#MainTab').val(selecteTab);
+        switch (selecteTab) {
+            case "#SecurityProperty":
+
+                $('#btnNewsecuritySetting').addClass('displayapp');
+                $('#btnSaveSecuritysetting').removeClass('displayapp');
+                $('#btnSaveprivilegeType').addClass('displayapp');
+                $('#btndashboardPrivilege').addClass('displayapp');
+
+                break;
+            case "#User_Account":
+               GetChangePassword();
+                $('#btnNewsecuritySetting').removeClass('displayapp');
+                $('#btnSaveSecuritysetting').addClass('displayapp');
+                $('#btnSaveprivilegeType').addClass('displayapp');
+                $('#btndashboardPrivilege').removeClass('displayapp');
+
+
+                break;
+            case "#Role_Management":
+                $('#btnNewsecuritySetting').removeClass('displayapp');
+                $('#btnSaveSecuritysetting').addClass('displayapp');
+                $('#btnSaveprivilegeType').removeClass('displayapp');
+                $('#btnSavedashboardPrivilege').addClass('displayapp');
+
+                break;
+        }
+    });
+
+</script>
+
+
+
+<script>
+
+    var checkedvalue = "";
+    $(document).on("change", "#rolehaveuser", function () {
+
+        checkedvalue = $(this).is(":checked");
+
+        $.ajax({
+            type: "GET",
+            dataType: 'html',
+            url: '@Url.Action("GetRolehaveuser", "Security")',
+            data: { value: checkedvalue },
+
+            success: function (data) {
+                $('#rolehaveusersection').html(data);
+
+            }
+        });
+
+    });
+
+    function GetChangePassword() {
+
+        $.ajax({
+            type: "GET",
+            dataType: 'html',
+            url: '@Url.Action("GetPasswordChangeActivity", "Security")',
+            data: {},
+
+            success: function (data) {
+                $('#UserPasswordData').html(data);
+            }
+        });
+    }
+</script>
+
+<script>
+ $(function () {
+        $('#btnSaveSecuritysetting').click(function () {
+          var selectedPage =  $('#MainTab').val();
+             if (selectedPage == "#Role_Management") 
+             {
+               var subTab = $('#selectesecurityRoleTab').val();
+
+                if (subTab == "#Access_Privilege") {
+                    var formDataa = $('#accessmatrixNewFormData').serialize();
+                   
+                    $.ajax({
+                        url: '/Security/Createaccessmatrix',
+                        type: 'POST',
+                        data: formDataa,
+                        success: function (result) {
+                            swal("", result, "success");
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+                }
+                else if (subTab == "#Document_Access_Privilege") {
+                    var formDatad = $('#documentaccessmatrixNewFormData').serialize();
+                         $.ajax({
+                            url: '/Security/Createdocumentaccessmatrix',
+                            type: 'POST',
+                            data: formDatad,
+                            success: function (result) {
+                                swal("", result, "success");
+                            },
+                            error: function () {
+                                console.log('Error occurred.');
+                            }
+                        });
+                }
+                else if (subTab == "#Report_Privilege") {
+                    var formDatar = $('#reportaccessmatrixNewFormData').serialize();
+                         $.ajax({
+                            url: '/Security/Createreportaccessmatrix',
+                            type: 'POST',
+                            data: formDatar,
+                            success: function (result) {
+                                swal("", result, "success");
+                            },
+                            error: function () {
+                                console.log('Error occurred.');
+                            }
+                        });
+                }
+             
+                else if (subTab == "#Dashboard_Privilege") {
+                    var formDatas = $('#systemdashboardNewFormData').serialize();
+                    $.ajax({
+                        url: '/Security/Createsystemdashboard',
+                        type: 'POST',
+                        data: formDatas,
+                        success: function (result) {
+                            swal("", result.result, "success");
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+                }
+            }
+            else {
+                var formData = $('#PropertyFormDataForSecurity').serialize();
+                $.ajax({
+                    url: '/Security/SavingSecuritySettingProperty',
+                    type: 'POST',
+                    data: formData,
+                    success: function (result) {
+                        swal("", result, "success");
+                    },
+                    error: function () {
+                        console.log('Error occurred.');
+                    }
+                });
+            }
+
+            });
+        });
+</script>
+
+
+
+
+

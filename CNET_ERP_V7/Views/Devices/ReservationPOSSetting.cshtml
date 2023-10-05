@@ -1,0 +1,867 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model Devicemodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var codemodel = Model.DeviceType;
+    int sysoldvalue = 1212121212;
+}
+<style>
+    .sptablecontent {
+        border-collapse: collapse;
+        background-color: #fff;
+        width: 98%;
+        margin-left: 15px;
+    }
+    .sptablecontent .asth {
+        font-weight: bold;
+    }
+    .sptablecontent th, table td {
+        padding: 1px;
+        border: 1px solid #ccc;
+    }
+    .sptablecontent th, table tr {
+        height: 3px;
+    }
+    .sptablecontent, .sptablecontent .sptablecontent td {
+        border: 0px solid #ccc;
+    }
+    .sptablecontent [type=text], select {
+        width: 100%;
+    }
+    .sptablecontent [type=password] {
+        width: 100%;
+    }
+    .sptablecontent div {
+        width: 97%;
+    }
+    #dampstyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    .inputfield {
+        pointer-events: none;
+        opacity: 30;
+        width: 80%;
+    }
+
+    .Inputborder:focus {
+        border: 1px solid #1670BE;
+        box-shadow: 0 0 3px #1670BE;
+        outline-offset: 0px;
+        outline: none;
+    }
+
+    .Inputborder {
+        border: 1px solid #eee;
+        font-size: 13px !important;
+        height: 17px !important;
+        line-height: 2px !important;
+        text-emphasis-position: initial !important;
+        margin-top: 0px !important;
+        padding: 0px 0px !important;
+    }
+
+
+    .mainparent {
+        color: dodgerblue;
+        background-color: #eee;
+    }
+
+    .boderclr {
+        background-color: dodgerblue;
+    }
+    .vouproperty {
+        height: 95vh;
+        overflow-y: scroll;
+    }
+</style>
+<div class="box box-primary">
+    <br />
+    <div class="box-header with-border">
+        <div class="row">
+            <div class="col-md-11">
+                <div class="row">
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-1 control-labell"> Find</label>
+                        <div class="col-md-9">
+                            <select class="form-control select2" asp-for="devicesettingproperty" style="width:100%"></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body vouproperty">
+        <form id="PropertyFormDataForreservationpos" method="post">
+            <table cellpadding="0" cellspacing="0" class="sptablecontent tree-loadreser">
+                <tr class="asth">
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Closing Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Closing Frequency
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="resv_ClosingFrequency" asp-items="Html.GetEnumSelectList<enreserClosingFrequency>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Accuracy Tolerance
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (Model.resv_AccuracyTolerance == 0)
+                        {
+                            <input asp-for="resv_AccuracyTolerance" type="text" class="Inputborder" value="0" onkeypress="return iscloseschedule(event)" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="resv_AccuracyTolerance" type="text" value="@Model.resv_AccuracyTolerance" class="Inputborder form-control" maxlength="9" onkeypress="return iscloseschedule(event)" />
+
+                        }
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Summary Difference Tolerance
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (Model.resv_SummaryDifferenceTolerance == 0)
+                        {
+                            <input asp-for="resv_SummaryDifferenceTolerance" type="text" class="Inputborder" value="0" onkeypress="return iscloseschedule(event)" />
+                        }
+                        else
+                        {
+                            <input asp-for="resv_SummaryDifferenceTolerance" type="text" value="@Model.resv_SummaryDifferenceTolerance" class="Inputborder" maxlength="9" onkeypress="return iscloseschedule(event)" />
+                        }
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Check Voucher Integrity
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="resv_CheckVoucherIntegrity" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Fiscal Reconciliation
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="resv_FiscalReconciliation" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        DownLoad EJ
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="resv_DownLoadEJ" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Summary Voucher
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="resv_SummaryVoucher" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        XML Reconciliation
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="resv_XMLReconciliation" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Zeroing Voucher
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="resv_ZeroingVoucher" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        POS Component Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Select Automatic Shift Period
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="resv_SelectAutomaticShiftPeriod" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Cash Customer
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#CashCustomerMap">
+                        @if (string.IsNullOrEmpty(Model.resv_CashCustomer))
+                        {
+                            <input asp-for="resv_CashCustomer" type="text" value="" id="reservation_cash_customer" class="Inputborder form-control" />
+                        }
+                        else
+                        {
+                            <input asp-for="resv_CashCustomer" type="text" value="@Model.resv_CashCustomer" id="reservation_cash_customer" class="Inputborder form-control" />
+                        }
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        POS Store
+                    </td>
+                    <td class="attributdata" data-toggle="modal" data-id="1" data-target="#PosStorebtnsaveMap">
+                        @if (string.IsNullOrEmpty(Model.resv_POSStore))
+                        {
+                            <input asp-for="resv_POSStore" type="text" value="" id="reservation_pos_store_value" class="Inputborder form-control" />
+                        }
+                        else
+                        {
+                            <input asp-for="resv_POSStore" type="text" value="@Model.resv_POSStore" id="reservation_pos_store_value" class="Inputborde form-control" />
+                        }
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Need Credentials For Removal
+                    </td>
+                    <td class="attributcurrvalue">
+
+                        <select asp-for="resv_NeedCredentialsForRemoval" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Default payment
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="resv_DefaultPayment" asp-items="Html.GetEnumSelectList<enreserDefaultPayment>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Capture Fiscal Information
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="resv_CaptureFiscalInformation" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            <input asp-for="resv_devicecode" hidden />
+        </form>
+    </div>
+</div>
+<script>
+    function TreeFunctionproprty() {
+        $(document).ready(function () {
+            $('.tree-basic').treegrid();
+
+            $('.tree-loadreser').treegrid({
+                source: function (id, response) {
+                    if (id != 1) response(['']);
+                    else response(['']);
+                }
+            });
+
+        });
+    }
+    TreeFunctionproprty();
+</script>
+<script>
+    $('.attributdata').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).children('.inputfield').val();*/
+        var value = $(this).text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).closest("tr").addClass('boderclr');
+        $('#deviceproperty').html(value);
+
+    });
+    $('.attributcurrvalue').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).siblings().children('.inputfield').val();*/
+        var value = $(this).siblings().text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).siblings().addClass("boderclr");
+        $('#deviceproperty').html(value);
+
+    });
+    $("#propertysect").change(function () {
+        var value = $(this).select2('data')[0].text;
+        $(".boderclr").removeClass("boderclr");
+        $("input[name*='" + value + "']").addClass('boderclr');
+        $("input[name*='" + value + "']").closest("tr").addClass('boderclr');
+
+        $('#deviceproperty').html(value);
+    });
+
+</script>
+
+<script>
+$(function () {
+
+    $('#@nameof(Model.rmsthemeChangedDate)').datepicker();
+
+    });
+</script>
+
+<script>
+
+
+    function iscloseschedule(evt) {
+
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        else {
+
+            return true;
+        }
+
+    }
+    var getdevicecode = "";
+    var getpassword = "";
+
+    $(document).on("click", ".devicepropertysetting", function () {
+        getdevicecode = $(this).data('types');
+
+        submitfunctiongetdevicedetailforpropertyvalue(getdevicecode);
+
+        });
+    window.submitfunctiongetdevicedetailforpropertyvalue = function (getdevicecode) {
+
+            $.ajax({
+                type: "POST",
+                dataType: 'json',
+                url: '@Url.Action("getPropertycurrentvalue", "Devices")',
+                data: { DEVCODE: getdevicecode},
+
+                success: function (data) {
+
+
+                    $.each(data, function (index, item) {
+
+                        switch (item.attribute) {
+                            case "Accuracy Tolerance":
+                                 $('#@nameof(Model.rmsaccuracy_Tolerance)').val(item.currentValue);
+                                break;
+                            case "Currency Conversion":
+                                 $('#@nameof(Model.rmscurrency_Conversion)').val(item.currentValue);
+                                break;
+                            case "Print Discount & Additional Charge Per LineItem":
+                                 $('#@nameof(Model.rmsprintDiscountAdditionalChargePerLineItem)').val(item.currentValue);
+                                break;
+                            case "Select Automatic Shift Period":
+                                 $('#@nameof(Model.rmsselectAutomaticShiftPeriod)').val(item.currentValue);
+                                break;
+                            case "XML Reconciliation":
+                                 $('#@nameof(Model.rmsxML_Reconciliation)').val(item.currentValue);
+                                break;
+                            case "Bold Order No":
+                                 $('#@nameof(Model.rmsbold_Order_No)').val(item.currentValue);;
+                                break;
+                            case "Enable Dynamic Visual Display":
+                                $('#@nameof(Model.rmsenableDynamicVisualDisplay)').val(item.currentValue);
+                                break;
+                            case "POS Theme":
+                                 $('#@nameof(Model.rmspOS_theme)').val(item.currentValue);
+                                break;
+                            case "Navigator Type":
+                                 $('#@nameof(Model.rmsnavigatorType)').val(item.currentValue);
+                                break;
+                            case "Theme Changed Date":
+                                 $('#@nameof(Model.rmsthemeChangedDate)').val(item.currentValue);
+                                break;
+                            case "Aspect Ratio":
+                                $('#@nameof(Model.rmsaspectRatio)').val("A_" +item.currentValue);
+                                break;
+                            case "Change Frequency":
+                                 $('#@nameof(Model.rmschangeFrequency)').val(item.currentValue);
+                                break;
+                            case "Allow Animation":
+                                $('#@nameof(Model.rmsallowAnimation)').val(item.currentValue);
+                                break;
+                            case "Enable Touch Screen":
+                                $('#@nameof(Model.rmsenableTouchScreen)').val(item.currentValue);
+                                break;
+                            case "Check Amount Limit For Hold":
+                                 $('#@nameof(Model.rmscheckAmountLimitForHold)').val(item.currentValue);
+                                break;
+                            case "Hold Amount Per Person":
+                                 $('#@nameof(Model.rmsholdAmountPerPerson)').val(item.currentValue);
+                                break;
+                            case "Hold Document Life":
+                                $('#@nameof(Model.rmshold_Document_Life)').val(item.currentValue);
+                                break;
+                            case "Enable Bill Management":
+                                $('#@nameof(Model.rmsenableBillManagement)').val(item.currentValue);
+                                break;
+                            case "Company Tin Mandatory":
+                                 $('#@nameof(Model.rmscompanyTinMandatory)').val(item.currentValue);
+                                break;
+                            case "Enable Delivery Management":
+                                $('#@nameof(Model.rmsenableDeliveryManagement)').val(item.currentValue);
+                                break;
+                            case "Enable Document Reference":
+                                 $('#@nameof(Model.rmsenableDocumentReference)').val(item.currentValue);
+                                break;
+                            case "Enable Room Charge":
+                                $('#@nameof(Model.rmsenableRoomCharge)').val(item.currentValue);
+                                break;
+                            case "Enable Reservation":
+                                $('#@nameof(Model.rmsenable_Reservation)').val(item.currentValue);
+                                break;
+                            case "Enable Package Design":
+                                $('#@nameof(Model.rmsenable_Package_esign)').val(item.currentValue);
+                                break;
+
+                            case "Station Type":
+                                 $('#@nameof(Model.rmsstation_Type)').val(item.currentValue);
+                                break;
+                            case "Table Selection Type":
+                                $('#@nameof(Model.rmstable_Selection_Type)').val(item.currentValue);
+                                break;
+                            case "Waiter Selection":
+                                $('#@nameof(Model.rmswaiter_selection)').val(item.currentValue);
+                                break;
+                            case "POS Trigger Article Removal":
+                                $('#@nameof(Model.rmspOS_Trigger_Article_Removal)').val(item.currentValue);
+                                break;
+                            case "Need Credentials For Removal":
+                                $('#@nameof(Model.rmsneed_Credentials_For_Removal)').val(item.currentValue);
+
+                                break;
+                            case "Enable Order Function":
+                                $('#@nameof(Model.rmsenableOrderFunction)').val(item.currentValue);
+                                break;
+                            case "Order Station Mandatory":
+                                 $('#@nameof(Model.rmsorderStationMandatory)').val(item.currentValue);
+                                break;
+                            case "DownLoad EJ":
+                                $('#@nameof(Model.rmsdownLoad_EJ)').val(item.currentValue);
+                                break;
+
+
+                            case "Order Location":
+                                 $('#@nameof(Model.rmsorder_Location)').val(item.currentValue);
+                                break;
+                            case "Order Verification Method":
+                                $('#@nameof(Model.rmsorder_Verification_Method)').val(item.currentValue);
+                                break;
+                            case "Enable Auto Entry":
+                                $('#@nameof(Model.rmsenableAutoEntry)').val(item.currentValue);
+                                break;
+                            case "Open Drawer After Print":
+                                $('#@nameof(Model.rmsopenDrawerAfterPrint)').val(item.currentValue);
+                                break;
+                            case "Check System Timestamp":
+                                $('#@nameof(Model.rmsCheckSystemTimestamP)').val(item.currentValue);
+                                break;
+                            case "Default Transaction Type":
+                                 $('#@nameof(Model.rmsdefault_Transaction_Type)').val(item.currentValue);
+                                break;
+                            case "Default Payment":
+                                $('#@nameof(Model.rmsdefault_Payment)').val(item.currentValue);
+                                break;
+                            case "Table Mandatory":
+                                $('#@nameof(Model.rmstableMandatory)').val(item.currentValue);
+                                break;
+                            case "Waiter Mandatory":
+                                $('#@nameof(Model.rmsWaiterMandatory)').val(item.currentValue);
+                                break;
+                            case "Input Cover Mandatory":
+                                 $('#@nameof(Model.rmsinputCoverMandatory)').val(item.currentValue);
+                                break;
+                            case "Clear Hold Before Closing":
+                                $('#@nameof(Model.rmsclearHoldBeforeClosing)').val(item.currentValue);
+                                break;
+                            case "Allow multiple Instance Of Table":
+                                $('#@nameof(Model.rmsallowmultipleInstanceOfTable)').val(item.currentValue);
+                                break;
+                            case "Enable Vocal Assistance":
+                                $('#@nameof(Model.rmsenableVocalAssistance)').val(item.currentValue);
+                                break;
+                            case "Language":
+                                $('#@nameof(Model.rmsLanguage)').val(item.currentValue);
+                                break;
+                            case "Closing Frequency":
+                                 $('#@nameof(Model.rmsclosing_frequency)').val(item.currentValue);
+                                break;
+
+                            case "Summary Difference Tolerance":
+                                $('#@nameof(Model.rmssummary_Difference_Tolerance)').val(item.currentValue);
+                                break;
+                            case "Check Voucher Integrity":
+                                 $('#@nameof(Model.rmscheck_Voucher_Integrity)').val(item.currentValue);
+                                break;
+                            case "Fiscal Reconciliation":
+                                 $('#@nameof(Model.rmsfiscalReconciliation)').val(item.currentValue);
+                                break;
+                            case "Zeroing Voucher":
+                                $('#@nameof(Model.rmszeroing_Voucher)').val(item.currentValue);
+                                break;
+                            case "Calculate Consumption Cost":
+                                 $('#@nameof(Model.rmscalculateConsumptionCost)').val(item.currentValue);
+
+                                break;
+                            case "Summary Voucher":
+                                 $('#@nameof(Model.rmssummary_Voucher)').val(item.currentValue);
+                                break;
+                            case "F and B":
+
+                                 $('#@nameof(Model.rmsf_and_B)').val(item.currentValue);
+                                break;
+                            case "Daily Control Count":
+                                $('#@nameof(Model.rmsdailyControlCount)').val(item.currentValue);
+                                break;
+                            case "Clear Held Bill":
+                                $('#@nameof(Model.rmsclear_Held_Bill)').val(item.currentValue);
+                                break;
+                            case "Disable Void On Retrieve":
+                               $('#@nameof(Model.rmsdisableVoidOnRetrieve)').val(item.currentValue);
+                                break;
+                            case "Enable CBE":
+                               $('#@nameof(Model.rmsenable_cbe)').val(item.currentValue);
+                                break;
+                            case "Capture Fiscal Information":
+                                $('#@nameof(Model.rmscaptureFiscalInformation)').val(item.currentValue);
+                                break;
+                            case "Cash Customer":
+                                if (!string.IsNullOrWhiteSpace(va.currentValue.ToString())) {
+                                    var values = LoginPage.Authentication.AllPersonViewBufferList.Where(x => x.code == va.currentValue.ToString()).FirstOrDefault();
+                                    if (values != null) {
+                                        CashCustomer = values.code + "/" + values.firstName + ' ' + values.middleName + ' ' + values.lastName;
+                                    }
+                                    else
+                                        CashCustomer = "Not Applicable";
+                                }
+                                break;
+                            case "POS Store":
+                                if (!string.IsNullOrWhiteSpace(va.currentValue.ToString())) {
+                                    var values = LoginPage.Authentication.OrganizationUnitDefinitionBufferList.Where(x => x.code == va.currentValue.ToString()).FirstOrDefault();
+                                    if (values != null) {
+                                        POSStore = values.code + "/" + values.description;
+                                    }
+                                    else
+                                        POSStore = "";
+                                }
+                                else
+                                    POSStore = "";
+                                break;
+                            case "Enable Value Factory":
+                                $('#@nameof(Model.rmsenableValueFactory)').val(item.currentValue);
+                                break;
+                            case "Enable GSL Tax":
+                                 $('#@nameof(Model.rmsenable_GSL_Tax)').val(item.currentValue);
+                                break;
+                            case "Pos Theme Fixed":
+                                $('#@nameof(Model.rmspos_Theme_Fixed)').val(item.currentValue);
+                                break;
+                                     }
+
+
+                                 });
+
+
+                },
+                error: function (x) {
+                    alert(x.responseText);
+
+                }
+            });
+        }
+
+</script>
+
+
+<script>
+    $(document).on("click", '#btnDevicesettingImport', function () {
+        var getdevicecode = $('#devicesettingpropertyInindex').val();
+        submitfunctiongetdevicedetailforpropertyvalue(getdevicecode);
+    });
+      window.submitfunctiongetdevicedetailforpropertyvalue = function (getdevicecode) {
+
+            $.ajax({
+                type: "POST",
+                dataType: 'json',
+                url: '@Url.Action("getPropertycurrentvalue", "Devices")',
+                data: { DEVCODE: getdevicecode},
+
+                success: function (data) {
+
+
+                    $.each(data, function (index, item) {
+
+                        switch (item.attribute) {
+                            case "Accuracy Tolerance":
+                                console.log(item.currentValue);
+                                 $('#@nameof(Model.rmsaccuracy_Tolerance)').val(item.currentValue);
+                                break;
+                            case "Currency Conversion":
+                                 $('#@nameof(Model.rmscurrency_Conversion)').val(item.currentValue);
+                                break;
+                            case "Print Discount & Additional Charge Per LineItem":
+                                 $('#@nameof(Model.rmsprintDiscountAdditionalChargePerLineItem)').val(item.currentValue);
+                                break;
+                            case "Select Automatic Shift Period":
+                                 $('#@nameof(Model.rmsselectAutomaticShiftPeriod)').val(item.currentValue);
+                                break;
+                            case "XML Reconciliation":
+                                 $('#@nameof(Model.rmsxML_Reconciliation)').val(item.currentValue);
+                                break;
+                            case "Bold Order No":
+                                 $('#@nameof(Model.rmsbold_Order_No)').val(item.currentValue);;
+                                break;
+                            case "Enable Dynamic Visual Display":
+                                $('#@nameof(Model.rmsenableDynamicVisualDisplay)').val(item.currentValue);
+                                break;
+                            case "POS Theme":
+                                 $('#@nameof(Model.rmspOS_theme)').val(item.currentValue);
+                                break;
+                            case "Navigator Type":
+                                 $('#@nameof(Model.rmsnavigatorType)').val(item.currentValue);
+                                break;
+                            case "Theme Changed Date":
+                                 $('#@nameof(Model.rmsthemeChangedDate)').val(item.currentValue);
+                                break;
+                            case "Aspect Ratio":
+                                $('#@nameof(Model.rmsaspectRatio)').val("A_" +item.currentValue);
+                                break;
+                            case "Change Frequency":
+                                 $('#@nameof(Model.rmschangeFrequency)').val(item.currentValue);
+                                break;
+                            case "Allow Animation":
+                                $('#@nameof(Model.rmsallowAnimation)').val(item.currentValue);
+                                break;
+                            case "Enable Touch Screen":
+                                $('#@nameof(Model.rmsenableTouchScreen)').val(item.currentValue);
+                                break;
+                            case "Check Amount Limit For Hold":
+                                 $('#@nameof(Model.rmscheckAmountLimitForHold)').val(item.currentValue);
+                                break;
+                            case "Hold Amount Per Person":
+                                 $('#@nameof(Model.rmsholdAmountPerPerson)').val(item.currentValue);
+                                break;
+                            case "Hold Document Life":
+                                $('#@nameof(Model.rmshold_Document_Life)').val(item.currentValue);
+                                break;
+                            case "Enable Bill Management":
+                                $('#@nameof(Model.rmsenableBillManagement)').val(item.currentValue);
+                                break;
+                            case "Company Tin Mandatory":
+                                 $('#@nameof(Model.rmscompanyTinMandatory)').val(item.currentValue);
+                                break;
+                            case "Enable Delivery Management":
+                                $('#@nameof(Model.rmsenableDeliveryManagement)').val(item.currentValue);
+                                break;
+                            case "Enable Document Reference":
+                                 $('#@nameof(Model.rmsenableDocumentReference)').val(item.currentValue);
+                                break;
+                            case "Enable Room Charge":
+                                $('#@nameof(Model.rmsenableRoomCharge)').val(item.currentValue);
+                                break;
+                            case "Enable Reservation":
+                                $('#@nameof(Model.rmsenable_Reservation)').val(item.currentValue);
+                                break;
+                            case "Enable Package Design":
+                                $('#@nameof(Model.rmsenable_Package_esign)').val(item.currentValue);
+                                break;
+
+                            case "Station Type":
+                                 $('#@nameof(Model.rmsstation_Type)').val(item.currentValue);
+                                break;
+                            case "Table Selection Type":
+                                $('#@nameof(Model.rmstable_Selection_Type)').val(item.currentValue);
+                                break;
+                            case "Waiter Selection":
+                                $('#@nameof(Model.rmswaiter_selection)').val(item.currentValue);
+                                break;
+                            case "POS Trigger Article Removal":
+                                $('#@nameof(Model.rmspOS_Trigger_Article_Removal)').val(item.currentValue);
+                                break;
+                            case "Need Credentials For Removal":
+                                $('#@nameof(Model.rmsneed_Credentials_For_Removal)').val(item.currentValue);
+
+                                break;
+                            case "Enable Order Function":
+                                $('#@nameof(Model.rmsenableOrderFunction)').val(item.currentValue);
+                                break;
+                            case "Order Station Mandatory":
+                                 $('#@nameof(Model.rmsorderStationMandatory)').val(item.currentValue);
+                                break;
+                            case "DownLoad EJ":
+                                $('#@nameof(Model.rmsdownLoad_EJ)').val(item.currentValue);
+                                break;
+
+
+                            case "Order Location":
+                                 $('#@nameof(Model.rmsorder_Location)').val(item.currentValue);
+                                break;
+                            case "Order Verification Method":
+                                $('#@nameof(Model.rmsorder_Verification_Method)').val(item.currentValue);
+                                break;
+                            case "Enable Auto Entry":
+                                $('#@nameof(Model.rmsenableAutoEntry)').val(item.currentValue);
+                                break;
+                            case "Open Drawer After Print":
+                                $('#@nameof(Model.rmsopenDrawerAfterPrint)').val(item.currentValue);
+                                break;
+                            case "Check System Timestamp":
+                                $('#@nameof(Model.rmsCheckSystemTimestamP)').val(item.currentValue);
+                                break;
+                            case "Default Transaction Type":
+                                 $('#@nameof(Model.rmsdefault_Transaction_Type)').val(item.currentValue);
+                                break;
+                            case "Default Payment":
+                                $('#@nameof(Model.rmsdefault_Payment)').val(item.currentValue);
+                                break;
+                            case "Table Mandatory":
+                                $('#@nameof(Model.rmstableMandatory)').val(item.currentValue);
+                                break;
+                            case "Waiter Mandatory":
+                                $('#@nameof(Model.rmsWaiterMandatory)').val(item.currentValue);
+                                break;
+                            case "Input Cover Mandatory":
+                                 $('#@nameof(Model.rmsinputCoverMandatory)').val(item.currentValue);
+                                break;
+                            case "Clear Hold Before Closing":
+                                $('#@nameof(Model.rmsclearHoldBeforeClosing)').val(item.currentValue);
+                                break;
+                            case "Allow multiple Instance Of Table":
+                                $('#@nameof(Model.rmsallowmultipleInstanceOfTable)').val(item.currentValue);
+                                break;
+                            case "Enable Vocal Assistance":
+                                $('#@nameof(Model.rmsenableVocalAssistance)').val(item.currentValue);
+                                break;
+                            case "Language":
+                                $('#@nameof(Model.rmsLanguage)').val(item.currentValue);
+                                break;
+                            case "Closing Frequency":
+                                 $('#@nameof(Model.rmsclosing_frequency)').val(item.currentValue);
+                                break;
+
+                            case "Summary Difference Tolerance":
+                                $('#@nameof(Model.rmssummary_Difference_Tolerance)').val(item.currentValue);
+                                break;
+                            case "Check Voucher Integrity":
+                                 $('#@nameof(Model.rmscheck_Voucher_Integrity)').val(item.currentValue);
+                                break;
+                            case "Fiscal Reconciliation":
+                                 $('#@nameof(Model.rmsfiscalReconciliation)').val(item.currentValue);
+                                break;
+                            case "Zeroing Voucher":
+                                $('#@nameof(Model.rmszeroing_Voucher)').val(item.currentValue);
+                                break;
+                            case "Calculate Consumption Cost":
+                                 $('#@nameof(Model.rmscalculateConsumptionCost)').val(item.currentValue);
+
+                                break;
+                            case "Summary Voucher":
+                                 $('#@nameof(Model.rmssummary_Voucher)').val(item.currentValue);
+                                break;
+                            case "F and B":
+
+                                 $('#@nameof(Model.rmsf_and_B)').val(item.currentValue);
+                                break;
+                            case "Daily Control Count":
+                                $('#@nameof(Model.rmsdailyControlCount)').val(item.currentValue);
+                                break;
+                            case "Clear Held Bill":
+                                $('#@nameof(Model.rmsclear_Held_Bill)').val(item.currentValue);
+                                break;
+                            case "Disable Void On Retrieve":
+                               $('#@nameof(Model.rmsdisableVoidOnRetrieve)').val(item.currentValue);
+                                break;
+                            case "Enable CBE":
+                               $('#@nameof(Model.rmsenable_cbe)').val(item.currentValue);
+                                break;
+                            case "Capture Fiscal Information":
+                                $('#@nameof(Model.rmscaptureFiscalInformation)').val(item.currentValue);
+                                break;
+                            case "Cash Customer":
+                                 $('#@nameof(Model.rmscash_Customer)').val(item.currentValue);
+                                break;
+                            case "POS Store":
+                                 $('#@nameof(Model.rmspOS_Store)').val(item.currentValue);
+                                break;
+                            case "Enable Value Factory":
+                                $('#@nameof(Model.rmsenableValueFactory)').val(item.currentValue);
+                                break;
+                            case "Enable GSL Tax":
+                                 $('#@nameof(Model.rmsenable_GSL_Tax)').val(item.currentValue);
+                                break;
+                            case "Pos Theme Fixed":
+                                $('#@nameof(Model.rmspos_Theme_Fixed)').val(item.currentValue);
+                                break;
+                            case "Ignore zero price article":
+                                $('#@nameof(Model.rms_Ignore_zero_price_article)').val(item.currentValue);
+                                break;
+
+                                     }
+                                 });
+
+
+                },
+                error: function (x) {
+                    alert(x.responseText);
+
+                }
+            });
+        }
+
+</script>
+<script>
+    var selectedCountry = "";
+
+    var row = ""
+
+    $("select.select2").change(function () {
+        selectedCountry = $(this).children("option:selected").text();
+        console.log(selectedCountry);
+
+        $(".bg-blue").removeClass("bg-blue");
+        //var row = $(".addvaluepropertyLisearch:contains(" + selectedCountry + "));
+        $("input[name*='" + selectedCountry + "']").addClass("bg-blue");
+        /*location.href = '#resp-table'*/
+    });
+
+
+</script>

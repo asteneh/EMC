@@ -1,0 +1,50 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_V7_Entities.DataModels;
+@using Newtonsoft.Json;
+@model GSLmodel;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var ArticleTypes = await sharedHelpers.GetsystemConstantById(Convert.ToInt32(Model.gslType));
+
+    var codemodel = Model.codeforgslTYpe;
+  
+    var Carts = await sharedHelpers.GetpreferenceByreference(codemodel);
+  
+}
+<style>
+    .predesc {
+        white-space: nowrap;
+    }
+</style>
+
+@if (Model.prefparent > 0 && Model?.TreeCount<=3)
+{
+    var parentDesc = Carts.Find(c => c.Id == Model.prefparent)?.Description;
+    var desc = @Model.prefdescription;
+    var countChild = Model.TreeCount + 1;
+
+    <tr class="treegrid-@Model.prefcode treegrid-parent-@Model.prefparent  preferential" style="opacity:1.5">
+        <td class="predesc preferentialParent" data-value="@countChild" data-types="@Model.prefcode">
+        <a data-toggle="tab"  style="text-decoration-line:none; color:black !important" name="catagory" id="@Model.prefcode" >
+            @Model.prefdescription
+        </a>
+
+    </td>
+    <td><a class=" btn btn-xs" onclick="EditPreferenceFunction('@Model.prefcode')" data-toggle="modal"><i class="fa fa-edit"></i></a></td>
+    @*<td><a href="" class="btn  btn-xs " onclick="DeletePreferenceFunction('@Model.prefcode')"><i class="fa fa-trash text-danger"></i></a></td>*@
+    <td><a href="#" class="btn btn-social-icon btn-xs preferencebtndelete" data-code="@Model.prefcode"><i class="fa fa-trash" style="color:red"></i></a></td>
+
+</tr>
+    var NeastedChilds = Carts.Where(t => t.ParentId == Model.prefcode).ToList();
+    if (NeastedChilds.Count() > 0)
+    {
+        foreach (var item in NeastedChilds)
+        {
+             var ChildOfChildModel = new GSLmodel { prefcode = item.Id, prefparent = item.ParentId, prefdescription = item.Description, codeforgslTYpe = codemodel ,TreeCount=countChild};
+
+            @await Html.PartialAsync("_Preferencechild", ChildOfChildModel);
+        }
+    }
+
+}

@@ -1,0 +1,250 @@
+﻿@model GSLmodel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var ArticleTypes = await sharedHelpers.GetsystemConstantById(Convert.ToInt32(Model.gslType));
+
+    var preferenceList = ArticleTypes?.FirstOrDefault()?.Id;
+    var categoryType = ArticleTypes?.FirstOrDefault()?.Category;
+
+    var ValuedefnitionList = await sharedHelpers.getValueDefnByTypeandGslList(1960, preferenceList);
+    var ValuedefnitionListType = ValuedefnitionList?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Description }).ToArray();
+
+    var ShoppingCategoryList = await sharedHelpers.GetSystemConstantByCat("Shopping Category");
+  
+    var ShoppingCategoryListType = ShoppingCategoryList?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Description }).ToArray();
+
+}
+<div class="modal fade" id="preferenctilaModal">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <img src="~/images/Cnets.jpg" alt="CNET" />
+                    <span>Preferentila Child Creator</span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                </h5>
+
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form class="form-horizontal" id="PreferentilaChildCreatorNewFormData" onsubmit="return PreferentilaChildCreatorNewFormFunction()" asp-controller="GSL" asp-action="createPreferentilachild" method="post">
+                        <div class="col-md-12">
+                                <button class="btn btn-app" type="reset" id="IssuedbtnNew"> <i class="fa fa-file-o"></i>New</button>
+                                <button type="submit" action="addRow" class="btn btn-app" id="PreferentilaChildCreatorbtnNewsave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                                <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                           
+                        </div>
+
+                        <div class="col-md-12" style="margin-top:25px">
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Parent</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="prefParent" class="form-control select2" style="width:360px;">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="prefParent"></span>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Description</label>
+                                    <div class="col-md-9">
+                                        <input asp-for="prefDescription" class="form-control" style="width:360px;" autocomplete="off">
+                                        <span asp-validation-for="prefDescription"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Font</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="prefFont" class="form-control select2" style="width:360px;"><option></option></select>
+                                        <span asp-validation-for="prefFont"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Value</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="prefValue" class="form-control" style="width:360px;" />
+                                        <span asp-validation-for="prefValue"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Marign</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="prefMargin" class="form-control select2" style="width:360px;"><option></option></select>
+                                        <span asp-validation-for="prefMargin"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Shopping Category</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="prefshoppingcate" class="form-control select2" style="width:360px;">
+                                            <option value="" disabled="disabled">Shopping</option>
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="prefshoppingcate"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Is Active</label>
+                                    <div class="col-md-1">
+                                        <input asp-for="prefIsactive" checked="checked" />
+                                        <span asp-validation-for="prefIsactive"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <input asp-for="getCategoryTypeForcomp" hidden />
+                        <input asp-for="getreferenceTypeForpref" hidden />
+                        <input asp-for="prefrencecodeforupdate" hidden />
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+    var geTGSreferenceforpref = '@Model.gslType';
+
+    $('#@nameof(Model.getreferenceTypeForpref)').val(geTGSreferenceforpref);
+
+    var getcategoryType = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(categoryType));
+
+      $('#@nameof(Model.getCategoryTypeForcomp)').val(getcategoryType);
+</script>
+<script>
+    $('#@nameof(Model.prefMargin)').select2({
+        data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ValuedefnitionListType)),
+        placeholder: "",
+        allowClear: true
+
+    });
+
+        $('#@nameof(Model.prefshoppingcate)').select2({
+          data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ShoppingCategoryListType)),
+            allowClear: true,
+            placeholder: "",
+             templateResult: funcShoppingCate
+        });
+
+
+    function funcShoppingCate(shopcat) {
+        if (shopcat.loading) {
+            return shopcat.text;
+        }
+        if (shopcat != null || shopcat != undefined || shopcat != "") {
+
+            if (shopcat.text == "Shopping") {
+
+                var $container = $('<div class="row bg-blue" style="padding-bottom: 7px;padding-top: 7px;"><div class="col-md-4"><b>Code</b></div><div class="col-md-4"><b>Description</b></div></div>');
+
+            }
+
+            else {
+
+                var $container = $('<div class="row">' +
+                    '<div class="col-md-4">' + shopcat.id + '</div>' +
+                    '<div class="col-md-4">' + shopcat.text + '</div>' +
+                    '</div>');
+            }
+            return $container;
+        }
+    }
+</script>
+<script>
+
+  $(document).on("click", ".btnDeleteAccountMap", function () {
+      var prefcode = $('#@nameof(Model.Prefcode)').val();
+      var code = $(this).data('code');
+        swal({
+            title: "are you sure to delete this ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "GET",
+                        dataType: 'json',
+                        url: '@Url.Action("DeleteAccountMap", "GSL")',
+                        data: { code: code },
+                        success: function (data) {
+                           
+                            swal("", data, "success");
+                            $.ajax({
+                                type: "GET",
+                                dataType: 'html',
+                                url: '@Url.Action("getaccountmappreference", "GSL")',
+                                data: { prefcode: prefcode },
+
+                                success: function (data) {
+
+                                    $('#accountmapContent').html(data);
+                                }
+                            });
+                        },
+                    });
+                }
+            });
+    });
+
+    $(document).on("click", ".preferencebtndelete", function () {
+        var code = $(this).data('code');
+        var gslcode = '@Model.gslType';
+        swal({
+            title: "are you sure to delete this ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "POST",
+                        dataType: 'json',
+                        url: '@Url.Action("DeletePreferencList", "GSL")',
+                        data: { PREFCODE: code },
+
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        success: function (data) {
+                            if (data.rowremove == true) {
+                                swal("", data.result, "success");
+                                GetPreference(gslcode);
+                            }
+                            else {
+                                swal("", data.result, "error");
+                            }
+
+                        }
+                    });
+
+                }
+            });
+    });
+</script>

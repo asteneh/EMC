@@ -1,0 +1,148 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_V7_Entities.DataModels;
+@using Newtonsoft.Json;
+@model Companymodel;
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers;
+@{
+    var _jobDesc = Model?._jobDescriptions;
+}
+<style>
+    .vIdDefiniation {
+        height: 77vh;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    .vIdDefiniation {
+        white-space: nowrap
+    }
+
+    .vIdDefiniation {
+        overflow-y: auto; /* make the table scrollable if height is more than 200 px  */
+        height: 77vh /* gives an initial height of 200px to the table */
+    }
+
+        .vIdDefiniation th {
+            position: sticky; /* make the table heads sticky */
+            top: 0px; /* table head will be placed from the top of the table and sticks to it */
+        }
+
+    /*table {
+                            border-collapse: collapse;*/ /* make the table borders collapse to each other */
+    /*width: 100%;
+                        }*/
+
+    th,
+    td {
+        padding: 0 0 !important;
+        border: 1px solid #ccc;
+    }
+
+    th {
+        background-color: rgb(179, 236, 255)
+    }
+</style>
+
+
+<div class="border vIdDefiniation" style="border:1px solid #e5e5e5;">
+    <table id="voucher_idSetting_table" class="table table-striped container-fluid" style="background-color:#ffffff" width="105%">
+        <thead>
+            <tr class="attendancesum">
+                <th>Descrption</th>
+                <th>Index</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Remark</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (_jobDesc != null && _jobDesc.Count() > 0)
+            {
+                @foreach (var item in _jobDesc)
+                {
+                    var _cate = await sharedHelpers.GetLookUpById(Convert.ToInt32(item?.Category));
+                    var _status = await sharedHelpers.GetLookUpById(Convert.ToInt32(item?.Status));
+                 
+                    <tr class="attendancesum">
+                        <td>@item?.Description</td>
+                        <td>@item?.Index</td>
+                        <td>@_cate?.FirstOrDefault()?.Description</td>
+                        <td>@_status?.FirstOrDefault()?.Description</td>
+                        <td>@item?.Remark</td>
+                        <td><a class="btn btn-social-icon btn-xs" onclick="EditJobDescriptionFunction('@item?.Id')" data-toggle="modal"><i class="fa fa-edit"></i></a></td>
+                        <td><a href="#" class="btn btn-social-icon btn-xs" onclick="DeleteJobDescriptionFunction('@item?.Id')"><i class="fa fa-trash"></i></a></td>
+
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function DeleteJobDescriptionFunction(CODE) {
+        var code = CODE;
+        swal({
+            title: "are you sure to delete this ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "POST",
+                        dataType: 'json',
+                        url: '@Url.Action("DeleteJobDescriptionById", "Company")',
+                        data: { code: code },
+
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        success: function (data) {
+                            var idd =  $('#@nameof(Model.job_orgUnitDefn)').val();
+                            $.ajax({
+                                type: "GET",
+                                dataType: 'html',
+                                url: '@Url.Action("JobdescriptionList", "Company")',
+                                data: { idd: idd },
+
+                                success: function (data) {
+
+                                    $('#JobDescriptionData').html(data);
+
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+
+
+    }
+</script>
+
+<script>
+    function EditJobDescriptionFunction(CODE) {
+        var code = CODE;
+        $.ajax({
+            type: "GET",
+            dataType: 'json',
+            url: '@Url.Action("GetJobDescriptionById", "Company")',
+            data: { code: code },
+            success: function (data) {
+                $('#@nameof(Model.job_orgUnitDefncode)').val(data.code);
+                $('#@nameof(Model.job_description)').val(data.desc);
+                $('#@nameof(Model.job_index)').val(data.index);
+                $('#@nameof(Model.job_category)').val(data.ctegory).trigger('change');
+                $('#@nameof(Model.job_status)').val(data.status).trigger('change');
+                $('#@nameof(Model.job_remark)').val(data.remark);
+
+                $('#RoleOrganizationUnitModal').modal("show");
+            },
+        });
+    }
+</script>
+

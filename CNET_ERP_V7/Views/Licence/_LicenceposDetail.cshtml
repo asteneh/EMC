@@ -1,0 +1,104 @@
+﻿@model LicenseModel
+@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var cNETLIN = Model.NETLicenses;
+}
+<style>
+    .Licensepos {
+        height: 77vh;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    .Licensepos {
+        white-space: nowrap
+    }
+
+    .Licensepos {
+        overflow-y: auto; /* make the table scrollable if height is more than 200 px  */
+        height: 77vh /* gives an initial height of 200px to the table */
+    }
+
+        .Licensepos th {
+            position: sticky; /* make the table heads sticky */
+            top: 0px; /* table head will be placed from the top of the table and sticks to it */
+        }
+
+    /*table {
+                border-collapse: collapse;*/ /* make the table borders collapse to each other */
+    /*width: 100%;
+            }*/
+
+    th,
+    td {
+        padding: 0 0 !important;
+        border: 1px solid #ccc;
+    }
+
+    th {
+        background-color: rgb(179, 236, 255)
+    }
+</style>
+
+ <div class="border Licensepos">
+            <table id="Licencepos_detail_List" class="table table-striped" style="background-color:#ffffff">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th id="deviceforpos">Device</th>
+                        <th>License Code</th>
+                        <th>Remaining Days</th>
+                        <th>Remark</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (cNETLIN != null && cNETLIN.Count() > 0)
+                    {
+                        @foreach (var item in cNETLIN)
+                        {
+                            //var remaindate = item.Device.Split('/');
+                            //var tointSub = Convert.ToInt32((@remaindate[1]));
+                            //var remaindatesub = "";
+                            //if (@remaindate[2] == "True")
+                            //{
+                            //    if (@tointSub <= 1)
+                            //    {
+                            //        remaindatesub = "EXPIERED";
+                            //    }
+                            //    else
+                            //    {
+                            //        remaindatesub = @remaindate[1];
+                            //    }
+
+                            //}
+                            //else
+                            //{
+                            //    remaindatesub = "INVALID";
+                            //}
+
+                            <tr>
+                                <td>@item.Consignee</td>
+                                <td></td>
+                                <td>@item.LicenseCode</td>
+                                <td></td>
+                                <td>@item.Remark</td>
+                                <td><a class="btn btn-social-icon btn-xs" onclick="EditLicenceposFunction('@item.Id')" data-toggle="modal"><i class="fa fa-edit"></i></a></td>
+                                <td><a href="#" class="btn btn-social-icon btn-xs" onclick="EditLicenceposFunction('@item.Id')"><i class="fa fa-trash"></i></a></td>
+
+                            </tr>
+
+                        }
+                    }
+                  
+                </tbody>
+            </table>
+
+        </div>
+    

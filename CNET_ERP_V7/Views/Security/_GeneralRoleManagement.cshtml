@@ -1,0 +1,530 @@
+﻿@model SecurityModel
+@using CNET_ERP_V7.Models.Security;
+@using CNET_V7_Domain.Domain.SecuritySchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Newtonsoft.Json;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@inject CNET_ERP_V7.Common.AuthNavigation.AuthenticationManager _authenticationManager
+@{
+    var userrole = true;
+    var rolecode = "";
+    List<Member> mMembers = new List<Member>();
+
+   
+}
+<style>
+    .backtable {
+        background: green;
+    }
+
+    .backtablecheck {
+        background: green;
+    }
+
+    .backtableuncheck {
+        background: white;
+    }
+</style>
+
+<div class="row">
+    <div class="box box-primary">
+        <div class="col-md-3">
+            <div class="border">
+                <div id="rolehaveusersection">
+                    @await Html.PartialAsync("_RoleType", new SecurityModel() { userRole = userrole })
+                </div>
+                <div class="form-group form-group-sm">
+                    <br /> <br />
+                    <div class="col-md-7">
+                        <button type="button" class="btn btn btn-outline-primary btn-sm" style="border:dotted; height:30px;" id="buttonchecked">Role Have User</button>
+                        <input asp-for="rolehaveuser" checked />
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="col-md-9">
+            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs" id="Rolemanagement_tab_nav">
+                    <li class="active"><a href="#UserMemebership" data-toggle="tab">User Memebership</a></li>
+                    <li><a href="#Access_Privilege" data-toggle="tab">Access Privilege</a></li>
+                    <li><a href="#Document_Access_Privilege" data-toggle="tab">Document Access Privilege</a></li>
+                    <li><a href="#Activity_Privilege" data-toggle="tab">Activity Privilege</a></li>
+                    <li><a href="#Report_Privilege" data-toggle="tab">Report Privilege</a></li>
+                    <li><a href="#Dashboard_Privilege" data-toggle="tab">Dashboard Privilege</a></li>
+
+                </ul>
+                <input type="hidden" id="selectesecurityRoleTab" value="" />
+
+                <div class="tab-content">
+                    <div class="active tab-pane" id="UserMemebership">
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="useraccountcontent">
+                                    @await Html.PartialAsync("_userMemebership.cshtml", new SecurityModel() { mMembers = mMembers })
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="Access_Privilege">
+                        <div class="row">
+                            <div class="col-md-12">
+                                @await Html.PartialAsync("_AccessPrivilege.cshtml")
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="tab-pane" id="Document_Access_Privilege">
+                        <div class="row">
+                            <div class="col-md-12">
+                                @await Html.PartialAsync("_DocumentAccessPrivilege.cshtml")
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="Activity_Privilege">
+                        <div class="row">
+                            <div class="col-md-12">
+                                @await Html.PartialAsync("_ActivityPrivilege.cshtml")
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="Report_Privilege">
+                        <div class="row">
+                            <div class="col-md-12">
+                                @await Html.PartialAsync("_ReportPrivilege.cshtml")
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="Dashboard_Privilege">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="nav-tabs-custom">
+                                    <ul class="nav nav-tabs" id="dashboard_tab_navv">
+                                        <li class="active"><a href="#voucherDashboard_Privilege" data-toggle="tab"> Voucher Dashboard Privilege</a></li>
+                                        <li><a href="#subsystemDashboard_Privilege" data-toggle="tab">Subsystem Dashboard Privilege</a></li>
+
+                                    </ul>
+
+                                </div>
+                                <div class="tab-content">
+                                    <div class="active tab-pane" id="voucherDashboard_Privilege">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                @await Html.PartialAsync("_voucherDashboardPrivilege.cshtml")
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane" id="subsystemDashboard_Privilege">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div id="subsystemdasbord">
+                                                   @await Html.PartialAsync("_subsystemDashboardPrivilege.cshtml")
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- /.tab-pane -->
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+<script>
+    var privilegeaccess = false;
+    var reportaccess = false;
+    var privilegedocument = false;
+    var privilegereport = false;
+    var systemdashboard = false;
+    var voucherdashboard = false;
+    var voucherdashboarddef = false;
+    var voucherdescription = [];
+    var voucherDashdesc = [];
+    var sn = 0;
+    var count = 0;
+    var countdesc = 0;
+
+    var orgunit = false;
+    $(document).on("click", ".roleList", function () {
+       orgunit = true;
+
+    });
+
+
+    $('#Rolemanagement_tab_nav li a').click(function (e) {
+
+        var selecteTab = e.target.attributes['href'].value;
+        $('#selectesecurityRoleTab').val(selecteTab);
+
+        switch (selecteTab) {
+            case "#UserMemebership":
+                $('#btnNewsecuritySetting').removeClass('displayapp');
+                $('#btnSaveSecuritysetting').addClass('displayapp');
+                $('#btnSaveprivilegeType').addClass('displayapp');
+                $('#btnSavedashboardPrivilege').addClass('displayapp');
+            break;
+            case "#Access_Privilege":
+                 $.ajax({
+                            type: "GET",
+                            dataType: 'html',
+                            url: '@Url.Action("Getaccessprivilege", "Security")',
+                            data: {  },
+
+                            success: function (data) {
+                               $('#accessesprivilegeContent').html(data);
+
+
+                                }
+                         });
+
+                privilegeaccess = true;
+                privilegedocument = false;
+                privilegereport = false;
+                $('#btnNewsecuritySetting').addClass('displayapp');
+                $('#btnSaveSecuritysetting').removeClass('displayapp');
+                break;
+            case "#Document_Access_Privilege":
+                   $.ajax({
+                            type: "GET",
+                            dataType: 'html',
+                            url: '@Url.Action("Getdocumentaccessprivilege", "Security")',
+                            data: {  },
+
+                            success: function (data) {
+
+                                $('#documentPrivilegeContent').html(data);
+
+                                }
+                         });
+                privilegeaccess = false;
+                privilegedocument = true;
+                privilegereport = false;
+
+                $('#btnNewsecuritySetting').addClass('displayapp');
+                $('#btnSaveSecuritysetting').removeClass('displayapp');
+                $('#btnSavedashboardPrivilege').addClass('displayapp');
+                break;
+            case "#Report_Privilege":
+                         $.ajax({
+                                    type: "GET",
+                                    dataType: 'html',
+                                    url: '@Url.Action("Getreportprivilege", "Security")',
+                                    data: {  },
+
+                                    success: function (data) {
+
+                                      $('#ReportTypecontent').html(data);
+
+                                        }
+                               });
+
+
+                 privilegeaccess = false;
+                privilegedocument = false;
+                  privilegereport = true;
+
+                $('#btnNewsecuritySetting').addClass('displayapp');
+                $('#btnSaveSecuritysetting').removeClass('displayapp');
+
+
+
+                break;
+            case "#Activity_Privilege":
+
+                $.ajax({
+                      type: "GET",
+                       dataType: 'html',
+                        url: '@Url.Action("Getactivityprivilege", "Security")',
+                         data: {  },
+
+                        success: function (data) {
+
+                            $('#activirtprivilegeContent').html(data);
+
+                            }
+                 });
+                privilegeaccess = false;
+                privilegedocument = false;
+                privilegereport = false;
+                $('#btnNewsecuritySetting').removeClass('displayapp');
+                $('#btnSaveSecuritysetting').addClass('displayapp');
+
+                break;
+            case "#Dashboard_Privilege":
+                voucherdashboarddef = true;
+                privilegeaccess = false;
+                privilegedocument = false;
+                privilegereport = false;
+                $('#btnNewsecuritySetting').addClass('displayapp');
+                $('#btnSaveSecuritysetting').removeClass('displayapp');
+
+                break;
+
+        }
+
+    });
+    $('#dashboard_tab_navv li a').click(function (e) {
+
+        var selecteTab = e.target.attributes['href'].value;
+
+        if (selecteTab) {
+            switch (selecteTab) {
+
+                case "#voucherDashboard_Privilege":
+                    voucherdashboard = true;
+                    systemdashboard = false;
+                    voucherdashboarddef = false;
+                    break;
+                case "#subsystemDashboard_Privilege":
+                    voucherdashboard = false;
+                    voucherdashboarddef = false;
+                    systemdashboard = true;
+                    break;
+
+               }
+        }
+        else {
+            voucherdashboard = true;
+            systemdashboard = false;
+        }
+
+
+    });
+
+    $('#buttonchecked').click(function () {
+        $('#rolehaveuser').trigger('click');
+    });
+    var orgunitcode = "";
+    var descriptionn = "";
+     function  submitfunctionUserrole(orgunitcode)
+     {
+        $.ajax({
+            type: "GET",
+            dataType: 'html',
+            url: '@Url.Action("getUserRole", "Security")',
+                data: { Code: orgunitcode },
+
+            success: function (data) {
+                $('#useraccountcontent').html(data);
+
+            }
+        });
+   }
+   
+    $("#btnSaveprivilegeType").click(function () {
+
+        if (privilegeaccess == true ) {
+            $('#accessmatrixNewFormData').submit();
+        }
+        else if (privilegedocument == true) {
+            $('#documentaccessmatrixNewFormData').submit();
+        }
+        else if (privilegereport == true) {
+            $('#reportaccessmatrixNewFormData').submit();
+        }
+
+
+    });
+
+    $("#btnSavedashboardPrivilege").click(function () {
+
+        if (systemdashboard == true ) {
+            $('#systemdashboardNewFormData').submit();
+        }
+        else if (voucherdashboard == true) {
+            $('#VoucerDashboardprivilegeNewFormData').submit();
+        }
+        else if (voucherdashboarddef == true) {
+            $('#VoucerDashboardprivilegeNewFormData').submit();
+        }
+
+    });
+
+    $('#accessmatrixNewFormData').submit(function () {
+        var $form = $('#accessmatrixNewFormData');
+        var data = $form.serialize();
+        var action = $(this).attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: function (data) {
+                alert(data);
+            },
+        });
+        return false;
+    });
+
+    $('#documentaccessmatrixNewFormData').submit(function () {
+        var $form = $('#documentaccessmatrixNewFormData');
+        var data = $form.serialize();
+        var action = $(this).attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: function (data) {
+                alert(data.result);
+            },
+        });
+        return false;
+    });
+
+    $('#systemdashboardNewFormData').submit(function () {
+        var $form = $('#systemdashboardNewFormData');
+        var data = $form.serialize();
+        var action = $(this).attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: function (data) {
+                alert(data.result);
+            },
+        });
+        return false;
+    });
+    $('#VoucerDashboardprivilegeNewFormData').submit(function () {
+      var code =   $('#@nameof(Model.voucherdashrole)').val();
+        var $form = $('#VoucerDashboardprivilegeNewFormData');
+        var data = $form.serialize();
+        var action = $(this).attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: function (data) {
+                alert(data.result);
+                submitfunctionvoucherDashboard(code);
+            },
+        });
+        return false;
+    });
+    $('#reportaccessmatrixNewFormData').submit(function () {
+        var $form = $('#reportaccessmatrixNewFormData');
+        var data = $form.serialize();
+        var action = $(this).attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: function (data) {
+                alert(data);
+
+            },
+        });
+        return false;
+    });
+
+
+    $(document).on("change", ".checkedvalueType", function () {
+
+        if ($(this).prop("checked")) {
+            $(".checkedvalueType").prop("checked", false);
+            $(this).prop("checked", true);
+
+        }
+
+    });
+
+     
+ 
+    function ClearvoucherDashboardModal()
+    {
+           $('#@nameof(Model.voucher_definition)').val("");
+           $('#@nameof(Model.voucher_definition)').val("");
+
+    }
+
+    function DeletingvoucherDashboardRow()
+    {
+        $('#voucherdashbardprvilage_detail_List').DataTable({
+            responsive: true,
+            "retrieve": true
+        });
+
+        $('#voucherdashbardprvilage_detail_List').on('click', '.editor_remove', function () {
+            var table = $('#voucherdashbardprvilage_detail_List').DataTable();
+            var row = $(this).parents('tr');
+
+            if ($(row).hasClass('child')) {
+                table.row($(row).prev('tr')).remove().draw();
+            }
+            else {
+                table
+                    .row($(this).parents('tr'))
+                    .remove()
+                    .draw();
+            }
+
+        });
+    }
+
+    $(document).on("click", ".btnDeletevoucherdashboard", function () {
+
+        var code = $('#@nameof(Model.voucherdashrole)').val();
+
+        if (code == "" || code == undefined) {
+
+            $(".roleList:first").trigger('click');
+        }
+        var deletefield = $(this).data('code');
+
+        var tables = $('#voucherdashbardprvilage_detail_List').DataTable();
+        if (confirm('are you sure to delete this record?')) {
+
+            tables
+                .row($(this).parents('tr'))
+                .remove()
+                .draw()
+
+            $.ajax({
+                type: "POST",
+                dataType: 'json',
+                url: '@Url.Action("Deletevoucherdashboard", "Security")',
+                data: { Id: deletefield },
+
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                success: function (data) {
+                    alert(data);
+                    submitfunctionvoucherDashboard(code);
+
+                }
+            });
+
+        }
+    });
+
+</script>
+
+
+
+
+
+
+
+

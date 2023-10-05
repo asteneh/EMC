@@ -1,0 +1,97 @@
+﻿@model SecurityModel
+@using CNET_ERP_V7.Models.Security;
+@using CNET_V7_Domain.Domain.SecuritySchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_V7_Domain.Domain.ViewSchema;
+@using Newtonsoft.Json;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@inject CNET_ERP_V7.Common.AuthNavigation.AuthenticationManager _authenticationManager
+@{
+    var rolecode = "";
+    var selectedcode  = "";
+    var selectedname  = "";
+
+    List<SystemConstantDTO> docunETComponents = new List<SystemConstantDTO>();
+    List<SystemConstantDTO> docunETComponentschild = new List<SystemConstantDTO>();
+
+    List<ViewFunctWithAccessMDTO> functWithAccessMs = new List<ViewFunctWithAccessMDTO>();
+    List<ViewFunctWithAccessMDTO> functWithAccesdoc = new List<ViewFunctWithAccessMDTO>();
+    List<ViewFunctWithAccessMDTO> funcMatrixaccessList = new List<ViewFunctWithAccessMDTO>();
+    bool countcheck = false;
+}
+<div class="row">
+    <div class="col-md-6">
+        <div id="documentPrivilegeContent">
+            @await Html.PartialAsync("_DocumentSubsystemList", new SecurityModel() { documentcNETComponents = docunETComponents, documentchildcNETComponents = docunETComponentschild })
+        </div>
+    </div>
+    <div class="col-md-6">
+        
+            <div id="DocumentType">
+                @await Html.PartialAsync("_DocumentList")
+
+            </div>
+            <div class="form-group form-group-sm">
+               <div class="col-md-4">
+                    <button type="button" class="btn btn btn-outline-primary btn-sm" style="border:dotted; height:30px;" id="documentprivilegebtn">Select All</button>
+                    <input asp-for="documentselectall"  />
+
+                </div>
+            </div>
+
+    </div>
+</div>
+<script>
+    $('#documentprivilegebtn').click(function () {
+        $('#documentselectall').trigger('click');
+    });
+</script>
+
+<script>
+        var docprivilage = "";
+    var docdescription = "";
+    $(document).on("click", ".documentaccessprivilege", function () {
+
+        docprivilage = $(this).data('types');
+        docdescription = $(this).data('value');
+
+
+        var roleTypeCode = $('#@nameof(Model.access_orgunitcode)').val();
+        if (roleTypeCode == "" || roleTypeCode == undefined) {
+
+            $(".roleList:first").trigger('click');
+        }
+
+         $.ajax({
+                type: "GET",
+                dataType: 'html',
+                url: '@Url.Action("GetDocumentListType", "Security")',
+                data: { voucherCode: docprivilage, orgunitdefcode: roleTypeCode, selectedname: docdescription},
+
+                success: function (data) {
+                   $('#DocumentType').html(data);
+                        $('#@nameof(Model.Docategory)').val(docprivilage);
+                        $('#@nameof(Model.docRolecode)').val(roleTypeCode);
+                },
+            });
+
+    });
+    $(document).on("change", "#documentselectall", function () {
+
+
+        var checkedallcheckbox = $(this).is(":checked");
+        if (checkedallcheckbox == true) {
+            $(".backtableuncheck").removeClass("backtableuncheck");
+            $(".backtablecheck").removeClass("backtablecheck");
+            $(".checkedDoc").prop("checked", true);
+            $(".checkedDoc").closest("tr").addClass('backtable');
+        }
+        else {
+            $(".backtableuncheck").removeClass("backtableuncheck");
+            $(".backtablecheck").removeClass("backtablecheck");
+            $('.backtable').removeClass('backtable');
+            $(".checkedDoc").prop("checked", false);
+        }
+
+    });
+</script>

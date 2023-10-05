@@ -1,0 +1,166 @@
+﻿
+@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_V7_Entities.DataModels;
+@using Newtonsoft.Json;
+@model IdDefinitionModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var Idedefn = Model?.dTO2s;
+}
+<style>
+    .vIdDefiniation {
+        height: 77vh;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+     .vIdDefiniation::-webkit-scrollbar
+     {
+        display:none;
+
+     }
+
+    .vIdDefiniation {
+        white-space: nowrap
+    }
+
+    .vIdDefiniation {
+        overflow-y: auto; /* make the table scrollable if height is more than 200 px  */
+        height: 77vh /* gives an initial height of 200px to the table */
+    }
+
+        .vIdDefiniation th {
+            position: sticky; /* make the table heads sticky */
+            top: 0px; /* table head will be placed from the top of the table and sticks to it */
+        }
+
+    /*table {
+                            border-collapse: collapse;*/ /* make the table borders collapse to each other */
+    /*width: 100%;
+                        }*/
+
+    th,
+    td {
+        padding: 0 0 !important;
+        border: 1px solid #ccc;
+    }
+
+    th {
+        background-color: rgb(179, 236, 255)
+    }
+</style>
+<div class="border vIdDefiniation" style="border:1px solid #e5e5e5;">
+    <table id="copy_Distribution_table" class="table table-striped container-fluid" style="background-color:#ffffff" width="105%">
+        <thead>
+            <tr class="attendancesum">
+                <th>Description</th>
+                <th>Prefix</th>
+                <th>Prefix Separator</th>
+                <th>Length</th>
+                <th>Suffix Separator</th>
+                <th>Suffix</th>
+                <th>Assigned To</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Idedefn != null && Idedefn.Count() > 0)
+            {
+                @foreach (var item in Idedefn)
+                {
+                    <tr class="attendancesum">
+                        <td>@item?.description</td>
+                        <td>@item?.prefix</td>
+                        <td>@item?.prefixSeparator</td>
+                        <td>@item?.length</td>
+                        <td>@item?.suffixSeparator</td>
+                        <td>@item?.suffix</td>
+                        @if (item?.systemConstant ==5)
+                        {
+                            <td>@item.VDefAssignedTo</td>
+                        }
+                        else
+                        {
+                            <td>@item?.GSLAssginedTo</td>
+                        }
+                        <td><a class=" btn btn-social-icon btn-xs" onclick="EditIdDefinitionFunction('@item?.id')" data-toggle="modal"><i class="fa fa-edit"></i></a></td>
+                        <td><a href="#" class="btn btn-social-icon btn-xs" onclick="DeleteIdDefinitionFunction('@item?.id','@item?.systemConstant')"><i class="fa fa-trash"></i></a></td>
+
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    function DeleteIdDefinitionFunction(CODE,type) {
+        var code = CODE;
+        swal({
+            title: "are you sure to delete this ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "POST",
+                        dataType: 'json',
+                        url: '@Url.Action("deleteIddefinition", "IdDefinition")',
+                        data: { code: code },
+
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        success: function (data) {
+                            swal("", data, "success");
+                            $(function () {
+                                $.ajax({
+                                    url: '/IdDefinition/GetIdDefinitionList',
+                                    type: 'POST',
+                                    data: { type: type }, // send the data object with the request
+                                    success: function (result) {
+                                        $('#IddefinitonData').html(result);
+                                    },
+                                    error: function () {
+                                        console.log('Error occurred.');
+                                    }
+                                });
+                            });
+
+                        }
+                    });
+                }
+            });
+
+
+    }
+</script>
+
+<script>
+    function EditIdDefinitionFunction(CODE) {
+        var code = CODE;
+        $.ajax({
+            type: "GET",
+            dataType: 'json',
+            url: '@Url.Action("GetIdDefinitionById", "IdDefinition")',
+            data: { code: code },
+            success: function (data) {
+
+                $('#@nameof(Model.iden_code)').val(data.code);
+                $('#@nameof(Model.iden_description)').val(data.descption);
+                $('#@nameof(Model.iden_component)').val(data.compo);
+                $('#@nameof(Model.iden_prefix)').val(data.preftype).trigger('change');
+                $('#@nameof(Model.iden_prefixseparator)').val(data.prefseparator);
+                $('#@nameof(Model.iden_length)').val(data.lenth);
+                $('#@nameof(Model.iden_suffix)').val(data.suffxx).trigger('change');
+                $('#@nameof(Model.iden_suffixseparator)').val(data.suffsepa);
+                $('#@nameof(Model.iden_remark)').val(data.remark);
+                $('#IddefinitionModal').modal("show");
+            },
+        });
+    }
+
+</script>

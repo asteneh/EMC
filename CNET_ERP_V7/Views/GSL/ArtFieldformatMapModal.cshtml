@@ -1,0 +1,237 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.ArticleSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_V7_Entities.DataModels;
+@using Cnetv7BufferHolder;
+@using Newtonsoft.Json;
+@model GSLmodel;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+
+@{
+    var ArticleTypes = await sharedHelpers.GetsystemConstantById(Convert.ToInt32(Model.gslType));
+    int? category = ArticleTypes?.FirstOrDefault()?.Id;
+    string category2 = ArticleTypes?.FirstOrDefault()?.Type;
+    var gsldescription = GeneralBufferHolder.SystemConstants;
+    string index = null;
+
+    int gsltypedscription = 0;
+    foreach (var item in gsldescription)
+    {
+        if (category == item.Id)
+        {
+            gsltypedscription = item.Id;
+        }
+    }
+    List<string> columnsnameList = new List<string>();
+    string columnheadertype = "";
+  
+
+    if (category2 == "GSL Article")
+    {
+        columnsnameList = await sharedHelpers.GetViewColoumnsByViewName("vw_ArticleView");
+        columnheadertype = "vw_ArticleView";
+    }
+    else if (category2 == "GSL Consignee")
+    {
+        columnsnameList = await sharedHelpers.GetViewColoumnsByViewName("vw_ConsigneeView");
+        columnheadertype = "vw_ConsigneeView";
+    }
+}
+
+<div class="modal fade" id="artfildformatModelMap">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <img src="~/images/Cnets.jpg" alt="CNET" />
+                    <span>Field Format For</span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                </h5>
+
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form class="form-horizontal" id="articlefieldformatNewFormData" onsubmit="return ArticlefiledformatNewFormFunction()" asp-controller="GSL" asp-action="createfieldformatarticle" method="post">
+                        <div class="col-md-12">
+                            
+                                <button class="btn btn-app" type="reset" id="IssuedbtnNew"> <i class="fa fa-file-o"></i>New</button>
+                                <button type="submit" action="addRow" class="btn btn-app" id="articlefieldformatbtnNewsave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                                <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                           
+                        </div>
+
+                        <div class="col-md-12" style="margin-top:25px">
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Field</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="fieldfrmatart" class="form-control select2" style="width:340px;" id="@nameof(Model.fieldfrmatart)">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="fieldfrmatart"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Width</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="widthfrmatart" class="form-control"  min="0" />
+                                        <span asp-validation-for="widthfrmatart"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Index</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="indexfrmatart" class="form-control" min="0" />
+                                        <span asp-validation-for="indexfrmatart"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Font</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="fontfrmatart" class="form-control select2" style="width:340px;">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="fontfrmatart"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Color</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="colorfrmatart" class="form-control" type="color" />
+                                        <span asp-validation-for="colorfrmatart"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Caption</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="captionfrmatart" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="captionfrmatart"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Wrap Text</label>
+                                    <div class="col-md-1">
+                                        <input asp-for="isrequiredfrmatart" autocomplete="off" />
+                                        <span asp-validation-for="isrequiredfrmatart"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Remark</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="remarkfrmatart" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="remarkfrmatart"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <input hidden asp-for="filedformatcodefordeleationart" />
+                        <input hidden asp-for="filedformatcodeforheadersaveart" />
+                        <input hidden asp-for="code_feldformatart" />
+                        <input hidden asp-for="gslTypeCodeforfieldformat" />
+                        <input hidden asp-for="categoryTypeCodeforfieldformat" />
+                        <input hidden asp-for="getgslheader" />
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<script>
+
+    function ArticlefiledformatNewFormFunction() {
+        var gatergoryType =  @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(gsltypedscription))
+            $("#@nameof(Model.categoryTypeCodeforfieldformat)").val(gatergoryType);
+        var getheadertype =  @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(columnheadertype))
+            $("#@nameof(Model.getgslheader)").val(getheadertype);
+
+        var gslTYpeforfiledformatarticle = '@Model.gslType';
+
+        var $form = $('#articlefieldformatNewFormData');
+        var data = $form.serialize();
+        var action = $('#articlefieldformatNewFormData').attr("action");
+        $.ajax({
+        type: "POST",
+        url: action,
+        data: data,
+        success: function (data) {
+                swal("", result, "success");
+             var indexvalue = $("#@nameof(Model.indexfrmatart)").val();
+             var indexvaluee = parseInt(indexvalue);
+             $("#@nameof(Model.indexfrmatart)").val(indexvaluee +1);
+                var _idd = $("#@nameof(Model.filedformatcodeforheadersaveart)").val();
+
+                var gslcode = '@Model?.gslType';
+                    $.ajax({
+                        type: "GET",
+                        dataType: 'html',
+                        url: '@Url.Action("getFieldformatResult", "GSL")',
+                        data: { idd: _idd, gslcode: gslcode },
+
+                        success: function (data) {
+                            $('#gslfieldFormatContent').html(data);
+                        }
+                    });
+                       ClearfieldformatarticleModal();
+
+                },
+                });
+        return false;
+        };
+
+</script>
+
+
+<script>
+
+    var codeforfldfrrmt = '@Model.gslType';
+    $('#@nameof(Model.gslTypeCodeforfieldformat)').val(codeforfldfrrmt);
+</script>
+<script>
+  
+    $('#@nameof(Model.fieldfrmatart)').select2({
+                    data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(columnsnameList)),
+                    placeholder: "",
+                    allowClear: true
+
+                });
+</script>
+<script>
+function ClearfieldformatarticleModal() {
+
+        $('#@nameof(Model.code_feldformatart)').val("");
+        $('#@nameof(Model.fieldfrmatart)').val("").trigger('change');
+        $('#@nameof(Model.widthfrmatart)').val("");
+        $('#@nameof(Model.fontfrmatart)').val("").trigger('change');
+        $('#@nameof(Model.colorfrmatart)').val("").trigger('change');
+        $('#@nameof(Model.captionfrmatart)').val("");
+        $('#@nameof(Model.isrequiredfrmatart)').prop('checked', false);
+        $('#@nameof(Model.remarkfrmatart)').val("");
+    }
+
+</script>

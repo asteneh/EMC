@@ -1,0 +1,145 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_V7_Entities.DataModels;
+@using Newtonsoft.Json;
+@model GSLmodel;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+   
+    var distributionList = await sharedHelpers.GetSystemConstantByCat("Distribution Type");
+
+}
+<style>
+
+    .activeidSetting {
+        background-color: dodgerblue;
+        width: auto;
+    }
+
+    .mainsysType {
+        height: 76vh;
+        white-space: nowrap;
+        cursor: pointer;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    .idSetting {
+        cursor: pointer;
+        white-space: nowrap;
+    }
+</style>
+
+<div class="box-body">
+    <div class="box box-primary">
+        <input asp-for="distridutioName" hidden />
+        <div style="border:1px solid #e5e5e5;" class="mainsysType">
+            <table class="table table-sm" id="VoucherFieldFormat_Table" width="100%">
+                <thead>
+                    <tr class="treegrid-3 treegrid-parent-1">
+                        <th colspan="2" style="border:1px solid #e5e5e5; background-color:lightgray">Description</th>
+
+                    </tr>
+                </thead>
+                
+                <tbody>
+                    @if (distributionList != null && distributionList.Count() > 0)
+                    {
+
+                        @foreach (var item in distributionList)
+                        {
+                            <tr onclick="GetDistributionById('@item.Id')" class="activeconsinee">
+
+                                @if (item.Description == "Copy Distribution")
+                                {
+                                    <td> <i class="fa fa-book"></i>@item?.Description</td>
+                                   
+                                }
+                                else if (item.Description == "Synchronization")
+                                {
+                                    <td> <i class="fa fa-book"></i>@item?.Description</td>
+                                   
+                                }
+                                else if (item.Description == "Machine Distribution")
+                                {
+                                    <td><i class="fa fa-building-o"></i>@item?.Description</td>
+                                   
+                                }
+
+                            </tr>
+                        }
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+</div>
+<script>
+
+    function GetDistributionById(_idd) {
+        $('#@nameof(Model.distridutioName)').val(_idd);
+        var gslcode = $('#@nameof(Model.gslType)').val();
+        $("#@nameof(Model.gslTypecodesync)").val(gslcode);
+        switch (_idd) {
+            case "1578":
+                $('#copydistributionart').removeClass('displaydistribution')
+                $('#synchronizationart').addClass('displaydistribution')
+                $('#machinedistributionart').addClass('displaydistribution')
+                $('#copydistributionMapart').removeClass('displaynone')
+                $('#synchronizationMapart').addClass('displaynone')
+                $('#mechiinedistributionMapart').addClass('displaynone')
+                $('#copydistributionMapart').prop('disabled', false)
+                submitfunctioncopydistributionarticle(_idd, gslcode);
+                break;
+            case "1580":
+
+                $('#copydistributionart').addClass('displaydistribution')
+                $('#synchronizationart').removeClass('displaydistribution')
+                $('#machinedistributionart').addClass('displaydistribution')
+                $('#copydistributionMapart').addClass('displaynone')
+                $('#synchronizationMapart').removeClass('displaynone')
+                $('#mechiinedistributionMapart').addClass('displaynone')
+                break;
+            case "1579":
+                $('#copydistributionart').addClass('displaydistribution')
+                $('#synchronizationart').addClass('displaydistribution')
+                $('#machinedistributionart').removeClass('displaydistribution')
+                $('#copydistributionMapart').addClass('displaynone')
+                $('#synchronizationMapart').addClass('displaynone')
+                $('#mechiinedistributionMapart').removeClass('displaynone')
+                submitfunctionsynchronizationarticle(_idd, gslcode);
+                break;
+
+        }
+    }
+
+    function submitfunctioncopydistributionarticle(_idd, gslcode) {
+        $.ajax({
+            type: "GET",
+            dataType: 'html',
+            url: '@Url.Action("getCopydistributionarticle", "GSL")',
+            data: { _idd: _idd, gslcode: gslcode },
+            success: function (data) {
+
+                $('#copydistributionart').html(data);
+            }
+        });
+    }
+    function submitfunctionsynchronizationarticle(_idd, gslcode) {
+        $.ajax({
+            type: "GET",
+            dataType: 'html',
+            url: '@Url.Action("getmachinedistributionarticle", "GSL")',
+            data: { _idd: _idd, gslcode: gslcode },
+            success: function (data) {
+
+                $('#machinedistributionart').html(data);
+            }
+        });
+    }
+</script>
+
+

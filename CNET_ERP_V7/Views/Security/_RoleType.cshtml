@@ -1,0 +1,178 @@
+﻿@model SecurityModel
+@using CNET_ERP_V7.Models.Security;
+@using CNET_V7_Domain.Domain.SecuritySchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Newtonsoft.Json;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@inject CNET_ERP_V7.Common.AuthNavigation.AuthenticationManager _authenticationManager
+@{
+    var userrole = Model.userRole;
+    int? count = 0;
+    var roletype = await sharedHelpers.GetConsigneeByType1(1725);
+
+    var rolemap = await sharedHelpers.SelectAllUserRoleMapper();
+    var rolemapList = rolemap?.Select(o => o.Role ).Distinct().ToList();
+
+    var UserwithRoel = (from urole in rolemapList
+                        join org in roletype
+                         on urole equals org.Id
+
+                        select new
+                        {
+                            urole,
+                            org.Id,
+                            org.Type,
+                            org.Name,
+                            org.ParentId,
+                            org.SpecificAddress,
+                            org.Abrivation,
+                            org.Remark,
+
+                        }).ToList();
+
+}
+<style type="text/css">
+    .sptable {
+        border: 1px solid #ccc;
+        border-collapse: collapse;
+        background-color: #fff;
+        width: 100%;
+    }
+
+        .sptable .asth {
+            background-color: #3c8dbc;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .sptable th, table td {
+            padding: 1px;
+            border: 1px solid #ccc;
+        }
+
+        .sptable, .sptable .sptable td {
+            border: 0px solid #ccc;
+        }
+
+            .sptable [type=text], select {
+                width: 100%;
+            }
+
+    .activeroleType {
+        background-color: dodgerblue;
+    }
+    .rolemanagement {
+        cursor: pointer
+    }
+    .userwithrole{
+        white-space:nowrap;
+    }
+</style>
+
+<div class="box-body createacount">
+    <table cellpadding="0" cellspacing="0" class="tree_role sptable">
+        <thead>
+            <tr class="asth">
+                <th colspan="2"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (userrole == true)
+            {
+                if (UserwithRoel != null && UserwithRoel.Count()> 0)
+                {
+                    foreach (var item in UserwithRoel)
+                    {
+                        var AlluserRoleMaper = await sharedHelpers.SelectAllUserRoleMapper();
+                        var activeperson = await sharedHelpers.GetActiveUserPersonList();
+                        if (activeperson != null)
+                        {
+                            List<int> userList = activeperson.Select(u => u.Id).ToList();
+                            AlluserRoleMaper = AlluserRoleMaper.Where(u => userList.Contains(u.User)).ToList();
+                        }
+                        var usercountList = AlluserRoleMaper?.Where(u => u.Role == item.Id).ToList();
+                        count = usercountList?.Count();
+                        <tr class="roleList" id="@item.Id" data-value="@item.Id" data-types="@item.Id">
+                            <td class="userwithrole" style="height:10px;">
+                                <a data-toggle="tab" style="text-decoration-line:none; color:black !important" name="catagory" id="@item.Id">
+                                    @item.Name@("(")@count@(")")
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+            }
+            else
+            {
+                @if (roletype != null && roletype.Count() > 0)
+                {
+                    @foreach (var item in roletype)
+                    {
+                        <tr class="roleList" id="@item.Id" data-value="@item.Id" data-types="@item.Id">
+                            <td class="userwithrole" style="height:10px;">
+                                <a data-toggle="tab" data-value="@item.Id" data-types="@item.Id" style="text-decoration-line:none; color:black !important" name="catagory" id="@item.Id">
+                                    @item.Name
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+            }
+        </tbody>
+    </table>
+
+</div>
+
+    <script>
+        function TreeFunctionrole() {
+            $(document).ready(function () {
+                $('.tree-basic').treegrid();
+
+                $('.tree_role').treegrid({
+                    source: function (id, response) {
+                        if (id != 1) response(['']);
+                        else response(['']);
+                    }
+                });
+
+            });
+        }
+        TreeFunctionrole();
+        var roleTypecode = "";
+    $(document).on("click", ".roleList", function () {
+        $(".activeroleType").removeClass("activeroleType");
+        $(this).addClass('activeroleType');
+        });
+        $(document).on("click", ".roleList", function () 
+        {
+
+            roleTypecode = $(this).data('value');
+
+            $('#@nameof(Model.mem_orgunitcode)').val(roleTypecode);
+            $('#@nameof(Model.access_orgunitcode)').val(roleTypecode);
+            $('#@nameof(Model.subsysrolecode)').val(roleTypecode);
+            $('#@nameof(Model.act_rolecode)').val(roleTypecode);
+           $('#@nameof(Model.mem_orgunitcode)').val(roleTypecode);
+           $('#@nameof(Model.reportrolecode)').val(roleTypecode);
+             submitfunctionUserrole(roleTypecode);
+             submitfunctionsysystemDashboard(roleTypecode);
+            //submitfunctionvoucherDashboard(roleTypecode);
+    });
+  
+    function submitfunctionsysystemDashboard(role) {
+        $.ajax({
+            type: "GET",
+            dataType: 'html',
+            url: '@Url.Action("LoadDashboardRoleaccess", "Security")',
+            data: { role: role },
+
+            success: function (data) {
+
+                $('#subsystemdasbord').html(data);
+
+            }
+        });
+    }
+           
+ </script>
+ 

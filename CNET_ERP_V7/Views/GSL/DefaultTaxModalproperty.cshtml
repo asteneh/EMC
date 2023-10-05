@@ -1,0 +1,95 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Cnetv7BufferHolder;
+@using Newtonsoft.Json;
+@model GSLmodel
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var TaxListItem = GeneralBufferHolder.AllTaxs;
+
+
+}
+
+<div class="modal fade" id="propertyMapmodelForarticle">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <span>Tax Type</span>
+                </h5>
+            </div>
+            <div class="box-body">
+                <div class="modal-body">
+                    <div class="row">
+                        <form class="form-horizontal" id="VoucherTaxFormData" method="post">
+
+                            
+                            <div class="col-md-12" style="margin-top:25px">
+
+                                <div class="row">
+
+                                    <div class="divTable">
+
+                                        <div class="col-md-6" style="margin-left:0px ;">
+                                            <ul class="sidebar-men secondNav tree " data-widget="tree" id="">
+                                                @foreach (var item in TaxListItem)
+                                                {
+                                                    <li class="nav-item treeview menu-open attachmentType" id="parentVoucher">
+                                                        <a data-toggle="tab" data-value="@item.Description" data-types="@item.Id" style="text-decoration-line:none!important" name="catagory" class="adddefaultTaxitem">
+                                                            <span class="labelcss" selectedValue="@item.Description">@item.Description</span>
+                                                        </a>
+
+                                                        <ul class="treeview-menu" style="padding-left:35px; background-color:white;" id="@item.Id">
+                                                        </ul>
+                                                    </li>
+                                                }
+
+                                            </ul>
+
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+
+
+
+
+                        </form>
+                    </div>
+
+                </div>
+                <div class="col-md-12">
+                    <button type="button" action="addRow" class="btn btn-default btn-sm" id="DefaultTaxTypebtnSave">Ok</button>
+                    <button class="btn btn-default btn-sm" id="defaulttaxbtndismis" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+    var defaultitem = "";
+    $(document).ready(function () {
+
+        $(".adddefaultTaxitem").click(function () {
+            defaultitem  = $(this).data("value");
+
+        });
+
+        $("#DefaultTaxTypebtnSave").click(function () {
+
+            $('#default_Tax_Type').val(defaultitem);
+            $('#defaulttaxbtndismis').trigger('click');
+           
+        });
+
+    });
+
+</script>

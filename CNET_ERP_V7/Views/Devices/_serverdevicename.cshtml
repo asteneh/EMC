@@ -1,0 +1,130 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model Devicemodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+  
+    var deviceviewType = Model?.deviceViews;
+}
+<style>
+
+    .parentdevice {
+        padding-left: 0px;
+        padding-right: 0px;
+        margin-left: 0px;
+        margin-right: 0px;
+        font-size: 14px;
+    }
+
+    .devicesetting {
+        height: 105vh;
+        background-color: #eee;
+        overflow-y: scroll;
+    }
+
+    .parentdevice {
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .activedeviceSetting {
+        background-color: dodgerblue;
+        width: auto;
+    }
+
+    .DeviceConsineeunit {
+        overflow-y: scroll; /* make the table scrollable if height is more than 200 px  */
+        height: 90vh; /* gives an initial height of 200px to the table */
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .DeviceConsineeunit::-webkit-scrollbar {
+        display: none;
+    }
+
+   
+
+    .DeviceConsineeunit thead th {
+            position: sticky; /* make the table heads sticky */
+            top: 0px; /* table head will be placed from the top of the table and sticks to it */
+        }
+
+    /*table {
+                border-collapse: collapse;*/ /* make the table borders collapse to each other */
+    /*width: 100%;
+            }*/
+
+    th,
+    td {
+        padding: 0 0 !important;
+        border: 1px solid #ccc;
+    }
+
+    th {
+    }
+
+    .devicelist{
+        white-space:nowrap;
+    }
+</style>
+
+<div class="box box-primary">
+
+    <div class="box-body">
+        <div class="row">
+            <div class="col-md-12">
+                <input type="text" id="filterDevice" style="display:flex;width:100%; height:25px !important" class="form-control" placeholder="Search By Name">
+            </div>
+        </div>
+        <div style="border:1px solid #e5e5e5;" class="DeviceConsineeunit">
+            <table class="table table-border" id="consineeUnitDevicename_Table">
+                <thead>
+                    <tr class="treegrid-3 treegrid-parent-1">
+                        <th colspan="2" style="border:1px solid #e5e5e5; background-color:lightgray">Description</th>
+
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (deviceviewType != null && deviceviewType.Count() >0)
+                    {
+                        @foreach (var item in deviceviewType)
+                        {
+                            <tr data-value="@item.Name" data-types="@item.Id" class="Alldevicepropertysetting devicelist">
+                                <td style="height:17px !important">
+                                    <a data-toggle="tab"  style="text-decoration-line:none!important;" name="catagory" >
+                                    @item.Name
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                  
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+</div>
+<script>
+    $(document).on("click", ".devicelist", function () {
+
+        $(".activedeviceSetting").removeClass("activedeviceSetting");
+        $(this).addClass('activedeviceSetting');
+    });
+
+    $(function () {
+        $("#filterDevice").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#consineeUnitDevicename_Table > tbody > tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+
+

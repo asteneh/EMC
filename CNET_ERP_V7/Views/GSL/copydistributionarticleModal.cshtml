@@ -1,0 +1,215 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Newtonsoft.Json;
+@model GSLmodel
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    
+    var copydistributionList = await sharedHelpers.GetLookUpByType("Copy Description");
+    var copydistributionListType = copydistributionList?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Description }).ToArray();
+  
+    var DESTINATIONList  = await sharedHelpers.GetConsigneeByType1(1721);
+
+    var DESTINATIONListType = DESTINATIONList?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Name }).ToArray();
+
+}
+
+<div class="modal fade" id="copydstributionModalarticle">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <img src="~/images/Cnets.jpg" alt="CNET" />
+                    <span>Copy Distribution</span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                </h5>
+
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form class="form-horizontal" id="DistributionarticleNewFormData" onsubmit="return copydistributionarticleNewFormFunction()" asp-controller="GSL" asp-action="CreatecopyDistributionarticle" method="post">
+                        <div class="col-md-12">
+                                <button class="btn btn-app" type="reset" id="IssuedbtnNew"> <i class="fa fa-file-o"></i>New</button>
+                                <button type="submit" action="addRow" class="btn btn-app" id="CopyDistributionarticleNewsave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                                <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                          
+                        </div>
+
+                        <div class="col-md-12" style="margin-top:25px">
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Copy</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="copydisart" class="form-control select2" style="width:340px;">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="copydisart"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Destination</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="destinatindisart" class="form-control select2" style="width:340px;">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="destinatindisart"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Printer</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="printerdisart" class="form-control select2" style="width:340px;" asp-items="Model.copydistributionprinnterarts">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="printerdisart"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <input hidden asp-for="codefordeletedistributionart" />
+                        <input hidden asp-for="codeforselectedistributionart" />
+                        <input hidden asp-for="codeforupdatedistributionart" />
+                        <input hidden asp-for="VoucherSettingCodeforcopydistributionart" />
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+    var getdistributioncopyyyyarticle = "";
+    $(document).ready(function () {
+        $(".distributionselectionforarticle").click(function () {
+            getdistributioncopyyyyarticle = "1578";
+
+
+        });
+    });
+
+    function copydistributionarticleNewFormFunction() {
+        var _idd =  $('#@nameof(Model.distridutioName)').val();
+        var gslcode = $('#@nameof(Model.gslType)').val();
+        var $form = $('#DistributionarticleNewFormData');
+        var data = $form.serialize();
+        var action = $('#DistributionarticleNewFormData').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            success: function (data) {
+                swal("", data, "success");
+                submitfunctioncopydistributionarticle(_idd, gslcode);
+                ClearcopydistributiionModalarticle();
+
+          },
+        });
+        return false;
+    };
+
+</script>
+<script>
+    var gslTYpecode = '@Model.gslType';
+    $('#@nameof(Model.VoucherSettingCodeforcopydistributionart)').val(gslTYpecode);
+</script>
+<script>
+        $('#@nameof(Model.copydisart)').select2({
+                    data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(copydistributionListType)),
+                    placeholder: "Select type of copy",
+                    allowClear: true
+
+        });
+    $('#@nameof(Model.destinatindisart)').select2({
+                    data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(DESTINATIONListType)),
+                    placeholder: "Select type of copy",
+                    allowClear: true
+
+                });
+</script>
+<script>
+var getdistribution = "";
+    $(document).ready(function () {
+        $(".distributionselection").click(function () {
+            getdistribution = $(this).data('types');
+
+            switch (getdistribution) {
+                case "1578":
+
+                    $('#@nameof(Model.codeforselectedistributionart)').val("1578");
+                    break;
+
+
+            }
+
+        });
+    });
+</script>
+<script>
+
+    $(document).on("click", ".btnUpdatecopydestinationarticle", function () {
+        $("#CopyDistributionarticleNewsave").attr("action", "updatePRT");
+            var code = $(this).data('code');
+            var copy = $(this).data('cop');
+            var destina = $(this).data('des');
+            var print = $(this).data('pri');
+
+
+
+                $('#@nameof(Model.codeforupdatedistributionart)').val(code);
+                $('#@nameof(Model.copydisart)').val(copy).trigger('change');
+                $('#@nameof(Model.destinatindisart)').val(destina).trigger('change');
+               $('#@nameof(Model.printerdisart)').val(print).trigger('change');
+
+
+     });
+
+    $(document).on("click", ".btndeletecopydestinationarticle", function () {
+        var table = $('#article_copydistribution_distribution').DataTable();
+        var deletedistrart = $(this).data('code');
+        console.log(deletedistrart+"deletedis");
+        if (confirm('are you sure to delete this Distribution?')) {
+
+            table
+                .row($(this).parents('tr'))
+                .remove()
+                .draw();
+            $.ajax({
+                type: "POST",
+                dataType: 'json',
+                url: '@Url.Action("deleteDistributioncopyartilce", "GSL")',
+                data: { codefordeletedistributionart: deletedistrart },
+
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                success: function (data) {
+
+
+
+                }
+            });
+        }
+
+
+      });
+
+    function ClearcopydistributiionModalarticle() {
+
+                $('#@nameof(Model.codeforupdatedistributionart)').val("");
+                $('#@nameof(Model.copydisart)').val("").trigger('change');
+                $('#@nameof(Model.destinatindisart)').val("").trigger('change');
+                $('#@nameof(Model.printerdisart)').val("").trigger('change');
+
+                }
+
+</script>

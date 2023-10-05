@@ -1,0 +1,175 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model Devicemodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+
+    var articleType = await sharedHelpers.GetSytemConstantBytype("GSL Article");
+
+    var articleTypeList = articleType?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Description }).ToArray();
+    var OrderStation = Model?._prfOrderstn;
+    var MainSattion = OrderStation?.Where(x => x.ParentId == null || x.ParentId == 0).ToList();
+    var prefdesc = articleType?.Where(x => x.Id == Model?.prefererenceList).FirstOrDefault();
+}
+<style>
+
+    .parentdevice {
+        background-color: #eee;
+        padding-left: 0px;
+        padding-right: 0px;
+        margin-left: 0px;
+        margin-right: 0px;
+        font-size: 14px;
+    }
+
+
+    .orderstationsetting {
+        height: 95vh;
+        overflow-y: scroll;
+        overflow-x: scroll;
+    }
+
+    .subOrderStaion{
+        display:none;
+    }
+</style>
+
+<div class="box box-primary">
+    <div class="box-body">
+        <div class="col-md-12" style="margin-top:25px">
+
+            <div class="row">
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label">Article Type</label>
+                    <div class="col-md-7">
+                        <select asp-for="articleType" class="form-control select2 gslreferenceforname" style="width:100%;">
+                            <option value="@prefdesc?.Id"> @prefdesc?.Description</option>
+                        </select>
+                        <span asp-validation-for="articleType"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <form class="form-horizontal" id="OrderstationFormData" method="post">
+
+            <fieldset class="col-md-10 filedset form-group form-group-sm orderstationsetting " style="border: 0.5px solid #e5e5e5; margin-left: 30px; width: 580px;">
+
+                <legend class="text-sm" style="padding-left:10px; border-bottom: none; font-size:10px">Order Category</legend>
+
+                <div class="box-header with-border">
+                    <h3 class="box-title">
+                        <span>Station Device</span>
+
+                    </h3>
+
+                </div>
+
+                <div class="preftable">
+                    <table class="table table-striped tree-load">
+
+                        <thead>
+                            <tr class="treegrid-3 treegrid-parent-1">
+                                <th colspan="2"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (MainSattion != null && MainSattion.Count() > 0)
+                            {
+                                @foreach (var item in MainSattion)
+                                {
+
+                                    if (string.IsNullOrEmpty(item.ParentId.ToString()))
+                                    {
+                                        <tr class="treegrid-@item.Id ">
+                                            <td style="height:10px;">
+                                                <input class="form-check-input" name="Orderstationchecklist[]" value="@item.Id" type="checkbox" @(Convert.ToBoolean(item?.IsActive) ? "checked" : "") onclick="return true" />
+                                                  @item?.Description
+                                            </td>
+
+                                        </tr>
+
+                                        var neatedchilds = OrderStation?.Where(t => t.ParentId == item?.Id).ToList();
+                                        if (neatedchilds != null && neatedchilds?.Count() > 0)
+                                        {
+                                            @foreach (var childitem in neatedchilds)
+                                            {
+                                                <tr class="treegrid-parent-@item?.Id">
+                                                    <td>
+                                                     <input class="form-check-input" name="Orderstationchecklist[]" value="@childitem.Id" type="checkbox" @(Convert.ToBoolean(childitem?.IsActive) ? "checked" : "") onclick="return true" />
+                                                        @childitem?.Description
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                         
+                        </tbody>
+                    </table>
+
+
+                </div>
+            </fieldset>
+            <input type="text" asp-for="stationDevice" value="@Model?.stationDevice" hidden />
+            <input hidden asp-for="prefererenceList" value="@Model?.prefererenceList" />
+            <input hidden asp-for="posDevice" value="@Model?.posDevice"/>
+            <input hidden asp-for="navType" >
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.tree-basic').treegrid();
+
+        $('.tree-load').treegrid({
+            source: function (id, response) {
+                if (id != 1) response(['']);
+                else response(['']);
+            }
+        });
+
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+
+        $('.orderStationtoggleBtn1').on('click', function () {
+            if ($(this).parent('tr').next('tr').is(":visible")) {
+
+                $(this).removeClass("fa fa-minus-square")
+                $(this).addClass("fa fa-plus-square")
+                $(this).parent('tr').next('tr').toggle("fast", function () {
+                });
+            }
+            else if ($(this).parent('tr').next('tr').not(":visible")) {
+                $(this).parent('tr').next('tr').toggle("fast", function () {
+                });
+                $(this).removeClass("fa fa-plus-square")
+                $(this).addClass("fa fa-minus-square")
+                //$(this).parent('tr').next('tr').removeClass("attendancesession")
+            }
+
+        });
+
+    });
+</script>
+<script>
+    $('#@nameof(Model.articleType)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(articleTypeList)),
+        placeholder: "",
+        allowClear: true
+
+    });
+</script>
+<script>
+    var selectedgslstate = "";
+    $('#@nameof(Model.articleType)').on("select2:select", function () {
+        var stationDevice = $('#@nameof(Model.stationDevice)').val();
+        SelectOrderStationMap(stationDevice);
+    });
+</script>

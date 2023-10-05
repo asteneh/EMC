@@ -1,0 +1,68 @@
+﻿@model SecurityModel
+@using CNET_ERP_V7.Models.Security;
+@using CNET_V7_Domain.Domain.SecuritySchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Newtonsoft.Json;
+@{
+}
+    <div class="row">
+        <div class="col-md-6">
+            <div id="accessesprivilegeContent">
+                @await Html.PartialAsync("_AccessPrivilageList")
+             </div>
+        </div>
+        <div class="col-md-6">
+            <div id="AccessPrivilageData">
+            @await Html.PartialAsync("_AccessPrivilageDetail")
+            </div>
+        </div>
+    </div>
+<script>
+    var code = "";
+    var description = "";
+      $(document).on("click", ".accessprivilege", function () 
+      { 
+        code = $(this).data('types');
+        description = $(this).data('value');
+           $(".prefrenceheader").removeClass("prefrenceheader");
+           $(this).closest("tr").addClass('prefrenceheader');
+           var roleType = $('#@nameof(Model.access_orgunitcode)').val();
+           submitfunctionaccessPrivilege(code, description, roleType);
+        });
+       function submitfunctionaccessPrivilege (code, description, role) {
+            $.ajax({
+                type: "GET",
+                dataType: 'html',
+                url: '@Url.Action("LoadRoleaccess", "Security")',
+            data: { subsys: code, category: description, role: role },
+
+                success: function (data) { 
+                    $('#AccessPrivilageData').html(data);
+                }
+            });
+        }
+    $(document).on("change", "#accessselectall", function () 
+    {
+        var checkedvaluebut = $(this).is(":checked");
+        if (checkedvaluebut == true) {
+            $(".backtableuncheck").removeClass("backtableuncheck");
+            $(".backtablecheck").removeClass("backtablecheck");
+            $("#acccesstablebody").addClass('backtable');
+            $(".checkaccess").prop("checked", true);
+        }
+        else {
+            $(".backtableuncheck").removeClass("backtableuncheck");
+            $(".backtablecheck").removeClass("backtablecheck");
+            $("#acccesstablebody").removeClass('backtable');
+            $(".checkaccess").prop("checked", false);
+        }
+
+    });
+    $(document).on("click", "#accesseselectallbtn", function () {
+
+        
+
+        $('#accessselectall').trigger('click');
+    });
+
+</script>

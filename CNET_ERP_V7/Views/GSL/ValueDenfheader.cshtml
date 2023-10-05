@@ -1,0 +1,120 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Newtonsoft.Json;
+@model GSLmodel
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+   
+    var distributionList = await sharedHelpers.GetSystemConstantByCat("Value Factor Type");
+
+}
+<style>
+
+    .parentfiekdformat {
+        background-color: #eee;
+        font-size: 18px;
+        height:90vh;
+        overflow-y:scroll;
+        cursor:pointer;
+    }
+
+    .displaynone {
+        display: none;
+    }
+
+    .activeidSetting {
+        background-color: dodgerblue;
+        width: auto;
+    }
+
+    .mainsysType {
+        height: 76vh;
+        white-space: nowrap;
+        cursor: pointer;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    .idSetting {
+        cursor: pointer;
+        white-space: nowrap;
+    }
+</style>
+
+<div class="box-body">
+    <div class="box box-primary">
+    
+        <div style="border:1px solid #e5e5e5;" class="mainsysType">
+            <table class="table table-sm" id="VoucherFieldFormat_Table" width="100%">
+                <thead>
+                    <tr class="treegrid-3 treegrid-parent-1">
+                        <th colspan="2" style="border:1px solid #e5e5e5; background-color:lightgray">Description</th>
+
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (distributionList != null && distributionList.Count() > 0)
+                    {
+
+                        @foreach (var item in distributionList)
+                        {
+                            <tr onclick="GetValueFactorDefnById('@item.Id')" class="activeconsinee">
+
+                                @if (item.Description == "Additional Charge")
+                                {
+                                    <td>  <i class="fa fa-book"></i>@item?.Description</td>
+                                }
+                                else if (item.Description == "Discount")
+                                {
+                                    <td>  <i class="fa fa-book"></i>@item?.Description</td>
+                                }
+                                else if (item.Description == "Commision")
+                                {
+                                    <td> <i class="fa fa-building-o"></i>@item?.Description</td>
+                                   
+                                }
+                                else if (item.Description == "Margin")
+                                {
+                                    <td><i class="fa fa-building-o"></i>@item?.Description</td>
+                                    
+                                }
+
+                            </tr>
+                        }
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+    $(document).on("click", ".activeconsinee", function () {
+
+        $(".activeidSetting").removeClass("activeidSetting");
+        $(this).addClass('activeidSetting');
+    });
+
+    function GetValueFactorDefnById(_idd)
+    {
+        $('#@nameof(Model.valueDefncodeforsave)').val(_idd);
+
+        var gslcode = '@Model.gslType';
+        $.ajax({
+            type: "GET",
+            dataType: 'html',
+            url: '@Url.Action("GetValueDefnByTypeandGslList", "GSL")',
+            data: { type: _idd, gslcode: gslcode },
+
+            success: function (data) {
+
+                $('#ValueDefContent').html(data);
+            }
+        });
+    }
+
+</script>

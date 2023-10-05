@@ -1,0 +1,265 @@
+﻿@model SecurityModel
+@using CNET_ERP_V7.Models.Security;
+@using CNET_V7_Domain.Domain.SecuritySchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Newtonsoft.Json;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    List<SystemConstantDTO> nETComponents = new List<SystemConstantDTO>();
+    List<SystemConstantDTO> nETComponentschild = new List<SystemConstantDTO>();
+}
+
+<style>
+    .voucherreferenceitemlist {
+        display: none
+    }
+
+
+    .modalbodyy {
+        position: relative;
+        padding: 20px;
+        height: 200px;
+        overflow-y: scroll;
+    }
+
+    .modaldialogg {
+        width: 700px; /* New width for default modal */
+        height: 50%; /* New width for default modal */
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-5">
+        <div id="activirtprivilegeContent">
+            @await Html.PartialAsync("_ActivityPrivilageList", new SecurityModel() { activitycNETComponents = nETComponents, activitychildcNETComponents = nETComponentschild })
+
+        </div>
+       
+    </div>
+
+    <div class="col-md-7" id="activityPrivilagevoucher">
+        @await Html.PartialAsync("_ActivityPrivilagevoucher")
+
+    </div>
+    <div class="col-md-7 voucherreferenceitemlist" id="ActivityPrivilagegsl">
+        @await Html.PartialAsync("_ActivityPrivilagegsl")
+
+    </div>
+</div>
+
+
+<div class="modal fade" id="modal_ActivityPrivilegeItems" role="dialog">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 style=" color:dodgerblue; font-weight:bold">
+                    <img src="~/images/Cnets.jpg" />
+                    Work Flow Package
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+
+                    <form class="form-horizontal" id="ActivityPrivilegedetailNewFormData" onsubmit="return ActivityPrivilegedetailNewFormFunction()" asp-controller="Security" asp-action="createActivityPrivilegedetail" method="post">
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-app" id="btnnewActivityPrivilegeList"> <i style="color:darkblue" class="fa fa-sticky-note-o"></i>New</button>
+                            <button type="submit" class="btn btn-app" action="addRow" id="btnActivityPrivilegedetailSave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                            <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                        </div>
+
+
+                        <div class="col-md-12" style="margin-top:25px">
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="activity_definition" class="col-md-3 control-label">Activity Definition</label>
+
+                                    <div class="col-md-9">
+                                        <select asp-for="activity_definition" class="form-control select2" style="width:90%"></select>
+                                        <span asp-validation-for="activity_definition"></span>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Need Pass Key</label>
+                                    <div class="col-md-1">
+                                        <input asp-for="activity_passkey" />
+                                        <span asp-validation-for="activity_passkey"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm" id="rangewithaddrange">
+                                    <label class="col-md-3 control-label text right">Min</label>
+                                    <div class="col-md-4">
+                                        <input asp-for="rangemin" type="number" value="1" class="form-control" />
+                                        <span asp-validation-for="rangemin"></span>
+                                    </div>
+
+                                    <label class="col-md-1 control-label text right">Max</label>
+                                    <div class="col-md-3">
+                                        <input asp-for="rangemax" type="number" value="1" class="form-control" />
+                                        <span asp-validation-for="rangemax"></span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="activity_remark" class="col-md-3 control-label"> Remark</label>
+                                    <div class="col-md-9">
+                                        <textarea asp-for="activity_remark" style="width:90%; overflow:auto" class="form-control "></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <input type="hidden" asp-for="Voucher_gslcode" />
+                        <input asp-for="act_rolecode" hidden />
+                        <input type="hidden" asp-for="roleac_code" />
+                        <input type="hidden" asp-for="activityType" />
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        @*/.modal-content -*@
+    </div>
+</div>
+
+<script>
+      $(document).on("click", ".activityaccessprivilege", function () {
+
+       var code = $(this).data('types');
+         $('#@nameof(Model.activity_definition)').select2({
+            placeholder: 'Select Activity',
+            allowclear: true,
+        ajax: {
+            url: '@Url.Action("getactivitydefinition", "Security")',
+            dataType: 'json',
+            data: { Code: code },
+                data: function (params)
+                {
+                return {
+                    q: params.term,
+                    page: params.page,
+                    other: code,
+                };
+                },
+                processResults: function (data, params)
+                {
+                return data;
+                },
+                cache: true
+        },
+        });
+
+
+         var roleTypeCode = $('#@nameof(Model.access_orgunitcode)').val();
+        if (roleTypeCode == "" || roleTypeCode == undefined) {
+
+            $(".roleList:first").trigger('click');
+        }
+
+    });
+
+</script>
+
+<script>
+    function ActivityPrivilegedetailNewFormFunction() {
+        var roleTypeCode = $('#@nameof(Model.access_orgunitcode)').val();
+        var code = $('#@nameof(Model.activityType)').val();
+        var $form = $('#ActivityPrivilegedetailNewFormData');
+        var data = $form.serialize();
+        var action = $('#ActivityPrivilegedetailNewFormData').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            success: function (data) {
+               
+                var create = data.clear;
+                if (data.clear == true) {    
+                    swal("", data.result, "success")
+                    if (data.checkcode == true) {
+                        Clearactivitydef();
+                        submitfunctionactivityPrivilegevoucher(code, roleTypeCode)
+                    }
+                    else {
+                        submitfunctionactivityPrivilegegsl(code, roleTypeCode)
+                    }
+                   
+                }
+                else
+                {
+                    swal("", data.result, "error")
+                }
+            },
+        });
+        return false;
+    };
+    function Clearactivitydef() {
+            $('#@nameof(Model.roleac_code)').val("");
+            $('#@nameof(Model.activity_definition)').val("").trigger('change');
+            $('#@nameof(Model.activity_range)').val("").trigger('change');
+            $('#@nameof(Model.activity_passkey)').prop('checked', "");
+            $('#@nameof(Model.activity_remark)').val("").trigger('change');
+    }
+</script>
+
+<script>
+    var code = "";
+    var vouchergslcode = 0;
+
+   $(document).on("click", ".activityaccessprivilege", function () {
+        code = $(this).data('types');
+        $('#@nameof(Model.Voucher_gslcode)').val(code);
+         var roleTypeCode = $('#@nameof(Model.access_orgunitcode)').val();
+        $('#@nameof(Model.activityType)').val(code);
+        if (roleTypeCode == "" || roleTypeCode == undefined) {
+
+            $(".roleList:first").trigger('click');
+        }
+          vouchergslcode = parseInt(code);
+          if (vouchergslcode > 100) 
+          {
+                $('#activityPrivilagevoucher').removeClass('voucherreferenceitemlist');
+                $('#ActivityPrivilagegsl').addClass('voucherreferenceitemlist');
+                $('#rangewithaddrange').show();
+                submitfunctionactivityPrivilegevoucher(code, roleTypeCode);
+            }
+            else {
+                $('#activityPrivilagevoucher').addClass('voucherreferenceitemlist');
+                $('#ActivityPrivilagegsl').removeClass('voucherreferenceitemlist');
+                $('#rangewithaddrange').hide();
+               submitfunctionactivityPrivilegegsl(code, roleTypeCode);
+            }
+    });
+    function submitfunctionactivityPrivilegevoucher(code, roleTypeCode) {
+        $.ajax({
+            type: "GET",
+            dataType: 'html',
+            url: '@Url.Action("LoadProcessRolevoucher", "Security")',
+            data: { CODE: code, ROLE: roleTypeCode },
+
+            success: function (data) {
+                $('#activityPrivilagevoucher').html(data);
+            }
+        });
+    }
+    function submitfunctionactivityPrivilegegsl(code, roleTypeCode) {
+        $.ajax({
+            type: "GET",
+            dataType: 'html',
+            url: '@Url.Action("LoadProcessRolegsl", "Security")',
+            data: { CODE: code, ROLE: roleTypeCode },
+
+            success: function (data) {
+                $('#ActivityPrivilagegsl').html(data);
+            }
+        });
+   }
+</script>

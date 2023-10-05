@@ -1,0 +1,372 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model Devicemodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var codemodel = Model.DeviceType;
+    int sysoldvalue = 1212121212;
+
+}
+<style>
+    .sptablecontent {
+        border-collapse: collapse;
+        background-color: #fff;
+        width: 98%;
+        margin-left: 15px;
+    }
+
+        .sptablecontent .asth {
+            font-weight: bold;
+        }
+
+        .sptablecontent th, table td {
+            padding: 1px;
+            border: 1px solid #ccc;
+        }
+
+        .sptablecontent th, table tr {
+            height: 3px;
+        }
+
+        .sptablecontent, .sptablecontent .sptablecontent td {
+            border: 0px solid #ccc;
+        }
+
+            .sptablecontent [type=text], select {
+                width: 100%;
+            }
+
+            .sptablecontent [type=password] {
+                width: 100%;
+            }
+
+            .sptablecontent div {
+                width: 97%;
+            }
+
+
+    .inputfield {
+        border-top-style: hidden;
+        border-right-style: hidden;
+        border-left-style: hidden;
+        border-bottom-style: hidden;
+        background-color: #eee;
+        font-size: 14px;
+        max-height: 25px;
+    }
+
+    .Inputborder:focus {
+        border: 1px solid #1670BE;
+        box-shadow: 0 0 3px #1670BE;
+        outline-offset: 0px;
+        outline: none;
+    }
+
+    .Inputborder {
+        border: 1px solid #eee;
+        font-size: 13px !important;
+        height: 17px !important;
+        line-height: 2px !important;
+        text-emphasis-position: initial !important;
+        margin-top: 0px !important;
+        padding: 0px 0px !important;
+    }
+
+
+    .mainparent {
+        color: dodgerblue;
+        background-color: #eee;
+    }
+
+    .boderclr {
+        background-color: dodgerblue;
+    }
+
+    .vouproperty {
+        height: 95vh;
+        overflow-y: scroll;
+    }
+</style>
+<div class="box box-primary">
+    <br />
+
+    <div class="box-header with-border">
+        <div class="row">
+            <div class="col-md-11">
+                <div class="row">
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-1 control-labell"> Find</label>
+                        <div class="col-md-9">
+                            <select class="form-control select2" asp-for="devicesettingproperty" style="width:100%"></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body">
+
+        <form id="PropertyFormDataForamole" asp-controller="Devices" asp-action="SavingamoleSettingProperty" method="post">
+
+            <table cellpadding="0" cellspacing="0" class="sptablecontent tree-load">
+                <tr class="asth">
+                    <td></td>
+                    <td></td>
+
+                </tr>
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        General Setting
+                    </td>
+                </tr>
+
+
+                @*<tr class="treegrid-parent-@sysoldvalue">
+            <td class="attributdata">
+                <input value="Log Option" name="Log Option" readonly class="inputfield" style="height:27px; background-color:white; border:none;" />
+            </td>
+            <td class="attributcurrvalue">
+                <select asp-for="amole_Logoption" asp-items="Model.enLogoption" class="form-control custom-select Inputborder">
+                </select>
+            </td>
+
+        </tr>*@
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        ApiKey
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="amole_apiKey" value="@Model.amole_apiKey" class="Inputborder" />
+                    </td>
+
+                </tr>
+
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        ApiUsername
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="amole_apiUsername" value="@Model.amole_apiUsername"  class="Inputborder" />
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        ApiPassword
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="amole_apiPassword" value="@Model.amole_apiPassword" class="Inputborder"  />
+                    </td>
+
+                </tr>
+
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        PaymentApiEndpointUrl
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="amole_paymentApiEndpointUrl" value="@Model.amole_paymentApiEndpointUrl" class="Inputborder" />
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        ServiceApiEndpointUrl
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="amole_serviceApiEndpointUrl" value="@Model.amole_serviceApiEndpointUrl" class="Inputborder" />
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        VendorAccountId
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="amole_vendorAccountId" value="@Model.amole_vendorAccountId" class="Inputborder" />
+                    </td>
+
+                </tr>
+
+
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        MerchantId
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="amole_merchantId" value="@Model.amole_merchantId" class="Inputborder" />
+                    </td>
+
+                </tr>
+                @*<tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        <input value="RegisteredIpAddress" name="RegisteredIpAddress" readonly class="inputfield" style="height:27px; background-color:white; border:none;" />
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="amole_registeredIpAddress" value="@Model.amole_registeredIpAddress" class="Inputborder" />
+                    </td>
+
+                </tr>*@
+            </table>
+                <input asp-for="amodeldevicecode" hidden />
+        </form>
+    </div>
+</div>
+
+<script>
+    function TreeFunctionproprty() {
+        $(document).ready(function () {
+            $('.tree-basic').treegrid();
+
+            $('.tree-loadebirr').treegrid({
+                source: function (id, response) {
+                    if (id != 1) response(['']);
+                    else response(['']);
+                }
+            });
+
+        });
+    }
+    TreeFunctionproprty();
+</script>
+<script>
+    $('.attributdata').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).children('.inputfield').val();*/
+        var value = $(this).text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).closest("tr").addClass('boderclr');
+        $('#deviceproperty').html(value);
+
+    });
+    $('.attributcurrvalue').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).siblings().children('.inputfield').val();*/
+        var value = $(this).siblings().text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).siblings().addClass("boderclr");
+        $('#deviceproperty').html(value);
+
+    });
+    $("#propertysect").change(function () {
+        var value = $(this).select2('data')[0].text;
+        $(".boderclr").removeClass("boderclr");
+        $("input[name*='" + value + "']").addClass('boderclr');
+        $("input[name*='" + value + "']").closest("tr").addClass('boderclr');
+
+        $('#deviceproperty').html(value);
+    });
+
+</script>
+
+
+<script>
+    var devicecode = "";
+
+    $(document).on("click", ".devicepropertysetting", function () {
+        devicecode = $(this).data('types');
+
+        $('#@nameof(Model.amodeldevicecode)').val(devicecode);
+
+        $('#@nameof(Model.devicesettingproperty)').select2({
+            placeholder: 'device',
+            allowclear: true,
+        ajax: {
+            url: '@Url.Action("getdeviceforPROPERTY", "Devices")',
+            dataType: 'json',
+            data: { DEVICECODE: devicecode },
+                data: function (params)
+                {
+                return {
+                    q: params.term,
+                    page: params.page,
+                    other: devicecode,
+                };
+                },
+                processResults: function (data, params)
+                {
+                return data;
+                },
+                cache: true
+        },
+        });
+    });
+</script>
+
+<script>
+
+    var getdevicecode = "";
+    var getpassword = "";
+
+    $(document).on("click", ".devicepropertysetting", function () {
+        getdevicecode = $(this).data('types');
+        AmoleBirrSetting(getdevicecode);
+
+        });
+    $(document).on("click", '#btnDevicesettingImport', function () {
+        var devcode = $('#devicesettingpropertyInindex').val();
+        AmoleBirrSetting(devcode);
+    });
+    function AmoleBirrSetting(devcode) {
+          $.ajax({
+                type: "POST",
+                dataType: 'json',
+                url: '@Url.Action("getPropertycurrentvalue", "Devices")',
+              data: { code: devcode},
+
+                success: function (data) {
+                      $('#@nameof(Model.amole_apiKey)').val("");
+                      $('#@nameof(Model.amole_apiUsername)').val("");
+                      $('#@nameof(Model.amole_apiPassword)').val("");
+                      $('#@nameof(Model.amole_paymentApiEndpointUrl)').val("");
+                      $('#@nameof(Model.amole_serviceApiEndpointUrl)').val("");
+                      $('#@nameof(Model.amole_vendorAccountId)').val("");
+                      $('#@nameof(Model.amole_merchantId)').val("");
+                       $.each(data, function (index, item) {
+
+                              switch (item.attribute) {
+                                  case "ApiKey":
+                                      $('#@nameof(Model.amole_apiKey)').val(item?.currentValue);
+
+                                      break;
+                                  case "ApiUsername":
+                                      $('#@nameof(Model.amole_apiUsername)').val(item?.currentValue);
+                                      break;
+                                  case "ApiPassword":
+                                      $('#@nameof(Model.amole_apiPassword)').val(item.currentValue);
+                                      break;
+                                  case "PaymentApiEndpointUrl":
+                                      $('#@nameof(Model.amole_paymentApiEndpointUrl)').val(item.currentValue);
+
+                                      break;
+                                  case "ServiceApiEndpointUrl":
+                                      $('#@nameof(Model.amole_serviceApiEndpointUrl)').val(item.currentValue);
+                                      break;
+                                  case "VendorAccountId":
+                                      $('#@nameof(Model.amole_vendorAccountId)').val(item.currentValue);
+                                      break;
+                                  case "MerchantId":
+                                      $('#@nameof(Model.amole_merchantId)').val(item.currentValue);
+                                      break;
+                                  @*case "RegisteredIpAddress":
+                                      $('#@nameof(Model.amole_registeredIpAddress)').val(item.currentValue);
+                                      break;*@
+                              }
+                      });
+
+                },
+                error: function (x) {
+                    alert(x.responseText);
+
+                }
+            });
+    }
+
+</script>

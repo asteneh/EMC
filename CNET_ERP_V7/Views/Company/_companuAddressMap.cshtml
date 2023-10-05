@@ -1,0 +1,192 @@
+﻿@model Companymodel
+@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+<style>
+    .latlog {
+        white-space: nowrap;
+    }
+
+    .mapwidt {
+    }
+
+    #comap {
+        height: 60vh;
+        width: 100%;
+        padding-left: -80px;
+    }
+</style>
+<div class="row">
+    <div class="box-body mapwidt">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group form-group-sm">
+                        <div class="col-md-4">
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-3 control-label latlog">latitude</label>
+                                <div class="col-md-9">
+                                    <input asp-for="complatitude" class="form-control" style="width:100%">
+                                    <span asp-validation-for="complatitude"></span>
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-3 control-label latlog">longitude</label>
+                                <div class="col-md-9">
+                                    <input asp-for="complongitude" class="form-control" style="width:100%">
+                                    <span asp-validation-for="complongitude"></span>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group form-group-sm">
+                                <div class="col-md-3">
+                                    <button type="button" class="btn btn-primary btn-sm addbtn" style="width:100%; margin-left:0px; height:28px" id="searchLoactionOnMap">Search</button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="col-md-12 container-fluid" id="comap">
+
+                    </div>
+
+                </div>
+            </div>  
+        </div>
+
+        @*<div class="col-md-10">
+                <div class="col-md-12 container-fluid" id="Ecomcomap">
+
+                </div>
+
+            </div>*@
+
+ 
+    </div>
+</div>
+
+
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAA8U3kqWJt2stT_CX_r8md8FKsj0-rmiQ&callback=compinitMap&libraries=&v=weekly" defer>
+</script>
+<script>
+    function showcomplocationonmap(id) {
+         var test = $('#@nameof(Model.comporgtbranchcode)').val();
+
+        $('#@nameof(Model.comporganizationunitbranchcode)').val(test);
+
+        $.ajax({
+            url: '@Url.Action("DisplayCnetGps", "Company")',
+            type: "POST",
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            data: {compCode:id},
+            dataType: 'json',
+            success: function (data) {
+                if (data.lat != 0) {
+                    var Data = data.data;
+                    $("#@nameof(Model.complatitude)").val(data.lat);
+                    $("#@nameof(Model.complongitude)").val(data.longg);
+
+                    compinitMap();
+                }
+                else {
+                     $("#@nameof(Model.complatitude)").val("");
+                    $("#@nameof(Model.complongitude)").val("");
+
+                    compinitMap();
+                }
+
+
+            }
+        })
+
+    }
+</script>
+
+<script>
+
+    function compinitMap() {
+         var lati = $("#@nameof(Model.complatitude)").val();
+        var long = $("#@nameof(Model.complongitude)").val();
+        console.log($("#@nameof(Model.complatitude)").val())
+
+
+        if (lati == null || lati == "") {
+            lati = 9.016730937403223;
+        }
+        if (long == null || long == undefined) {
+            long = 38.76576485528018;
+        }
+        const addis = { lat: 9.016730937403223, lng: 38.76576485528018 }
+        var latlang = new google.maps.LatLng(lati, long);
+
+        const map = new google.maps.Map(document.getElementById("comap"), {
+            zoom: 15,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            center: latlang,
+
+        });
+
+        const contentString = '<div id="contentt">' + '<div id="siteNoticet">' + "</div>" + '<h6 id="firstHeadingg" class="firstHeading">Drag and pin </h6>' + "</div>";
+
+        const infowindow = new google.maps.InfoWindow({
+            content: contentString,
+        });
+
+        const marker = new google.maps.Marker({
+            position: latlang,
+            map,
+            draggable: true,
+            title: "Cnet (HeadOffice)",
+            icon: "/images/savepos.jpg",
+
+        });
+
+        const markerread = new google.maps.Marker({
+            position: { lat: Number($("#@nameof(Model.complatitude)").val()), lng: Number($("#@nameof(Model.complongitude)").val()) },
+            map,
+            draggable: true,
+            title: "Cnet (Adama)",
+        });
+
+        marker.addListener("mouseover", () => {
+            infowindow.open(map, marker);
+        });
+
+        marker.addListener("mouseout", () => {
+            infowindow.close();
+        });
+
+
+        google.maps.event.addListener(markerread, 'click', function () {
+            map.setZoom(16);
+            console.log(marker.getPosition().lat());
+            console.log(marker.getPosition().lng());
+        })
+
+        google.maps.event.addListener(marker, 'dragend', function () {
+            console.log(marker.getPosition().lat());
+            console.log(marker.getPosition().lng());
+
+            $("#@nameof(Model.complatitude)").val(marker.getPosition().lat())
+            $("#@nameof(Model.complongitude)").val(marker.getPosition().lng())
+
+           console.log($("#@nameof(Model.complatitude)").val())
+
+        })
+
+    }
+</script>
+
+

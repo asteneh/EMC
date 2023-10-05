@@ -1,0 +1,57 @@
+﻿@model Companymodel
+@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    
+ }
+    <div class="row">
+        <div class="col-md-12">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-7">
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="basicinformationContent">
+                        @await Html.PartialAsync("_basicInformation.cshtml")
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-md-12">
+                    @await Html.PartialAsync("_identification.cshtml")
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-md-5">
+            <div class="row">
+                <div class="col-md-12">
+                     @await Html.PartialAsync("_additionalInformation.cshtml")
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-12">
+                    <div id="ownersContent">
+                        @await Html.PartialAsync("_ownersMap.cshtml")
+                    </div>
+                  
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+

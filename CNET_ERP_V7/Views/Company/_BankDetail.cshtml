@@ -1,0 +1,309 @@
+﻿@model Companymodel
+@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var bankType = await sharedHelpers.GetSystemConstantByCat("Bank Type");
+
+    var accountType = await sharedHelpers.GetSystemConstantByCat("Bank Account type");
+    var accountTypelist = accountType?.Select(s => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = s.Id, text = s.Description });
+
+    var allbank = await sharedHelpers.GetConsigneeByType(38);
+
+    var orgunitDefn = await sharedHelpers.GetConsigneeunit();
+
+    var BankdetailList = allbank?.Select(d => new CNET_ERP_V7.Models.SelectorModel.Select2Result()
+    {
+         text = d.FirstName,
+                children = orgunitDefn?.Where(y => y.Consignee == d.Id).Select(x => new CNET_ERP_V7.Models.SelectorModel.Select2Result() { id = x.Id, text = x.Name }).ToList()
+
+    }).ToArray();
+}
+<style>
+    .select2-container--default .select2-results__group {
+        border: solid 0.3px lightgray;
+        cursor: grabbing;
+        margin-left: 5px;
+       
+    }
+
+    .select2-results__options--nested > li {
+        background-color: #ecf0f5;
+        font-size: 14px;
+        margin-left: 15px;
+        border-left: solid 0.3px lightgray;
+        border-left: solid 0.3px lightgray;
+       
+    }
+   
+
+    .banktype {
+        height: 70vh;
+        overflow-y: scroll;
+    }
+
+    .activeidSetting {
+        background-color: dodgerblue;
+        width: auto;
+    }
+
+    .mainsysType {
+        height: 76vh;
+        white-space: nowrap;
+        cursor: pointer;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    .idSetting {
+        cursor: pointer;
+        white-space: nowrap;
+    }
+</style>
+<div class="box box-primary">
+
+    <div class="box-body">
+        <div class="row">
+            <div class="col-md-2 mainsysType" style="margin-left:0px;border-right:solid black 1px">
+
+                <input asp-for="banktype" hidden />
+                <table class="table table-sm" id="consineeUnit_Table" width="100%">
+                    <thead>
+                        <tr class="treegrid-3 treegrid-parent-1">
+                            <th colspan="2" style="border:1px solid #e5e5e5; background-color:lightgray"></th>
+
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in bankType)
+                        {
+                            <tr onclick="GetCompanyBankDetail('@item.Id')">
+                                <td class="activeconsinee">
+                                    @if (item.Description == "Local Bank")
+                                    {
+                                        <i class="fa fa-university"></i>
+                                    }
+                                    else if (item.Description == "International Bank")
+                                    {
+                                        <i class="fa fa-university"></i>
+                                    }
+                                    @item.Description
+                                </td>
+
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+
+            </div>
+            <div class="col-md-10">
+                <div id="BankDetalData">
+                    @await Html.PartialAsync("_BankDetailList.cshtml")
+                </div>
+            </div>
+        </div>
+
+        </div>
+     
+        </div>
+<div class="modal fade" id="modal-BankDetail" role="dialog">
+            <div class="modal-dialog ">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 style=" color:dodgerblue; font-weight:bold">
+                            <img src="~/images/Cnets.jpg" />
+                            Bank Detail Information
+                        </h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+
+                            <form class="form-horizontal" id="BankAccountdetailNewFormData" onsubmit="return BankAccountdetailNewFormFunction()" asp-controller="Company" asp-action="createBankAccountdetail" method="post">
+                                <div class="col-md-12">
+                                    <button type="button" class="btn btn-app" id="btnnewBDList"> <i style="color:darkblue" class="fa fa-sticky-note-o"></i>New</button>
+                                    <button type="submit" class="btn btn-app" action="addRow" id="btnbankdetailSave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                                    <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                                </div>
+
+
+                                <div class="col-md-12" style="margin-top:25px">
+                                    <div class="row">
+                                        <div class="form-group  form-group-sm">
+                                            <label asp-for="bankAccountDetailDesc" class="col-md-3 control-label">Description</label>
+                                            <div class="col-md-7">
+                                                <input asp-for="bankAccountDetailDesc" type="text" class="form-control" autocomplete="off" />
+                                            </div>
+                                        </div>
+                                    </div><br />
+
+                                    <div class="row">
+                                        <div class="form-group  form-group-sm">
+                                            <label asp-for="bankAccountDetailType" class="col-md-3 control-label">Account Type</label>
+                                            <div class="col-md-7">
+                                                <select asp-for="bankAccountDetailType" class="form-control select2" style="width:100%">
+                                               <option></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div><br />
+
+                                    <div class="row">
+                                        <div class="form-group  form-group-sm">
+                                            <label asp-for="bankAccountDetailACCnum" class="col-md-3 control-label">Account No</label>
+                                            <div class="col-md-7">
+                                                <input asp-for="bankAccountDetailACCnum" class="form-control" onkeypress="return isAccountnum(event)" autocomplete="off" />
+                                            </div>
+                                        </div>
+                                    </div><br />
+
+                                    <div class="row">
+                                        <div class="form-group  form-group-sm">
+                                            <label asp-for="bankAccountDetailBank" class="col-md-3 control-label">Bank</label>
+                                            <div class="col-md-7">
+                                                <select asp-for="bankAccountDetailBank" class="form-control select2" style="width:100%">
+                                               <option></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div><br />
+
+                                    <div class="row">
+                                        <div class="form-group  form-group-sm">
+                                            <label asp-for="bankAccountDetailRemark" class="col-md-3 control-label"> Remark</label>
+                                            <div class="col-md-7">
+                                                <textarea asp-for="bankAccountDetailRemark" style="width:100%; overflow:auto" autocomplete ="off"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+
+                                <input type="hidden" asp-for="bankAccountDetailCodeforEdit" />
+                                <input type="hidden" asp-for="bankAccountDetailCatagory" />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+        </div>
+<script>
+    $(document).on("click", ".activeconsinee", function () {
+        $(".activeidSetting").removeClass("activeidSetting");
+        $(this).addClass('activeidSetting');
+    });
+
+
+    $('#@nameof(Model.bankAccountDetailType)').select2({
+        data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(accountTypelist)),
+        placeholder: "",
+      
+    });
+
+    $('#@nameof(Model.bankAccountDetailBank)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(BankdetailList)),
+        placeholder: "",
+    });
+
+ </script>
+
+<script>
+    function GetCompanyBankDetail(idd){
+        $('#@nameof(Model.banktype)').val(idd);
+        $('#@nameof(Model.bankAccountDetailCatagory)').val(idd);
+        $(function () {
+            $.ajax({
+                url: '/Company/OrganizationBankDetail',
+                type: 'POST',
+                data: { code: idd }, // send the data object with the request
+                success: function (result) {
+                    $('#BankDetalData').html(result);
+                },
+                error: function () {
+                    console.log('Error occurred.');
+                }
+            });
+        });
+    }
+ function BankAccountdetailNewFormFunction() {
+
+        var $form = $('#BankAccountdetailNewFormData');
+        var data = $form.serialize();
+        var action = $('#BankAccountdetailNewFormData').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            success: function (data) {
+                var clear = data.check;
+                if (data.check == true) {
+                    swal("", data.result, "success");
+                   var idd =  $('#@nameof(Model.bankAccountDetailCatagory)').val();
+                        $(function () {
+                            $.ajax({
+                                url: '/Company/OrganizationBankDetail',
+                                type: 'POST',
+                                data: { code: idd }, // send the data object with the request
+                                success: function (result) {
+                                    $('#BankDetalData').html(result);
+                                },
+                                error: function () {
+                                    console.log('Error occurred.');
+                                }
+                            });
+                        });
+                }
+                else{
+                    swal("", data.result, "error");
+                }
+                ClearbankdetailModal(clear);
+  },
+        });
+        return false;
+    };
+
+ </script>
+
+       
+<script>
+
+    function isAccountnum(evt) {
+
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+
+    }
+
+</script>
+
+
+ <script>
+   
+     $("body").on('click', '.select2-results__group', function () {
+         $(this).siblings().toggle();
+    })
+ </script>
+
+<script>
+function ClearbankdetailModal(clear) {
+    if (clear == true) {
+
+        $('#@nameof(Model.bankAccountDetailDesc)').val("");
+        $('#@nameof(Model.bankAccountDetailType)').val("").trigger('change');
+        $('#@nameof(Model.bankAccountDetailBank)').val("").trigger('change');
+        $('#@nameof(Model.bankAccountDetailACCnum)').val("");
+        $('#@nameof(Model.bankAccountDetailRemark)').val("");
+    }
+
+    }
+</script>

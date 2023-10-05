@@ -1,0 +1,1028 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain;
+@using Newtonsoft.Json;
+@model Devicemodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var codemodel = Model.DeviceType;;
+
+    int sysoldvalue = 1212121212;
+    var deviceConfig = await sharedHelpers.GetConfigurationByRefandPref(Model?.deviceId.ToString(), CNETConstants.DEVICE);
+}
+<style>
+    .sptablecontent {
+        border-collapse: collapse;
+        background-color: #fff;
+        width: 100%;
+        margin-left: 15px;
+    }
+
+        .sptablecontent .asth {
+            font-weight: bold;
+        }
+
+        .sptablecontent th, table td {
+            padding: 1px;
+            border: 1px solid #ccc;
+        }
+
+        .sptablecontent th, table tr {
+            height: 3px;
+        }
+
+        .sptablecontent, .sptablecontent .sptablecontent td {
+            border: 0px solid #ccc;
+        }
+
+            .sptablecontent [type=text], select {
+                width: 100%;
+            }
+
+            .sptablecontent [type=password] {
+                width: 100%;
+            }
+
+            .sptablecontent div {
+                width: 98%;
+            }
+
+    .inputfield {
+        border-top-style: hidden;
+        border-right-style: hidden;
+        border-left-style: hidden;
+        border-bottom-style: hidden;
+        background-color: #eee;
+        font-size: 14px;
+        max-height: 25px;
+    }
+
+    .inputfield {
+        pointer-events: none;
+        opacity: 30;
+        width: 80%;
+        height: 16px !important;
+        padding: 0px 0px !important;
+        font-size: 13px !important;
+    }
+
+    .Inputborder:focus {
+        border: 1px solid #1670BE;
+        box-shadow: 0 0 3px #1670BE;
+        outline-offset: 0px;
+        outline: none;
+    }
+
+    .Inputborder {
+        border: 1px solid #eee;
+        font-size: 13px !important;
+        height: 17px !important;
+        line-height: 2px !important;
+        text-emphasis-position: initial !important;
+        margin-top: 0px !important;
+        padding: 0px 0px !important;
+    }
+
+
+    .mainparent {
+        color: dodgerblue;
+        background-color: #eee;
+    }
+
+    .boderclr {
+        background-color: dodgerblue;
+    }
+
+  
+    .vouproperty {
+        height: 95vh;
+        overflow-y: scroll;
+    }
+</style>
+<div class="box box-primary">
+    <br />
+
+    <div class="box-header with-border">
+        <div class="row">
+            <div class="col-md-11">
+                <div class="row">
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-1 control-labell"> Find</label>
+                        <div class="col-md-9">
+                            <input type="text" id="filterPmsSetting" style="display:flex;width:100%;" class="form-control" placeholder="Search By Name">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body vouproperty">
+
+
+        @foreach (var item in deviceConfig)
+        {
+            switch (item.Attribute)
+            {
+
+                case "Accuracy Tolerance":
+                    if (string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                        Model.pmsaccuracy_Tolerance = float.Parse(item.CurrentValue);
+                    }
+                    break;
+                case "Check Voucher Integrity":
+                    Model.pmscheck_Voucher_Integrity = item.CurrentValue;
+                    break;
+                case "Clear Held Bill":
+                    Model.pmsclear_Held_Bill = item.CurrentValue;
+                    break;
+                case "Closing Frequency":
+                    Model.pmsclosing_frequency = item.CurrentValue;
+                    break;
+                case "Daily Control Count":
+                    Model.pmsdailyControlCount = item.CurrentValue;
+                    break;
+                case "Fiscal Reconciliation":
+                    Model.pmsfiscalReconciliation = item.CurrentValue;
+                    break;
+                case "Summary Difference Tolerance":
+                    if (string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                        Model.pmssummary_Difference_Tolerance = float.Parse(item.CurrentValue);
+                    }
+                    break;
+                case "Summary Voucher":
+                    Model.pmssummary_Voucher = item.CurrentValue;
+                    break;
+                case "Zeroing Voucher":
+                    Model.pmszeroing_Voucher = item.CurrentValue;
+                    break;
+                case "Check Amount Limit For Hold":
+                    Model.pmscheckAmountLimitForHold = item.CurrentValue;
+                    break;
+                case "Clear Hold Before Closing":
+                    Model.pmsclearHoldBeforeClosing = item.CurrentValue;
+                    break;
+                case "Hold Amount Per Person":
+                    if (string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                        Model.pmsholdAmountPerPerson = Convert.ToInt32(item.CurrentValue);
+                    }
+                    break;
+                case "Hold Document Life":
+                    if (string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                        Model.pmshold_Document_Life = Convert.ToInt32(item.CurrentValue);
+                    }
+                    break;
+                case "Enable Order Function":
+                    Model.pmsenableOrderFunction = item.CurrentValue;
+                    break;
+                case "Order Location":
+                    Model.pmsorder_Location = item.CurrentValue;
+                    break;
+                case "Order Verification Method":
+                    Model.pmsorder_Verification_Method = item.CurrentValue;
+                    break;
+                case "Allow multiple Instance Of Table":
+                    Model.pmsallowmultipleInstanceOfTable = item.CurrentValue;
+                    break;
+                case "Company Tin Mandatory":
+                    Model.pmscompanyTinMandatory = item.CurrentValue;
+                    break;
+                case "Disable Void On Retrieve":
+                    Model.pmsdisableVoidOnRetrieve = item.CurrentValue;
+                    break;
+                case "Enable Bill Management":
+                    Model.pmsenableBillManagement = item.CurrentValue;
+                    break;
+                case "Enable CBE":
+                    Model.pmsenable_cbe = item.CurrentValue;
+                    break;
+                case "Enable Document Reference":
+                    Model.pmsenableDocumentReference = item.CurrentValue;
+                    break;
+                case "Enable Room Charge":
+                    Model.pmsenableRoomCharge = item.CurrentValue;
+                    break;
+                case "Need Credentials For Removal":
+                    Model.pmsneed_Credentials_For_Removal = item.CurrentValue;
+
+                    break;
+                case "Station Type":
+                    Model.pmsstation_Type = item.CurrentValue;
+                    break;
+                case "Table Selection Type":
+                    Model.pmstable_Selection_Type = item.CurrentValue;
+                    break;
+                case "Trigger Article Removal":
+                    Model.pmsTrigger_Article_Removal = item.CurrentValue;
+                    break;
+                case "Waiter Selection":
+                    Model.pmswaiter_selection = item.CurrentValue;
+                    break;
+                case "Welcome Message Rule":
+                    Model.pmswelcome_Message_Rule = item.CurrentValue;
+                    break;
+                case "Check System Timestamp":
+                    Model.pmsCheckSystemTimestamP = item.CurrentValue;
+                    break;
+                case "Default Payment":
+                    Model.pmsdefault_Payment = item.CurrentValue;
+                    break;
+                case "Default Transaction Type":
+                    Model.pmsdefault_Transaction_Type = item.CurrentValue;
+                    break;
+                case "Enable Auto Entry":
+                    Model.pmsenableAutoEntry = item.CurrentValue;
+                    break;
+                case "Input Cover Mandatory":
+                    Model.pmsinputCoverMandatory = item.CurrentValue;
+                    break;
+                case "Open Drawer After Print":
+                    Model.pmsopenDrawerAfterPrint = item.CurrentValue;
+                    break;
+                case "Table Mandatory":
+                    Model.pmstableMandatory = item.CurrentValue;
+                    break;
+                case "Waiter Mandatory":
+                    Model.pmsWaiterMandatory = item.CurrentValue;
+                    break;
+                case "Enable Vocal Assistance":
+                    Model.pmsenableVocalAssistance = item.CurrentValue;
+                    break;
+                case "Language":
+                    Model.pmsrmsLanguage = item.CurrentValue;
+                    break;
+                case "Allow Animation":
+                    Model.pmsallowAnimation = item.CurrentValue;
+                    break;
+                case "Aspect Ratio":
+                    Model.pmsaspectRatio = "A_" + item.CurrentValue;
+                    break;
+                case "Change Frequency":
+                    Model.pmschangeFrequency = item.CurrentValue;
+                    break;
+                case "Enable Dynamic Visual Display":
+                    Model.pmsenableDynamicVisualDisplay = item.CurrentValue;
+                    break;
+                case "Enable Touch Screen":
+                    Model.pmsenableTouchScreen = item.CurrentValue;
+                    break;
+                case "Navigator Type":
+                    Model.pmsnavigatorType = item.CurrentValue;
+                    break;
+                case "Theme Changed Date":
+                    Model.pmstheme_Change_dDate = item.CurrentValue;
+                    break;
+
+            }
+        }
+        <form id="PropertyFormDataForPms"  method="post">
+
+            <table cellpadding="0" cellspacing="0" class="sptablecontent tree-loadpms" id="pms_table_setting">
+                <tr class="asth">
+                    <td></td>
+                    <td></td>
+
+                </tr>
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Closing Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+
+                        Accuracy Tolerance
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="pmsaccuracy_Tolerance" value="@Model.pmsaccuracy_Tolerance" class="Inputborder" />
+
+                    </td>
+
+                </tr>
+               <tr class="treegrid-parent-@sysoldvalue">
+                   <td class="attributdata">
+                          Show Online Business Rate
+                   </td>
+                   <td class="attributcurrvalue">
+                       <select asp-for="pms_ShowOnlineBusinessRate" asp-items="Html.GetEnumSelectList<en1ShowOnlineBusinessRate>()" class="form-control custom-select Inputborder">
+                       </select>
+                   </td>
+                </tr>
+              
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Check Voucher Integrity
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmscheck_Voucher_Integrity" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Clear Held Bill
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsclear_Held_Bill" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Closing Frequency
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsclosing_frequency" asp-items="Model.closing_frequencys" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Daily Control Count
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsdailyControlCount" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+              
+               
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        FiscalReconciliation
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsfiscalReconciliation" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Summary Difference Tolerance
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="pmssummary_Difference_Tolerance" value="@Model.pmssummary_Difference_Tolerance" class="Inputborder" />
+
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Summary Voucher
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmssummary_Voucher" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+               
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Zeroing Voucher
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmszeroing_Voucher" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Hold Setting
+                    </td>
+                </tr>
+
+              
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Check Amount Limit For Hold
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="rmscheckAmountLimitForHold" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Clear Hold Before Closing
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsclearHoldBeforeClosing" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Hold Amount Per Person
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (Model.pmsholdAmountPerPerson == 0)
+                        {
+                            <input asp-for="pmsholdAmountPerPerson" type="text" value="100" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="pmsholdAmountPerPerson" type="text"  value="@Model.pmsholdAmountPerPerson" class="Inputborder" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Hold Document Life
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (Model.pmshold_Document_Life == 0)
+                        {
+                            <input asp-for="pmshold_Document_Life" type="text"  value="2" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="pmshold_Document_Life" type="text"  value="@Model.pmshold_Document_Life"
+                                   class="Inputborder" />
+
+                        }
+                    </td>
+
+                </tr>
+
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Order Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Order Function
+                    </td>
+                    <td class="attributcurrvalue">
+                       <select asp-for="pmsenableOrderFunction" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                                </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Order Location
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsorder_Location" asp-items="Model.order_Locations" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+               
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+
+                        Order Verification Method
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsorder_Verification_Method" asp-items="Model.order_Verification_Methods" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        PMS Component Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+
+                        Allow multiple Instance Of Table
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsallowmultipleInstanceOfTable" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+
+                        Company Tin Mandatory
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmscompanyTinMandatory" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+               
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+
+                        Disable Void On Retrieve
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsdisableVoidOnRetrieve" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Bill Management
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsenableBillManagement" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable CBE
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsenable_cbe" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Delivery Management
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="rmsenableDeliveryManagement" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Document Reference
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsenableDocumentReference" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+              
+             
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Room Charge
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsenableRoomCharge" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+              
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Need Credentials For Removal
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsneed_Credentials_For_Removal" asp-items="Model.need_Credentials_For_Removals" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+              
+
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Station Type
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsstation_Type" asp-items="Model.station_Types" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+
+
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Table Selection Type
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmstable_Selection_Type" asp-items="Model.table_Selection_Types" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Trigger Article Removal
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsTrigger_Article_Removal" asp-items="Model.pOS_Trigger_Article_Removals" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr> 
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Waiter Selection
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmswaiter_selection" asp-items="Model.waiter_selections" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr> 
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Welcome Message Rule
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#welcomepmsposbtnsaveMap">
+                        @if (string.IsNullOrEmpty(Model.pmswelcome_Message_Rule))
+                        {
+                            <input asp-for="pmswelcome_Message_Rule" type="text"  value="" id="wel_come_message" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="pmswelcome_Message_Rule" type="text"  value="@Model.pmswelcome_Message_Rule" id="wel_come_message" class="Inputborder" />
+
+                        }
+                    </td>
+
+                </tr> 
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Room Service POS
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="">
+                        @if (string.IsNullOrEmpty(Model.pms_RoomServicePOS))
+                        {
+                            <input asp-for="pms_RoomServicePOS" type="text"  value="" id="" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="pms_RoomServicePOS" type="text"  value="@Model.pms_RoomServicePOS" id="" class="Inputborder" />
+
+                        }
+                    </td>
+
+                </tr>
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        PMS Interface Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Allow Animation
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsallowAnimation" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Aspect Ratio
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsaspectRatio" asp-items="Model.aspectrations" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+           
+              
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Dynamic Visual Display
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsenableDynamicVisualDisplay" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Touch Screen
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsenableTouchScreen" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Navigator Type
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsnavigatorType" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+             
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        POS Theme
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmspos_theme" asp-items="Model.POSThemes" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Theme Changed Date
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (string.IsNullOrEmpty(Model.pmstheme_Change_dDate))
+                        {
+                            <input asp-for="pmstheme_Change_dDate" type="text" value="@DateTime.Now"  class="Inputborder" />
+                        }
+                        else
+                        {
+                            <input asp-for="pmstheme_Change_dDate" type="text" value="@Model.pmstheme_Change_dDate"  class="Inputborder" />
+                        }
+                    </td>
+
+                </tr>
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        PMS Process Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+
+                        Check System Timestamp
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsCheckSystemTimestamP" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+
+                        Default Payment
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsdefault_Payment" asp-items="Model.pmsdefault_PaymentS" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+
+                        Default Transaction Type
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsdefault_Transaction_Type" asp-items="Model.DefaultTransactionTypeS" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+
+                        Enable Auto Entry
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsenableAutoEntry" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+
+                        Input Cover Mandatory
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsinputCoverMandatory" asp-items="Model.changefrequencys" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+
+                        Open Drawer After Prin
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsopenDrawerAfterPrint" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Table Mandatory
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmstableMandatory" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Waiter Mandatory
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsWaiterMandatory" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Vocal Assistance Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Vocal Assistance
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsenableVocalAssistance" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Language
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="pmsrmsLanguage" asp-items="Model.langugerms" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+
+
+            </table>
+
+            <input asp-for="pmsdevicecode" hidden value="@Model.deviceId" />
+
+
+        </form>
+
+
+    </div>
+</div>
+<script>
+    $(function () {
+        $("#filterPmsSetting").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#pms_table_setting > tbody > tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+
+<script>
+    function TreeFunctionproprty() {
+        $(document).ready(function () {
+            $('.tree-basic').treegrid();
+
+            $('.tree-loadpms').treegrid({
+                source: function (id, response) {
+                    if (id != 1) response(['']);
+                    else response(['']);
+                }
+            });
+
+        });
+    }
+    TreeFunctionproprty();
+</script>
+<script>
+    $('.attributdata').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).children('.inputfield').val();*/
+        var value = $(this).text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).closest("tr").addClass('boderclr');
+        $('#deviceproperty').html(value);
+
+    });
+    $('.attributcurrvalue').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).siblings().children('.inputfield').val();*/
+        var value = $(this).siblings().text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).siblings().addClass("boderclr");
+        $('#deviceproperty').html(value);
+
+    });
+    $("#propertysect").change(function () {
+        var value = $(this).select2('data')[0].text;
+        $(".boderclr").removeClass("boderclr");
+        $("input[name*='" + value + "']").addClass('boderclr');
+        $("input[name*='" + value + "']").closest("tr").addClass('boderclr');
+
+        $('#deviceproperty').html(value);
+    });
+
+</script>
+
+<script>
+
+$(function () {
+
+    $('#@nameof(Model.pmstheme_Change_dDate)').datepicker();
+
+    });
+</script>
+
+<script>
+    var devicecode = "";
+
+    $(document).on("click", ".devicepropertysetting", function () {
+        devicecode = $(this).data('types');
+
+        $('#@nameof(Model.pmsdevicecode)').val(devicecode);
+
+        $('#@nameof(Model.devicesettingproperty)').select2({
+            placeholder: 'device',
+            allowclear: true,
+        ajax: {
+            url: '@Url.Action("getdeviceforPROPERTY", "Devices")',
+            dataType: 'json',
+            data: { DEVICECODE: devicecode },
+                data: function (params)
+                {
+                return {
+                    q: params.term,
+                    page: params.page,
+                    other: devicecode,
+                };
+                },
+                processResults: function (data, params)
+                {
+                return data;
+                },
+                cache: true
+        },
+        });
+    });
+</script>
+<script>
+    var selectedCountry = "";
+
+    var row = ""
+
+    $("select.select2").change(function () {
+        selectedCountry = $(this).children("option:selected").text();
+        console.log(selectedCountry);
+
+        $(".bg-black").removeClass("bg-black");
+        //var row = $(".addvaluepropertyLisearch:contains(" + selectedCountry + "));
+        $("input[name*='" + selectedCountry + "']").addClass("bg-black");
+        /*location.href = '#resp-table'*/
+    });
+
+
+</script>

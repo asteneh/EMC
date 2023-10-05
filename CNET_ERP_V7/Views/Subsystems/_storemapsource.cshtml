@@ -1,0 +1,64 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@model VoucherSearchModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var organizationTypes = await sharedHelpers.GetsystemConstantById(Convert.ToInt32(Model.documentType));
+
+
+    var _vsource = Model?._vsource;
+}
+   <style>
+    .storemap {
+        white-space: nowrap;
+    }
+   </style>
+<div class="box box-primary">
+
+    <div class="box-body">
+
+        <div class="border destinationtable">
+         
+                <table id="mapstorefor_source" class="table table-striped" style="background-color:#ffffff">
+                    <thead>
+                        <tr class="storemap">
+                            <th>Is default</th>
+                            <th>Store</th>
+                            <th>Remark</th>
+                            <th style="width:0px;"></th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (_vsource != null && _vsource.Count() > 0)
+                        {
+                            foreach (var item in _vsource)
+                            {
+                                    var store = await sharedHelpers.GetConsigneeunitById(item.Store);
+                                    var storedesc = store?.FirstOrDefault();
+                                    <input asp-for="storemapSourcecode" name="storemapSourcecode[]" value="@item.Store" hidden />
+                                    <input asp-for="storemapsource" name="storemapsource[]" value="@storedesc?.Name" hidden />
+                                <tr onclick="MoveFromSTableToConsigneeUnit('@item.Store','@item.Remark')">
+                                <td> <input class="btnremoveSourcedestination" name="isDefault" value="@item.Store" type="checkbox" @(Convert.ToBoolean(item?.IsDefault) ? "checked" : "") onclick="return true" /></td>
+                                    <td>@storedesc?.Name</td>
+                                    <td>@item?.Remark</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+                <input hidden asp-for="vouchercodeforsource" />
+                <input hidden asp-for="storemapSourceType" />
+
+          
+        </div>
+        </div>
+    </div>
+  <script>
+    $('#@nameof(Model.vouchercodeforsource)').val($('#@nameof(Model.documentType)').val());
+  </script>
+    
+

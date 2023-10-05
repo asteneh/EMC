@@ -1,0 +1,1121 @@
+﻿@model GSLmodel
+@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain;
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    int Gsloldvalue = 111111111;
+    var gslTypecode = Model?.gslType;
+    var gsl = await sharedHelpers.GetsystemConstantById(Convert.ToInt32(gslTypecode));
+    var gslcomp = gsl?.FirstOrDefault()?.ParentId;
+    var gslSetting = await sharedHelpers.GetConfigurationByRefandPref(Model?.gslType.ToString(), CNETConstants.MAIN_TYPE_GSL);
+}
+<style>
+    .inputfield {
+        border-top-style: hidden;
+        border-right-style: hidden;
+        border-left-style: hidden;
+        border-bottom-style: hidden;
+    }
+
+        .inputfield:focus {
+            outline: none;
+            width: 60%;
+        }
+
+    .Inputborder form-control {
+        border: 1px solid #eee;
+    }
+
+    .custom-select {
+        max-height: 28px;
+        font-size: 13px;
+    }
+
+    .Inputborder form-controlbrows {
+        border: 1px solid #eee;
+    }
+
+    #doumentlibraryurl {
+        position: absolute !important;
+        background-color: #eee;
+    }
+
+    #maintainlibraryurl {
+        position: absolute !important;
+        background-color: #eee;
+    }
+
+    #filelabeldesign {
+        position: absolute !important;
+        background-color: #eee;
+    }
+
+    .sptablecontent {
+        border-collapse: collapse;
+        background-color: #fff;
+        width: 98%;
+        margin-left: 15px;
+    }
+
+        .sptablecontent .asth {
+            font-weight: bold;
+        }
+
+        .sptablecontent th, table td {
+            padding: 0px 0px !important;
+            border: 1px solid #ccc;
+        }
+
+        .sptablecontent, .sptablecontent .sptablecontent td {
+            border: 0px solid #ccc;
+            padding: 0px 0px !important;
+        }
+
+            .sptablecontent [type=text], select {
+                width: 100%;
+            }
+
+            .sptablecontent div {
+                width: 97%;
+            }
+
+    .vouproperty {
+        height: 95vh;
+        overflow-y: scroll;
+    }
+
+    .prefrenceheader {
+        background-color: dodgerblue;
+    }
+
+    .inputfield {
+        pointer-events: none;
+        opacity: 30;
+        width: 80%;
+        height: 16px !important;
+        padding: 0px 0px !important;
+        font-size: 13px !important;
+    }
+
+    .Inputborder:focus {
+        border: 1px solid #1670BE;
+        box-shadow: 0 0 3px #1670BE;
+        outline-offset: 0px;
+        outline: none;
+    }
+
+    .Inputborder {
+        border: 1px solid #eee;
+        font-size: 13px !important;
+        height: 17px !important;
+        line-height: 2px !important;
+        text-emphasis-position: initial !important;
+        margin-top: 0px !important;
+        padding: 0px 0px !important;
+    }
+
+
+    .mainparent {
+        color: dodgerblue;
+        background-color: #eee;
+    }
+
+    .boderclr {
+        background-color: dodgerblue;
+    }
+
+</style>
+<div class="row">
+    <div class="col-md-12">
+        <div class="box box-primary">
+
+            <div class="box-header with-border">
+                <div class="row">
+                    <div class="col-md-11">
+                        <div class="row">
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-1 control-labell"> Find</label>
+                                <div class="col-md-9">
+                                    <input type="text" id="filterGslSetting" style="display:flex;width:100%;" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="box-body vouproperty">
+
+                @foreach (var item in gslSetting)
+                {
+                    switch (item.Attribute)
+                    {
+                       case "Default Document":
+                            Model.default_document = item.CurrentValue;
+
+                            break;
+                        case "Document Browser Library URL":
+                            Model.document_Browser_Library_URL = item.CurrentValue;
+
+                            break;
+                        case "Show Find Panel":
+                            Model.show_Find_Panel = item.CurrentValue;
+
+                            break;
+                        case "Show Group Panel":
+                            Model.show_Group_Panel = item.CurrentValue;
+
+                            break;
+                        case "Allow Duplicate Name":
+                            Model.allow_Duplicate_Name = item.CurrentValue;
+
+                            break;
+                        case "Category Depth":
+                            Model.category_Depth = item.CurrentValue;
+
+                            break;
+                        case "Maximum Dates Without Transaction":
+                            Model.Maximum_Dates_Without_Transaction = item.CurrentValue;
+
+                            break;
+                        case "Default ObjectState":
+                        if (!string.IsNullOrEmpty(item.CurrentValue))
+                            {
+                               var defaulobject = await sharedHelpers.GetsystemConstantById(Convert.ToInt32(!string.IsNullOrEmpty(item.CurrentValue)  ? item.CurrentValue : 0));
+                               Model.default_ObjectStategsl = item.CurrentValue + ("/") + defaulobject?.FirstOrDefault()?.Description;
+                            }
+                            else
+                            {
+                                Model.default_ObjectStategsl = "";
+                            }
+                          
+                            break;
+                        case "Default Tax":
+                            Model.default_Tax = item.CurrentValue;
+
+                            break;
+                        case "Id Generation Style":
+                            Model.id_Generation_Style = item.CurrentValue;
+
+                            break;
+                        case "Maintain Case":
+                            Model.maintain_Case = item.CurrentValue;
+
+                            break;
+                        case "Maintain Library URL":
+                            Model.maintain_Case = item.CurrentValue;
+
+                            break;
+                        case "Enable Label Printing":
+                            Model.enable_Label_Printing = item.CurrentValue;
+
+                            break;
+                        case "Label Design File":
+                            Model.label_Design_File = item.CurrentValue;
+
+                            break;
+                        case "Label Printer":
+                            Model.label_Printer = item.CurrentValue;
+
+                            break;
+                        case "Label Type":
+                            Model.label_Type = item.CurrentValue;
+
+                            break;
+                        case "Preview Label Before Print":
+                            Model.preview_Label_Before_Print = item.CurrentValue;
+
+                            break;
+                        case "Near Me in Meter":
+                            Model.near_Me_in_Meter = item.CurrentValue;
+
+                            break;
+                        case "Advanced Combo Search As Type":
+                            Model.advanced_Combo_Search_As_Type = item.CurrentValue;
+
+                            break;
+                        case "Clear Log After Days":
+                            Model.clear_Log_After_Days = item.CurrentValue;
+
+                            break;
+                        case "Maintain Modification History":
+                            Model.maintain_Modification_History = item.CurrentValue;
+
+                            break;
+                        case "Maximum Records":
+                            Model.maximum_Records = item.CurrentValue;
+
+                            break;
+                        case "Enable Mobile Transaction":
+                            Model.enable_Mobile_Transaction = item.CurrentValue;
+
+                            break;
+                        case "Consumer Price Formula":
+                            Model.consumer_Price_Formula = item.CurrentValue;
+
+                            break;
+                        case "Discounted Price Formula":
+                            Model.discounted_Price_Formula = item.CurrentValue;
+
+                            break;
+                        case "On holiday Formula":
+                            Model.on_holiday_Formula = item.CurrentValue;
+
+                            break;
+                        case "Qty Price Formula":
+                            Model.qty_Price_Formula = item.CurrentValue;
+
+                            break;
+                        case "Retail Price Formula":
+                            Model.retail_Price_Formula = item.CurrentValue;
+
+                            break;
+                        case "Whole Sale Formula":
+                            Model.whole_Sale_Formula = item.CurrentValue;
+
+                            break;
+                        case "Allow Duplicate TIN":
+                            Model.allow_Duplicate_TIN = item.CurrentValue;
+
+                            break;
+                        case "TIN is Mandatory":
+                            Model.tIN_is_Mandatory = item.CurrentValue;
+
+                            break;
+                        case "Enable Group panel":
+                            Model.gsl_EnableGrouppanel = (envoucherFlag)Enum.Parse(typeof(envoucherFlag), item.CurrentValue, false);
+
+                            break;
+                        case "Enable Search bar":
+                            Model.gsl_EnableSearchbar = (envoucherFlag)Enum.Parse(typeof(envoucherFlag), item.CurrentValue, false);
+
+                            break;
+
+                        case "Enable Filter":
+                            Model.gsl_EnableFilter = (envoucherFlag)Enum.Parse(typeof(envoucherFlag), item.CurrentValue, false);
+                            break;
+                        case "Enable Field search":
+                            Model.gsl_EnableFieldsearch = (envoucherFlag)Enum.Parse(typeof(envoucherFlag), item.CurrentValue, false);
+                            break;
+
+                    }
+                }
+
+              
+                    <table id="GslSetting_Table" cellpadding="0" cellspacing="0" class="sptablecontent tree_loadgslprop">
+                            <tr class="asth">
+                                <td></td>
+                                <td></td>
+
+                            </tr>
+
+                            <tr class="treegrid-@Gsloldvalue mainparent">
+                                <td colspan="2">
+                                   Document Browser
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Default Document
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="default_document" asp-items="Model.default_documents" class="custom-select Inputborder  form-control">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Document Browser Library URL
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <div class="input-group">
+                                        @if (string.IsNullOrEmpty(Model.document_Browser_Library_URL))
+                                        {
+                                            <input asp-for="document_Browser_Library_URL" id="display-filenamedblurl" value="\\server.." class="form-control" style="height: 20px !important;">
+                                        <label for="ItemDoumentBrowserLiberaryurl" id="doumentlibraryurl" class="Inputborder">...</label>
+                                        }
+                                        else
+                                        {
+                                            <input asp-for="document_Browser_Library_URL" id="display-filenamedblurl" value="@Model.document_Browser_Library_URL" class="form-control" style="height: 20px !important;">
+                                        <label for="ItemDoumentBrowserLiberaryurl" id="doumentlibraryurl" class="Inputborder">...</label>
+
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                           <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Enable Group panel
+                                </td>
+                                <td class="attributcurrvalue">
+                            <select asp-for="gsl_EnableGrouppanel" asp-items="Html.GetEnumSelectList<envoucherFlag>()" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                           <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Enable Search bar
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="gsl_EnableSearchbar" asp-items="Html.GetEnumSelectList<envoucherFlag>()" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Enable Filter
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="gsl_EnableFilter" asp-items="Html.GetEnumSelectList<envoucherFlag>()" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                             <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Enable Field search
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="gsl_EnableFieldsearch" asp-items="Html.GetEnumSelectList<envoucherFlag>()" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+
+                            @{
+                                Gsloldvalue = Gsloldvalue + 1;
+                            }
+
+                            <tr class="treegrid-@Gsloldvalue mainparent">
+                                <td colspan="2">
+                                    General Setting
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Allow Duplicate Name
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="allow_Duplicate_Name" asp-items="Model.show_Find_Panels" class=" form-control custom-select Inputborder  form-control">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Maximum Dates Without Transaction
+                                </td>
+                                <td class="attributcurrvalue">
+                                    @if (string.IsNullOrEmpty(Model.Maximum_Dates_Without_Transaction))
+                                    {
+
+                                        <input asp-for="Maximum_Dates_Without_Transaction" id="Max_Dates_Without_Transaction" value="365" class="Inputborder   form-control" onkeypress="return isMaxtranNumber(event)" maxlength="3" onInput="return edValueMaxtranPress(eve)">
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="Maximum_Dates_Without_Transaction" id="Max_Dates_Without_Transaction" value="@Model.Maximum_Dates_Without_Transaction" class="Inputborder   form-control" onkeypress="return isMaxtranNumber(event)" maxlength="3" onInput="return edValueMaxtranPress(eve)" />
+                                    }
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Category Depth
+                                </td>
+                                <td class="attributcurrvalue">
+
+                                    @if (string.IsNullOrEmpty(Model.category_Depth))
+                                    {
+
+
+                                        <input asp-for="category_Depth" id="categoryDepth" value="3" class="Inputborder  form-control" onkeypress="return iscategoryNumber(event)" maxlength="3" onInput="return edValuecategoryPress(eve)">
+                                    }
+                                    else
+                                    {
+
+                                        <input asp-for="category_Depth" id="categoryDepth" value="@Model.category_Depth" class="Inputborder  form-control" onkeypress="return iscategoryNumber(event)" maxlength="3" onInput="return edValuecategoryPress(eve)" />
+                                    }
+
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Default ObjectState
+                                </td>
+                                <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#ObjectsateMapMOdalgsl">
+                                    @if (string.IsNullOrEmpty(Model.default_ObjectStategsl))
+                                    {
+                                        <input asp-for="default_ObjectStategsl" type="text" value="" id="Default_object_stategsl" class="Inputborder  form-control" readonly="readonly" />
+
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="default_ObjectStategsl" type="text" value="@Model.default_ObjectStategsl" id="Default_object_stategsl" class="Inputborder  form-control" readonly="readonly" />
+
+                                    }
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Default Tax
+                                </td>
+                                <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#propertyMapmodelForarticle">
+                                    @if (string.IsNullOrEmpty(Model.default_Tax))
+                                    {
+                                        <input asp-for="default_Tax" type="text" value="VAT" id="default_Tax_Type" class="Inputborder  form-control Inputborder  form-control" readonly="readonly" />
+
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="default_Tax" type="text" value="@Model.default_Tax" id="default_Tax_Type" class="Inputborder  form-control Inputborder  form-control" readonly="readonly" />
+                                    }
+
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Idgeneration Style
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="id_Generation_Style" asp-items="Model.id_Generation_Styles" class=" form-control custom-select Inputborder  form-control">
+                                    </select>
+
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Maintain Case
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="maintain_Case" asp-items="Model.maintain_Cases" class=" form-control custom-select Inputborder  form-control">
+                                    </select>
+
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Maintain Library URL
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <div class="input-group">
+                                        @if (string.IsNullOrEmpty(Model.maintain_Library_URL))
+                                        {
+                                            <input asp-for="maintain_Library_URL" id="display-filenamemaintainurl" value="\\server.." class="form-control" style="height: 20px !important;">
+                                        <label for="ItemmaintainLiberaryurl" id="maintainlibraryurl" class="Inputborder">...</label>
+                                        }
+                                        else
+                                        {
+                                            <input asp-for="maintain_Library_URL" id="display-filenamemaintainurl" value="@Model.maintain_Library_URL" class="form-control" style="height: 20px !important;">
+                                        <label for="ItemmaintainLiberaryurl" id="maintainlibraryurl" class="Inputborder">...</label>
+
+                                        }
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                            @{
+                                Gsloldvalue = Gsloldvalue + 1;
+                            }
+
+                            <tr class="treegrid-@Gsloldvalue mainparent">
+                                <td colspan="2">
+                                    Label Printing
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Enable Label Printing
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_Label_Printing" asp-items="Model.show_Find_Panels" class=" form-control custom-select Inputborder  form-control">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Label Design File
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <div class="input-group">
+                                        @if (string.IsNullOrEmpty(Model.label_Design_File))
+                                        {
+                                            <input asp-for="label_Design_File" id="display-filelabeldesign" value="\\server.." class="form-control" style="height: 20px !important;">
+                                        <label for="Itemlabeldesignfile" id="filelabeldesign" class="Inputborder">...</label>
+                                        }
+                                        else
+                                        {
+                                            <input asp-for="label_Design_File" id="display-filelabeldesign" value="@Model.label_Design_File" class="form-control" style="height: 20px !important;">
+                                        <label for="Itemlabeldesignfile" id="filelabeldesign" class="Inputborder">...</label>
+
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Label Printer
+                                </td>
+                                <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#PrinterMapmodelForarticle">
+                                    @if (string.IsNullOrEmpty(Model.label_Printer))
+                                    {
+                                        <input asp-for="label_Printer" type="text" value="Fax" id="label_printer_Type" class="Inputborder  form-control Inputborder  form-control" />
+
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="label_Printer" type="text" value="@Model.label_Printer" id="label_printer_Type" class="Inputborder  form-control Inputborder  form-control" />
+                                    }
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Label Type
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="label_Type" asp-items="Model.label_Types" class=" form-control custom-select Inputborder  form-control">
+                                    </select>
+
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Preview Label Before Print
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="preview_Label_Before_Print" asp-items="Model.show_Find_Panels" class=" form-control custom-select Inputborder  form-control">
+                                    </select>
+
+                                </td>
+
+                            </tr>
+
+                            @{
+                                Gsloldvalue = Gsloldvalue + 1;
+                            }
+
+                            <tr class="treegrid-@Gsloldvalue mainparent">
+                                <td colspan="2">
+                                    Location Setting
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Near Me in Meter
+                                </td>
+                                <td class="attributcurrvalue">
+                                    @if (string.IsNullOrEmpty(Model.near_Me_in_Meter))
+                                    {
+                                        <input asp-for="near_Me_in_Meter" type="text" id="me_in_Meter" value="1000" class="Inputborder  form-control Inputborder  form-control" onkeypress="return iscategoryNumber(event)" maxlength="10" onInput="return edValuenearmePress(eve)" />
+
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="near_Me_in_Meter" type="text" id="me_in_Meter" value="@Model.near_Me_in_Meter" class="Inputborder  form-control Inputborder  form-control" onkeypress="return iscategoryNumber(event)" maxlength="10" onInput="return edValuenearmePress(eve)" />
+                                    }
+                                </td>
+
+                            </tr>
+
+                            @{
+                                Gsloldvalue = Gsloldvalue + 1;
+                            }
+
+                            <tr class="treegrid-@Gsloldvalue mainparent">
+                                <td colspan="2">
+                                    Log Setting
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Advanced Combo Search As Type
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="advanced_Combo_Search_As_Type" asp-items="Model.show_Find_Panels" class=" form-control custom-select Inputborder  form-control">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Clear Log After Days
+                                </td>
+                                <td class="attributcurrvalue">
+                                    @if (string.IsNullOrEmpty(Model.clear_Log_After_Days))
+                                    {
+                                        <input asp-for="clear_Log_After_Days" type="text" id="log_After_Days" value="90" class="Inputborder  form-control Inputborder  form-control" onkeypress="return iscategoryNumber(event)" maxlength="3" onInput="return edValueclearlogPress(eve)" />
+
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="clear_Log_After_Days" type="text" id="log_After_Days" value="@Model.clear_Log_After_Days" class="Inputborder  form-control Inputborder  form-control" onkeypress="return iscategoryNumber(event)" maxlength="3" onInput="return edValueclearlogPress(eve)" />
+                                    }
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Maintain Modification History
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="maintain_Modification_History" asp-items="Model.show_Find_Panels" class=" form-control custom-select Inputborder  form-control">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Maximum Records
+                                </td>
+                                <td class="attributcurrvalue">
+                                    @if (string.IsNullOrEmpty(Model.maximum_Records))
+                                    {
+                                        <input asp-for="maximum_Records" id="maximumRecords" type="text" value="100000" class="Inputborder  form-control Inputborder  form-control" onkeypress="return iscategoryNumber(event)" maxlength="9" onInput="return edValuemaximumPress(eve)" />
+
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="maximum_Records" id="maximumRecords" type="text" value="@Model.maximum_Records" class="Inputborder  form-control Inputborder  form-control" onkeypress="return iscategoryNumber(event)" maxlength="9" onInput="return edValuemaximumPress(eve)" />
+                                    }
+                                </td>
+
+                            </tr>
+
+
+                            @{
+                                Gsloldvalue = Gsloldvalue + 1;
+                            }
+
+                            <tr class="treegrid-@Gsloldvalue mainparent">
+                                <td colspan="2">
+                                    Mobile Setting
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Enable Mobile Transaction
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_Mobile_Transaction" asp-items="Model.show_Find_Panels" class=" form-control custom-select Inputborder  form-control">
+                                    </select>
+                                </td>
+
+                            </tr>
+
+
+                            @{
+                                Gsloldvalue = Gsloldvalue + 1;
+                            }
+
+                            <tr class="treegrid-@Gsloldvalue mainparent">
+                                <td colspan="2">
+                                    Price Formula Setting
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Consumer Price Formula
+                                </td>
+                                <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#consumePriceformulaMaoModal">
+                                    @if (string.IsNullOrEmpty(Model.consumer_Price_Formula))
+                                    {
+                                        <input asp-for="consumer_Price_Formula" type="text" value="" id="consumerPriceFormula" class="Inputborder  form-control Inputborder  form-control" readonly="readonly" />
+
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="consumer_Price_Formula" type="text" value="@Model.consumer_Price_Formula" id="consumerPriceFormula" class="Inputborder  form-control Inputborder  form-control" readonly="readonly" />
+                                    }
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Discounted Price Formula
+                                </td>
+                                <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#discountPriceformulaMaoModal">
+                                    @if (string.IsNullOrEmpty(Model.discounted_Price_Formula))
+                                    {
+                                        <input asp-for="discounted_Price_Formula" type="text" value="" id="discountedPriceFormula" class="Inputborder  form-control Inputborder  form-control" readonly="readonly" />
+
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="discounted_Price_Formula" type="text" value="@Model.discounted_Price_Formula" id="discountedPriceFormula" class="Inputborder  form-control Inputborder  form-control" readonly="readonly" />
+                                    }
+                                </td>
+
+                            </tr>
+
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    On holiday Formula
+                                </td>
+                                <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#holidayPriceformulaMaoModal">
+                                    @if (string.IsNullOrEmpty(Model.on_holiday_Formula))
+                                    {
+                                        <input asp-for="on_holiday_Formula" type="text" value="" id="onholidayFormula" class="Inputborder  form-control Inputborder  form-control" readonly="readonly" />
+
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="on_holiday_Formula" type="text" value="@Model.on_holiday_Formula" id="onholidayFormula" class="Inputborder  form-control Inputborder  form-control" readonly="readonly" />
+                                    }
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Qty Price Formula
+                                </td>
+                                <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#qtyPriceformulaMaoModal">
+                                    @if (string.IsNullOrEmpty(Model.qty_Price_Formula))
+                                    {
+                                        <input asp-for="qty_Price_Formula" type="text" value="" id="qtyPriceFormula" class="Inputborder  form-control Inputborder  form-control" readonly="readonly" />
+
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="qty_Price_Formula" type="text" value="@Model.qty_Price_Formula" id="qtyPriceFormula" class="Inputborder  form-control Inputborder  form-control" readonly="readonly" />
+                                    }
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Retail Price Formula
+                                </td>
+                                <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#retailPriceformulaMaoModal">
+                                    @if (string.IsNullOrEmpty(Model.retail_Price_Formula))
+                                    {
+                                        <input asp-for="retail_Price_Formula" type="text" value="" id="retailPriceFormula" class="Inputborder  form-control Inputborder  form-control" readonly="readonly" />
+
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="retail_Price_Formula" type="text" value="@Model.retail_Price_Formula" id="retailPriceFormula" class="Inputborder  form-control Inputborder  form-control" readonly="readonly" />
+                                    }
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@Gsloldvalue">
+                                <td class="attributdata">
+                                    Whole Sale Formula
+                                </td>
+                                <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#wholPriceformulaMaoModal">
+                                    @if (string.IsNullOrEmpty(Model.whole_Sale_Formula))
+                                    {
+                                        <input asp-for="whole_Sale_Formula" type="text" value="" id="wholeSaleFormula" class="Inputborder  form-control Inputborder  form-control" readonly="readonly" />
+
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="whole_Sale_Formula" type="text" value="@Model.whole_Sale_Formula" id="wholeSaleFormula" class="Inputborder  form-control Inputborder  form-control" readonly="readonly" />
+                                    }
+                                </td>
+
+                            </tr>
+                        </table>
+                        <input class="form-control" type="file" name="ItemDoumentBrowserLiberaryurl" id="ItemDoumentBrowserLiberaryurl" style="display:none; visibility:hidden;" onchange="getDoumentBrowserLiberaryurl(this.value);">
+                        <input class="form-control" type="file" name="ItemmaintainLiberaryurl" id="ItemmaintainLiberaryurl" style="display:none; visibility:hidden;" onchange="getmaintainLiberaryurl(this.value);">
+                        <input class="form-control" type="file" name="Itemlabeldesignfile" id="Itemlabeldesignfile" style="display:none; visibility:hidden;" onchange="getItemlabeldesignfile(this.value);">
+
+                        <input asp-for="gslartpropertycode" hidden />
+              
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        $("#filterGslSetting").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#GslSetting_Table > tbody > tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+
+<script>
+    function TreeFunctiongslprop() {
+        $(document).ready(function () {
+            $('.tree-basic').treegrid();
+
+            $('.tree_loadgslprop').treegrid({
+                source: function (id, response) {
+                    if (id != 1) response(['']);
+                    else response(['']);
+                }
+            });
+
+        });
+    }
+    TreeFunctiongslprop();
+
+
+
+    function validnum(a) {
+        if (a < 0 || a > 255) {
+
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+
+    function validclearnum(a) {
+        if (a < 0 || a > 255) {
+
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+
+    var inputcategoryvalue;
+    function edValuecategoryPress(e) {
+
+        var str = $("#categoryDepth").val();
+
+        if (str != "") {
+            inputcategoryvalue = parseInt(str);
+            if (inputcategoryvalue > 255) {
+                inputcategoryvalue = 255
+            }
+            else {
+                inputcategoryvalue = inputcategoryvalue
+            }
+        }
+        else {
+            inputcategoryvalue = 0;
+        }
+        return true;
+    }
+    $("#categoryDepth").mouseout(function () {
+        if (inputcategoryvalue != undefined) {
+            $("#categoryDepth").val(inputcategoryvalue);
+        }
+    });
+
+    var inputlogvalue;
+    function edValueclearlogPress(e) {
+
+        var str = $("#log_After_Days").val();
+
+        if (str != "") {
+            inputlogvalue = parseInt(str);
+            if (inputlogvalue > 255) {
+                inputlogvalue = 255
+            }
+            else {
+                inputlogvalue = inputlogvalue
+            }
+        }
+        else {
+            inputlogvalue = 0;
+        }
+        return true;
+    }
+
+
+    $("#log_After_Days").mouseout(function () {
+        if (inputlogvalue != undefined) {
+            $("#log_After_Days").val(inputlogvalue);
+        }
+    });
+    var inputMaxtranvalue;
+    function edValueMaxtranPress(e) {
+
+        var str = $("#Max_Dates_Without_Transaction").val();
+
+        if (str != "") {
+            inputMaxtranvalue = parseInt(str);
+            if (inputMaxtranvalue > 365) {
+                inputMaxtranvalue = 365
+            }
+            else {
+                inputMaxtranvalue = inputMaxtranvalue
+            }
+        }
+        else {
+            inputMaxtranvalue = 0;
+        }
+        return true;
+    }
+
+    $("#Max_Dates_Without_Transaction").mouseout(function () {
+        if (inputMaxtranvalue != undefined) {
+            $("#Max_Dates_Without_Transaction").val(inputMaxtranvalue);
+        }
+    });
+
+    var inputnearmevalue;
+    function edValuenearmePress(e) {
+
+        var str = $("#me_in_Meter").val();
+        if (str != "") {
+            inputnearmevalue = parseInt(str);
+        }
+        else {
+            inputnearmevalue = 0;
+        }
+
+
+        return true;
+    }
+    $("#me_in_Meter").mouseout(function () {
+        if (inputnearmevalue != undefined) {
+            $("#me_in_Meter").val(inputnearmevalue);
+        }
+
+
+    });
+
+
+    var inputmaxvalue;
+    function edValuemaximumPress(e) {
+
+        var str = $("#maximumRecords").val();
+        if (str != "") {
+            inputmaxvalue = parseInt(str);
+        }
+        else {
+            inputmaxvalue = 0;
+        }
+
+
+        return true;
+    }
+    $("#maximumRecords").mouseout(function () {
+        if (inputmaxvalue != undefined) {
+            $("#maximumRecords").val(inputmaxvalue);
+        }
+
+
+    });
+
+
+    var gslTypecode = '@Model.gslType';
+    $('#@nameof(Model.gslartpropertycode)').val(gslTypecode);
+
+</script>
+
+@*<script>
+    $('#@nameof(Model.GslTypeListforperoperty)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(artpropertyListItem)),
+        placeholder: "",
+        allowClear: true
+
+    });
+</script>*@
+<script>
+    function getDoumentBrowserLiberaryurl(filename) {
+        $('#display-filenamedblurl').val(filename);
+    }
+</script>
+<script>
+    function getmaintainLiberaryurl(filename) {
+        $('#display-filenamemaintainur').val(filename);
+    }
+</script>
+<script>
+    function getItemlabeldesignfile(filename) {
+        $('#display-filelabeldesign').val(filename);
+    }
+</script>
+<script>
+    var selectedCountry = "";
+
+    var row = ""
+
+    $("select.select2").change(function () {
+        selectedCountry = $(this).children("option:selected").text();
+        console.log(selectedCountry);
+
+        $(".bg-black").removeClass("bg-black");
+        //var row = $(".addvaluepropertyLisearch:contains(" + selectedCountry + "));
+        $("input[name*='" + selectedCountry + "']").addClass("bg-black");
+        /*location.href = '#resp-table'*/
+    });
+
+
+</script>
+
+<script>
+
+    $('.attributdata').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        var value = $(this).text();
+
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).closest("tr").addClass('boderclr');
+        $('#gslVal').html(value);
+
+    });
+    $('.attributcurrvalue').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        var value = $(this).siblings().text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).siblings().addClass("boderclr");
+        $('#gslVal').html(value);
+
+    });
+    $("#GslTypeListforperoperty").change(function () {
+        var value = $(this).select2('data')[0].text;
+        $(".boderclr").removeClass("boderclr");
+        $("input[name*='" + value + "']").addClass('boderclr');
+        $("input[name*='" + value + "']").closest("tr").addClass('boderclr');
+        $('#gslVal').html(value);
+    });
+
+    function iscategoryNumber(evt) {
+
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        else {
+
+            return true;
+        }
+
+    }
+    function isMaxtranNumber(evt) {
+
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        else {
+
+            return true;
+        }
+
+    }
+
+</script>
+
+
+

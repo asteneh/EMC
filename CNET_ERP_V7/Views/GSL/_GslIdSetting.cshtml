@@ -1,0 +1,19 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@model GSLmodel
+@{
+
+}
+<div class="row">
+    <div class="col-md-3">
+        @await Html.PartialAsync("_cosigneeUnitList.cshtml")
+    </div>
+    <div class="col-md-9">
+        <div id="gslIdDefinitionContent">
+           @await Html.PartialAsync("_IdSettingMap.cshtml")
+        </div>
+
+    </div>
+</div>
+
+

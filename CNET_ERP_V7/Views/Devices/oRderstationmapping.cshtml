@@ -1,0 +1,176 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model Devicemodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var codemodel = Model.DeviceType;
+
+    var Orderprinterdevice = await sharedHelpers.GetViewDeviceByReferenceBypreference(550);
+
+}
+<style>
+
+    .parentdevice {
+        background-color: #eee;
+        padding-left: 0px;
+        padding-right: 0px;
+        margin-left: 0px;
+        margin-right: 0px;
+        font-size: 14px;
+    }
+
+    .orderstationsettingdevi {
+        height: 100vh;
+        overflow-y: scroll;
+    }
+    .parentidsetting {
+        padding-left: 0px;
+        padding-right: 0px;
+        margin-left: 0px;
+        margin-right: 0px;
+        font-size: 14px;
+        height: 100vh;
+        overflow-y: scroll;
+        cursor: pointer;
+    }
+
+    .activePrinter {
+        background-color: dodgerblue;
+        width: auto;
+    }
+
+
+    .idSetting {
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .DeviceConsineeunit {
+        white-space: nowrap;
+        cursor: pointer;
+        height: 80vh;
+    }
+
+    .InnDeviceConsineeunit {
+        overflow-y: auto; /* make the table scrollable if height is more than 200 px  */
+        height: 80vh; /* gives an initial height of 200px to the table */
+    }
+
+        .InnDeviceConsineeunit thead th {
+            position: sticky; /* make the table heads sticky */
+            top: 0px; /* table head will be placed from the top of the table and sticks to it */
+        }
+
+    /*table {
+                    border-collapse: collapse;*/ /* make the table borders collapse to each other */
+    /*width: 100%;
+                }*/
+
+    th,
+    td {
+        padding: 0 0 !important;
+        border: 1px solid #ccc;
+    }
+
+    th {
+    }
+
+    .StationDevice {
+        overflow-y: scroll; /* make the table scrollable if height is more than 200 px  */
+        height: 90vh; /* gives an initial height of 200px to the table */
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+        .StationDevice::-webkit-scrollbar {
+            display: none;
+        }
+</style>
+
+<div class="box box-primary">
+
+ <fieldset class=" col-md-10 filedset form-group form-group-sm orderstationsettingdevi" style="border:0.5px solid #e5e5e5;margin-left:30px; width:600px;">
+
+            <legend class="text-sm" style="padding-left:10px; border-bottom: none; font-size:10px">Station</legend>
+            <div class="box-header with-border">
+                <h3 class="box-title">
+
+                    <span>Station Device</span>
+
+                </h3>
+
+            </div>
+
+
+     <div class="box box-primary">
+
+        <div class="box-body DeviceConsineeunit">
+
+                <div style="border:1px solid #e5e5e5;" class="StationDevice">
+                    <table class="table table-border" id="consineeUnit_Table">
+                        <thead>
+                            <tr class="treegrid-3 treegrid-parent-1">
+                                <th colspan="2" style="border:1px solid #e5e5e5; background-color:lightgray">Description</th>
+
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @if (Orderprinterdevice != null && Orderprinterdevice.Count() > 0)
+                            {
+                                @foreach (var item in Orderprinterdevice)
+                                {
+                                    <tr class="Orderstaionmapping" >
+                                        <td width="20px" style="border:none !important"></td>
+                                        <td style="height:17px !important" class="activeOrderPrinter" data-value="@item.Id">
+                                            @item.Name
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+ </fieldset>
+</div>
+
+<script>
+    $(document).on("click", ".activeOrderPrinter", function () {
+
+        $(".activePrinter").removeClass("activePrinter");
+        $(this).addClass('activePrinter');
+        var articleCode = $(this).data('value');
+        $('#@nameof(Model.stationDevice)').val(articleCode);
+        SelectOrderStationMap(articleCode);
+    });
+    $('#btnSaveForOrderstation').click(function () {
+        $('#OrderstationFormData').submit();
+    });
+    function orderstationNewFormFunction() {
+        var $form = $('#OrderstationFormData');
+        var data = $form.serialize();
+        var action = $('#OrderstationFormData').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            success: function (data) {
+                alert(data.result);
+
+                if (data.increament != null) {
+                    alert("This Assigned Before Not Saved" + data.increament);
+                }
+            },
+        });
+        return false;
+    };
+</script>
+
+

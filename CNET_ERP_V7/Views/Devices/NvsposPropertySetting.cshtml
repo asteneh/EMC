@@ -1,0 +1,756 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain;
+@using Newtonsoft.Json;
+@model Devicemodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var codemodel = Model.DeviceType;
+
+
+    int sysoldvalue = 1212121212;
+    var deviceConfig = await sharedHelpers.GetConfigurationByRefandPref(Model?.deviceId.ToString(), CNETConstants.DEVICE);
+}
+<style>
+    .sptablecontent {
+        border-collapse: collapse;
+        background-color: #fff;
+        width: 98%;
+        margin-left: 15px;
+    }
+
+        .sptablecontent .asth {
+            font-weight: bold;
+        }
+
+        .sptablecontent th, table td {
+            padding: 1px;
+            border: 1px solid #ccc;
+        }
+
+        .sptablecontent th, table tr {
+            height: 3px;
+        }
+
+        .sptablecontent, .sptablecontent .sptablecontent td {
+            border: 0px solid #ccc;
+        }
+
+            .sptablecontent [type=text], select {
+                width: 100%;
+            }
+
+            .sptablecontent [type=password] {
+                width: 100%;
+            }
+
+            .sptablecontent div {
+                width: 97%;
+            }
+
+
+    .inputfield {
+        border-top-style: hidden;
+        border-right-style: hidden;
+        border-left-style: hidden;
+        border-bottom-style: hidden;
+        background-color: #eee;
+        font-size: 14px;
+        max-height: 25px;
+    }
+
+    .inputfield {
+        pointer-events: none;
+        opacity: 30;
+        width: 80%;
+        height: 16px !important;
+        padding: 0px 0px !important;
+        font-size: 13px !important;
+    }
+
+    .Inputborder:focus {
+        border: 1px solid #1670BE;
+        box-shadow: 0 0 3px #1670BE;
+        outline-offset: 0px;
+        outline: none;
+    }
+
+    .Inputborder {
+        border: 1px solid #eee;
+        font-size: 13px !important;
+        height: 17px !important;
+        line-height: 2px !important;
+        text-emphasis-position: initial !important;
+        margin-top: 0px !important;
+        padding: 0px 0px !important;
+    }
+
+
+    .mainparent {
+        color: dodgerblue;
+        background-color: #eee;
+    }
+
+
+    .boderclr {
+        background-color: dodgerblue;
+    }
+
+
+    .vouproperty {
+        height: 95vh;
+        overflow-y: scroll;
+    }
+
+    #logstyle {
+        position: absolute;
+        background-color: #eee;
+    }
+</style>
+<div class="box box-primary">
+    <br />
+
+    <div class="box-header with-border">
+        <div class="row">
+            <div class="col-md-11">
+                <div class="row">
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-1 control-labell"> Find</label>
+                        <div class="col-md-9">
+                            <input type="text" id="filternvsSetting" style="display:flex;width:100%;" class="form-control" placeholder="Search By Name">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body">
+        @foreach (var va in deviceConfig)
+        {
+            switch (va.Attribute)
+            {
+
+                case "POS Print Batch":
+                    Model.nvs_PrintBatch = (enrecuIgnorezeroprice_rticle)
+                    Enum.Parse(typeof(enrecuIgnorezeroprice_rticle), va.CurrentValue, false);
+                    break;
+                case "POS Print Expiry Date":
+                    Model.nvs_PrintExpiryDate = (enrecuIgnorezeroprice_rticle)
+                    Enum.Parse(typeof(enrecuIgnorezeroprice_rticle), va.CurrentValue, false);
+                    break;
+                case "POS Serial Input Type":
+                    Model.nvs_SerialInputType =
+                    (enSerialInputType)
+                    Enum.Parse(typeof(enSerialInputType), va.CurrentValue, false);
+                    break;
+                case "POS Use Automatic Life span":
+                    Model.nvs_UseAutomaticLifespan = (enrecuIgnorezeroprice_rticle)
+                    Enum.Parse(typeof(enrecuIgnorezeroprice_rticle), va.CurrentValue, false);
+                    break;
+                case "POS Enable Serial Number Or LifeSpan":
+                    Model.nvs_EnableSerialNumberLifeSpan = (enrecuIgnorezeroprice_rticle)
+                    Enum.Parse(typeof(enrecuIgnorezeroprice_rticle), va.CurrentValue, false);
+                    break;
+                case "POS Serial Movement Suggestion":
+                   Model.nvs_SerialMovementSuggestion =
+                    (enSerialMovementSuggestion)
+                    Enum.Parse(typeof(enSerialMovementSuggestion), va.CurrentValue, false);
+                    break;
+                case "Beneficiary User":
+                    Model.nvs_BeneficiaryUser =
+                    (enBeneficiaryUser)
+                    Enum.Parse(typeof(enBeneficiaryUser), va.CurrentValue, false);
+                    break;
+                case "Need Credentials For Customer Discount":
+                    Model.nvs_NeedCredentialsForCustomerDiscount = (enNeedCredentials)
+                    Enum.Parse(typeof(enNeedCredentials), va.CurrentValue, false);
+                    break;
+
+                case "POS Value Rule":
+                    Model.nvs_POSValueRule =
+                    (enValueRule)
+                    Enum.Parse(typeof(enValueRule), va.CurrentValue, false);
+                    break;
+
+                case "Device Status API URL":
+                   Model.nvs_DeviceStatusAPIURL = va.CurrentValue;
+                    break;
+                case "Use Only Current Branch":
+                    Model.nvs_UseOnlyCurrentBranch = (enrecuIgnorezeroprice_rticle)
+                    Enum.Parse(typeof(enrecuIgnorezeroprice_rticle), va.CurrentValue, false);
+                    break;
+                case "Enable Item Selection":
+                    Model.nvs_EnableItemSelection = (enrecuIgnorezeroprice_rticle)
+                    Enum.Parse(typeof(enrecuIgnorezeroprice_rticle), va.CurrentValue, false);
+                    break;
+
+                case "Lock Store Selection":
+                    Model.nvs_LockStoreSelection = (enrecuIgnorezeroprice_rticle)
+                    Enum.Parse(typeof(enrecuIgnorezeroprice_rticle), va.CurrentValue, false);
+                    break;
+                case "POS Use Only Available Article":
+                    Model.nvs_POSUseOnlyAvailableArticle = (enrecuIgnorezeroprice_rticle)
+                    Enum.Parse(typeof(enrecuIgnorezeroprice_rticle), va.CurrentValue, false);
+                    break;
+                case "Ignore zero price article":
+                    Model.nvs_Ignorezeropricearticle = va.CurrentValue;
+                    break;
+                case "Enable Online Payment":
+                    Model.nvs_EnableOnlinePayment = (enrecuIgnorezeroprice_rticle)
+                    Enum.Parse(typeof(enrecuIgnorezeroprice_rticle), va.CurrentValue, false);
+                    break;
+
+                case "Price Type":
+                  @*  Model.nvs_PriceTYpe = va.CurrentValue;*@
+                    break;
+                case "QR Code Destination":
+                    Model.nvs_QRCodeDestination =
+                    (enQRCodeDestination)
+                    Enum.Parse(typeof(enQRCodeDestination), va.CurrentValue, false);
+                    break;
+                case "Print Discount & Additional Charge Per LineItem":
+                   Model.nvs_PrintDiscountAdditionalChargePerLineItem = va.CurrentValue;
+                    break;
+                case "Select Automatic Shift Period":
+                  Model.nvs_SelectAutomaticShiftPeriod = va.CurrentValue;
+                    break;
+                case "XML Reconciliation":
+                   Model.nvs_XMLReconciliation = va.CurrentValue;
+                    break;
+                case "Accuracy Tolerance":
+                if (!string.IsNullOrEmpty(va.CurrentValue))
+                    {
+                        Model.nvs_AccuracyTolerance = int.Parse(va.CurrentValue);
+                    }
+                 
+                    break;
+                case "Summary Difference Tolerance":
+                    if (!string.IsNullOrEmpty(va.CurrentValue))
+                    {
+                       Model.nvs_SummaryDifferenceTolerance = float.Parse(va.CurrentValue);
+                    }
+                    break;
+                case "DownLoad EJ":
+                  Model.nvs_DownLoadEJ = va.CurrentValue;
+                    break;
+                case "Check Voucher Integrity":
+                    Model.nvs_CheckVoucherIntegrity = va.CurrentValue;
+                    break;
+                case "Closing Frequency":
+                   Model.nvs_ClosingFrequency =  va.CurrentValue;
+                    break;
+                case "Fiscal Reconciliation":
+                   Model.nvs_FiscalReconciliation = va.CurrentValue;
+                    break;
+                case "Summary Voucher":
+                   Model.nvs_SummaryVoucher = va.CurrentValue;
+                    break;
+                case "Zeroing Voucher":
+                  Model.nvs_ZeroingVoucher = va.CurrentValue;
+                    break;
+                case "Enable Document Refernce":
+                    //EnableDocumentRefernce = bool.Parse(va.CurrentValue.ToString());
+                    break;
+                case "Need Credentials For Removal":
+                   Model.nvs_NeedCredentialsForRemoval = va.CurrentValue;
+                    break;
+                case "Check System TimeStamp":
+                    //CheckSystemTimeStamp = bool.Parse(va.CurrentValue.ToString());
+                    break;
+                case "POS Trigger Article Removal":
+
+                    //POSTriggerArticleRemoval =
+                    //(enPOSTriggerArticleRemoval)
+                    //                Enum.Parse(typeof(enPOSTriggerArticleRemoval), va.CurrentValue.ToString(), false);
+                    break;
+                case "Default Payment":
+                  Model.nvs_DefaultPayment = va.CurrentValue;
+                    break;
+                case "Enable AutoEntry":
+                    //EnableAutoEntry = bool.Parse(va.CurrentValue.ToString());
+                    break;
+                case "Capture Fiscal Information":
+                  Model.nvs_CaptureFiscalInformation = va.CurrentValue;
+                    break;
+                case "Cash Customer":
+                    Model.nvs_CashCustomer = va.CurrentValue;
+                    break;
+                case "POS Store":
+                    Model.nvs_POSStore = va.CurrentValue;
+                    break;
+            }
+
+        }
+        <form id="PropertyFormDataForNvs" method="post">
+            <table cellpadding="0" cellspacing="0" class="sptablecontent tree-loadnvs" id="nvs_setting_table">
+                <tr class="asth">
+                    <td></td>
+                    <td></td>
+
+                </tr>
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Closing Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Accuracy Tolerance
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (Model.nvs_AccuracyTolerance == 0)
+                        {
+                            <input asp-for="nvs_AccuracyTolerance" type="number" value="0" class="Inputborder accutolernvsaninput" maxlength="10" min="0" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="nvs_AccuracyTolerance" type="number" value="@Model.nvs_AccuracyTolerance" class="Inputborder accutolernvsaninput" maxlength="10" min="0" />
+
+                        }
+
+                    </td>
+                </tr>
+               
+              
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+
+                        Check Voucher Integrity
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_CheckVoucherIntegrity" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+              
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Closing Frequency
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_ClosingFrequency" asp-items="Model.closing_frequencys" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        DownLoad EJ
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_DownLoadEJ" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        FiscalReconciliation
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_FiscalReconciliation" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Summary Difference Tolerance
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (Model.nvs_SummaryDifferenceTolerance == 0)
+                        {
+                            <input asp-for="nvs_SummaryDifferenceTolerance" value="0" class="Inputborder summmerydefenvsinput" maxlength="7" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="nvs_SummaryDifferenceTolerance" value="@Model.nvs_SummaryDifferenceTolerance" class="Inputborder summmerydefenvsinput" maxlength="7" />
+
+                        }
+
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Summary Voucher
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_SummaryVoucher" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        XML Reconciliation
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_XMLReconciliation" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Zeroing Voucher
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_ZeroingVoucher" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        POS Component Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Beneficiary User
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_BeneficiaryUser" asp-items="Html.GetEnumSelectList<enBeneficiaryUser>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Need Credentials For Customer Discount
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_NeedCredentialsForCustomerDiscount" asp-items="Html.GetEnumSelectList<enNeedCredentials>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        QR Code Destination
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_QRCodeDestination" asp-items="Html.GetEnumSelectList<enQRCodeDestination>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        POS Value Rule
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_POSValueRule" asp-items="Html.GetEnumSelectList<enValueRule>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Item Selection
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_EnableItemSelection" asp-items="Html.GetEnumSelectList<enrecuIgnorezeroprice_rticle>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr> 
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Online Payment
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_EnableOnlinePayment" asp-items="Html.GetEnumSelectList<enrecuIgnorezeroprice_rticle>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Capture Fiscal Information
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_CaptureFiscalInformation" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Default Payment
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_DefaultPayment" asp-items="Model.smsdefault_PaymentS" class="form-control custom-select Inputborder">
+                        </select>
+
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Cash Coustomer
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#CashCustomerMap">
+                        @if (string.IsNullOrEmpty(Model.nvs_CashCustomer))
+                        {
+                            <input asp-for="nvs_CashCustomer" value="" id="cash_customer_value" class="Inputborder form-control" readonly="readonly" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="nvs_CashCustomer" value="@Model.nvs_CashCustomer" id="cash_customer_value" class="Inputborder form-control" readonly="readonly" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Device Status API URL
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (string.IsNullOrEmpty(Model.nvs_DeviceStatusAPIURL))
+                        {
+                            <input asp-for="nvs_DeviceStatusAPIURL" value="" class="Inputborder form-control"  />
+
+                        }
+                        else
+                        {
+                            <input asp-for="nvs_DeviceStatusAPIURL" value="@Model.nvs_DeviceStatusAPIURL"  class="Inputborder form-control" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Ignore zero price article
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_Ignorezeropricearticle" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Need Credentials For Removal
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_NeedCredentialsForRemoval" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        POS Store
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#PosStorebtnsaveMap">
+                        @if (string.IsNullOrEmpty(Model.nvs_POSStore))
+                        {
+                            <input asp-for="nvs_POSStore" value="" id="pos_store_valuenvs" class="Inputborder" readonly="readonly" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="nvs_POSStore" value="@Model.nvs_POSStore" id="pos_store_valuenvs" class="Inputborder" readonly="readonly" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Print Discount & Additional Charge Per LineItem
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_PrintDiscountAdditionalChargePerLineItem" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+
+                        POS Use Only Available Article
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_POSUseOnlyAvailableArticle" asp-items="Html.GetEnumSelectList<enrecuIgnorezeroprice_rticle>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Use Only Current Branch
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_UseOnlyCurrentBranch" asp-items="Html.GetEnumSelectList<enrecuIgnorezeroprice_rticle>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr> 
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        POS Print Batch
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_PrintBatch" asp-items="Html.GetEnumSelectList<enrecuIgnorezeroprice_rticle>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr> 
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        POS Use Automatic Life span
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_UseAutomaticLifespan" asp-items="Html.GetEnumSelectList<enrecuIgnorezeroprice_rticle>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr> 
+                
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        POS Enable Serial Number Or LifeSpan
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_EnableSerialNumberLifeSpan" asp-items="Html.GetEnumSelectList<enrecuIgnorezeroprice_rticle>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr> 
+
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        POS Print Expiry Date
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_PrintExpiryDate" asp-items="Html.GetEnumSelectList<enrecuIgnorezeroprice_rticle>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr> 
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        POS Serial Movement Suggestion
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_SerialMovementSuggestion" asp-items="Html.GetEnumSelectList<enSerialMovementSuggestion>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        POS Serial Input Type
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_SerialInputType" asp-items="Html.GetEnumSelectList<enSerialInputType>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Lock Store Selection
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_LockStoreSelection" asp-items="Html.GetEnumSelectList<enrecuIgnorezeroprice_rticle>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Select Automatic Shift Period
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="nvs_SelectAutomaticShiftPeriod" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+            </table>
+
+
+            <input asp-for="nvsdevicecode" value="@Model?.deviceId" hidden />
+
+            <input class="form-control" type="file" name="" id="log_path_file" style="display:none; visibility:hidden;" onchange="getlogpathfile(this.value);">
+
+        </form>
+
+
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $("#filternvsSetting").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#nvs_setting_table > tbody > tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+<script>
+    function TreeFunctionproprty() {
+        $(document).ready(function () {
+            $('.tree-basic').treegrid();
+
+            $('.tree-loadnvs').treegrid({
+                source: function (id, response) {
+                    if (id != 1) response(['']);
+                    else response(['']);
+                }
+            });
+
+        });
+    }
+    TreeFunctionproprty();
+</script>
+<script>
+    $('.attributdata').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).children('.inputfield').val();*/
+        var value = $(this).text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).closest("tr").addClass('boderclr');
+        $('#deviceproperty').html(value);
+
+    });
+    $('.attributcurrvalue').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).siblings().children('.inputfield').val();*/
+        var value = $(this).siblings().text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).siblings().addClass("boderclr");
+        $('#deviceproperty').html(value);
+
+    });
+    $("#propertysect").change(function () {
+        var value = $(this).select2('data')[0].text;
+        $(".boderclr").removeClass("boderclr");
+        $("input[name*='" + value + "']").addClass('boderclr');
+        $("input[name*='" + value + "']").closest("tr").addClass('boderclr');
+
+        $('#deviceproperty').html(value);
+    });
+
+</script>
+<script>
+
+     $('.summmerydefenvsinput').on('input', function () {
+        this.value = this.value.replace(/(?!^-)[^0-9.]/g, "").replace(/(\..*)\./g, '$1');
+     });
+    $('.accutolernvsaninput').on('input', function () {
+        this.value = this.value.replace(/(?!^-)[^0-9.]/g, "").replace(/(\..*)\./g, '$1');
+    });
+</script>
+
+<script>
+    function getlogpathfile(filename) {
+        $('#display_log_path_file').val(filename);
+    }
+</script>

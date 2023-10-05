@@ -1,0 +1,23 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Newtonsoft.Json;
+@model GSLmodel
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    List<FieldFormatDTO> fieldFormats = new List<FieldFormatDTO>();
+}
+    <div class="row">
+        <div class="col-md-3">
+            @await Html.PartialAsync("Articlefieldformatheader")
+
+        </div>
+
+        <div class="col-md-9">
+            <div id="gslfieldFormatContent">
+                @await Html.PartialAsync("artfieldformattableMap" , new GSLmodel() { FieldFormats = fieldFormats })
+            </div>
+
+
+        </div>
+
+    </div>

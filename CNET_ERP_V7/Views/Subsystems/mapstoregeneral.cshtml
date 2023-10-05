@@ -1,0 +1,96 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@model VoucherSearchModel
+@{
+
+}
+<style>
+    .sourcePage {
+        display: none;
+    }
+
+  
+</style>
+<div class="row">
+    <div class="col-md-4" id="OrgaunitdefForDestination">
+        @await Html.PartialAsync("_storemap_OrgaunitdefForDestination",new VoucherSearchModel() {_destination = Model._destination})
+
+    </div>
+    <div class="col-md-4 sourcePage" id="OrgunitdefForSource">
+        @await Html.PartialAsync("_storemap_OrgunitdefForSource",new VoucherSearchModel() {_source = Model._source})
+    </div>
+
+
+    <div class="col-md-8">
+        <div class="nav-tabs-custom ">
+            <ul class="nav nav-tabs" id="sub_Tab_nav_tab">
+
+                <li class="active">
+                    <a href="#storemapdestination" data-toggle="tab" data-value="Destination" data-types="" class="getselecteddestinationorsource">
+                        Destination
+                    </a>
+
+                </li>
+                <li>
+                    <a href="#storemapsource" data-toggle="tab" data-value="Source" data-types="" class="getselecteddestinationorsource">
+                        Source
+                    </a>
+
+                </li>
+            </ul>
+
+        </div>
+        <div class="tab-content getselecteddestinationorsource">
+            <div class="active tab-pane" id="storemapdestination">
+                <div class="row">
+                    <div class="col-md-12">
+                        @await Html.PartialAsync("_storemapdestinationAndsource",new VoucherSearchModel() {_vdestination = Model._vdestination})
+
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="storemapsource">
+                <div class="row">
+                    <div class="col-md-12">
+                        @await Html.PartialAsync("_storemapsource",new VoucherSearchModel() {_vsource = Model._vsource})
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    var Sourceflag = false;
+    var destinationflag = false;
+    var selectedtab = "";
+    $('#sub_Tab_nav_tab li a').click(function (e) {
+        selectedtab = e.target.attributes['href'].value;
+        $('#@nameof(Model.storeType)').val(selectedtab);
+        if (selectedtab) {
+                switch (selectedtab) {
+                    case "#storemapdestination":
+                        $('#OrgaunitdefForDestination').removeClass('sourcePage');
+                        $('#OrgunitdefForSource').addClass('sourcePage');
+                        destinationflag = true;
+                        Sourceflag = false;
+
+                        break;
+                    case "#storemapsource":
+                        $('#OrgunitdefForSource').removeClass('sourcePage');
+                        $('#OrgaunitdefForDestination').addClass('sourcePage');
+                        destinationflag = false;
+                        Sourceflag = true;
+
+                       break;
+
+                }
+        }
+       
+    });
+</script>

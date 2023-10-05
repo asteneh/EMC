@@ -1,0 +1,62 @@
+﻿@model LicenseModel
+@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var cNETLIN = Model.cNETLicenses;
+}
+ <div class="border Licensepos">
+                <table id="Licencesub_detail_List" class="table table-striped tree-load" style="background-color:#ffffff">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>License Code</th>
+                            <th>Remaining Days</th>
+                            <th>Remark</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @if (cNETLIN != null && cNETLIN.Count() > 0)
+                    {
+                        @foreach (var item in cNETLIN)
+                        {
+                            @* var remaindate = item.device.Split('/');
+                                var tointSub = Convert.ToInt32((@remaindate[0]));
+                                var remaindatesub = "";
+                                if (@remaindate[1] == "True")
+                                {
+                                if (@tointSub <= 0)
+                                {
+                                remaindatesub = "EXPIERED";
+                                }
+                                else
+                                {
+                                remaindatesub = @remaindate[0];
+                                }
+                                }
+                                else
+                                {
+                                remaindatesub = "INVALID";
+                                }*@
+                            <tr>
+                                <td>@item.Consignee</td>
+                                <td>@item.LicenseCode</td>
+                                <td></td>
+                                <td>@item.Remark</td>
+                                <td><a class="btn btn-social-icon btn-xs" onclick="EditLicenceFunction('@item.Id')" data-toggle="modal"><i class="fa fa-edit"></i></a></td>
+                                <td><a href="#" class="btn btn-social-icon btn-xs" onclick="EditLicenceFunction('@item.Id')"><i class="fa fa-trash"></i></a></td>
+                            </tr>
+                        }
+                    }
+                     
+                    </tbody>
+                </table>
+            </div>
+  
+
+ 

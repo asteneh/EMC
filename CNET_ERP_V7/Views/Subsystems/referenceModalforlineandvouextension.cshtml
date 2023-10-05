@@ -1,0 +1,142 @@
+﻿@using CNET_V7_Domain.Domain.ViewSchema;
+@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_ERP_V7.Common.Helpers;
+@model CNET_ERP_V7.Models.SubSytsemModel.VoucherSearchModel
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var voucherdefinitionList = await sharedHelpers.GetSytemConstantBytype("Transaction"); ;
+    var voucherdefinitionListType = voucherdefinitionList?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Id + "- " + t.Description }).ToArray();
+
+    List<string> dateType = new List<string>();
+    dateType.Add("String");
+    dateType.Add("Date Time");
+    dateType.Add("Combo");
+
+}
+<div class="modal fade" id="LineandVoucherextensionJobOrderVoucher">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <img src="~/images/Cnets.jpg" alt="CNET" />
+                    <span id="referenceModel"></span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                </h5>
+
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form class="form-horizontal" id="gslLineandVoucherextensionFormData" onsubmit="return IneandvoucherNewFormFunction()" asp-controller="Subsystems" asp-action="createLineandVoucherextension" method="post">
+                        <div class="col-md-12">
+                            <div>
+                                <button class="btn btn-app" type="reset" id="IssuedbtnNew"> <i class="fa fa-file-o"></i>New</button>
+                                <button type="submit" action="addRow" class="btn btn-app" id="gslLineandVoucherextensiobtnNewsave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                                <button class="btn btn-app closebutnIngslreq" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12" style="margin-top:25px">
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Description</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="descforlineandvoucher" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="descforlineandvoucher"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Is Mandatory</label>
+                                    <div class="col-md-1">
+                                        <input asp-for="ismandaforlineandvoucher" />
+                                        <span asp-validation-for="ismandaforlineandvoucher"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Datatype</label>
+                                    <div class="col-md-9">
+                                        <select asp-for="datetimeforlineandvoucher" class="form-control select2"  style="width:340px;">
+                                            <option></option>
+                                        </select>
+                                      
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Remark</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="remarkforlineandvoucher" class="form-control" autocomplete="off"/>
+                                        <span asp-validation-for="remarkforlineandvoucher"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input asp-for="getselectedvoucherheadertow" hidden />
+                        <input asp-for="deletecoderefe" hidden />
+                        <input asp-for="coderefeforupdateforlineandvoucher" hidden />
+                        <input asp-for="Vouchercoderefeforupdateforlineandvoucher" hidden />
+                        <input asp-for="headerType" hidden />
+                        <input asp-for="Vindex" hidden />
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+    $('#@nameof(Model.datetimeforlineandvoucher)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(dateType)),
+        placeholder: "",
+        allowClear: true
+
+    });
+    function IneandvoucherNewFormFunction() {
+        var Vouchersettingpreferentila = $('#@nameof(Model.documentType)').val();
+        var getheader = $('#@nameof(Model.headerType)').val();
+
+        var $form = $('#gslLineandVoucherextensionFormData');
+        var data = $form.serialize();
+        var action = $('#gslLineandVoucherextensionFormData').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            success: function (data) {
+                swal("", data, "success");
+                submitfunctionforlineandvoucher(getheader, Vouchersettingpreferentila);
+                ClearreferentialvoucherModal();
+
+          },
+        });
+        return false;
+    };
+
+</script>
+
+<script>
+    $('#@nameof(Model.Vouchercoderefeforupdateforlineandvoucher)').val($('#@nameof(Model.documentType)').val());
+</script>
+
+<script>
+    function ClearreferentialvoucherModal() {
+      $('#@nameof(Model.coderefeforupdateforlineandvoucher)').val("");
+            $('#@nameof(Model.descforlineandvoucher)').val("");
+            $('#@nameof(Model.ismandaforlineandvoucher)').prop('checked', "");
+            $('#@nameof(Model.datetimeforlineandvoucher)').val("").trigger('change');
+        $('#@nameof(Model.remarkforlineandvoucher)').val("");
+    }
+</script>

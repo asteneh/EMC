@@ -1,0 +1,102 @@
+﻿@model SecurityModel
+@using CNET_ERP_V7.Models.Security;
+@using CNET_V7_Domain.Domain.SecuritySchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Newtonsoft.Json;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@inject CNET_ERP_V7.Common.AuthNavigation.AuthenticationManager _authenticationManager
+@{
+  
+}
+
+    <div class="modal fade" id="modal_usermemebership" role="dialog">
+        <div class="modal-dialog ">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 style=" color:dodgerblue; font-weight:bold">
+                        <img src="~/images/Cnets.jpg" />
+                        User Memebership
+                    </h5>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+
+                        <form class="form-horizontal" id="usermemebershipdetailNewFormData" onsubmit="return usermemebershipdetailNewFormFunction()" asp-controller="Security" asp-action="Createusermemebershipdetail" method="post">
+                            <div class="col-md-12">
+                                <button type="button" class="btn btn-app" id="btnnewusermemebershipList"> <i style="color:darkblue" class="fa fa-sticky-note-o"></i>New</button>
+                                <button type="submit" class="btn btn-app" action="addRow" id="btnusermemebershipdetailSave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                                <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                            </div>
+
+
+                            <div class="col-md-12" style="margin-top:25px">
+                                <div class="row">
+                                    <div class="form-group  form-group-sm">
+                                        <label asp-for="mem_username" class="col-md-3 control-label">User Name</label>
+                                        <div class="col-md-7">
+                                            <select asp-for="mem_username" class="form-control select2" style="width:100%"></select>
+                                            <span asp-validation-for="mem_username"></span>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group  form-group-sm">
+                                        <label asp-for="mem_employeename" class="col-md-3 control-label">Employee Name</label>
+                                        <div class="col-md-7">
+                                            <input asp-for="mem_employeename" class="form-control" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group  form-group-sm">
+                                        <label asp-for="mem_Address" class="col-md-3 control-label">Address</label>
+                                        <div class="col-md-7">
+                                            <input asp-for="mem_Address" class="form-control" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <input type="hidden" asp-for="mem_orgunitcode" />
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+            @*/.modal-content -*@
+        </div>
+    </div>
+
+    <script>
+    function usermemebershipdetailNewFormFunction() {
+        var orgunitcode = $('#@nameof(Model.mem_orgunitcode)').val();
+        var $form = $('#usermemebershipdetailNewFormData');
+        var data = $form.serialize();
+        var action = $('#usermemebershipdetailNewFormData').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            success: function (data) {
+                if (data.canSaved == true) {
+                    swal("", data.result, "success");
+                    ClearUserMemberModal();
+                    submitfunctionUserrole(orgunitcode)
+                }
+                else 
+                {
+                    swal("", data.result, "error");
+                }
+            },
+        });
+        return false;
+    };
+
+    function ClearUserMemberModal() {
+        $('#@nameof(Model.mem_username)').val("").trigger("change");
+        $('#@nameof(Model.mem_employeename)').val("");
+        $('#@nameof(Model.mem_Address)').val("");
+    }</script>

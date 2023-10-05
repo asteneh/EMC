@@ -1,0 +1,75 @@
+﻿@model Companymodel
+@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+
+@{
+
+    //var orgunitdfinition = new List<ConsigneeUnitDTO>();
+    //var currentCompanyOrgUnits = new List<string>();
+
+    //var orgunitdefList = await sharedHelpers.GetConsigneeunit();
+
+    //var getorganizationBytype = await sharedHelpers.GetCompanyBygslTtype();
+
+    //if (getorganizationBytype != null)
+    //{
+    //    var getorganizationunit = await sharedHelpers.GetOrgUnitByReference(getorganizationBytype.code);
+    //    currentCompanyOrgUnits = getorganizationunit.Select(o => o.organizationUnitDefinition).ToList();
+    //    orgunitdfinition = orgunitdefList.Where(x => x.type == CNET_ERP_WEB.Data_Service.CNETConstantes.ORG_UNIT_TYPE_BRUNCH && currentCompanyOrgUnits.Contains(x.code)).ToList();
+
+    //}
+    //else
+    //{
+    //    orgunitdfinition = orgunitdefList.Where(x => x.type == CNET_ERP_WEB.Data_Service.CNETConstantes.ORG_UNIT_TYPE_BRUNCH).ToList();
+    //}
+    //var orgunit = orgunitdfinition?.GroupBy(t => t.type).Select(x => x.First());
+
+    var orgunitcode = "";
+  
+ 
+    //foreach (var item in orgunit)
+    //{
+    //    orgunitcode = item.code;
+    //}
+
+}
+
+<div class="row">
+    <form class="form-horizontal" id="OrganizationUnitAddressFormData" ethod="post">
+
+        <div class="col-md-12">
+            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs" id="main-tab-navmap">
+                    <li class="active"><a href="#compadressTab" data-toggle="tab">Adress</a></li>
+                    <li><a href="#compmapTab" data-toggle="tab">Map Unit</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="compadressTab">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="Addressvaluesection">
+                                    @await Html.PartialAsync("organizationAddressTable")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="compmapTab">
+                        <div class="row">
+                            <div class="col-md-12">
+                                @await Html.PartialAsync("_companuAddressMap.cshtml")
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
+    </form>
+</div>
+
+ 

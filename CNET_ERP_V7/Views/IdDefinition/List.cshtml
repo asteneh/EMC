@@ -1,0 +1,161 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Cnetv7BufferHolder;
+@model IdDefinitionModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var _sysconsList = GeneralBufferHolder.SystemConstants;
+    List<SystemConstantDTO> _sysdTOs = new List<SystemConstantDTO>();
+   
+        _sysdTOs = _sysconsList.Where(x => x.Id == 3 || x.Id == 4 || x.Id == 5).ToList();
+}
+<style>
+    .activeidSetting {
+        background-color: dodgerblue;
+        width: auto;
+    }
+
+    .mainsysType {
+        height: 76vh;
+        white-space: nowrap;
+        cursor: pointer;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    .mainsysType::-webkit-scrollbar{
+        display:none;
+    }
+
+    .idSetting {
+        cursor: pointer;
+        white-space: nowrap;
+    }
+</style>
+<section class="content-header">
+    <h5>
+        @ViewData["Title"]
+    </h5>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i></a></li>
+        <li><a href="#"><i class="fa fa-cart-plus"></i></a></li>
+    </ol>
+</section>
+
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">  
+            <div class="box">
+                <div class="box-body">
+                    <div class="col-md-8">
+                        <div style="float:left ;padding-top:1px">
+                            <a href="#" class="btn btn-app" id="btnNewIddefinition"> <i class="fa fa-plus-circle"></i>New</a>
+                          
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs" id="idDefinition_tab_nav">
+                    <li class="active"><a href="#iddefinition" data-toggle="tab">Id Definition</a></li>
+
+                </ul>
+                <div class="tab-content">
+                    <div class="active tab-pane" id="iddefinition">
+                        <div class="row">
+
+                            <div style="border:1px solid #e5e5e5;" class="mainsysType col-md-2">
+                                <table class="table table-border" id="consineeUnit_Table" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="2" style="border:1px solid #e5e5e5; background-color:lightgray">Description</th>
+
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        @foreach (var item in _sysdTOs)
+                                        {
+                                            <tr onclick="GetIdDefinitionDetailList('@item.Id')" class="activeIddefiniton">
+                                                <td style="height:17px !important">
+                                                    @item.Description
+                                                </td>
+
+                                            </tr>
+                                        }
+                                    </tbody>
+
+                                </table>
+                            </div>
+
+                            <div class="col-md-10">
+                                <div id="IddefinitonData">
+                                    @await Html.PartialAsync("_idDefinition.cshtml")
+                                </div>
+                            </div>
+                    </div>
+
+
+                    <!-- /.tab-pane -->
+                </div>
+
+            </div>
+        </div>
+    </div>
+    </div>
+    <!--Issued Card Modal-->
+
+</section>
+@await Html.PartialAsync("_IDdefinitionModal.cshtml")
+<script>
+    var iddefinition = false;
+    $(document).on("click", ".activeIddefiniton", function () {
+        $(".activeidSetting").removeClass("activeidSetting");
+        $(this).addClass('activeidSetting');
+        iddefinition = true;
+    });
+    $('#btnNewIddefinition').bind("click", function () {
+
+        if (iddefinition == true) {
+
+            $('#IddefinitionModal').modal({ backdrop: 'static', keyboard: false });
+
+        }
+        else {
+            swal("", "Select Id Definition", "error");
+        }
+    });
+
+
+</script>
+<script>
+    function GetIdDefinitionDetailList(type)
+    {
+        $('#@nameof(Model.iden_component)').val(type);
+        $(function () {
+            $.ajax({
+                url: '/IdDefinition/GetIdDefinitionList',
+                type: 'POST',
+                data: { type: type }, // send the data object with the request
+                success: function (result) {
+                    $('#IddefinitonData').html(result);
+                },
+                error: function () {
+                    console.log('Error occurred.');
+                }
+            });
+        });
+    }
+</script>
+
+

@@ -1,0 +1,202 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@model VoucherSearchModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var organizationTypes = await sharedHelpers.GetsystemConstantById(Convert.ToInt32(Model.documentType));
+
+
+    var columnsnameList = await sharedHelpers.GetViewColoumnsByViewName("vw_VoucherHeader");
+
+   
+    //var FiELLDFORMATlIST = await sharedHelpers.GetfieldformatByreference(organizationTypes?.FirstOrDefault().Id);
+    //var index = FiELLDFORMATlIST?.LastOrDefault()?.Index;
+
+    //index = ++index;
+
+}
+<div class="modal fade" id="fildformatModelMap">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <img src="~/images/Cnets.jpg" alt="CNET" />
+                    <span>Field Format For Job Order Voucher</span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form class="form-horizontal" id="fieldformatNewFormData" onsubmit="return fieldformatNewFormFunction()" asp-controller="Subsystems" asp-action="createfieldformat" method="post">
+                        <div class="col-md-12">
+                            <div>
+                                <button class="btn btn-app" type="reset" > <i class="fa fa-file-o"></i>New</button>
+                                <button type="submit" action="addRow" class="btn btn-app" id="fieldformatbtnNewsave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                                <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div id="FieldFormatFormResult">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12" style="margin-top:25px">
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Field</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="fieldfrmat" class="form-control select2" style="width:340px;">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="fieldfrmat"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Width</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="widthfrmat" class="form-control" min="0" />
+                                        <span asp-validation-for="widthfrmat"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Index</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="indexfrmat" class="form-control"  min="0" />
+                                        <span asp-validation-for="indexfrmat"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Font</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="fontfrmat" class="form-control select2" style="width:340px;">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="fontfrmat"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Color</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="colorfrmat" class="form-control" value="#ffffff" type="color" />
+                                        <span asp-validation-for="colorfrmat"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Caption</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="captionfrmat" class="form-control"  autocomplete="off" />
+                                        <span asp-validation-for="captionfrmat"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Wrap Text</label>
+                                    <div class="col-md-1">
+                                        <input asp-for="isrequiredfrmat"  />
+                                        <span asp-validation-for="isrequiredfrmat"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Remark</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="remarkfrmat" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="remarkfrmat"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <input hidden asp-for="filedformatcodefordeleation" />
+                        <input hidden asp-for="filedformatcodeforheadersave" />
+                        <input hidden asp-for="code_feldformat" />
+                        <input hidden asp-for="vouchercodeforfiledformat" />
+                        <input hidden asp-for="filedformatType" />
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+    $('#@nameof(Model.fieldfrmat)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(columnsnameList)),
+        placeholder: "",
+        allowClear: true
+
+    });
+    /* $('#fieldformatNewFormData').submit(function () {*/
+    function fieldformatNewFormFunction() {
+        var fieldformat = $("#@nameof(Model.filedformatcodeforheadersave)").val();
+        Vouchersettingfieldformat = $('#@nameof(Model.documentType)').val();
+        var $form = $('#fieldformatNewFormData');
+        var data = $form.serialize();
+        var action = $('#fieldformatNewFormData').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            success: function (data) {
+                swal("", data, "success");
+                var indexvalue = $("#@nameof(Model.indexfrmat)").val();
+                var indexvaluee = parseInt(indexvalue);
+                $("#@nameof(Model.indexfrmat)").val(indexvaluee +1);
+                    $.ajax({
+                        url: '/Subsystems/getFieldformatResult',
+                        type: 'POST',
+                        data: { formattype: fieldformat, vouchercode: Vouchersettingfieldformat }, // send the data object with the request
+                        success: function (result) {
+                            $('#VoucherFieldForatData').html(result);
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                        });
+                    ClearFieldFormatModal();
+             },
+        });
+        return false;
+    };
+
+</script>
+
+<script>
+    $('#@nameof(Model.vouchercodeforfiledformat)').val($('#@nameof(Model.documentType)').val());
+</script>
+<script>
+    function ClearFieldFormatModal() {
+        $('#@nameof(Model.code_feldformat)').val("");
+        $('#@nameof(Model.fieldfrmat)').val("").trigger('change');
+        $('#@nameof(Model.widthfrmat)').val("");
+        $('#@nameof(Model.fontfrmat)').val("").trigger('change');
+        $('#@nameof(Model.colorfrmat)').val("").trigger('change');
+        $('#@nameof(Model.captionfrmat)').val("");
+        $('#@nameof(Model.isrequiredfrmat)').prop('checked', false);
+        $('#@nameof(Model.remarkfrmat)').val("");
+    }
+</script>

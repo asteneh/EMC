@@ -1,0 +1,108 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model GSLmodel
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+<style>
+    .priceformuladisplay {
+        display: none;
+    }
+
+    .modaldialogprice {
+        width: 620px;
+    }
+</style>
+
+<div class="modal fade" id="holidayPriceformulaMaoModal">
+    <div class="modal-dialog modaldialogprice">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <span>Tax Type</span>
+                </h5>
+            </div>
+            <div class="box-body">
+                <div class="modal-body">
+                    <div class="row">
+                        <form class="form-horizontal" id="VoucherTaxFormData" method="post">
+
+
+                            <div class="col-md-12" style="margin-top:25px">
+
+                                <div class="row">
+
+                                    <div class="divTable">
+
+                                        <div class="col-md-6" style="margin-left:0px ;">
+                                            <ul class="sidebar-men secondNav tree " data-widget="tree" id="">
+
+                                                <li class="nav-item treeview menu-open attachmentType" id="OnholidayFormulaModal">
+                                                    <a data-toggle="tab" data-value="Microsoft XPS Document Writer" data-types="" style="text-decoration-line:none!important" name="catagory" class="addlabelprinteritem">
+                                                        <span class="labelcss" selectedValue="">On holiday Formula  = Normal Price </span>
+                                                    </a>
+
+                                                    <ul class="treeview-menu" style="padding-left:35px; background-color:white;" id="">
+                                                    </ul>
+                                                </li>
+
+
+                                            </ul>
+
+
+                                        </div>
+                                        <br />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-md-1 control-label"></label>
+                                        <div class="col-md-3">
+                                            <select asp-for="price_oprationholi" asp-items="Model.price_oprations" class="form-control select2 selectopration" style="width:340px;"></select>
+                                            <span asp-validation-for="price_oprationholi"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-md-1 control-label"></label>
+                                        <div class="col-md-3">
+                                            <input asp-for="valueItemhol" class="form-control" autocomplete="off" />
+                                            <span asp-validation-for="valueItemhol"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+
+
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+                <div class="col-md-12">
+                    <button type="button" action="addRow" class="btn btn-default btn-sm" id="holidaypriceformulabtnSave">Ok</button>
+                    <button class="btn btn-default btn-sm" id="onholidaydatadismisbtn" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+    var normalvalue = "Normal Price";
+    var getpricrformulaID = ""
+    var selectedOpratioin = "";
+    $("select.selectopration").change(function () {
+        selectedOpratioin = $(this).children("option:selected").val();
+    });
+    $("#holidaypriceformulabtnSave").click(function () {
+        var inputfiledvalu = $('#@nameof(Model.valueItemhol)').val();
+        $('#onholidayFormula').val(normalvalue + selectedOpratioin + inputfiledvalu)
+        $('#onholidaydatadismisbtn').trigger('click');
+    });
+
+
+</script>

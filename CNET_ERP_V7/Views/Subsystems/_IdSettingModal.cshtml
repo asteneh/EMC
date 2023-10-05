@@ -1,0 +1,140 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model VoucherSearchModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    //var idDefinition = Model.idDefenation;
+
+    //var iddefiniwithoutidsettingListType = idDefinition?.Select(t => new CNET_ERP_WEB.Models.CloudSync.Select2Result { id = t.code, text = t.description }).Distinct().ToArray();
+
+
+}
+
+<style>
+    .select2-container--default .select2-results__group {
+        border: solid 0.3px lightgray;
+        cursor: grabbing;
+        margin-left: 5px;
+    }
+
+    .select2-results__options--nested > li {
+        background-color: #ecf0f5;
+        font-size: 14px;
+        margin-left: 15px;
+        border-left: solid 0.3px lightgray;
+        border-left: solid 0.3px lightgray;
+    }
+
+    .modaldialogidsetting {
+        width: 50%;
+    }
+</style>
+
+
+<div class="modal fade" id="IdsettingModelMap">
+    <div class="modal-dialog modaldialogidsetting ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <img src="~/images/Cnets.jpg" alt="CNET" />
+                    <span>ID Setting For Job Order Voucher</span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form class="form-horizontal" id="idsettingNewFormData" onsubmit="return IdsettingNewFormFunction()" asp-controller="Subsystems" asp-action="createIdsetting" method="post">
+                        <div class="col-md-12">
+                            <div>
+                                <button class="btn btn-app" type="reset" id="IssuedbtnNew"> <i class="fa fa-file-o"></i>New</button>
+                                <button type="submit" action="addRow" class="btn btn-app" id="idSettingbtnNewsave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                                <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12" style="margin-top:25px">
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Id Definition</label>
+                                    <div class="col-md-9">
+                                        <select asp-for="id_definitionper" class="form-control select2" style="width:76%;">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="id_definitionper"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Device</label>
+                                    <div class="col-md-9">
+                                        <select asp-for="deviceper" class="form-control select2" style="width:76%;">
+                                            <option></option>  
+                                        </select>
+                                        <span asp-validation-for="deviceper"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Start From</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="start_Fromper" class="form-control"  min="0" />
+                                        <span asp-validation-for="start_Fromper"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Is Flexible</label>
+                                    <div class="col-md-1">
+                                        <input asp-for="iS_flexibleper" />
+                                        <span asp-validation-for="iS_flexibleper"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Remark</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="remarkper" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="remarkper"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <input hidden asp-for="organizationundefper" />
+                        <input hidden  asp-for="code_idsetting" />
+                        <input hidden asp-for="VoucherSettigForIdsetting" />
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+
+    $("body").on('click', '.select2-results__group', function () {
+        $(this).siblings().slideToggle("slow");
+    })
+
+</script>
+<script>
+    $('#@nameof(Model.VoucherSettigForIdsetting)').val($('#@nameof(Model.documentType)').val());
+</script>
+
+
+
+
+
+

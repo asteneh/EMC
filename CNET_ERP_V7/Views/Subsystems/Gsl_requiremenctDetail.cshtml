@@ -1,0 +1,102 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Newtonsoft.Json;
+@model VoucherSearchModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var _requgsl = Model?.gSLDetailDTO3s;
+   
+ }
+<div class="border vIdDefiniation" style="border:1px solid #e5e5e5;">
+    <table id="voucher_idSetting_table" class="table table-striped container-fluid" style="background-color:#ffffff" width="105%">
+        <thead>
+            <tr class="attendancesum">
+                <th>GSL</th>
+                <th>GSL TYPE</th>
+                <th>Object State</th>
+                <th>Remark</th>
+                <th width="2px">Edit</th>
+                <th width="2px">delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (_requgsl != null && _requgsl.Count() > 0)
+            {
+                @foreach (var item in _requgsl)
+                {
+                    <tr class="attendancesum">
+                        <td>@item?.gslType</td>
+                        @if (item?.requiredGSL == "3")
+                        {
+                            <td>Article</td>
+                        }
+                        else
+                        {
+                            <td>Consignee</td>
+                        }
+                        <td>@item?.objectState</td>
+                        <td>@item?.remark</td>
+                        <td><a class="btn btn-social-icon btn-xs" onclick="EditRequiredGslDetailFunction('@item?.id ')"><i class="fa fa-edit"></i></a></td>
+                        <td><a href="#" class="btn btn-social-icon btn-xs" onclick="DeleteRequDetailFunction('@item?.id')"><i class="fa fa-trash"></i></a></td>
+
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function DeleteRequDetailFunction(CODE) {
+        var id = CODE;
+        var code = $('#@nameof(Model.requiredGSLDetailcodefrochid)').val();
+        swal({
+            title: "are you sure to delete this ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "POST",
+                        dataType: 'json',
+                        url: '@Url.Action("deletegslrequrmentItem", "Subsystems")',
+                        data: { code: id },
+
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        success: function (data) {
+                            swal("", data, "success")
+                            GetGslRequiredDetail(code);
+                        }
+                    });
+                }
+            });
+
+
+    }
+</script>
+
+<script>
+    function EditRequiredGslDetailFunction(CODE) {
+        var code = CODE;
+        $.ajax({
+            type: "GET",
+            dataType: 'json',
+            url: '@Url.Action("GetrequiredGslBycode", "Subsystems")',
+            data: { code: code },
+            success: function (data) {
+
+                $('#@nameof(Model.requiredGSLDetailcodeforedit)').val(data.code);
+                $('#@nameof(Model.gslreqconsi)').val(data.consin).trigger('change');
+                $('#@nameof(Model.objectsatereq)').val(data.objectsta).trigger('change');
+                $('#@nameof(Model.remarkreq)').val(data.remark)
+
+                $('#GslRequirementModelMap').modal("show");
+            },
+        });
+    }  
+
+</script>

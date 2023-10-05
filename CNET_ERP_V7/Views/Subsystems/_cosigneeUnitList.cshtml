@@ -1,0 +1,130 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model VoucherSearchModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var comp = sharedHelpers.GetCompany();
+    var comptin = comp?.Result?.Tin;
+    var consineeunitlist = await sharedHelpers.GetCompanyBranchsByTin(comptin);
+   
+}
+<style>
+    .activeidSetting {
+        background-color: dodgerblue;
+        width: auto;
+    }
+
+    .mainsysType {
+        height: 76vh;
+        white-space: nowrap;
+        cursor: pointer;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    .idSetting {
+        cursor: pointer;
+        white-space: nowrap;
+    }
+</style>
+
+    <div class="box-body">
+
+        <input asp-for="idseorganaizationunit" hidden />
+        <input asp-for="idsettingdelVouchercode" hidden />
+        <input asp-for="idsettingdelcode" type="text" id="@nameof(Model.idsettingdelcode)" hidden />
+        <div style="border:1px solid #e5e5e5;" class="mainsysType">
+            <table class="table table-sm" id="consineeUnit_Table" width="100%">
+                <thead>
+                    <tr class="treegrid-3 treegrid-parent-1">
+                        <th colspan="2" style="border:1px solid #e5e5e5; background-color:lightgray">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in consineeunitlist)
+                    {
+                        <tr onclick="GetVoucheridSettimgConsineeunit('@item.Id')">
+                            <td width="20px" style="border:none !important"></td>
+                            <td class="activeconsinee">
+                                  @item.Name
+                            </td>
+
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+      
+    </div>
+
+<script>
+    $(document).on("click", ".activeconsinee", function () {
+        $(".activeidSetting").removeClass("activeidSetting");
+        $(this).addClass('activeidSetting');
+    });
+
+    function GetVoucheridSettimgConsineeunit(code) {
+        $('#@nameof(Model.id_definitionper)').empty();
+        $('#@nameof(Model.deviceper)').empty();
+        $('#@nameof(Model.organizationundefper)').val(code);
+        var vouchercode = $('#@nameof(Model.documentType)').val();
+        GetIdDefinitionList(code, vouchercode);
+
+    }
+</script>
+<script>
+    function IdsettingNewFormFunction() {
+        var Vouchersettingidsetting = $('#@nameof(Model.documentType)').val();
+        var branch = $('#@nameof(Model.organizationundefper)').val();
+        var $form = $('#idsettingNewFormData');
+        var data = $form.serialize();
+        var action = $('#idsettingNewFormData').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            success: function (data) {
+                swal("", data, "success");
+                $('#@nameof(Model.id_definitionper)').empty();
+                $('#@nameof(Model.deviceper)').empty();
+                GetIdDefinitionList(branch, Vouchersettingidsetting);
+               
+                ClearIdSettingModal();
+
+            },
+        });
+        return false;
+    };
+
+
+    function GetIdDefinitionList(code, vouchercode)
+    {
+        $(function () {
+            $.ajax({
+                url: '/Subsystems/GetidDefinition',
+                type: 'POST',
+                data: { code: code, vouchercode: vouchercode }, // send the data object with the request
+                success: function (result) {
+                    $('#iddefinationContent').html(result);
+                     ClearIdSettingModal();
+                },
+                error: function () {
+                    console.log('Error occurred.');
+                }
+            });
+        });
+    }
+    function ClearIdSettingModal() {
+        $('#@nameof(Model.code_idsetting)').val("");
+        $('#@nameof(Model.id_definitionper)').val("").trigger('change');
+        $('#@nameof(Model.deviceper)').val("").trigger('change');
+        $('#@nameof(Model.start_Fromper)').val("");
+        $('#@nameof(Model.iS_flexibleper)').prop('checked', "");
+        $('#@nameof(Model.remarkper)').val("");
+    }
+
+</script>

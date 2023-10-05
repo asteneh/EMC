@@ -1,0 +1,1498 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain;
+@using Newtonsoft.Json;
+@model Devicemodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    int sysoldvalue = 1212121212;
+    var deviceConfig = await sharedHelpers.GetConfigurationByRefandPref(Model?.deviceId.ToString(), CNETConstants.DEVICE);
+}
+<style>
+    .sptablecontent {
+        border-collapse: collapse;
+        background-color: #fff;
+        width: 98%;
+        margin-left: 15px;
+    }
+
+        .sptablecontent .asth {
+            font-weight: bold;
+        }
+
+        .sptablecontent th, table td {
+            padding: 1px;
+            border: 1px solid #ccc;
+        }
+
+        .sptablecontent th, table tr {
+            height: 3px;
+        }
+
+        .sptablecontent, .sptablecontent .sptablecontent td {
+            border: 0px solid #ccc;
+        }
+
+            .sptablecontent [type=text], select {
+                width: 100%;
+            }
+
+            .sptablecontent [type=password] {
+                width: 100%;
+            }
+
+            .sptablecontent div {
+                width: 97%;
+            }
+
+    #dampstyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    .inputfield {
+        pointer-events: none;
+        opacity: 30;
+        width: 80%;
+    }
+
+    .Inputborder:focus {
+        border: 1px solid #1670BE;
+        box-shadow: 0 0 3px #1670BE;
+        outline-offset: 0px;
+        outline: none;
+    }
+
+    .Inputborder {
+        border: 1px solid #eee;
+        font-size: 13px !important;
+        height: 17px !important;
+        line-height: 2px !important;
+        text-emphasis-position: initial !important;
+        margin-top: 0px !important;
+        padding: 0px 0px !important;
+    }
+
+
+    .mainparent {
+        color: dodgerblue;
+        background-color: #eee;
+    }
+
+    .boderclr {
+        background-color: dodgerblue;
+    }
+
+    .vouproperty {
+        height: 95vh;
+        overflow-y: scroll;
+    }
+</style>
+<div class="box box-primary">
+    <br />
+
+    <div class="box-header with-border">
+        <div class="row">
+            <div class="col-md-11">
+                <div class="row">
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-1 control-labell"> Find</label>
+                        <div class="col-md-9">
+                            <input type="text" id="filterrecurringsSetting" style="display:flex;width:100%;" class="form-control" placeholder="Search By Name">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body vouproperty">
+        @foreach (var va in deviceConfig)
+        {
+            switch (va.Attribute)
+            {
+
+                case "Beneficiary User":
+                 Model.recu_BeneficiaryUser =
+                    (enBeneficiaryUser)
+                    Enum.Parse(typeof(enBeneficiaryUser), va.CurrentValue, false);
+                    break;
+                case "Need Credentials For Customer Discount":
+                    Model.recu_NeedCredentialsForCustomerDiscount = (enNeedCredentials)
+                    Enum.Parse(typeof(enNeedCredentials), va.CurrentValue, false);
+                    break;
+
+                case "POS Value Rule":
+                    Model.recu_POSValueRule =
+                    (enValueRule)
+                    Enum.Parse(typeof(enValueRule), va.CurrentValue, false);
+                    break;
+                case "Device Status API URL":
+                    Model.recu_DeviceStatusAPIURL = va.CurrentValue;
+                    break;
+                case "POS Use Only Available Article":
+                    Model.recu_POSUseOnlyAvailableArticle = (enrecuIgnorezeroprice_rticle)Enum.Parse(typeof(enrecuIgnorezeroprice_rticle), va.CurrentValue, false);
+                    break;
+                case "Ignore zero price article":
+                    Model.recu_Ignore_zero_price_article = (enrecuIgnorezeroprice_rticle)Enum.Parse(typeof(enrecuIgnorezeroprice_rticle), va.CurrentValue, false);
+                    break;
+                case "Enable Online Payment":
+                     Model.recu_EnableOnlinePayment = va.CurrentValue;
+                    break;
+                case "QR Code Destination":
+                     Model.recu_QRCodeDestination =
+                    (enrecuQRCodeDestination)
+                    Enum.Parse(typeof(enrecuQRCodeDestination), va.CurrentValue, false);
+                    break;
+                case "Print Discount & Additional Charge Per LineItem":
+                    Model.recu_PrintDiscountAdditionalChargePerLineItem = va.CurrentValue;
+                    break;
+
+                case "Select Automatic Shift Period":
+                     Model.recu_SelectAutomaticShiftPeriod = va.CurrentValue;
+                    break;
+                case "XML Reconciliationcase":
+                     Model.recu_XMLReconciliation = va.CurrentValue;
+                    break;
+                case "Enable Document Reference":
+
+                     Model.recu_EnableDocumentReference = va.CurrentValue;
+
+                    break;
+                case "POS Trigger Article Removal":
+                    Model.recu_POSTriggerArticleRemoval =
+                    (enrecuPOSTriggerArticleRemoval)
+                    Enum.Parse(typeof(enrecuPOSTriggerArticleRemoval), va.CurrentValue, false);
+                    break;
+                case "Need Credentials For Removal":
+                     Model.recu_NeedCredentialsForRemoval =
+                    (enrecuNeedCredentialsForRemoval)
+                    Enum.Parse(typeof(enrecuNeedCredentialsForRemoval), va.CurrentValue, false);
+
+                    break;
+                case "Item Selection":
+                     Model.recu_ItemSelection =
+                    (enrecuItemSelection)
+                    Enum.Parse(typeof(enrecuItemSelection), va.CurrentValue, false);
+
+                    break;
+                case "Open Drawer After Print":
+                     Model.recu_OpenDrawerAfterPrint = va.CurrentValue;
+                    break;
+                //case "Default Transaction Type":
+                //    DefaultTransactionType =
+                //                (enDefaultTransactionType)
+                //                    Enum.Parse(typeof(enDefaultTransactionType), va.CurrentValue.ToString(), false);
+                //    break;
+                case "Enable Auto Entry":
+                    Model.recu_EnableAutoEntry = va.CurrentValue;
+                    break;
+                case "Default Payment":
+                     Model.recu_DefaultPayment =
+                    (enrecuDefaultPayment)
+                    Enum.Parse(typeof(enrecuDefaultPayment), va.CurrentValue, false);
+                    break;
+                case "Enable Scale Encryption":
+                     Model.recu_EnableScaleEncryption = va.CurrentValue;
+                    break;
+                case "Code Length":
+                     Model.recu_CodeLength = va.CurrentValue;
+                    break;
+                //case "Hold Amount Per Person":
+                //    HoldAmountPerPerson = uint.Parse(va.CurrentValue;.ToString());
+                //    break;
+                case "Enable Hold Functionality":
+                     Model.recu_EnableHoldFunctionality = va.CurrentValue;
+                    break;
+                case "Clear Hold Before Closing":
+                    Model.recu_ClearHoldBeforeClosing = va.CurrentValue;
+                    break;
+                case "Article Code Start":
+                     Model.recu_ArticleCodeStart = va.CurrentValue;
+                    break;
+                case "Article Code Length":
+                     Model.recu_ArticleCodeLength = va.CurrentValue;
+                    break;
+                case "Value Start":
+                     Model.recu_ValueStart =va.CurrentValue;
+                    break;
+                case "Value Length":
+                     Model.recu_ValueLength = va.CurrentValue;
+                    break;
+                case "Decimal Position":
+                     Model.recu_DecimalPosition = va.CurrentValue;
+                    break;
+                case "Enable Vocal Assistance":
+                     Model.recu_EnableVocalAssistance = va.CurrentValue;
+                    break;
+                case "Language":
+                    Model.recu_Language =
+                    (enrecuLanguage)
+                    Enum.Parse(typeof(enrecuLanguage), va.CurrentValue, false);
+                    break;
+
+                case "Closing Frequency":
+                     Model.recu_ClosingFrequency =
+                    (enrecuClosingFrequency)
+                    Enum.Parse(typeof(enrecuClosingFrequency), va.CurrentValue, false);
+                    break;
+                case "Accuracy Tolerance":
+                  if (!string.IsNullOrEmpty(va.CurrentValue))
+                    {
+                         Model.recu_AccuracyTolerance = float.Parse(va.CurrentValue);
+                    }
+                    break;
+                case "Summary Difference Tolerance":
+                   if (!string.IsNullOrEmpty(va.CurrentValue))
+                    {
+                        Model.recu_SummaryDifferenceTolerance = float.Parse(va.CurrentValue);
+                    }
+                
+                    break;
+                case "Check Voucher Integrity":
+                     Model.recu_CheckVoucherIntegrity = va.CurrentValue;
+                    break;
+                case "Fiscal Reconciliation":
+                    Model.recu_FiscalReconciliation = va.CurrentValue;
+                    break;
+                case "Zeroing Voucher":
+                     Model.recu_ZeroingVoucher = va.CurrentValue;
+                    break;
+                case "Summary Voucher":
+                    Model.recu_SummaryVoucher = va.CurrentValue;
+                    break;
+                case "DownLoad EJ":
+                    Model.recu_DownLoadEJ =va.CurrentValue;
+                    break;
+                case "Enable CBE":
+                     Model.recu_EnableCBE = va.CurrentValue;
+                    break;
+                case "Capture Fiscal Information":
+                    Model.recu_CaptureFiscalInformation = va.CurrentValue;
+                    break;
+                case "Cash Customer":
+                    Model.recu_CashCustomer = va.CurrentValue;
+                    break;
+                case "POS Store":
+                    Model.recu_POSStore = va.CurrentValue;
+                    break;
+                case "Enable Value Factory":
+                     Model.recu_EnableValueFactory = va.CurrentValue;
+                    break;
+                case "Enable GSL Tax":
+                     Model.recu_EnableGSLTax = va.CurrentValue;
+                    break;
+                case "Day Closing":
+                    Model.recu_DayClosing = va.CurrentValue;
+                    break;
+            }
+        }
+        <form id="PropertyFormDataForrecurringpos" method="post">
+
+            <table cellpadding="0" cellspacing="0" class="sptablecontent tree-loadrecurr" id="recurring_setting_table">
+                <tr class="asth">
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Closing Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Closing Frequency
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_ClosingFrequency" asp-items="Html.GetEnumSelectList<enrecuClosingFrequency>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        POS Value Rule
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_POSValueRule" asp-items="Html.GetEnumSelectList<enValueRule>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Need Credentials For Customer Discount
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_NeedCredentialsForCustomerDiscount" asp-items="Html.GetEnumSelectList<enNeedCredentials>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Beneficiary User
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_BeneficiaryUser" asp-items="Html.GetEnumSelectList<enBeneficiaryUser>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Accuracy Tolerance
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (Model.recu_AccuracyTolerance == 0)
+                        {
+                            <input asp-for="recu_AccuracyTolerance" type="text" class="Inputborder" value="0" onkeypress="return iscloseschedule(event)" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="recu_AccuracyTolerance" type="text" value="@Model.recu_AccuracyTolerance" class="Inputborder form-control" maxlength="9" onkeypress="return iscloseschedule(event)" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Summary Difference Tolerance
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (Model.recu_SummaryDifferenceTolerance == 0)
+                        {
+                            <input asp-for="recu_SummaryDifferenceTolerance" type="text" class="Inputborder" value="0" onkeypress="return iscloseschedule(event)" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="recu_SummaryDifferenceTolerance" type="text" value="@Model.recu_SummaryDifferenceTolerance" class="Inputborder" maxlength="9" onkeypress="return iscloseschedule(event)" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Ignore zero price article
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_Ignore_zero_price_article" asp-items="Html.GetEnumSelectList<enrecuIgnorezeroprice_rticle>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        POS Use Only Available Article
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_POSUseOnlyAvailableArticle" asp-items="Html.GetEnumSelectList<enrecuIgnorezeroprice_rticle>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Check Voucher Integrity
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_CheckVoucherIntegrity" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Fiscal Reconciliation
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_FiscalReconciliation" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        DownLoad EJ
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_DownLoadEJ" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Summary Voucher
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_SummaryVoucher" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        XML Reconciliation
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_XMLReconciliation" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Zeroing Voucher
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_ZeroingVoucher" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Hold Setting
+                    </td>
+                </tr>
+
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Hold Functionality
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_EnableHoldFunctionality" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Clear Hold Before Closing
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_ClearHoldBeforeClosing" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        POS Component Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Online Payment
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="ref_EnableOnlinePayment" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Day Closing
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_DayClosing" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable CBE
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_EnableCBE" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        QR Code Destination
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_QRCodeDestination" asp-items="Html.GetEnumSelectList<enrecuQRCodeDestination>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Select Automatic Shift Period
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_SelectAutomaticShiftPeriod" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Cash Customer
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#CashCustomerMap">
+                        @if (string.IsNullOrEmpty(Model.recu_CashCustomer))
+                        {
+                            <input asp-for="recu_CashCustomer" type="text" value="" id="recurring_cash_customer_value" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="recu_CashCustomer" type="text" value="@Model.recu_CashCustomer" id="recurring_cash_customer_value" class="Inputborder" />
+
+                        }
+                    </td>
+                </tr> 
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Device Status API URL
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (string.IsNullOrEmpty(Model.recu_DeviceStatusAPIURL))
+                        {
+                            <input asp-for="recu_DeviceStatusAPIURL" type="text" value=""  class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="recu_DeviceStatusAPIURL" type="text" value="@Model.recu_DeviceStatusAPIURL" class="Inputborder" />
+
+                        }
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        POS Store
+                    </td>
+                    <td class="attributdata" data-toggle="modal" data-id="1" data-target="#PosStorebtnsaveMap">
+                        @if (string.IsNullOrEmpty(Model.recu_POSStore))
+                        {
+                            <input asp-for="recu_POSStore" type="text" value="" id="recurring_pos_store_value" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="recu_POSStore" type="text" value="@Model.recu_POSStore" id="recurring_pos_store_value" class="Inputborder" />
+
+                        }
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Capture Fiscal Information
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_CaptureFiscalInformation" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Document Reference
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_EnableDocumentReference" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        POS Trigger Article Removal
+                    </td>
+                    <td class="attributcurrvalue">
+
+                        <select asp-for="recu_POSTriggerArticleRemoval" asp-items="Html.GetEnumSelectList<enrecuPOSTriggerArticleRemoval>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Print Discount & Additional Charge Per LineItem
+                    </td>
+                    <td class="attributcurrvalue">
+
+                        <select asp-for="recu_PrintDiscountAdditionalChargePerLineItem" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Need Credentials For Removal
+                    </td>
+                    <td class="attributcurrvalue">
+
+                        <select asp-for="recu_NeedCredentialsForRemoval" asp-items="Html.GetEnumSelectList<enrecuNeedCredentialsForRemoval>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Item Selection
+                    </td>
+                    <td class="attributcurrvalue">
+
+                        <select asp-for="recu_ItemSelection" asp-items="Html.GetEnumSelectList<enrecuItemSelection>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Value Factory
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_EnableValueFactory" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable GSL Tax
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_EnableGSLTax" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Pos Process Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Default Payment
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_DefaultPayment" asp-items="Html.GetEnumSelectList<enrecuDefaultPayment>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Auto Entry
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_EnableAutoEntry" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Open Drawer After Print
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_OpenDrawerAfterPrint" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Scale Encryption
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Scale Encryption
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_EnableScaleEncryption" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Code Length
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (string.IsNullOrEmpty(Model.recu_CodeLength))
+                        {
+                            <input asp-for="recu_CodeLength" class="Inputborder" value="18" onkeypress="return iscloseschedule(event)" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="recu_CodeLength" value="@Model.recu_CodeLength" class="Inputborder" maxlength="10" onkeypress="return iscloseschedule(event)" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Article Code Start
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (string.IsNullOrEmpty(Model.recu_ArticleCodeStart))
+                        {
+                            <input asp-for="recu_ArticleCodeStart" class="Inputborder" value="0" onkeypress="return iscloseschedule(event)" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="recu_ArticleCodeStart" value="@Model.recu_ArticleCodeStart" class="Inputborder" maxlength="10" onkeypress="return iscloseschedule(event)" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Article Code Length
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (string.IsNullOrEmpty(Model.recu_ArticleCodeLength))
+                        {
+                            <input asp-for="recu_ArticleCodeLength" class="Inputborder" value="5" onkeypress="return iscloseschedule(event)" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="recu_ArticleCodeLength" value="@Model.recu_ArticleCodeLength" class="Inputborder" maxlength="10" onkeypress="return iscloseschedule(event)" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Value Start
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (string.IsNullOrEmpty(Model.recu_ValueStart))
+                        {
+                            <input asp-for="recu_ValueStart" class="Inputborder" value="13" onkeypress="return iscloseschedule(event)" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="recu_ValueStart" value="@Model.recu_ValueStart" class="Inputborder" maxlength="10" onkeypress="return iscloseschedule(event)" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Value Length
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (string.IsNullOrEmpty(Model.recu_ValueLength))
+                        {
+                            <input asp-for="recu_ValueLength" class="Inputborder" value="4" onkeypress="return iscloseschedule(event)" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="recu_ValueLength" value="@Model.recu_ValueLength" class="Inputborder" maxlength="10" onkeypress="return iscloseschedule(event)" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Decimal Position
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (string.IsNullOrEmpty(Model.recu_DecimalPosition))
+                        {
+                            <input asp-for="recu_DecimalPosition" class="Inputborder" value="3" onkeypress="return iscloseschedule(event)" />
+                        }
+                        else
+                        {
+                            <input asp-for="recu_DecimalPosition" value="@Model.recu_DecimalPosition" class="Inputborder" maxlength="10" onkeypress="return iscloseschedule(event)" />
+                        }
+                    </td>
+                </tr>
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Vocal Assistance Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Vocal Assistance
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_EnableVocalAssistance" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Language
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="recu_Language" asp-items="Html.GetEnumSelectList<enrecuLanguage>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            <input asp-for="recu_devicecode" value="@Model.deviceId" hidden />
+
+        </form>
+
+
+    </div>
+</div>
+<script>
+    $(function () {
+        $("#filterrecurringsSetting").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#recurring_setting_table > tbody > tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+<script>
+    function TreeFunctionproprty() {
+        $(document).ready(function () {
+            $('.tree-basic').treegrid();
+
+            $('.tree-loadrecurr').treegrid({
+                source: function (id, response) {
+                    if (id != 1) response(['']);
+                    else response(['']);
+                }
+            });
+
+        });
+    }
+    TreeFunctionproprty();
+</script>
+<script>
+    $('.attributdata').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).children('.inputfield').val();*/
+        var value = $(this).text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).closest("tr").addClass('boderclr');
+        $('#deviceproperty').html(value);
+
+    });
+    $('.attributcurrvalue').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).siblings().children('.inputfield').val();*/
+        var value = $(this).siblings().text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).siblings().addClass("boderclr");
+        $('#deviceproperty').html(value);
+
+    });
+    $("#propertysect").change(function () {
+        var value = $(this).select2('data')[0].text;
+        $(".boderclr").removeClass("boderclr");
+        $("input[name*='" + value + "']").addClass('boderclr');
+        $("input[name*='" + value + "']").closest("tr").addClass('boderclr');
+
+        $('#deviceproperty').html(value);
+    });
+
+</script>
+<script>
+
+$(function () {
+
+    $('#@nameof(Model.rmsthemeChangedDate)').datepicker();
+
+    });
+</script>
+
+
+<script>
+    var devicecode = "";
+
+    $(document).on("click", ".devicepropertysetting", function () {
+
+        devicecode = $(this).data('types');
+
+        $('#@nameof(Model.recu_devicecode)').val(devicecode);
+
+        $('#@nameof(Model.devicesettingproperty)').select2({
+            placeholder: 'device',
+            allowclear: true,
+        ajax: {
+            url: '@Url.Action("getdeviceforPROPERTY", "Devices")',
+            dataType: 'json',
+            data: { DEVICECODE: devicecode },
+                data: function (params)
+                {
+                return {
+                    q: params.term,
+                    page: params.page,
+                    other: devicecode,
+                };
+                },
+                processResults: function (data, params)
+                {
+                return data;
+                },
+                cache: true
+        },
+        });
+    });
+</script>
+
+
+<script>
+
+
+    function iscloseschedule(evt) {
+
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        else {
+
+            return true;
+        }
+
+    }
+    var getdevicecode = "";
+    var getpassword = "";
+
+    $(document).on("click", ".devicepropertysetting", function () {
+        getdevicecode = $(this).data('types');
+
+        submitfunctiongetdevicedetailforpropertyvalue(getdevicecode);
+
+        });
+    window.submitfunctiongetdevicedetailforpropertyvalue = function (getdevicecode) {
+
+            $.ajax({
+                type: "POST",
+                dataType: 'json',
+                url: '@Url.Action("getPropertycurrentvalue", "Devices")',
+                data: { DEVCODE: getdevicecode},
+
+                success: function (data) {
+
+
+                    $.each(data, function (index, item) {
+
+                        switch (item.attribute) {
+                            case "Accuracy Tolerance":
+                                 $('#@nameof(Model.rmsaccuracy_Tolerance)').val(item.currentValue);
+                                break;
+                            case "Currency Conversion":
+                                 $('#@nameof(Model.rmscurrency_Conversion)').val(item.currentValue);
+                                break;
+                            case "Print Discount & Additional Charge Per LineItem":
+                                 $('#@nameof(Model.rmsprintDiscountAdditionalChargePerLineItem)').val(item.currentValue);
+                                break;
+                            case "Select Automatic Shift Period":
+                                 $('#@nameof(Model.rmsselectAutomaticShiftPeriod)').val(item.currentValue);
+                                break;
+                            case "XML Reconciliation":
+                                 $('#@nameof(Model.rmsxML_Reconciliation)').val(item.currentValue);
+                                break;
+                            case "Bold Order No":
+                                 $('#@nameof(Model.rmsbold_Order_No)').val(item.currentValue);;
+                                break;
+                            case "Enable Dynamic Visual Display":
+                                $('#@nameof(Model.rmsenableDynamicVisualDisplay)').val(item.currentValue);
+                                break;
+                            case "POS Theme":
+                                 $('#@nameof(Model.rmspOS_theme)').val(item.currentValue);
+                                break;
+                            case "Navigator Type":
+                                 $('#@nameof(Model.rmsnavigatorType)').val(item.currentValue);
+                                break;
+                            case "Theme Changed Date":
+                                 $('#@nameof(Model.rmsthemeChangedDate)').val(item.currentValue);
+                                break;
+                            case "Aspect Ratio":
+                                $('#@nameof(Model.rmsaspectRatio)').val("A_" +item.currentValue);
+                                break;
+                            case "Change Frequency":
+                                 $('#@nameof(Model.rmschangeFrequency)').val(item.currentValue);
+                                break;
+                            case "Allow Animation":
+                                $('#@nameof(Model.rmsallowAnimation)').val(item.currentValue);
+                                break;
+                            case "Enable Touch Screen":
+                                $('#@nameof(Model.rmsenableTouchScreen)').val(item.currentValue);
+                                break;
+                            case "Check Amount Limit For Hold":
+                                 $('#@nameof(Model.rmscheckAmountLimitForHold)').val(item.currentValue);
+                                break;
+                            case "Hold Amount Per Person":
+                                 $('#@nameof(Model.rmsholdAmountPerPerson)').val(item.currentValue);
+                                break;
+                            case "Hold Document Life":
+                                $('#@nameof(Model.rmshold_Document_Life)').val(item.currentValue);
+                                break;
+                            case "Enable Bill Management":
+                                $('#@nameof(Model.rmsenableBillManagement)').val(item.currentValue);
+                                break;
+                            case "Company Tin Mandatory":
+                                 $('#@nameof(Model.rmscompanyTinMandatory)').val(item.currentValue);
+                                break;
+                            case "Enable Delivery Management":
+                                $('#@nameof(Model.rmsenableDeliveryManagement)').val(item.currentValue);
+                                break;
+                            case "Enable Document Reference":
+                                 $('#@nameof(Model.rmsenableDocumentReference)').val(item.currentValue);
+                                break;
+                            case "Enable Room Charge":
+                                $('#@nameof(Model.rmsenableRoomCharge)').val(item.currentValue);
+                                break;
+                            case "Enable Reservation":
+                                $('#@nameof(Model.rmsenable_Reservation)').val(item.currentValue);
+                                break;
+                            case "Enable Package Design":
+                                $('#@nameof(Model.rmsenable_Package_esign)').val(item.currentValue);
+                                break;
+
+                            case "Station Type":
+                                 $('#@nameof(Model.rmsstation_Type)').val(item.currentValue);
+                                break;
+                            case "Table Selection Type":
+                                $('#@nameof(Model.rmstable_Selection_Type)').val(item.currentValue);
+                                break;
+                            case "Waiter Selection":
+                                $('#@nameof(Model.rmswaiter_selection)').val(item.currentValue);
+                                break;
+                            case "POS Trigger Article Removal":
+                                $('#@nameof(Model.rmspOS_Trigger_Article_Removal)').val(item.currentValue);
+                                break;
+                            case "Need Credentials For Removal":
+                                $('#@nameof(Model.rmsneed_Credentials_For_Removal)').val(item.currentValue);
+
+                                break;
+                            case "Enable Order Function":
+                                $('#@nameof(Model.rmsenableOrderFunction)').val(item.currentValue);
+                                break;
+                            case "Order Station Mandatory":
+                                 $('#@nameof(Model.rmsorderStationMandatory)').val(item.currentValue);
+                                break;
+                            case "DownLoad EJ":
+                                $('#@nameof(Model.rmsdownLoad_EJ)').val(item.currentValue);
+                                break;
+
+
+                            case "Order Location":
+                                 $('#@nameof(Model.rmsorder_Location)').val(item.currentValue);
+                                break;
+                            case "Order Verification Method":
+                                $('#@nameof(Model.rmsorder_Verification_Method)').val(item.currentValue);
+                                break;
+                            case "Enable Auto Entry":
+                                $('#@nameof(Model.rmsenableAutoEntry)').val(item.currentValue);
+                                break;
+                            case "Open Drawer After Print":
+                                $('#@nameof(Model.rmsopenDrawerAfterPrint)').val(item.currentValue);
+                                break;
+                            case "Check System Timestamp":
+                                $('#@nameof(Model.rmsCheckSystemTimestamP)').val(item.currentValue);
+                                break;
+                            case "Default Transaction Type":
+                                 $('#@nameof(Model.rmsdefault_Transaction_Type)').val(item.currentValue);
+                                break;
+                            case "Default Payment":
+                                $('#@nameof(Model.rmsdefault_Payment)').val(item.currentValue);
+                                break;
+                            case "Table Mandatory":
+                                $('#@nameof(Model.rmstableMandatory)').val(item.currentValue);
+                                break;
+                            case "Waiter Mandatory":
+                                $('#@nameof(Model.rmsWaiterMandatory)').val(item.currentValue);
+                                break;
+                            case "Input Cover Mandatory":
+                                 $('#@nameof(Model.rmsinputCoverMandatory)').val(item.currentValue);
+                                break;
+                            case "Clear Hold Before Closing":
+                                $('#@nameof(Model.rmsclearHoldBeforeClosing)').val(item.currentValue);
+                                break;
+                            case "Allow multiple Instance Of Table":
+                                $('#@nameof(Model.rmsallowmultipleInstanceOfTable)').val(item.currentValue);
+                                break;
+                            case "Enable Vocal Assistance":
+                                $('#@nameof(Model.rmsenableVocalAssistance)').val(item.currentValue);
+                                break;
+                            case "Language":
+                                $('#@nameof(Model.rmsLanguage)').val(item.currentValue);
+                                break;
+                            case "Closing Frequency":
+                                 $('#@nameof(Model.rmsclosing_frequency)').val(item.currentValue);
+                                break;
+
+                            case "Summary Difference Tolerance":
+                                $('#@nameof(Model.rmssummary_Difference_Tolerance)').val(item.currentValue);
+                                break;
+                            case "Check Voucher Integrity":
+                                 $('#@nameof(Model.rmscheck_Voucher_Integrity)').val(item.currentValue);
+                                break;
+                            case "Fiscal Reconciliation":
+                                 $('#@nameof(Model.rmsfiscalReconciliation)').val(item.currentValue);
+                                break;
+                            case "Zeroing Voucher":
+                                $('#@nameof(Model.rmszeroing_Voucher)').val(item.currentValue);
+                                break;
+                            case "Calculate Consumption Cost":
+                                 $('#@nameof(Model.rmscalculateConsumptionCost)').val(item.currentValue);
+
+                                break;
+                            case "Summary Voucher":
+                                 $('#@nameof(Model.rmssummary_Voucher)').val(item.currentValue);
+                                break;
+                            case "F and B":
+
+                                 $('#@nameof(Model.rmsf_and_B)').val(item.currentValue);
+                                break;
+                            case "Daily Control Count":
+                                $('#@nameof(Model.rmsdailyControlCount)').val(item.currentValue);
+                                break;
+                            case "Clear Held Bill":
+                                $('#@nameof(Model.rmsclear_Held_Bill)').val(item.currentValue);
+                                break;
+                            case "Disable Void On Retrieve":
+                               $('#@nameof(Model.rmsdisableVoidOnRetrieve)').val(item.currentValue);
+                                break;
+                            case "Enable CBE":
+                               $('#@nameof(Model.rmsenable_cbe)').val(item.currentValue);
+                                break;
+                            case "Capture Fiscal Information":
+                                $('#@nameof(Model.rmscaptureFiscalInformation)').val(item.currentValue);
+                                break;
+                            case "Cash Customer":
+                                if (!string.IsNullOrWhiteSpace(va.currentValue.ToString())) {
+                                    var values = LoginPage.Authentication.AllPersonViewBufferList.Where(x => x.code == va.currentValue.ToString()).FirstOrDefault();
+                                    if (values != null) {
+                                        CashCustomer = values.code + "/" + values.firstName + ' ' + values.middleName + ' ' + values.lastName;
+                                    }
+                                    else
+                                        CashCustomer = "Not Applicable";
+                                }
+                                break;
+                            case "POS Store":
+                                if (!string.IsNullOrWhiteSpace(va.currentValue.ToString())) {
+                                    var values = LoginPage.Authentication.OrganizationUnitDefinitionBufferList.Where(x => x.code == va.currentValue.ToString()).FirstOrDefault();
+                                    if (values != null) {
+                                        POSStore = values.code + "/" + values.description;
+                                    }
+                                    else
+                                        POSStore = "";
+                                }
+                                else
+                                    POSStore = "";
+                                break;
+                            case "Enable Value Factory":
+                                $('#@nameof(Model.rmsenableValueFactory)').val(item.currentValue);
+                                break;
+                            case "Enable GSL Tax":
+                                 $('#@nameof(Model.rmsenable_GSL_Tax)').val(item.currentValue);
+                                break;
+                            case "Pos Theme Fixed":
+                                $('#@nameof(Model.rmspos_Theme_Fixed)').val(item.currentValue);
+                                break;
+                                     }
+
+
+                                 });
+
+
+                },
+                error: function (x) {
+                    alert(x.responseText);
+
+                }
+            });
+        }
+
+</script>
+
+
+<script>
+    $(document).on("click", '#btnDevicesettingImport', function () {
+        var getdevicecode = $('#devicesettingpropertyInindex').val();
+        submitfunctiongetdevicedetailforpropertyvalue(getdevicecode);
+    });
+      window.submitfunctiongetdevicedetailforpropertyvalue = function (getdevicecode) {
+
+            $.ajax({
+                type: "POST",
+                dataType: 'json',
+                url: '@Url.Action("getPropertycurrentvalue", "Devices")',
+                data: { DEVCODE: getdevicecode},
+
+                success: function (data) {
+
+
+                    $.each(data, function (index, item) {
+
+                        switch (item.attribute) {
+                            case "Accuracy Tolerance":
+                                console.log(item.currentValue);
+                                 $('#@nameof(Model.rmsaccuracy_Tolerance)').val(item.currentValue);
+                                break;
+                            case "POS Value Rule":
+                                 $('#@nameof(Model.rmsaccuracy_Tolerance)').val(item.currentValue);
+                                break;
+                            case "Currency Conversion":
+                                 $('#@nameof(Model.rmscurrency_Conversion)').val(item.currentValue);
+                                break;
+                            case "Print Discount & Additional Charge Per LineItem":
+                                 $('#@nameof(Model.rmsprintDiscountAdditionalChargePerLineItem)').val(item.currentValue);
+                                break;
+                            case "Select Automatic Shift Period":
+                                 $('#@nameof(Model.rmsselectAutomaticShiftPeriod)').val(item.currentValue);
+                                break;
+                            case "XML Reconciliation":
+                                 $('#@nameof(Model.rmsxML_Reconciliation)').val(item.currentValue);
+                                break;
+                            case "Bold Order No":
+                                 $('#@nameof(Model.rmsbold_Order_No)').val(item.currentValue);;
+                                break;
+                            case "Enable Dynamic Visual Display":
+                                $('#@nameof(Model.rmsenableDynamicVisualDisplay)').val(item.currentValue);
+                                break;
+                            case "POS Theme":
+                                 $('#@nameof(Model.rmspOS_theme)').val(item.currentValue);
+                                break;
+                            case "Navigator Type":
+                                 $('#@nameof(Model.rmsnavigatorType)').val(item.currentValue);
+                                break;
+                            case "Theme Changed Date":
+                                 $('#@nameof(Model.rmsthemeChangedDate)').val(item.currentValue);
+                                break;
+                            case "Aspect Ratio":
+                                $('#@nameof(Model.rmsaspectRatio)').val("A_" +item.currentValue);
+                                break;
+                            case "Change Frequency":
+                                 $('#@nameof(Model.rmschangeFrequency)').val(item.currentValue);
+                                break;
+                            case "Allow Animation":
+                                $('#@nameof(Model.rmsallowAnimation)').val(item.currentValue);
+                                break;
+                            case "Enable Touch Screen":
+                                $('#@nameof(Model.rmsenableTouchScreen)').val(item.currentValue);
+                                break;
+                            case "Check Amount Limit For Hold":
+                                 $('#@nameof(Model.rmscheckAmountLimitForHold)').val(item.currentValue);
+                                break;
+                            case "Hold Amount Per Person":
+                                 $('#@nameof(Model.rmsholdAmountPerPerson)').val(item.currentValue);
+                                break;
+                            case "Hold Document Life":
+                                $('#@nameof(Model.rmshold_Document_Life)').val(item.currentValue);
+                                break;
+                            case "Enable Bill Management":
+                                $('#@nameof(Model.rmsenableBillManagement)').val(item.currentValue);
+                                break;
+                            case "Company Tin Mandatory":
+                                 $('#@nameof(Model.rmscompanyTinMandatory)').val(item.currentValue);
+                                break;
+                            case "Enable Delivery Management":
+                                $('#@nameof(Model.rmsenableDeliveryManagement)').val(item.currentValue);
+                                break;
+                            case "Enable Document Reference":
+                                 $('#@nameof(Model.rmsenableDocumentReference)').val(item.currentValue);
+                                break;
+                            case "Enable Room Charge":
+                                $('#@nameof(Model.rmsenableRoomCharge)').val(item.currentValue);
+                                break;
+                            case "Enable Reservation":
+                                $('#@nameof(Model.rmsenable_Reservation)').val(item.currentValue);
+                                break;
+                            case "Enable Package Design":
+                                $('#@nameof(Model.rmsenable_Package_esign)').val(item.currentValue);
+                                break;
+
+                            case "Station Type":
+                                 $('#@nameof(Model.rmsstation_Type)').val(item.currentValue);
+                                break;
+                            case "Table Selection Type":
+                                $('#@nameof(Model.rmstable_Selection_Type)').val(item.currentValue);
+                                break;
+                            case "Waiter Selection":
+                                $('#@nameof(Model.rmswaiter_selection)').val(item.currentValue);
+                                break;
+                            case "POS Trigger Article Removal":
+                                $('#@nameof(Model.rmspOS_Trigger_Article_Removal)').val(item.currentValue);
+                                break;
+                            case "Need Credentials For Removal":
+                                $('#@nameof(Model.rmsneed_Credentials_For_Removal)').val(item.currentValue);
+
+                                break;
+                            case "Enable Order Function":
+                                $('#@nameof(Model.rmsenableOrderFunction)').val(item.currentValue);
+                                break;
+                            case "Order Station Mandatory":
+                                 $('#@nameof(Model.rmsorderStationMandatory)').val(item.currentValue);
+                                break;
+                            case "DownLoad EJ":
+                                $('#@nameof(Model.rmsdownLoad_EJ)').val(item.currentValue);
+                                break;
+
+
+                            case "Order Location":
+                                 $('#@nameof(Model.rmsorder_Location)').val(item.currentValue);
+                                break;
+                            case "Order Verification Method":
+                                $('#@nameof(Model.rmsorder_Verification_Method)').val(item.currentValue);
+                                break;
+                            case "Enable Auto Entry":
+                                $('#@nameof(Model.rmsenableAutoEntry)').val(item.currentValue);
+                                break;
+                            case "Open Drawer After Print":
+                                $('#@nameof(Model.rmsopenDrawerAfterPrint)').val(item.currentValue);
+                                break;
+                            case "Check System Timestamp":
+                                $('#@nameof(Model.rmsCheckSystemTimestamP)').val(item.currentValue);
+                                break;
+                            case "Default Transaction Type":
+                                 $('#@nameof(Model.rmsdefault_Transaction_Type)').val(item.currentValue);
+                                break;
+                            case "Default Payment":
+                                $('#@nameof(Model.rmsdefault_Payment)').val(item.currentValue);
+                                break;
+                            case "Table Mandatory":
+                                $('#@nameof(Model.rmstableMandatory)').val(item.currentValue);
+                                break;
+                            case "Waiter Mandatory":
+                                $('#@nameof(Model.rmsWaiterMandatory)').val(item.currentValue);
+                                break;
+                            case "Input Cover Mandatory":
+                                 $('#@nameof(Model.rmsinputCoverMandatory)').val(item.currentValue);
+                                break;
+                            case "Clear Hold Before Closing":
+                                $('#@nameof(Model.rmsclearHoldBeforeClosing)').val(item.currentValue);
+                                break;
+                            case "Allow multiple Instance Of Table":
+                                $('#@nameof(Model.rmsallowmultipleInstanceOfTable)').val(item.currentValue);
+                                break;
+                            case "Enable Vocal Assistance":
+                                $('#@nameof(Model.rmsenableVocalAssistance)').val(item.currentValue);
+                                break;
+                            case "Language":
+                                $('#@nameof(Model.rmsLanguage)').val(item.currentValue);
+                                break;
+                            case "Closing Frequency":
+                                 $('#@nameof(Model.rmsclosing_frequency)').val(item.currentValue);
+                                break;
+
+                            case "Summary Difference Tolerance":
+                                $('#@nameof(Model.rmssummary_Difference_Tolerance)').val(item.currentValue);
+                                break;
+                            case "Check Voucher Integrity":
+                                 $('#@nameof(Model.rmscheck_Voucher_Integrity)').val(item.currentValue);
+                                break;
+                            case "Fiscal Reconciliation":
+                                 $('#@nameof(Model.rmsfiscalReconciliation)').val(item.currentValue);
+                                break;
+                            case "Zeroing Voucher":
+                                $('#@nameof(Model.rmszeroing_Voucher)').val(item.currentValue);
+                                break;
+                            case "Calculate Consumption Cost":
+                                 $('#@nameof(Model.rmscalculateConsumptionCost)').val(item.currentValue);
+
+                                break;
+                            case "Summary Voucher":
+                                 $('#@nameof(Model.rmssummary_Voucher)').val(item.currentValue);
+                                break;
+                            case "F and B":
+
+                                 $('#@nameof(Model.rmsf_and_B)').val(item.currentValue);
+                                break;
+                            case "Daily Control Count":
+                                $('#@nameof(Model.rmsdailyControlCount)').val(item.currentValue);
+                                break;
+                            case "Clear Held Bill":
+                                $('#@nameof(Model.rmsclear_Held_Bill)').val(item.currentValue);
+                                break;
+                            case "Disable Void On Retrieve":
+                               $('#@nameof(Model.rmsdisableVoidOnRetrieve)').val(item.currentValue);
+                                break;
+                            case "Enable CBE":
+                               $('#@nameof(Model.rmsenable_cbe)').val(item.currentValue);
+                                break;
+                            case "Capture Fiscal Information":
+                                $('#@nameof(Model.rmscaptureFiscalInformation)').val(item.currentValue);
+                                break;
+                            case "Cash Customer":
+                                 $('#@nameof(Model.rmscash_Customer)').val(item.currentValue);
+                                break;
+                            case "POS Store":
+                                 $('#@nameof(Model.rmspOS_Store)').val(item.currentValue);
+                                break;
+                            case "Enable Value Factory":
+                                $('#@nameof(Model.rmsenableValueFactory)').val(item.currentValue);
+                                break;
+                            case "Enable GSL Tax":
+                                 $('#@nameof(Model.rmsenable_GSL_Tax)').val(item.currentValue);
+                                break;
+                            case "Pos Theme Fixed":
+                                $('#@nameof(Model.rmspos_Theme_Fixed)').val(item.currentValue);
+                                break;
+                            case "Ignore zero price article":
+                                $('#@nameof(Model.rms_Ignore_zero_price_article)').val(item.currentValue);
+                                break;
+
+                                     }
+                                 });
+
+
+                },
+                error: function (x) {
+                    alert(x.responseText);
+
+                }
+            });
+        }
+
+</script>
+<script>
+    var selectedCountry = "";
+
+    var row = ""
+
+    $("select.select2").change(function () {
+        selectedCountry = $(this).children("option:selected").text();
+        console.log(selectedCountry);
+
+        $(".bg-blue").removeClass("bg-blue");
+        //var row = $(".addvaluepropertyLisearch:contains(" + selectedCountry + "));
+        $("input[name*='" + selectedCountry + "']").addClass("bg-blue");
+        /*location.href = '#resp-table'*/
+    });
+
+
+</script>

@@ -1,0 +1,54 @@
+﻿@using CNET_ERP_V7.Models.Security;
+@using Newtonsoft.Json;
+@model systemSettingModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var accountcode = await sharedHelpers.GetAccount();
+    var consinUnitCode = Model?.consineeCode;
+}
+<style>
+    .basicinfo {
+        height: 25vh;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+    </div>
+</div>
+
+<div class="box box-primary">
+
+    <form class="form-horizontal" id="systemparameterNewFormData" asp-controller="SystemParameters" asp-action="Createcompantworkinghour" method="post">
+
+        <input asp-for="workinghourorgunitDefn" hidden />
+     @*   <div class="row">
+            <div class="col-md-9">
+                <div class="row">
+                    <div class="col-md-12">
+                        @await Html.PartialAsync("_workingHours.cshtml", new systemSettingModel() {consineeCode = Model?.consineeCode})
+                    </div>
+
+                </div>
+
+            </div>
+        </div>*@
+
+        <div class="row">
+            <div class="col-md-12">
+                <div id="workhourContent">
+                    @await Html.PartialAsync("_workingHoursdetail.cshtml")
+                </div>
+              
+            </div>
+        </div>
+    </form>
+
+</div>
+
+
+
+
+
+

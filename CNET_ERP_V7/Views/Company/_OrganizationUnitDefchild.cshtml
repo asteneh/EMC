@@ -1,0 +1,56 @@
+﻿@model Companymodel
+@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+
+@{
+    var spacficOrg = Model?.organization_unit_type;
+
+    //var relationanndVouch = Model.vw_Vouchers;
+    var lookups = Model?.lookups;
+
+}
+@if (!string.IsNullOrEmpty(Model?.orgunitparent.ToString()))
+{
+            var orgunit = spacficOrg?.Where(x => x.Id == Model?.orgunitcode).FirstOrDefault();
+            var parentDesc = spacficOrg.Find(c => c.Id == Model?.orgunitparent)?.Id;
+
+          @*  var resperson = relationanndVouch.Where(x => x.idNumber == orgunit?.Id)?.FirstOrDefault()?.name;
+
+            var respersoncode = relationanndVouch.Where(x => x.idNumber == orgunit?.Id)?.FirstOrDefault()?.i;*@
+
+            var specialzz = await sharedHelpers.GetsystemConstantById(orgunit?.Specialization);
+            var specialz = specialzz.FirstOrDefault()?.Description;
+            var specialzcode = specialzz?.FirstOrDefault()?.Id;
+
+            <tr class="treegrid-@Model?.orgunitcode treegrid-parent-@Model?.orgunitparent" style="opacity:1.5">
+                <td>@Model.orgname</td>
+                <td>@Model.orgdescription</td>
+                <td>@orgunit?.Id</td>
+                <td>@specialz</td>
+                <td>@orgunit?.Abrivation</td>
+                <td></td>
+                <td> <input class="form-check-input" type="checkbox" id="" @(Convert.ToBoolean(orgunit?.IsActive) ? "checked" : "") onclick="return false" /></td>
+                 <td> <input class="form-check-input" type="checkbox" id="" @(Convert.ToBoolean(orgunit?.IsOnline) ? "checked" : "") onclick="return false" /></td>
+                 <td> <input class="form-check-input" type="checkbox" id="" @(Convert.ToBoolean(orgunit?.Ecommerce) ? "checked" : "") onclick="return false" /></td>
+                  <td>@orgunit?.Remark</td>
+
+               <td><a href="#" class="btn btn-social-icon btn-xs btnUpdateorgunitdef" data-code="@orgunit?.Id" data-desc="@orgunit?.Name" data-spe="@specialzcode" data-abb="@orgunit.Abrivation" data-paren="@parentDesc" data-resp="" data-remm="@orgunit.Remark" data-toggle="modal" data-target="#OrganizationUnitModal"><i class="fa fa-edit"></i></a></td>
+                <td><a href="#" class="btn btn-social-icon btn-xs btnDeleteorgunitdef" onclick="DeleteOrgunitFunction('@Model.orgunitcode')"><i class="fa fa-trash"></i></a></td>
+ 
+            </tr>
+            var NeastedChilds = spacficOrg.Where(t => t?.ParentId == Model?.orgunitcode).ToList();
+            if (NeastedChilds?.Count > 0)
+            {
+                foreach (var item in NeastedChilds)
+                {
+                    var ChildOfChildModel = new Companymodel { orgunitcode = item.Id, orgunitparent = item.ParentId, orgdescription = item.Name, organization_unit_type = Model.organization_unit_type, @*, vw_Vouchers = Model.vw_Vouchers,*@ lookups = Model.lookups };
+
+                    @await Html.PartialAsync("_OrganizationUnitDefchild", ChildOfChildModel)
+                    ;
+                }
+            }
+
+}

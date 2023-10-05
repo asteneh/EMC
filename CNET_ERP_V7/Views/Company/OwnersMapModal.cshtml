@@ -1,0 +1,93 @@
+﻿@model Companymodel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+
+@{
+    //var allpersonviewList = await _uiProccessManager.GetVw_AllPersonViewByType(CNETConstantes.OWNER);
+    //var allpersonviewListItem = allpersonviewList.Where(x => x.isActive == true);
+
+    //var allpersonviewListType = allpersonviewListItem?.Select(r => new CNET_ERP_WEB.Models.CloudSync.Select2Result { id = r.code, text = r.firstName }).ToArray();
+
+
+    var relationList = await sharedHelpers.GetLookUpByType("Company Relation Type");
+    var relationListType = relationList?.Select(r => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = r.Id, text = r.Description }).ToArray();
+}
+<style>
+    .select2-container {
+        width: 100% !important;
+    }
+
+    .select2-search--dropdown .select2-search__field {
+        width: 98% !important;
+    }
+</style>
+
+<div class="modal fade" id="OwnersMapModal">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <img src="~/images/Cnets.jpg" alt="CNET" />
+                    <span>Owners</span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                </h5>
+
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="form-group form-group-sm">
+                        <div class="col-md-12" style="margin-left:25px;">
+                            <button class="btn btn-app" type="reset" id="ownerebtnnew"> <i class="fa fa-file-o"></i>New</button>
+                            <button type="button" action="addRow" class="btn btn-app" id="ownerebtnSave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                            <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                        </div>
+
+                        <input asp-for="owncodeforupdate" hidden />
+                        <div class="col-md-12" style="margin-top:25px">
+                            <label class="col-md-3 text-right control-label">Person</label>
+                            <div class="col-md-9">
+                                <select asp-for="ownersname" class="form-control select2">
+                                    <option></option>
+                                </select>
+                                <span asp-validation-for="ownersname"></span>
+                            </div><br /><br />
+                            <label class="col-md-3 text-right control-label">State</label>
+                            <div class="col-md-9">
+                                <input asp-for="ownerstatetYPE" class="form-control" autocomplete="off" />
+                                <span asp-validation-for="ownerstatetYPE"></span>
+                            </div><br /><br />
+                            <label class=" control-label text-right col-md-3 ">Relation Type</label>
+                            <div class="col-md-9">
+
+                                <select asp-for="ownerrelationtype" class="form-control select2">
+                                    <option></option>
+                                </select>
+                                <span asp-validation-for="ownerrelationtype"></span>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+    $('#@nameof(Model.ownerrelationtype)').select2({
+        data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(relationListType)),
+        placeholder: "",
+        width:'resolve'
+
+    });
+</script>
+
+

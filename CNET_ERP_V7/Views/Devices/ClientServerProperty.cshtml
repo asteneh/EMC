@@ -1,0 +1,412 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain;
+@using Newtonsoft.Json;
+@model Devicemodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var codemodel = Model.DeviceType;
+
+    int sysoldvalue = 1212121212;
+
+    var deviceConfig = await sharedHelpers.GetConfigurationByRefandPref(Model?.deviceId.ToString(), CNETConstants.DEVICE);
+}
+<style>
+    .sptablecontent {
+        border-collapse: collapse;
+        background-color: #fff;
+        width: 100%;
+        margin-left: 15px;
+    }
+
+        .sptablecontent .asth {
+            font-weight: bold;
+        }
+
+        .sptablecontent th, table td {
+            padding: 1px;
+            border: 1px solid #ccc;
+        }
+
+        .sptablecontent th, table tr {
+            height: 3px;
+        }
+
+        .sptablecontent, .sptablecontent .sptablecontent td {
+            border: 0px solid #ccc;
+        }
+
+            .sptablecontent [type=text], select {
+                width: 100%;
+            }
+            .sptablecontent [type=password] {
+                width: 100%;
+            }
+
+            .sptablecontent div {
+                width: 98%;
+            }
+
+    #tvlogostyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #weastyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #phystyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #alarmstyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #hotelstyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #roomstyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #mediastyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #IIsustyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #attachstyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+  
+
+    .inputfield {
+        border-top-style: hidden;
+        border-right-style: hidden;
+        border-left-style: hidden;
+        border-bottom-style: hidden;
+        background-color: #eee;
+     
+        font-size: 14px;
+        max-height: 25px;
+    }
+
+    .Inputborder:focus {
+        border: 1px solid #1670BE;
+        box-shadow: 0 0 3px #1670BE;
+        outline-offset: 0px;
+        outline: none;
+    }
+
+    .Inputborder {
+        border: 1px solid #eee;
+        font-size: 13px !important;
+        height: 17px !important;
+        line-height: 2px !important;
+        text-emphasis-position: initial !important;
+        margin-top: 0px !important;
+        padding: 0px 0px !important;
+    }
+
+
+    .mainparent {
+        color: dodgerblue;
+        background-color: #eee;
+    }
+
+    .boderclr {
+        background-color: dodgerblue;
+    }
+   
+</style>
+
+<div class="box box-primary">
+    <br />
+
+    <div class="box-header with-border">
+        <div class="row">
+            <div class="col-md-11">
+                <div class="row">
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-1 control-labell"> Find</label>
+                        <div class="col-md-9">
+                            <input type="text" id="filterclientSetting" style="display:flex;width:100%;" class="form-control" placeholder="Search By Name">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body">
+        @foreach (var item in deviceConfig)
+        {
+            switch (item.Attribute)
+            {
+
+                case "Enable Synchronization":
+                    Model.enable_synchronization = item.CurrentValue;
+                    break;
+                case "Server Type":
+                    Model.clientserverType = item.CurrentValue;
+                    break;
+                case "Max Try Count Download":
+                  if (!string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                        Model.Max_Try_Count_Download = Convert.ToInt32(item.CurrentValue);
+                    }
+                    break;
+
+                case "Max Try Count Upload":
+                    if (!string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                        Model.Max_Try_Count_Upload = Convert.ToInt32(item.CurrentValue);
+                    }
+                    break;
+                case "Sync Frequency":
+                    Model.sync_frequency = item.CurrentValue;
+                    break;
+            }
+        }
+        <form id="PropertyFormDataForClient" method="post">
+
+            <table cellpadding="0" cellspacing="0" class="sptablecontent tree-loadclt" id="cilent_setting_table">
+                <tr class="asth">
+                    <td></td>
+                    <td></td>
+
+                </tr>
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Client Cloud Server Setting
+                    </td>
+                </tr>
+               
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Synchronization
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="enable_synchronization" asp-items="Model.enable_synchronizations" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+               
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Max Try Count Download
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (Model.Max_Try_Count_Download == 0)
+                        {
+                            <input asp-for="Max_Try_Count_Download" value="5" min="5" max="5" maxlength="1" class="Inputborder form-control" autocomplete="off" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="Max_Try_Count_Download" value="@Model.Max_Try_Count_Download" min="5" max="5" maxlength="1" class="Inputborder form-control" autocomplete="off" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Max Try Count Upload
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (Model.Max_Try_Count_Upload == 0)
+                        {
+                            <input asp-for="Max_Try_Count_Upload" value="5" min="5" max="5" maxlength="1" class="Inputborder form-control" autocomplete="off"  />
+
+                        }
+                        else
+                        {
+                            <input asp-for="Max_Try_Count_Upload" value="@Model.Max_Try_Count_Upload"  min="5" max="5" maxlength="1"  class="Inputborder form-control" autocomplete="off" />
+                        }
+
+                    </td>
+                </tr>
+               
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Sync Frequency
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="sync_frequency" asp-items="Model.sync_frequencys" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr> 
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Server Type
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="clientserverType" asp-items="Model.clientserverTypes" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+               
+            </table>
+            <input asp-for="clientdevicecodeType" value="@Model.deviceId" hidden />
+
+        </form>
+
+
+    </div>
+</div>
+
+
+<script>
+    $(function () {
+        $("#filterclientSetting").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#cilent_setting_table > tbody > tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+<script>
+
+    function TreeFunctionproprty() {
+        $(document).ready(function () {
+            $('.tree-basic').treegrid();
+
+            $('.tree-loadclt').treegrid({
+                source: function (id, response) {
+                    if (id != 1) response(['']);
+                    else response(['']);
+                }
+            });
+
+        });
+    }
+    TreeFunctionproprty();
+</script>
+<script>
+    $('.attributdata').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        var value = $(this).text();
+
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).closest("tr").addClass('boderclr');
+        $('#deviceproperty').html(value);
+
+    });
+    $('.attributcurrvalue').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        var value = $(this).siblings().text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).siblings().addClass("boderclr");
+        $('#deviceproperty').html(value);
+
+    });
+    $("#devicesettingproperty").change(function () {
+        var value = $(this).select2('data')[0].text;
+        $(".boderclr").removeClass("boderclr");
+        $("input[name*='" + value + "']").addClass('boderclr');
+        $("input[name*='" + value + "']").closest("tr").addClass('boderclr');
+        $('#deviceproperty').html(value);
+    });
+ 
+</script>
+<script>
+    var devicecode = "";
+   
+    $(document).on("click", ".devicepropertysetting", function () {
+        devicecode = $(this).data('types');
+       
+        $('#@nameof(Model.clientdevicecodeType)').val(devicecode);
+
+        $('#@nameof(Model.devicesettingproperty)').select2({
+            placeholder: 'device',
+            allowclear: true,
+        ajax: {
+            url: '@Url.Action("getdeviceforPROPERTY", "Devices")',
+            dataType: 'json',
+            data: { DEVICECODE: devicecode },
+                data: function (params)
+                {
+                return {
+                    q: params.term,
+                    page: params.page,
+                    other: devicecode,
+                };
+                },
+                processResults: function (data, params)
+                {
+                return data;
+                },
+                cache: true
+        },
+        });
+    });
+</script>
+
+<script>
+    function gettvlogofile(filename) {
+        $('#display_tvlogofile').val(filename);
+    }
+</script>
+<script>
+    function getweatherfile(filename) {
+        $('#display_weather_file').val(filename);
+    }
+</script>
+<script>
+    function getalarmmusicfile(filename) {
+        $('#display_alarmusicfile').val(filename);
+    }
+</script>
+<script>
+    function gethotelfile(filename) {
+        $('#display_hotelfile').val(filename);
+    }
+</script>
+<script>
+    function getIsupdateurlfile(filename) {
+        $('#display_iisufile').val(filename);
+    }
+</script>
+<script>
+    function getattachurlfile(filename) {
+        $('#display_attachfile').val(filename);
+    }
+</script>
+<script>
+    function getmediafile(filename) {
+        $('#display_mediafile').val(filename);
+    }
+</script>
+<script>
+    function getroomfile(filename) {
+        $('#display_roomfile').val(filename);
+    }
+</script>
+<script>
+    function getphysicalfile(filename) {
+        $('#display_physicalfile').val(filename);
+    }
+</script>

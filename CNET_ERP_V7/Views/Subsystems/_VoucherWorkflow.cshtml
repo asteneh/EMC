@@ -1,0 +1,149 @@
+﻿@using CNET_V7_Domain.Domain.ViewSchema;
+@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_ERP_V7.Common.Helpers;
+@model CNET_ERP_V7.Models.SubSytsemModel.VoucherSearchModel
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var workFlow = await sharedHelpers.GetWorkFlowsByreference(5, Model.documentType);
+
+    int count = 0;
+}
+<style>
+    .vIdDefiniation {
+        height: 77vh;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    .vIdDefiniation {
+        white-space: nowrap
+    }
+
+    .vIdDefiniation {
+        overflow-y: auto; /* make the table scrollable if height is more than 200 px  */
+        height: 77vh /* gives an initial height of 200px to the table */
+    }
+
+    .vIdDefiniation th {
+            position: sticky; /* make the table heads sticky */
+            top: 0px; /* table head will be placed from the top of the table and sticks to it */
+        }
+
+    /*table {
+            border-collapse: collapse;*/ /* make the table borders collapse to each other */
+    /*width: 100%;
+        }*/
+        
+    th,
+    td {
+        padding: 0 0 !important;
+        border: 1px solid #ccc;
+    }
+
+    th {
+        background-color: rgb(179, 236, 255)
+    }
+   
+</style>
+<div class="border vIdDefiniation" style="border:1px solid #e5e5e5;">
+    <table id="voucher_idSetting_table" class="table table-striped container-fluid" style="background-color:#ffffff" width="105%">
+        <thead>
+            <tr class="attendancesum">
+                <th>SN</th>
+                <th>Description</th>
+                <th>Has Issuing Effect</th>
+                <th>Is Manual</th> 
+                <th>Object State</th>
+                <th>Required Time</th>
+                <th>Index</th>
+                <th>Max Repated</th>
+                <th>Sequence</th>
+                <th>Remark</th>
+                <th>edit</th>
+                <th>delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (workFlow != null && workFlow.Count() > 0)
+            {
+                @foreach (var item in workFlow)
+                {
+                    var activity = await sharedHelpers.GetsystemConstantById(item.Description);
+                    count++;
+                    <tr class="attendancesum">
+                        <td>@count</td>
+                        <td>@activity?.First().Description</td>
+                        <td> <input class="form-check-input" type="checkbox" id="" @(Convert.ToBoolean(item?.IssuingEffect) ? "checked" : "") onclick="return false" /></td>
+                        <td> <input class="form-check-input" type="checkbox" id="" @(Convert.ToBoolean(item?.IsManual) ? "checked" : "") onclick="return false" /></td>
+                        <td>@item?.DescriptionName</td>
+                       <td>@item?.RequiredTime?.ToString("N2")</td>
+                       <td>@item?.Index</td>
+                       <td>@item?.MaxRepeat</td>
+                        <td> <input class="form-check-input" type="checkbox" id="" @(Convert.ToBoolean(item?.Sequence) ? "checked" : "") onclick="return false" /></td>
+                        <td>@item?.Remark</td>
+                        <td><a class="btn btn-social-icon btn-xs" onclick="EditActiviyDefinitionFunction('@item?.Id')"><i class="fa fa-edit"></i></a></td>
+                        <td><a href="#" class="btn btn-social-icon btn-xs" onclick="DeleteworkflowFunction('@item?.Id')"><i class="fa fa-trash"></i></a></td>
+
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    function EditActiviyDefinitionFunction(_id) {
+        var code = _id;
+        $.ajax({
+            type: "GET",
+            dataType: 'json',
+            url: '@Url.Action("GetWorkFlowById", "Subsystems")',
+            data: { code: code },
+            success: function (data) {
+                $('#@nameof(Model.codewrfl)').val(data.id);
+                $('#@nameof(Model.descriptionwrfl)').val(data.descrption).trigger('change');
+                $('#@nameof(Model.hasIssuingEffectwfl)').prop('checked', data.issuued);
+                $('#@nameof(Model.isManualwrfl)').prop('checked', data.ismanu);
+                $('#@nameof(Model.objectStateDefinitionwrfl)').val(data.objesta).trigger('change');
+                $('#@nameof(Model.requiredTimewrfl)').val(data.requ);
+                $('#@nameof(Model.timeFactorwrfl)').val(data.timefactor).trigger('change');
+                $('#@nameof(Model.indexwrfl)').val(data.index);
+                $('#@nameof(Model.maxRepeatwrfl)').val(data.maxrep);
+                $('#@nameof(Model.sequencewrfl)').prop('checked', data.squence);
+                $('#@nameof(Model.remarkwrfl)').val(data.remark);
+
+                $('#workflowMdalMap').modal("show");
+            },
+        });
+    }
+
+    function DeleteworkflowFunction(CODE) {
+        var getvouchercodeworkflowfordelete = $('#@nameof(Model.documentType)').val();
+        swal({
+            title: "are you sure to delete this ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "POST",
+                        dataType: 'json',
+                        url: '@Url.Action("DeleteWorkflow", "Subsystems")',
+                        data: { code: CODE, vouchDef: getvouchercodeworkflowfordelete },
+
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        success: function (data) {
+                            swal("", data, "success");
+                            GetWorkFlowByRef(getvouchercodeworkflowfordelete)
+
+
+                        }
+                    });
+                }
+            });
+      
+    }
+
+</script>

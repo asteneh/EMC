@@ -1,0 +1,375 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain;
+@using Newtonsoft.Json;
+@model Devicemodel
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var codemodel = Model.DeviceType;
+
+    int sysoldvalue = 1212121212;
+
+    var deviceConfig = await sharedHelpers.GetConfigurationByRefandPref(Model?.deviceId.ToString(), CNETConstants.DEVICE);
+}
+<style>
+    .mainparent {
+        color: blue;
+        background-color: #eee;
+    }
+    .sptablecontent {
+        border-collapse: collapse;
+        background-color: #fff;
+        width: 100%;
+        margin-left: 15px;
+    }
+
+        .sptablecontent .asth {
+            font-weight: bold;
+        }
+
+        .sptablecontent th, table td {
+            padding: 1px;
+            border: 1px solid #ccc;
+        }
+
+        .sptablecontent th, table tr {
+            height: 3px;
+        }
+
+        .sptablecontent, .sptablecontent .sptablecontent td {
+            border: 0px solid #ccc;
+        }
+
+            .sptablecontent [type=text], select {
+                width: 100%;
+            }
+
+            .sptablecontent [type=password] {
+                width: 100%;
+            }
+
+            .sptablecontent div {
+                width: 97%;
+            }
+
+    #dampstyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    .inputfield {
+        border-top-style: hidden;
+        border-right-style: hidden;
+        border-left-style: hidden;
+        border-bottom-style: hidden;
+        background-color: #eee;
+        font-size: 14px;
+        max-height: 25px;
+    }
+
+    .inputfield {
+        border-top-style: hidden;
+        border-right-style: hidden;
+        border-left-style: hidden;
+        border-bottom-style: hidden;
+        background-color: #eee;
+        font-size: 14px;
+        max-height: 25px;
+    }
+
+    .Inputborder:focus {
+        border: 1px solid #1670BE;
+        box-shadow: 0 0 3px #1670BE;
+        outline-offset: 0px;
+        outline: none;
+    }
+
+    .Inputborder {
+        border: 1px solid #eee;
+        font-size: 13px !important;
+        height: 17px !important;
+        line-height: 2px !important;
+        text-emphasis-position: initial !important;
+        margin-top: 0px !important;
+        padding: 0px 0px !important;
+    }
+
+
+    .mainparent {
+        color: dodgerblue;
+        background-color: #eee;
+    }
+
+    .boderclr {
+        background-color: dodgerblue;
+    }
+
+
+
+    .nopadding {
+        border: 1px solid #eee;
+        padding-left: 0px;
+        padding-right: 0px;
+        margin-left: 0px;
+        margin-right: 0px;
+        height: 25px;
+    }
+
+    .hiddebutn {
+        border: none;
+        resize: none;
+        outline: none;
+        margin: 0px;
+        background-color: white;
+        width: 15px;
+    }
+
+
+    .displaychild {
+        display: none;
+    }
+</style>
+
+<div class="box box-primary">
+    <br />
+
+    <div class="box-header with-border">
+        <div class="row">
+            <div class="col-md-11">
+                <div class="row">
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-1 control-labell"> Find</label>
+                        <div class="col-md-10">
+                            <input type="text" id="filterftpserverSetting" style="display:flex;width:100%;" class="form-control" placeholder="Search By Name">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body">
+
+        <form id="PropertyFormDataForFtp" method="post">
+
+            @foreach (var item in deviceConfig)
+            {
+                switch (item.Attribute)
+                {
+                       case "Damp Yard":
+                        Model.damp_yard = item.CurrentValue;
+                        break;
+
+                       case "FTP Password":
+                        Model.ftp_password = item.CurrentValue;
+                        break;
+                       case "FTP URL":
+                        Model.ftp_url =  item.CurrentValue;
+                        break;
+                        case "Host":
+                        Model.ftp_host =  item.CurrentValue;
+                        break;
+                        case "Local Root Path":
+                        Model.local_root_path =  item.CurrentValue;
+                        break;
+                        case "Local Root Path For V5":
+                        Model.local_root_path_for_vs =  item.CurrentValue;
+                        break;
+                        case "Slip Time":
+                        Model.slip_time_in_second =  item.CurrentValue;
+                        break;
+                        case "User Name":
+                        Model.user_name =  item.CurrentValue;
+                        break;
+                        }
+                     }
+
+            <table cellpadding="0" cellspacing="0" class="sptablecontent tree-loadftp" id="ftpserver_setting_Table">
+                <tr class="asth">
+                    <td></td>
+                    <td></td>
+
+                </tr>
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        FTP Server Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Damp Yard
+                    </td>
+                    <td class="attributcurrvalue">
+                        <div class="input-group">
+
+                            <input asp-for="damp_yard" id="display_damp_yardfile" value="@Model.damp_yard" onfocus="this.style.background='white'" class="Inputborder" autocomplete="off">
+                            <label for="damp_yard_file" id="dampstyle">...</label>
+
+                        </div>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        FTP Password
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="ftp_password" value="@Model.ftp_password" type="password" class="Inputborder" autocomplete="off" />
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Host
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="ftp_host" value="@Model.ftp_host" class="Inputborder" autocomplete="off" />
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        FTP URL
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="ftp_url" value="@Model.ftp_url" class="Inputborder" autocomplete="off" />
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Local Root Path
+                    </td>
+                    <td class="attributcurrvalue">
+                        <div class="input-group">
+
+                            <input asp-for="local_root_path" id="display_localroot_path_file" value="@Model.local_root_path" onfocus="this.style.background='white'" class="Inputborder" autocomplete="off">
+                            <label for="display_local_root_path_file" id="dampstyle">...</label>
+
+
+                        </div>
+                    </td>
+
+                </tr>
+
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Local Root Path For V5
+                    </td>
+                    <td class="attributcurrvalue">
+                        <div class="input-group">
+
+                            <input asp-for="local_root_path_for_vs" id="display_localroot_path_forvs_file" value="@Model.local_root_path_for_vs" onfocus="this.style.background='white'" class="Inputborder" autocomplete="off">
+                            <label for="display_local_root_path_forvs_file" id="dampstyle">...</label>
+
+
+                        </div>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Slip Time In Second
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="slip_time_in_second" value="@Model.slip_time_in_second" class="Inputborder" autocomplete="off" />
+
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        User Name
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="user_name" value="@Model.user_name" class="Inputborder" autocomplete="off" />
+
+                    </td>
+
+                </tr>
+
+
+            </table>
+           
+            <input asp-for="ftpdevicecode" value="@Model.deviceId" hidden />
+
+            <input class="form-control" type="file" name="dampyard" id="damp_yard_file" style="display:none; visibility:hidden;" onchange="getdampyardfile(this.value);">
+            <input class="form-control" type="file" name="localroot" id="display_local_root_path_file" style="display:none; visibility:hidden;" onchange="getlocalrootpathfile(this.value);">
+            <input class="form-control" type="file" name="localroot" id="display_local_root_path_forvs_file" style="display:none; visibility:hidden;" onchange="getlocalrootpathforvsfile(this.value);">
+
+        </form>
+
+
+    </div>
+</div>
+<script>
+    $(function () {
+        $("#filterftpserverSetting").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#ftpserver_setting_Table > tbody > tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+<script>
+    function TreeFunctionproprty() {
+        $(document).ready(function () {
+            $('.tree-basic').treegrid();
+
+            $('.tree-loadftp').treegrid({
+                source: function (id, response) {
+                    if (id != 1) response(['']);
+                    else response(['']);
+                }
+            });
+
+        });
+    }
+    TreeFunctionproprty();
+</script>
+<script>
+
+    $('.attributdata').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        var value = $(this).text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).closest("tr").addClass('boderclr');
+        $('#deviceproperty').html(value);
+
+    });
+    $('.attributcurrvalue').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        var value = $(this).siblings().text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).siblings().addClass("boderclr");
+        $('#deviceproperty').html(value);
+
+    });
+    $("#devicesettingproperty").change(function () {
+        var value = $(this).select2('data')[0].text;
+        $(".boderclr").removeClass("boderclr");
+        $("input[name*='" + value + "']").addClass('boderclr');
+        $("input[name*='" + value + "']").closest("tr").addClass('boderclr');
+        $('#deviceproperty').html(value);
+    });
+
+</script>
+<script>
+    function getdampyardfile(filename) {
+        $('#display_damp_yardfile').val(filename);
+    }
+</script>
+<script>
+    function getlocalrootpathfile(filename) {
+        $('#display_localroot_path_file').val(filename);
+    }
+</script>
+<script>
+    function getlocalrootpathforvsfile(filename) {
+        $('#display_localroot_path_forvs_file').val(filename);
+    }
+</script>

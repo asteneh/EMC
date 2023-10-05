@@ -1,0 +1,241 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain;
+@using Newtonsoft.Json;
+@model Devicemodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var codemodel = Model.DeviceType;
+    var devicename = await sharedHelpers.GetdeviceById(Model?.DeviceType);
+    var deviceTypecode = devicename?.FirstOrDefault()?.Description;
+
+    int sysoldvalue = 1212121212;
+    var deviceConfig = await sharedHelpers.GetConfigurationByRefandPref(Model?.deviceId.ToString(), CNETConstants.DEVICE);
+}
+<style>
+    .sptablecontent {
+        border-collapse: collapse;
+        background-color: #fff;
+        width: 100%;
+        margin-left: 15px;
+    }
+
+        .sptablecontent .asth {
+            font-weight: bold;
+        }
+
+        .sptablecontent th, table td {
+            padding: 1px;
+            border: 1px solid #ccc;
+        }
+
+        .sptablecontent, .sptablecontent .sptablecontent td {
+            border: 0px solid #ccc;
+        }
+
+            .sptablecontent [type=text], select {
+                width: 100%;
+            }
+
+            .sptablecontent [type=password] {
+                width: 100%;
+            }
+
+
+
+    .inputfield {
+        border-top-style: hidden;
+        border-right-style: hidden;
+        border-left-style: hidden;
+        border-bottom-style: hidden;
+        background-color: #eee;
+        font-size: 14px;
+        max-height: 25px;
+    }
+
+        .inputfield:focus {
+            outline: none;
+        }
+
+
+
+    .Inputborder:focus {
+        border: 1px solid #1670BE;
+        box-shadow: 0 0 3px #1670BE;
+        outline-offset: 0px;
+        outline: none;
+    }
+
+
+
+    .nopadding {
+        border: 1px solid #eee;
+        padding-left: 0px;
+        padding-right: 0px;
+        margin-left: 0px;
+        margin-right: 0px;
+        height: 25px;
+        width: 100%
+    }
+
+    .hiddebutn {
+        border: none;
+        resize: none;
+        outline: none;
+        margin: 0px;
+        width: 20px;
+        background-color: white;
+    }
+    .displaychild {
+        display: none;
+    }
+
+    .mainparent {
+        color: blue;
+        background-color: #eee;
+    }
+</style>
+
+<div class="box box-primary">
+
+    <div class="box-header with-border">
+        <div class="row">
+            <div class="col-md-11">
+                <div class="row">
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-1 control-labell"> Find</label>
+                        <div class="col-md-9">
+                            <input type="text" id="filterdomainsSetting" style="display:flex;width:100%;" class="form-control" placeholder="Search By Name">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body">
+        @foreach (var item in deviceConfig)
+        {
+            switch (item.Attribute)
+            {
+                case "Domain Name":
+                    Model.domain_Name = item.CurrentValue;
+                    break; ;
+                case "Password":
+                    Model.domain_password = item.CurrentValue;
+                    break;
+                case "User Name":
+                    Model.user_name = item.CurrentValue;
+                    break;
+
+
+            }
+        }
+        <form id="domainFormData" asp-controller="Devices" asp-action="SavingdomainProperty" method="post">
+
+
+            <table cellpadding="0" cellspacing="0" class="sptablecontent tree-load" id="domainsever_setting_table"> 
+                <tr class="asth">
+                    <td></td>
+                    <td></td>
+
+                </tr>
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Domain Server Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Domain Name
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="domain_Name" value="@Model.domain_Name" class="Inputborder" />
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Password
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="domain_password" value="@Model.domain_password" type="password" class="Inputborder" />
+
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        User Name
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (string.IsNullOrEmpty(Model.user_name))
+                        {
+                            <input asp-for="user_name" value="Administrator" class="Inputborder" />
+                        }
+                        else
+                        {
+                            <input asp-for="user_name" value="@Model.user_name" class="Inputborder" />
+
+                        }
+                    </td>
+
+                </tr>
+
+            </table>
+
+
+            <input asp-for="domainreferencecode" value="@Model.deviceId" hidden />
+            <input asp-for="preferencedescrption" hidden />
+
+        </form>
+
+
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $("#filterdomainsSetting").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#domainsever_setting_table > tbody > tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+<script>
+
+    $('.attributdata').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        //var value = $(this).children('.inputfield').val();
+        var value = $(this).text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).closest("tr").addClass('boderclr');
+        $('#deviceproperty').html(value);
+
+    });
+    $('.attributcurrvalue').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        //var value = $(this).siblings().children('.inputfield').val();
+        var value = $(this).siblings().text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).siblings().addClass("boderclr");
+        $('#deviceproperty').html(value);
+
+    });
+    $("#devicesettingproperty").change(function () {
+        var value = $(this).select2('data')[0].text;
+        $(".bg-blue").removeClass("bg-blue");
+        $("input[name*='" + value + "']").addClass('bg-blue');
+        $("input[name*='" + value + "']").closest("tr").addClass('bg-blue');
+        $('#deviceproperty').html(value);
+    });
+
+
+</script>
+

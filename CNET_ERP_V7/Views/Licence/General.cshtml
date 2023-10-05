@@ -1,0 +1,344 @@
+﻿@model LicenseModel
+@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Cnetv7BufferHolder;
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var deviceview = await sharedHelpers.SelectDevice();
+
+    var deviceviewList = deviceview.Where(x => x.IsActive == true).ToList();
+    var deviceviewTypelist = deviceviewList.Select(s => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = s.Id, text = s.MachineName }).ToArray();
+
+
+
+    var cnetcomponent = GeneralBufferHolder.SystemConstants;
+    var cnetcomponentList = cnetcomponent.Where(c => c?.Type?.ToLower() == "subsystem" || c?.Type?.ToLower() == "module" || c?.Type?.ToLower() == "pos").ToList();
+
+    var cnetcomponentListType = cnetcomponentList.Select(s => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = s.Id, text = s.Description }).ToArray();
+    List<string> licence = new List<string>();
+    licence.Add("Subsystem");
+    licence.Add("POS");
+}
+
+<style>
+    .activeidSetting {
+        background-color: dodgerblue;
+        width: auto;
+    }
+
+    .mainsysType {
+        height: 76vh;
+        white-space: nowrap;
+        cursor: pointer;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    .idSetting {
+        cursor: pointer;
+        white-space: nowrap;
+    }
+    .select2-container--default .select2-results__group {
+        border: solid 0.3px lightgray;
+        cursor: grabbing;
+        margin-left: 5px;
+    }
+
+    .select2-results__options--nested > li {
+        background-color: #ecf0f5;
+        font-size: 14px;
+        margin-left: 15px;
+        border-left: solid 0.3px lightgray;
+        border-left: solid 0.3px lightgray;
+    }
+
+    .Licensepos {
+        height: 80vh;
+        overflow-y: scroll;
+    }
+
+    .licencedisplay {
+        display: none;
+    }
+    .modalbody {
+        position: relative;
+        padding: 20px;
+        height: 50%;
+        overflow-y: scroll;
+    }
+
+    .modaldialog {
+        width: 80%; /* New width for default modal */
+       /* New width for default modal */
+    }
+</style>
+<div class="box box-primary">
+
+    <div class="box-body">
+        <div class="row">
+            <div class="col-md-2" style="margin-left:0px;border-right:solid black 1px">
+                <div style="border:1px solid #e5e5e5;" class="mainsysType">
+                    <table class="table table-sm" id="consineeUnit_Table" width="100%">
+                        <thead>
+                            <tr class="treegrid-3 treegrid-parent-1">
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in licence)
+                            {
+                                <tr onclick="GetcnetLicence('@item')">
+                                    <td width="20px" style="border:none !important"></td>
+                                    <td class="activeconsinee">
+                                        <i class="fa fa-id-card-o"></i>
+                                        @item
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-10 licencedisplay" id="posLicence">
+
+                <div id="posContent">
+                    @await Html.PartialAsync("_LicenceposDetail.cshtml")
+
+                </div>
+             
+            </div>
+            <div class="col-md-10" id="SubLicence">
+                <div id="subsystemContent">
+                    @await Html.PartialAsync("_LicenceSubDetail.cshtml")
+
+                </div>
+              
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<div class="modal fade" id="modal_LicenceItems" role="dialog">
+    <div class="modal-dialog modaldialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 style=" color:dodgerblue; font-weight:bold">
+                    <img src="~/images/Cnets.jpg" />
+                    License
+                </h5>
+            </div>
+            <div class="modal-body modalbody">
+                <div class="row">
+
+                    <form class="form-horizontal" id="LicencedetailNewFormData" onsubmit="return LicencedetailNewFormFunction()" asp-controller="Licence" asp-action="createLicencedetail" method="post">
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-app" id="btnnewLICENSList"> <i style="color:darkblue" class="fa fa-sticky-note-o"></i>New</button>
+                            <button type="submit" class="btn btn-app" action="addRow" id="btnLICENSdetailSave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                            <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                        </div>
+
+
+                        <div class="col-md-12" style="margin-top:25px">
+
+                            <div class="row">
+
+                                <table id="popup_Licence_code" class="table table-striped tree-load" style="background-color:#ffffff">
+                                    <thead>
+                                        <tr>
+
+                                            <th width="10%">Branch</th>
+                                            <th width="100%">expiryDate</th>
+                                            <th width="100px">Description</th>
+                                            <th width="10%"></th>
+                                            <th>licenseKey</th>
+                                            <th width="10%"></th>
+                                            <th>device</th>
+
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+
+                        <input type="hidden" asp-for="lince_updateposcode" />
+                        <input type="hidden" name="licenccodeList[]" />
+                        <input type="hidden" name="componentcodeList[]" />
+                       
+                    </form>
+                </div>
+            </div>
+        </div>
+        @*/.modal-content -*@
+    </div>
+</div>
+
+<script>
+    $(document).on("click", ".activeconsinee", function () {
+        $(".activeidSetting").removeClass("activeidSetting");
+        $(this).addClass('activeidSetting');
+    });
+</script>
+<script>
+    $('#@nameof(Model.lince_description)').select2({
+        data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(cnetcomponentListType)),
+        placeholder: "Please select",
+        allowClear: true,
+
+    });
+
+    $('#@nameof(Model.lince_device)').select2({
+        data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(deviceviewTypelist)),
+        placeholder: "Please select",
+        allowClear: true,
+
+    });
+
+</script>
+
+<script>
+    var poandsub = "";
+    var remaindate = "";
+    var remaindatesub = "";
+    var toint = 0;
+    var tointSub = 0;
+    var value = "";
+    function GetcnetLicence(poandsub) {
+        if (poandsub == "Subsystem") {
+            $('#SubLicence').removeClass('licencedisplay')
+            $('#posLicence').addClass('licencedisplay')
+            $.ajax({
+                type: "GET",
+                dataType: 'html',
+                url: '@Url.Action("getLicenceSubDetail", "Licence")',
+                data: {},
+
+                success: function (data) {
+
+                    $('#subsystemContent').html(data);
+                }
+            });
+        }
+        else if (poandsub == "POS") {
+            $('#SubLicence').addClass('licencedisplay')
+            $('#posLicence').removeClass('licencedisplay')
+
+            $.ajax({
+                type: "GET",
+                dataType: 'html',
+                url: '@Url.Action("getLicencePosDetail", "Licence")',
+                data: {},
+
+                success: function (data) {
+
+                    $('#posContent').html(data);
+                }
+            });
+
+        }
+
+    }
+       
+</script>
+
+<script>
+
+    function LicencedetailNewFormFunction() {
+        var $form = $('#LicencedetailNewFormData');
+        var data = $form.serialize();
+        var action = $('#LicencedetailNewFormData').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            success: function (data) {
+                alert(data.result);
+              
+            },
+        });
+        return false;
+    };
+
+
+    $(document).on("click", ".btnUpdatecnetLincence", function () {
+        $("#btnLICENSdetailSave").attr("action", "updatePRT");
+
+        var code = $(this).data('code');
+        var desc = $(this).data('deesc');
+        var device = $(this).data('devicee');
+        var licencecode = $(this).data('licen');
+        var remark = $(this).data('remark');
+
+            $('#@nameof(Model.lince_updateposcode)').val(code);
+            $('#@nameof(Model.lince_description)').val(desc).trigger('change');
+            $('#@nameof(Model.lince_device)').val(device).trigger('change');
+            $('#@nameof(Model.lince_code)').val(licencecode);
+           $('#@nameof(Model.lince_remark)').val(remark);
+     });
+
+    $(document).on("click", ".btnDeleteSubCnetLicence", function () {
+
+         var codedet = $(this).data('code');
+        var table = $('#Licencesub_detail_List').DataTable();
+         if (confirm('are you sure to delete this record?')) {
+
+             table
+                 .row($(this).parents('tr'))
+                 .remove()
+                 .draw();
+
+             $.ajax({
+                 type: "POST",
+                 dataType: 'json',
+                 url: '@Url.Action("DeleteLicenceItem", "Licence")',
+                 data: { ID: codedet },
+
+                 contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                 success: function (data) {
+                     alert(data);
+
+                 }
+             });
+         }
+    });
+
+    $(document).on("click", ".btnDeletePosCnetLicence", function () {
+
+         var codedet = $(this).data('code');
+        var table = $('#Licencepos_detail_List').DataTable();
+         if (confirm('are you sure to delete this record?')) {
+
+             table
+                 .row($(this).parents('tr'))
+                 .remove()
+                 .draw();
+
+             $.ajax({
+                 type: "POST",
+                 dataType: 'json',
+                 url: '@Url.Action("DeleteLicenceItem", "Licence")',
+                 data: { ID: codedet },
+
+                 contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                 success: function (data) {
+                     alert(data);
+
+                 }
+             });
+         }
+      });
+
+ 
+</script>

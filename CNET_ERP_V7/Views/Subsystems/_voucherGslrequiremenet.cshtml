@@ -1,0 +1,64 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model VoucherSearchModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+      
+}
+
+<div class="row">
+    <div class="col-md-3">
+        <div id="gslchildtype">
+            @await Html.PartialAsync("Gsl_requiremenct")
+        </div>
+
+
+    </div>
+
+    <div class="col-md-9">
+        <div id="GslrequiremenctDetailContent">
+            @await Html.PartialAsync("Gsl_requiremenctDetail")
+        </div>
+    </div>
+</div>
+
+<script>
+    var result = "";
+    function artandconsineNewFormFunction() {
+        var vouchercode = $('#@nameof(Model.documentType)').val();
+        var $form = $('#gslreqirementNewFormDatafroconandart');
+        var data = $form.serialize();
+        var action = $('#gslreqirementNewFormDatafroconandart').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            success: function (data) {
+
+                if (data.create == true) {
+                    swal("", data.result, "success");
+                    $.ajax({
+                        type: "GET",
+                        dataType: 'html',
+                        url: '@Url.Action("Getgslrequirment", "Subsystems")',
+                        data: { vouchercode: vouchercode },
+
+                        success: function (data) {
+                            $('#gslchildtype').html(data);
+
+                        }
+                    });
+                    Cleararticlenadconsilne();
+
+                }
+                else {
+                    swal("", data.result, "error");
+                }
+            },
+        });
+        return false;
+    };
+
+</script>

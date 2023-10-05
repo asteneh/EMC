@@ -1,0 +1,189 @@
+﻿@model Companymodel
+@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Cnetv7BufferHolder;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var CategoryList = GeneralBufferHolder.AllPreferences.Where(x => x.SystemConstant == 28).ToList();
+    var parentCats = CategoryList?.Where(c => string.IsNullOrWhiteSpace(c.ParentId.ToString())).ToList();
+
+    var CategoryTypeList = new List<CNET_ERP_V7.Models.SelectorModel.Select2Result>();
+    parentCats?.ForEach(item => CategoryTypeList.Add(new CNET_ERP_V7.Models.SelectorModel.Select2Result
+            {
+                id = item.Id,
+                text = item.Description,
+                children = CategoryList.Any(c => c.ParentId == item.Id) ? CategoryList.Where(c => c.ParentId == item.Id).Select(c => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = c.Id, text = c.Description }).ToList() : null
+            }));
+    var communicationSourceType = GeneralBufferHolder.AllLookups.Where(x => x.Type == "Communicated By"); ;
+    var communicationSourceList = communicationSourceType?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Description });
+
+    var assign = GeneralBufferHolder.AllConsineeUnit;
+    var assignList = assign?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Description });
+
+    var filterdPerson = new List<ConsigneeDTO>();
+      Dictionary<string, string> Dictionaryvalue = new Dictionary<string, string>() { { "Gsltype", "38".ToString() } };
+        filterdPerson = await sharedHelpers.GetFilterData<List<ConsigneeDTO>>("Consignee", Dictionaryvalue);
+        //if (sysCat?.Category == "Both")
+        //{
+        //    filterdPerson = filterdPerson.Where(x => x.IsPerson == true).ToList();
+        //}
+    
+    var filterdPersonList = filterdPerson?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.FirstName });
+    if (Model?.communicationSource == null)
+    {
+        Model.communicationSource = GeneralBufferHolder.AllLookups.Where(x => x.Type == "Communicated By" && x.IsDefault == true)?.FirstOrDefault()?.Id; ;
+    }
+
+    var consignee = await sharedHelpers.GetCompany();
+    Model.category = consignee.Preference;
+    Model.communicationSource = consignee.ComminicationSource;
+    Model.assigned = consignee.AssignedConsigneeUnit;
+    Model.cParentId = consignee.ParentId;
+}
+
+<style>
+    #defaultimage_po {
+        position: absolute;
+    }
+
+    .defImage
+    {
+       flex-direction:row
+    }
+</style>
+<div class="box box-primary">
+
+    <div class="box-header with-border">
+        <h3 class="box-title">Additional Information</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+        </div>
+    </div>
+
+    <div class="box-body">
+        <div class="row">
+            <div class="row" style="margin-top:2px;">
+                <label class="col-md-4 text-right control-label">Communication Source</label>
+                <div class="col-lg-8 col-sm-12">
+                    <select asp-for="communicationSource" class="form-control select2"><option></option></select> <span asp-validation-for="communicationSource"></span>
+
+                </div>
+            </div>
+            <div class="row" style="margin-top:2px;">
+                <label class="col-md-4 text-right control-label">Category</label>
+                <div class="col-lg-8 col-sm-12">
+                    <select asp-for="category" class="form-control select2"><option></option></select> <span asp-validation-for="category"></span>
+
+                </div>
+            </div>
+            <div class="row" style="margin-top:2px;">
+                <label class="col-md-4 text-right control-label">Value Factor Definition</label>
+                <div class="col-lg-8 col-sm-12">
+                    <select asp-for="valueFactorDefinition" class="form-control select2"><option></option></select> <span asp-validation-for="valueFactorDefinition" style="width:100%"></span>
+                </div>
+            </div>
+            <div class="row" style="margin-top:2px;">
+                <label class="col-md-4 text-right control-label">Credit limit</label>
+                <div class="col-lg-8 col-sm-12">
+                    <input asp-for="transactionLimitFactor" value="@consignee?.CreditLimit" class="form-control" type="number" style="width:100%" autocomplete="off" />
+                </div>
+            </div>
+            <div class="row" style="margin-top:2px;">
+                <label class="col-md-4 text-right control-label">transaction limit</label>
+                <div class="col-lg-8 col-sm-12">
+                    <input asp-for="transactionLimitType" class="form-control" value="@consignee?.TransactionLimit" type="number" style="width:100%" autocomplete="off" />
+                </div>
+            </div>
+            <div class="row" style="margin-top:2px;">
+                <label class="col-md-4 text-right control-label">Assigned</label>
+                <div class="col-lg-8 col-sm-12">
+                    <select asp-for="assigned" class="form-control select2"><option></option></select> <span asp-validation-for="assigned"></span>
+                  
+                </div>
+            </div>
+            <div class="row" style="margin-top:2px;">
+                <label class="col-md-4 text-right control-label">Parent</label>
+                <div class="col-lg-8 col-sm-12">
+                    <select asp-for="cParentId" class="form-control select2"><option></option></select> <span asp-validation-for="cParentId"></span>
+
+                </div>
+            </div>
+            <div class="Notpersonname">
+            <div class="row" style="margin-top:2px;">
+                <label class="col-md-4 text-right control-label">Base Url</label>
+                <div class="col-lg-8 col-sm-12">
+                        <input asp-for="Baseurl" class="form-control" value="@consignee?.BaseUrl" placeholder="Url" id="Baseurl" style="width:100%" autocomplete="off" /><span asp-validation-for="Baseurl"></span>
+                </div>
+            </div>
+            </div>
+             <div class="row" style="margin-top:2px;">
+                <div class="input-group defImage">
+                 <label class="col-md-4 text-right control-label">Image</label>
+                    <div class="col-lg-6 col-sm-12" style="padding-right:10px">
+                        <input asp-for="Iimage" class="form-control" id="Iimage" value="@consignee?.DefaultImageUrl" style="width:100%" autocomplete="off" /><span asp-validation-for="Iimage"></span>
+                    </div>
+                    <div class="col-lg-1 col-sm-12 form-control" style="width:15%">
+                        <label asp-for="defimage" id="defaultimage_po">Browse</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top:2px;">
+                <label class="col-md-4 text-right control-label">Remark</label>
+                <div class="col-lg-8 col-sm-12">
+                    <input asp-for="cremark" class="form-control" value="@consignee?.Remark" id="cremark" style="width:100%" autocomplete="off" /><span asp-validation-for="cremark"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<input class="form-control" asp-for="defimage" style="display:none; visibility:hidden;">
+
+<script>
+    $('#@nameof(Model.category)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(CategoryTypeList)),
+        placeholder: "",
+        allowClear: true,
+
+    });
+    $('#@nameof(Model.assigned)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(assignList)),
+        placeholder: "",
+        allowClear: true,
+
+    });
+    $('#@nameof(Model.communicationSource)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(communicationSourceList)),
+        placeholder: "Select Communication Source",
+        allowClear: true
+
+    });
+    $('#@nameof(Model.cParentId)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(filterdPersonList)),
+        placeholder: "Select Parent",
+        allowClear: true
+
+    });
+
+    $('#@nameof(Model.defimage)').on("change", function () {
+
+        var files = $('#@nameof(Model.defimage)').get(0).files;
+        var filename = files[0].name;
+        var baseURL = window.location.origin;
+        var URLL = baseURL + "/Defaultimages/" + filename;
+        $('#@nameof(Model.Iimage)').val(URLL);
+
+    });
+
+</script>
+
+
+<script>
+ $('#category').val('@Model?.category').trigger("change")
+ $('#communicationSource').val('@Model?.communicationSource').trigger("change")
+ $('#valueFactorDefinition').val('@Model?.valueFactorDefinition').trigger("change")
+ $('#personOrganizationUnit').val('@Model?.personOrganizationUnit').trigger("change")
+ $('#cParentId').val('@Model?.cParentId').trigger("change")
+
+</script>

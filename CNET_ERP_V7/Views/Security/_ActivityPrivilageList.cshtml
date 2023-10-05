@@ -1,0 +1,162 @@
+﻿@model SecurityModel
+@using CNET_ERP_V7.Models.Security;
+@using CNET_V7_Domain.Domain.SecuritySchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Newtonsoft.Json;
+@{
+    var cnetcomponentList = Model.activitycNETComponents;
+    var cnetcomponentchildList = Model.activitychildcNETComponents;
+}
+<style type="text/css">
+    .prefrenceheader {
+        background-color: dodgerblue;
+    }
+    .activity{
+        white-space:nowrap;
+        cursor:pointer;
+    }
+    .actsubHeader{
+        display:none;
+    }
+</style>
+<div class="box box-primary">
+    <div class="box-body createacount">
+       
+        <table cellpadding="0" cellspacing="0" class="table table-striped">
+            <thead>
+                <tr class="asth">
+                    <th colspan="2">Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in cnetcomponentList)
+                {
+                    var childs = cnetcomponentchildList.Where(t => t.ParentId == item.Id).ToList();
+                    <tr>
+                        @if (childs != null && childs.Count() > 0)
+                        {
+                            <td style="width:14px;" class="actvtytoggleBtn1 fa fa-plus-square text-info">
+                            </td>
+                            <td>
+                                <a data-toggle="tab" data-value="@item.Description" data-types="@item.Id" style="text-decoration-line:none; color:black !important" name="catagory" id="@item.Id">
+                                    @item.Description
+                                </a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td style="width:14px;">
+                            </td>
+                            <td>
+                                <a data-toggle="tab" data-value="@item.Description" data-types="@item.Id" style="text-decoration-line:none; color:black !important" name="catagory" id="@item.Id">
+                                    @item.Description
+                                </a>
+                            </td>
+                        }
+                    </tr>
+                    <tr class="actsubHeader">
+                        <td></td>
+                        <td colspan=2>
+                            <table style="width:100%;margin-right:5px" class="addressrow" id="">
+                                <tbody>
+                                    @if (item.Id != 0)
+                                    {
+                                        var child = cnetcomponentchildList.Where(t => t.ParentId == item.Id).ToList();
+
+                                        if (child.Count() > 0)
+                                        {
+                                            @foreach (var childitem in child)
+                                            {
+                                                var hrmsSubchild = cnetcomponentchildList.Where(t => t.ParentId == childitem.Id).ToList();
+                                                <tr class="activity accessprivilege activityaccessprivilege" data-value="@childitem.Description" data-types="@childitem.Id">
+                                                    <td style='width:1px; display:@(hrmsSubchild != null && hrmsSubchild.Count() > 0 ? "" : "none")' class="hrmsactivitytoggleBtn2 fa fa-minus-square text-info">
+                                                    </td>
+                                                    <td colspan="2">
+                                                        <a data-toggle="tab" style="text-decoration-line:none; color:black !important" name="catagory" id="@childitem.Id">
+
+                                                            @childitem.Description
+
+                                                        </a>
+                                                    </td>
+
+                                                </tr>
+                                                <tr class="hrmssubchild">
+                                                    <td style="width:4%;"></td>
+                                                    <td colspan="1">
+                                                        <table style="width:100%" id="" class="table-layout">
+                                                            <tbody id="">
+                                                                @if (hrmsSubchild != null && hrmsSubchild.Count() > 0)
+                                                                {
+                                                                    @foreach (var childitem3 in hrmsSubchild)
+                                                                    {
+                                                                        <tr style="opacity:1.5" class="accessprivilege activityaccessprivilege" data-value="@childitem3.Description" data-types="@childitem3.Id">
+                                                                            <td>
+                                                                                <a data-toggle="tab"  style="text-decoration-line:none; color: black !important" name="catagory">
+                                                                                    @childitem3.Description
+                                                                                </a>
+
+                                                                            </td>
+
+                                                                        </tr>
+                                                                    }
+                                                                }
+
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+ }
+            </tbody>
+            </table>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('.actvtytoggleBtn1').on('click', function () {
+            if ($(this).parent('tr').next('tr').is(":visible")) {
+
+                $(this).removeClass("fa fa-minus-square")
+                $(this).addClass("fa fa-plus-square")
+                $(this).parent('tr').next('tr').toggle("fast", function () {
+                });
+            }
+            else if ($(this).parent('tr').next('tr').not(":visible")) {
+                $(this).parent('tr').next('tr').toggle("fast", function () {
+                });
+                $(this).removeClass("fa fa-plus-square")
+                $(this).addClass("fa fa-minus-square")
+                //$(this).parent('tr').next('tr').removeClass("attendancesession")
+            }
+        });
+        $('.hrmsactivitytoggleBtn2').on('click', function () {
+
+            if ($(this).parent('tr').next('tr').is(":visible")) {
+
+                $(this).removeClass("fa fa-minus-square")
+                $(this).addClass("fa fa-plus-square")
+                $(this).parent('tr').next('tr').toggle("fast", function () {
+                });
+            }
+            else if ($(this).parent('tr').next('tr').not(":visible")) {
+                $(this).parent('tr').next('tr').toggle("fast", function () {
+                });
+                $(this).removeClass("fa fa-plus-square")
+                $(this).addClass("fa fa-minus-square")
+                //$(this).parent('tr').next('tr').removeClass("attendancesession")
+            }
+        })
+    });
+    $(document).on("click", ".activity", function ()
+    {
+         $(".prefrenceheader").removeClass("prefrenceheader");
+        $(this).closest("tr").addClass('prefrenceheader');
+    });
+</script>

@@ -1,0 +1,537 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain;
+@using Newtonsoft.Json;
+@model Devicemodel
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var codemodel = Model.DeviceType;
+    int sysoldvalue = 1212121212;
+    var deviceConfig = await sharedHelpers.GetConfigurationByRefandPref(Model?.deviceId.ToString(), CNETConstants.DEVICE);
+}
+<style>
+    .sptablecontent {
+        border-collapse: collapse;
+        background-color: #fff;
+        width: 98%;
+        margin-left: 15px;
+    }
+
+        .sptablecontent .asth {
+            font-weight: bold;
+        }
+
+        .sptablecontent th, table td {
+            padding: 0px !important;
+            border: 1px solid #ccc;
+        }
+
+
+
+        .sptablecontent, .sptablecontent .sptablecontent td {
+            border: 0px solid #ccc;
+            padding: 0px !important;
+        }
+
+            .sptablecontent [type=text], select {
+                width: 100%;
+            }
+
+            .sptablecontent [type=password] {
+                width: 100%;
+            }
+
+            .sptablecontent div {
+                width: 97%;
+            }
+
+    #Ejpathstyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #logstyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    .inputfield {
+        pointer-events: none;
+        opacity: 30;
+        width: 80%;
+        height: 16px !important;
+        padding: 0px 0px !important;
+        font-size: 13px !important;
+    }
+
+    .Inputborder:focus {
+        border: 1px solid #1670BE;
+        box-shadow: 0 0 3px #1670BE;
+        outline-offset: 0px;
+        outline: none;
+    }
+
+    .Inputborder {
+        border: 1px solid #eee;
+        font-size: 13px !important;
+        height: 17px !important;
+        line-height: 2px !important;
+        text-emphasis-position: initial !important;
+        margin-top: 0px !important;
+        padding: 0px 0px !important;
+    }
+
+
+    .mainparent {
+        color: dodgerblue;
+        background-color: #eee;
+    }
+
+    .boderclr {
+        background-color: dodgerblue;
+    }
+
+    .vouproperty {
+        height: 95vh;
+        overflow-y: scroll;
+    }
+
+    .boderclrclose {
+        border-color: ActiveBorder;
+    }
+    /*table {
+            border-collapse: collapse;*/ /* make the table borders collapse to each other */
+    /*width: 100%;
+        }*/
+
+</style>
+<div class="box box-primary">
+    <br />
+
+    <div class="box-header with-border">
+        <div class="row">
+            <div class="col-md-11">
+                <div class="row">
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-1 control-labell"> Find</label>
+                        <div class="col-md-9">
+                            <input type="text" id="filterFiscalSetting" style="display:flex;width:100%; height:25px !important" class="form-control" placeholder="Search By Name">
+                          
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body vouproperty">
+        @foreach (var va in deviceConfig)
+        {
+      
+             switch (va.Attribute)
+             {
+                         case "Barcode size":
+                            Model.fiscal_Barcodesize = (enBarcodeSize)Enum.Parse(typeof(enBarcodeSize), va.CurrentValue, false);
+                            break;
+                           case "Log File Format":
+                            Model.fiscal_LogFileFormat = va.CurrentValue;
+                            break;
+                            case "Log File Path":
+                             Model.fiscal_LogFilePath = va.CurrentValue;
+                            break;
+                            case "Maximum Z report":
+                            if (!string.IsNullOrEmpty(va.CurrentValue))
+                            {
+                                 Model.fiscal_MaximumZreport = Convert.ToInt32(va.CurrentValue);
+                            }
+                            break;
+                            case "EJPath":
+                              Model.fiscal_EJPath = va.CurrentValue;
+                            break;
+                            case "Use Automatic Attachment":
+                            Model.fiscal_UseAutomaticAttachment = va.CurrentValue;
+                            break;
+                            case "Barcode Height":
+                            if (!string.IsNullOrEmpty(va.CurrentValue))
+                            {
+                                  Model.fiscal_BarcodeHeight = Convert.ToInt32(va.CurrentValue);
+                            }
+                            break;
+                            case "Print Barcode":
+                             Model.fiscal_PrintBarcode =va.CurrentValue;
+                            break;
+                            case "OperatorSignature":
+                             Model.fiscal_OperatorSignature = va.CurrentValue;
+                            break;
+
+
+                            case "Show Fiscal Receipt Header":
+                             Model.fiscal_ShowFiscalReceiptHeader = va.CurrentValue;
+                            break;
+                            case "Print TIN As Commercial":
+                            Model.fiscal_PrintTINAsCommercial = va.CurrentValue;
+                            break;
+                            case "Print Duplicate":
+                             Model.fiscal_PrintDuplicate = va.CurrentValue;
+                            break;
+                        
+                            case "Unit Price":
+                             Model.fiscal_UnitPrice = (enGrandTotal)Enum.Parse(typeof(enGrandTotal), "r_" + va.CurrentValue.Replace(".", "_"), false);
+                            break;
+                            case "Unit Quantity":
+                           Model.fiscal_UnitQuantity = (enGrandTotal)Enum.Parse(typeof(enGrandTotal), "r_" + va.CurrentValue.Replace(".", "_"), false);
+                                break;
+                            case "Grand Total":
+                           Model.fiscal_GrandTotal = (enGrandTotal)Enum.Parse(typeof(enGrandTotal), "r_" + va.CurrentValue.Replace(".", "_"), false);
+                            break;
+                            case "Article Description Length":
+                            if (!string.IsNullOrEmpty(va.CurrentValue))
+                            {
+                                Model.fiscal_ArticleDescriptionLength = Convert.ToInt32(va.CurrentValue);
+                            }
+                            break;
+
+
+
+            }
+        }
+        <form id="PropertyFormDataForfiscal" method="post">
+            <table cellpadding="0" cellspacing="0" class="sptablecontent tree-load" id="Fisacl_setting_Table">
+                <tr class="asth">
+                    <td></td>
+                    <td></td>
+
+                </tr>
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Print Settings
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Article Description Length
+                    </td>
+                    <td class="attributcurrvalue">
+
+                        @if (Model.fiscal_ArticleDescriptionLength == 0)
+                        {
+                            <input asp-for="fiscal_ArticleDescriptionLength" value="35" class="form-control" style="height: 20px !important;" maxlength="19" onkeypress="return isarticleDesclength(event)">
+
+                        }
+                        else
+                        {
+                            <input asp-for="fiscal_ArticleDescriptionLength" value="@Model.fiscal_ArticleDescriptionLength" class="form-control" style="height: 20px !important;" maxlength="19" onkeypress="return isarticleDesclength(event)">
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Barcode Height
+                    </td>
+                    <td class="attributcurrvalue">
+
+                        @if (Model.fiscal_BarcodeHeight == 0)
+                        {
+                            <input asp-for="fiscal_BarcodeHeight" value="0" type="text" class="Inputborder" maxlength="10" min="0" onkeypress="return isarticleDesclength(event)">
+
+                        }
+                        else
+                        {
+                            <input asp-for="fiscal_BarcodeHeight" value="@Model.fiscal_BarcodeHeight" type="text" class="Inputborder" min="0" maxlength="10" onkeypress="return isarticleDesclength(event)">
+
+                        }
+
+                    </td>
+                </tr> 
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Barcode size
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="fiscal_Barcodesize" asp-items="Html.GetEnumSelectList<enBarcodeSize>()" class="form-control custom-select Inputborder">
+                        </select>
+
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        EJPath
+                    </td>
+                    <td class="attributcurrvalue">
+                        <div class="input-group">
+                            @if (string.IsNullOrEmpty(Model.fiscal_EJPath))
+                            {
+                                <input asp-for="fiscal_EJPath" id="display_ejpath_file" value="C:/CNET/EJ" onfocus="this.style.background='white'" class="form-control" style="height: 20px !important;">
+                                <label for="ej_path_file" id="Ejpathstyle">...</label>
+
+                            }
+                            else
+                            {
+                                <input asp-for="fiscal_EJPath" id="display_ejpath_file" value="@Model.fiscal_EJPath" onfocus="this.style.background='white'" class="form-control" style="height: 20px !important;">
+                                <label for="ej_path_file" id="Ejpathstyle">...</label>
+
+                            }
+                        </div>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Fp Capacity
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (Model.fiscal_FpCapacity == 0)
+                        {
+                            <input asp-for="fiscal_FpCapacity" value="1000" type="text" class="Inputborder" onkeypress="return isarticleDesclength(event)" maxlength="10">
+
+                        }
+                        else
+                        {
+                            <input asp-for="fiscal_FpCapacity" value="@Model.fiscal_FpCapacity" type="text" class="Inputborder" onkeypress="return isarticleDesclength(event)" maxlength="10">
+                        }
+
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Grand Total
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="fiscal_GrandTotal" asp-items="Html.GetEnumSelectList<enGrandTotal>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Log File Format
+                    </td>
+                    <td class="attributdata">
+                        <select asp-for="fiscal_LogFileFormat" asp-items="Model.fiscalLogFileFormat" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Log File Path
+                    </td>
+                    <td class="attributcurrvalue">
+                        <div class="input-group">
+                            @if (string.IsNullOrEmpty(Model.fiscal_LogFilePath))
+                            {
+                                <input asp-for="fiscal_LogFilePath" id="display_log_file" value="C:/CNET/EJ" onfocus="this.style.background='white'" class="form-control" style="height: 20px !important;">
+                                <label for="log_path_file" id="logstyle">...</label>
+
+                            }
+                            else
+                            {
+                                <input asp-for="fiscal_LogFilePath" id="display_log_file" value="@Model.fiscal_LogFilePath" onfocus="this.style.background='white'" class="form-control" style="height: 20px !important;">
+                                <label for="log_path_file" id="logstyle">...</label>
+
+                            }
+                        </div>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Maximum Z report
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (Model.fiscal_MaximumZreport == 0)
+                        {
+                            <input asp-for="fiscal_MaximumZreport" value="1850" type="text" maxlength="10" min="0" class="Inputborder" onkeypress="return isarticleDesclength(event)">
+
+                        }
+                        else
+                        {
+                            <input asp-for="fiscal_MaximumZreport" value="@Model.fiscal_MaximumZreport" type="text"  maxlength="10" min="0" class="Inputborder" onkeypress="return isarticleDesclength(event)">
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Notify Before
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (Model.fiscal_NotifyBefore == 0)
+                        {
+                            <input asp-for="fiscal_NotifyBefore" type="text" value="10" maxlength="10" min="0" class="Inputborder" onkeypress="return isarticleDesclength(event)">
+
+                        }
+                        else
+                        {
+                            <input asp-for="fiscal_NotifyBefore" type="text" value="@Model.fiscal_NotifyBefore" maxlength="10" min="0" class="Inputborder" onkeypress="return isarticleDesclength(event)">
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Operator Signature
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="fiscal_OperatorSignature" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Print Barcode
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="fiscal_PrintBarcode" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Print Duplicate
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="fiscal_PrintDuplicate" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+
+                        Print TIN As Commercial
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="fiscal_PrintTINAsCommercial" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Show Fiscal Receipt Header
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="fiscal_ShowFiscalReceiptHeader" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Unit Price
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="fiscal_UnitPrice" asp-items="Html.GetEnumSelectList<enGrandTotal>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Unit Quantity
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="fiscal_UnitQuantity"  asp-items="Html.GetEnumSelectList<enGrandTotal>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Use Automatic Attachment
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="fiscal_UseAutomaticAttachment" asp-items="Model.fiscaluseautomation" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+            </table>
+
+
+            <input asp-for="fiscaldevicecode" hidden value="@Model?.deviceId" />
+
+            <input class="form-control" asp-for="fill" name="Ejpath" id="ej_path_file" style="display:none; visibility:hidden;" onchange="getejpathfile(this.value);">
+            <input class="form-control" type="file" name="logpath" id="log_path_file" style="display:none; visibility:hidden;" onchange="getlogpathfile(this.value);">
+        </form>
+
+
+    </div>
+</div>
+<script>
+    $(function () {
+        $("#filterFiscalSetting").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#Fisacl_setting_Table > tbody > tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+<script>
+
+
+    $('.attributdata').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        var value = $(this).text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).closest("tr").addClass('boderclr');
+        $('#deviceproperty').html(value);
+
+    });
+    $('.attributcurrvalue').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        var value = $(this).siblings().text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).siblings().addClass("boderclr");
+        $('#deviceproperty').html(value);
+
+    });
+    $("#devicesettingproperty").change(function () {
+        var value = $(this).select2('data')[0].text;
+        $(".boderclr").removeClass("boderclr");
+        $("input[name*='" + value + "']").addClass('boderclr');
+        $("input[name*='" + value + "']").closest("tr").addClass('boderclr');
+        $('#deviceproperty').html(value);
+    });
+
+</script>
+<script>
+    function getejpathfile(filename) {
+        $('#display_ejpath_file').val(filename);
+    }
+</script>
+<script>
+    function getlogpathfile(filename) {
+        $('#display_log_file').val(filename);
+      
+    }
+</script>
+
+<script>
+
+    function isarticleDesclength(evt) {
+
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        else {
+
+            return true;
+        }
+
+    }
+
+</script>

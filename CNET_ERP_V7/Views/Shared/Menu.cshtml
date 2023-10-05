@@ -1,0 +1,29 @@
+﻿@using CNET_ERP_V7.Models.FramworkModels;
+@inject CNET_ERP_V7.Common.AuthNavigation.NavigatorManager navigationManager
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@inject CNET_ERP_V7.Common.AuthNavigation.AuthenticationManager authenticationManager
+@{
+    var authedUser = await authenticationManager.GetAuthenticatedUser();
+    GlobalParamsModel unorderedNavList = await sharedHelpers.GetGlobalParams(authedUser);
+    var rootNode = await navigationManager.PrepareNavigationList(unorderedNavList.navigatorList);
+}
+    <ul class="sidebar-menu" data-widget="tree">
+        @*<li class="header">MAIN NAVIGATION</li>*@
+        <li class="active">
+            <a href="#">
+                <i class="fa fa-dashboard"></i> <span>Dashboard</span>
+            </a>
+        </li>
+  
+
+            @{
+                if(rootNode != null && rootNode.Count > 0)
+                foreach (var item in rootNode)
+                {
+                    @await Html.PartialAsync("_MenuItem", item)
+
+                }
+            }
+
+    </ul>
+

@@ -1,0 +1,1675 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain;
+@using Newtonsoft.Json;
+@model Devicemodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+        var codemodel = Model.DeviceType;
+        int sysoldvalue = 1212121212;
+        var deviceConfig = await sharedHelpers.GetConfigurationByRefandPref(Model?.deviceId.ToString(), CNETConstants.DEVICE);
+}
+<style>
+    .sptablecontent {
+        border-collapse: collapse;
+        background-color: #fff;
+        width: 98%;
+        margin-left: 15px;
+    }
+
+        .sptablecontent .asth {
+            font-weight: bold;
+        }
+
+        .sptablecontent th, table td {
+            padding: 0px 0px !important;
+            border: 1px solid #ccc;
+        }
+
+        .sptablecontent th, table tr {
+            height: 3px;
+        }
+
+        .sptablecontent, .sptablecontent .sptablecontent td {
+            padding: 0px 0px !important;
+            border: 0px solid #ccc;
+        }
+
+            .sptablecontent [type=text], select {
+                width: 100%;
+            }
+
+            .sptablecontent [type=password] {
+                width: 100%;
+            }
+
+            .sptablecontent div {
+                width: 97%;
+            }
+
+    #dampstyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    .inputfield {
+        pointer-events: none;
+        opacity: 30;
+        width: 80%;
+    }
+
+    .Inputborder:focus {
+        border: 1px solid #1670BE;
+        box-shadow: 0 0 3px #1670BE;
+        outline-offset: 0px;
+        outline: none;
+    }
+
+    .Inputborder {
+        border: 1px solid #eee;
+        font-size: 13px !important;
+        height: 17px !important;
+        line-height: 2px !important;
+        text-emphasis-position: initial !important;
+        margin-top: 0px !important;
+        padding: 0px 0px !important;
+    }
+
+
+    .mainparent {
+        color: dodgerblue;
+        background-color: #eee;
+    }
+
+    .boderclr {
+        background-color: dodgerblue;
+    }
+
+    .vouproperty {
+        height: 95vh;
+        overflow-y: scroll;
+    }
+</style>
+<div class="box box-primary">
+    <br />
+
+    <div class="box-header with-border">
+        <div class="row">
+            <div class="col-md-11">
+                <div class="row">
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-1 control-labell"> Find</label>
+                        <div class="col-md-9">
+                            <input type="text" id="filterpremiumSetting" style="display:flex;width:100%;" class="form-control" placeholder="Search By Name">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body vouproperty">
+
+        @foreach (var va in deviceConfig)
+        {
+            switch (va.Attribute)
+            {
+                case "Beneficiary User":
+                    Model.prem_BeneficiaryUser =
+                    (enBeneficiaryUser)
+                    Enum.Parse(typeof(enBeneficiaryUser), va.CurrentValue, false);
+                    break;
+                case "Need Credentials For Customer Discount":
+                    Model.prem_NeedCredentialsForCustomerDiscount = (enNeedCredentials)
+                    Enum.Parse(typeof(enNeedCredentials), va.CurrentValue, false);
+                    break;
+
+                case "POS Value Rule":
+                    Model.prem_POSValueRule =
+                    (enValueRule)
+                    Enum.Parse(typeof(enValueRule), va.CurrentValue, false);
+                    break;
+                case "Device Status API URL":
+                  @*  Model.prem_DeviceStatusAPIURL = va.CurrentValue;*@
+                    break;
+                case "POS Use Only Available Article":
+                    Model.prem_POSUseOnlyAvailableArticle = (enrecuIgnorezeroprice_rticle)
+                    Enum.Parse(typeof(enrecuIgnorezeroprice_rticle), va.CurrentValue, false);
+                    break;
+                case "Ignore zero price article":
+                    Model.prem_Ignore_zero_price_article = (enrecuIgnorezeroprice_rticle)
+                    Enum.Parse(typeof(enrecuIgnorezeroprice_rticle), va.CurrentValue, false);
+                    break;
+                case "Enable Online Payment":
+                    Model.prem_EnableOnlinePayment = va.CurrentValue;
+                    break;
+                case "QR Code Destination":
+                    Model.prem_QRCodeDestination =
+                    (enpremQRCodeDestination)
+                    Enum.Parse(typeof(enpremQRCodeDestination), va.CurrentValue, false);
+                    break;
+                case "Closing Document Type":
+                    @*Model.prem_ClosingDocumentType =
+                    (enClosingDocumentType)
+                    Enum.Parse(typeof(enClosingDocumentType), va.CurrentValue, false);*@
+                    break;
+
+                case "Price Type":
+                    Model.prem_PriceType = va.CurrentValue;
+                    break;
+                case "Enable Package Design":
+                    Model.prem_EnablePackageDesign = va.CurrentValue;
+                    break;
+                case "DownLoad EJ":
+                    Model.prem_DownLoadEJ = va.CurrentValue;
+                    break;
+                case "Summary Voucher":
+                    Model.prem_SummaryVoucher = va.CurrentValue;
+                    break;
+                case "Accuracy Tolerance":
+                  if (!string.IsNullOrEmpty(va.CurrentValue))
+                    {
+                        Model.prem_AccuracyTolerance = float.Parse(va.CurrentValue);
+                    }
+                    break;
+                case "Summary Difference Tolerance":
+                 if (!string.IsNullOrEmpty(va.CurrentValue))
+                    {
+                       Model.prem_SummaryDifferenceTolerance = float.Parse(va.CurrentValue);
+                    }
+                    break;
+                case "Check Voucher Integrity":
+                    Model.prem_CheckVoucherIntegrity = va.CurrentValue;
+                    break;
+                case "Fiscal Reconciliation":
+                    Model.prem_FiscalReconciliation = va.CurrentValue;
+                    break;
+                case "Zeroing Voucher":
+                    Model.prem_ZeroingVoucher = va.CurrentValue;
+                    break;
+
+                case "Closing Frequency":
+                    Model.prem_ClosingFrequency =
+                    (enpremClosingFrequency)
+                    Enum.Parse(typeof(enpremClosingFrequency), va.CurrentValue, false);
+                    break;
+                case "Clear Held Bill":
+                    Model.prem_ClearHeldBill = va.CurrentValue;
+                    break;
+
+                case "Print Discount & Additional Charge Per LineItem":
+                    Model.prem_PrintDiscountAdditionalChargePerLineItem = va.CurrentValue;
+                    break;
+                case "Enable Bill Management":
+                    Model.prem_EnableBillManagement = va.CurrentValue;
+                    break;
+                case "POS Trigger Article Removal":
+                    Model.prem_POSTriggerArticleRemoval = (enpremPOSTriggerArticleRemoval)
+                    Enum.Parse(typeof(enpremPOSTriggerArticleRemoval), va.CurrentValue, false);
+                    break;
+                case "Need Credentials For Removal":
+                    Model.prem_NeedCredentialsForRemoval = (enpremNeedCredentialsForRemoval)
+                    Enum.Parse(typeof(enpremNeedCredentialsForRemoval), va.CurrentValue, false);
+
+                    break;
+                case "Enable Order Function":
+                    Model.prem_EnableOrderFunction = va.CurrentValue;
+                    break;
+                case "Order Station Mandatory":
+                    Model.prem_OrderStationMandatory = va.CurrentValue;
+                    break;
+                case "Order Verification Method":
+                    Model.prem_OrderVerificationMethod =
+                    (enOrderVerificationMethod)
+                    Enum.Parse(typeof(enOrderVerificationMethod), va.CurrentValue, false);
+                    break;
+                case "Open Drawer After Print":
+                    Model.prem_OpenDrawerAfterPrint = va.CurrentValue;
+                    break;
+                case "Default Transaction Type":
+                    Model.prem_DefaultTransactionType =
+                    (enpremDefaultTransactionType)
+                    Enum.Parse(typeof(enpremDefaultTransactionType), va.CurrentValue, false);
+                    break;
+                case "Default Payment":
+                    Model.prem_DefaultPayment =
+                    (enpremDefaultPayment)
+                    Enum.Parse(typeof(enpremDefaultPayment), va.CurrentValue, false);
+                    break;
+                case "Allow multiple Instance Of Table":
+                    Model.prem_AllowmultipleInstanceOfTable = va.CurrentValue;
+                    break;
+                case "Disable Void On Retrieve":
+                    Model.prem_DisableVoidOnRetrieve = va.CurrentValue;
+                    break;
+                case "Capture Fiscal Information":
+                    Model.prem_CaptureFiscalInformation = va.CurrentValue;
+                    break;
+                case "POS Store":
+                    Model.prem_POSStore = va.CurrentValue;
+                    break;
+
+                case "Station Type":
+                    Model.prem_StationType = (enStationType)Enum.Parse(typeof(enStationType), va.CurrentValue, false);
+                    break;
+                case "Enable Table":
+                    Model.prem_EnableTable = va.CurrentValue;
+                    break;
+                case "Table Table selection type":
+                    Model.prem_TableTableselectiontype =
+                    (enTableSelectionType)
+                    Enum.Parse(typeof(enTableSelectionType), va.CurrentValue, false);
+                    break;
+                case "Table Select seat position type":
+                    Model.prem_TableSelectseatpositiontype =
+                    (enSelectseatpositiontype)
+                    Enum.Parse(typeof(enSelectseatpositiontype), va.CurrentValue, false);
+                    break;
+                case "Table Select waiter before open":
+                    Model.prem_TableSelectwaiterbeforeopen = va.CurrentValue;
+                    break;
+                case "Table Select cover before open":
+                    Model.prem_TableSelectcoverbeforeopen = va.CurrentValue;
+                    break;
+                case "Table Applicable servicecharge":
+                    Model.prem_TableApplicableservicecharge = va.CurrentValue;
+                    break;
+                case "Table Applicable Discount":
+                    Model.prem_TableApplicableDiscount = va.CurrentValue;
+                    break;
+                case "Table Default category":
+                    Model.prem_TableDefaultcategory = va.CurrentValue;
+                    break;
+                case "Table Auto add item":
+                    Model.prem_TableAutoadditem = va.CurrentValue;
+                    break;
+
+                case "Enable Tab":
+                    Model.prem_EnableTab = va.CurrentValue;
+                    break;
+                case "Tab Table selection type":
+                    Model.prem_TabTableselectiontype =
+                    (enTableSelectionType)
+                    Enum.Parse(typeof(enTableSelectionType), va.CurrentValue, false);
+                    break;
+                case "Tab Select seat position type":
+                    Model.prem_TabSelectseatpositiontype =
+                    (enSelectseatpositiontype)
+                    Enum.Parse(typeof(enSelectseatpositiontype), va.CurrentValue, false);
+                    break;
+                case "Tab Select waiter before open":
+                    Model.prm_TabSelectwaiterbeforeopen = va.CurrentValue;
+                    break;
+                case "Tab Select cover before open":
+                    Model.prem_TabSelectcoverbeforeopen = va.CurrentValue;
+                    break;
+                case "Tab Applicable servicecharge":
+                    Model.prem_TabApplicableservicecharge = va.CurrentValue;
+                    break;
+                case "Tab Applicable Discount":
+                    Model.prem_TabApplicableDiscount = va.CurrentValue;
+                    break;
+                case "Tab Default category":
+                    Model.prem_TabDefaultcategory = va.CurrentValue;
+                    break;
+                case "Tab Auto add item":
+                    Model.prem_TabAutoadditem = va.CurrentValue;
+                    break;
+
+                case "Enable Fast Transaction":
+                    Model.prem_EnableFastTransaction = va.CurrentValue;
+                    break;
+                case "Fast Transaction Table selection type":
+                    Model.prem_FastTransactionTableselectiontype =
+                    (enTableSelectionType)
+                    Enum.Parse(typeof(enTableSelectionType), va.CurrentValue, false);
+                    break;
+                case "Fast Transaction Select seat position type":
+                    Model.prme_FastTransactionSelectseatpostionType =
+                    (enSelectseatpositiontype)
+                    Enum.Parse(typeof(enSelectseatpositiontype), va.CurrentValue, false);
+                    break;
+                case "Fast Transaction Select waiter before open":
+                    Model.prme_FastTransactionSelectwaiterbeforeopen = va.CurrentValue;
+                    break;
+                case "Fast Transaction Select cover before open":
+                    Model.prem_FastTransactionSelectcoverbeforeopen = va.CurrentValue;
+                    break;
+                case "Fast Transaction Applicable servicecharge":
+                    
+                    break;
+                case "Fast Transaction Applicable Discount":
+                   
+                    break;
+                case "Fast Transaction Default category":
+                   
+                    break;
+                case "Fast Transaction Auto add item":
+                    
+
+                case "Enable Takeaway":
+                    Model.prem_EnableTakeaway = va.CurrentValue;
+                    break;
+                case "Takeaway Table selection type":
+                    Model.prem_TakeawayTableselectiontype =
+                    (enTableSelectionType)
+                    Enum.Parse(typeof(enTableSelectionType), va.CurrentValue, false);
+                    break;
+                case "Takeaway Select seat position type":
+                    Model.prem_TakeawaySelectseatposition =
+                    (enSelectseatpositiontype)
+                    Enum.Parse(typeof(enSelectseatpositiontype), va.CurrentValue, false);
+                    break;
+                case "Takeaway Select waiter before open":
+                    Model.prem_TakeawaySelectwaiterbeforeopen = va.CurrentValue;
+                    break;
+                case "Takeaway Select cover before open":
+                    Model.prem_TakeawaySelectcoverbeforeopen = va.CurrentValue;
+                    break;
+                case "Takeaway Applicable servicecharge":
+                   
+                    break;
+                case "Takeaway Applicable Discount":
+                    
+                    break;
+                case "Takeaway Default category":
+                   
+                    break;
+                case "Takeaway Auto add item":
+                   
+                    break;
+
+                case "Enable Delivery":
+                    Model.prem_EnableDelivery = va.CurrentValue;
+                    break;
+                case "Delivery Table selection type":
+                    Model.prem_deliveryTableSelectionType =
+                    (enTableSelectionType)
+                    Enum.Parse(typeof(enTableSelectionType), va.CurrentValue, false);
+                    break;
+                case "Delivery Select seat position type":
+                    Model.prem_DeliverySelectseatpositiontype =
+                    (enSelectseatpositiontype)
+                    Enum.Parse(typeof(enSelectseatpositiontype), va.CurrentValue, false);
+                    break;
+                case "Delivery Select waiter before open":
+                    Model.prem_DeliverySelectwaiterbeforeopen = va.CurrentValue;
+                    break;
+                case "Delivery Select cover before open":
+                    Model.prem_DeliverySelectcoverbeforeopen = va.CurrentValue;
+                    break;
+                case "Delivery Applicable servicecharge":
+                    
+                    break;
+                case "Delivery Applicable Discount":
+                   
+                    break;
+                case "Delivery Default category":
+                    
+                    break;
+                case "Delivery Auto add item":
+                    
+                    break;
+                case "Enable Room Service":
+                    Model.prem_EnableRoomService = va.CurrentValue;
+                    break;
+                case "Room Service Table selection type":
+                    Model.prem_RoomServiceTableSelectionType =
+                    (enTableSelectionType)
+                    Enum.Parse(typeof(enTableSelectionType), va.CurrentValue, false);
+                    break;
+                case "Room Service Select seat position type":
+                    Model.prem_RoomServiceSelectseatpositiontype =
+                    (enSelectseatpositiontype)
+                    Enum.Parse(typeof(enSelectseatpositiontype), va.CurrentValue, false);
+                    break;
+                case "Room Service Select waiter before open":
+                    Model.prem_RoomServiceSelectwaiterbeforeopen = va.CurrentValue;
+                    break;
+                case "Room Service Select cover before open":
+                    Model.prem_RoomServiceSelectcoverbeforeopen = va.CurrentValue;
+                    break;
+                case "Room Service Applicable servicecharge":
+                   
+                    break;
+                case "Room Service Applicable Discount":
+                   
+                    break;
+                case "Room Service Default category":
+                   
+                    break;
+                case "Room Service Auto add item":
+                   
+                    break;
+
+            }
+        }
+        <form id="PropertyFormDataForSavingpremiumpos" method="post">
+
+            <table cellpadding="0" cellspacing="0" class="sptablecontent tree-loadprem" id="Premium_Setting_table">
+                <tr class="asth">
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Begin Delivery Settings
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Delivery
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_EnableDelivery" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Ignore zero price article
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_Ignore_zero_price_article" asp-items="Html.GetEnumSelectList<enrecuIgnorezeroprice_rticle>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        POS Value Rule
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_POSValueRule" asp-items="Html.GetEnumSelectList<enValueRule>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Need Credentials For Customer Discount
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_NeedCredentialsForCustomerDiscount" asp-items="Html.GetEnumSelectList<enNeedCredentials>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        POS Use Only Available Article
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_POSUseOnlyAvailableArticle" asp-items="Html.GetEnumSelectList<enrecuIgnorezeroprice_rticle>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Beneficiary User
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_BeneficiaryUser" asp-items="Html.GetEnumSelectList<enBeneficiaryUser>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Delivery Applicable Discount
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#deliveryapplicationDiacount">
+
+                        @if (string.IsNullOrEmpty(Model.prem_DeliveryApplicableDiscount))
+                        {
+                            <input asp-for="prem_DeliveryApplicableDiscount" type="text" value="" id="delivery_application_Diacount_value" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="prem_DeliveryApplicableDiscount" type="text" value="@Model.prem_DeliveryApplicableDiscount" id="delivery_application_Diacount_value" class="Inputborder" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Delivery Applicable service charge
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#Applicableservicecharge">
+
+                        @if (string.IsNullOrEmpty(Model.prem_DeliveryApplicableservicecharge))
+                        {
+                            <input asp-for="prem_DeliveryApplicableservicecharge" type="text" value="" id="Delivery_Applicable_service_charge_value" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="prem_DeliveryApplicableservicecharge" type="text" value="@Model.prem_DeliveryApplicableservicecharge" id="Delivery_Applicable_service_charge_value" class="Inputborder" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Delivery Auto add item
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#AutoAddItem">
+
+                        @if (string.IsNullOrEmpty(Model.prem_DeliveryAutoadditem))
+                        {
+                            <input asp-for="prem_DeliveryAutoadditem" type="text" value="" id="Delivery_Auto_add_item_value" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="prem_DeliveryAutoadditem" type="text" value="@Model.prem_DeliveryAutoadditem" id="Delivery_Auto_add_item_value" class="Inputborder" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Delivery Default category
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#DefaultCategorymodal">
+
+                        @if (string.IsNullOrEmpty(Model.prem_DeliveryDefaultcategory))
+                        {
+                            <input asp-for="prem_DeliveryDefaultcategory" type="text" value="" id="Delivery_Default_category_value" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="prem_DeliveryDefaultcategory" type="text" value="@Model.prem_DeliveryDefaultcategory" id="Delivery_Default_category_value" class="Inputborder" />
+
+                        }
+                    </td>
+
+                </tr>
+
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Delivery Select cover before open
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_DeliverySelectcoverbeforeopen" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Delivery Select seat position type
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_DeliverySelectseatpositiontype" asp-items="Html.GetEnumSelectList<enSelectseatpositiontype>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Delivery Select waiter before open
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_DeliverySelectwaiterbeforeopen" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Delivery Table selection type
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_deliveryTableSelectionType" asp-items="Html.GetEnumSelectList<enTableSelectionType>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Begin Fast Transaction Settings
+                    </td>
+                </tr>
+
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Fast Transaction
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_EnableFastTransaction" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Fast Transaction Applicable Discount
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="2" data-target="#deliveryapplicationDiacount">
+
+                        @if (string.IsNullOrEmpty(Model.prem_FastTransactionApplicableDiscount))
+                        {
+                            <input asp-for="prem_FastTransactionApplicableDiscount" type="text" value="" id="Fast_Transaction_Applicable_Discount_value" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="prem_FastTransactionApplicableDiscount" type="text" value="@Model.prem_FastTransactionApplicableDiscount" id="Fast_Transaction_Applicable_Discount_value" class="Inputborder" />
+
+                        }
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Fast Transaction Applicable service charge
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="2" data-target="#Applicableservicecharge">
+
+                        @if (string.IsNullOrEmpty(Model.prme_FastTransactionApplicableservicecharge))
+                        {
+                            <input asp-for="prme_FastTransactionApplicableservicecharge" type="text" value="" id="Fast_Transaction_Applicable_service_charge_value" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="prme_FastTransactionApplicableservicecharge" type="text" value="@Model.prme_FastTransactionApplicableservicecharge" id="Fast_Transaction_Applicable_service_charge_value" class="Inputborder" />
+
+                        }
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Fast Transaction Auto add item
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="2" data-target="#AutoAddItem">
+
+                        @if (string.IsNullOrEmpty(Model.prem_FastTransactionAutoadditem))
+                        {
+                            <input asp-for="prem_FastTransactionAutoadditem" type="text" value="" id="Fast_Transaction_Auto_additem_value" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="prem_FastTransactionAutoadditem" type="text" value="@Model.prem_FastTransactionAutoadditem" id="Fast_Transaction_Auto_additem_value" class="Inputborder" />
+
+                        }
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Fast Transaction Default category
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="2" data-target="#DefaultCategorymodal">
+
+                        @if (string.IsNullOrEmpty(Model.prem_FastTransactionDefaultcategory))
+                        {
+                            <input asp-for="prem_FastTransactionDefaultcategory" type="text" value="" id="Fast_Transaction_Default_category_value" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="prem_FastTransactionDefaultcategory" type="text" value="@Model.prem_FastTransactionDefaultcategory" id="Fast_Transaction_Default_category_value" class="Inputborder" />
+
+                        }
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Fast Transaction Select cover before open
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_FastTransactionSelectcoverbeforeopen" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Fast Transaction Select seat position type
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prme_FastTransactionSelectseatpostionType" asp-items="Html.GetEnumSelectList<enSelectseatpositiontype>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Fast Transaction Select waiter before open
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prme_FastTransactionSelectwaiterbeforeopen" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Fast Transaction Table selection type
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_FastTransactionTableselectiontype" asp-items="Html.GetEnumSelectList<enTableSelectionType>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Begin Room Service Settings
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Room Service
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_EnableRoomService" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Room Service Applicable Discount
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="3" data-target="#deliveryapplicationDiacount">
+
+                        @if (string.IsNullOrEmpty(Model.prem_RoomServiceApplicableDiscount))
+                        {
+                            <input asp-for="prem_RoomServiceApplicableDiscount" type="text" value="" id="Room_Service_Applicable_Discount_value" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="prem_RoomServiceApplicableDiscount" type="text" value="@Model.prem_RoomServiceApplicableDiscount" id="Room_Service_Applicable_Discount_value" class="Inputborder" />
+
+                        }
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Room Service Applicable service charge
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="3" data-target="#Applicableservicecharge">
+
+                        @if (string.IsNullOrEmpty(Model.prem_RoomServiceApplicableservicecharge))
+                        {
+                            <input asp-for="prem_RoomServiceApplicableservicecharge" type="text" value="" id="Room_Service_Applicable_service_charge_value" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="prem_RoomServiceApplicableservicecharge" type="text" value="@Model.prem_RoomServiceApplicableservicecharge" id="Room_Service_Applicable_service_charge_value" class="Inputborder" />
+
+                        }
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Room Service Auto add item
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="3" data-target="#AutoAddItem">
+
+                        @if (string.IsNullOrEmpty(Model.prem_RoomServiceAutoadditem))
+                        {
+                            <input asp-for="prem_RoomServiceAutoadditem" type="text" value="" id="Room_Service_Auto_add_item_value" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="prem_RoomServiceAutoadditem" type="text" value="@Model.prem_RoomServiceAutoadditem" id="Room_Service_Auto_add_item_value" class="Inputborder" />
+
+                        }
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Room Service Default category
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="3" data-target="#DefaultCategorymodal">
+
+                        @if (string.IsNullOrEmpty(Model.prem_RoomServiceDefaultcategory))
+                        {
+                            <input asp-for="prem_RoomServiceDefaultcategory" type="text" value="" id="Room_Service_Default_category_value" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="prem_RoomServiceDefaultcategory" type="text" value="@Model.prem_RoomServiceDefaultcategory" id="Room_Service_Default_category_value" class="Inputborder" />
+
+                        }
+                    </td>
+                </tr>
+
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Room Service Select cover before open
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_RoomServiceSelectcoverbeforeopen" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Room Service Select seat position type
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_RoomServiceSelectseatpositiontype" asp-items="Html.GetEnumSelectList<enSelectseatpositiontype>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Room Service Select waiter before open
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#CashCustomerMap">
+                        <select asp-for="prem_RoomServiceSelectwaiterbeforeopen" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Room Service Table selection type
+                    </td>
+                    <td class="attributdata" data-toggle="modal" data-id="1" data-target="#PosStorebtnsaveMap">
+                        <select asp-for="prem_RoomServiceTableSelectionType" asp-items="Html.GetEnumSelectList<enTableSelectionType>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Begin Tab Settings
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Tab
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_EnableTab" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Tab Applicable Discount
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="4" data-target="#deliveryapplicationDiacount">
+
+                        @if (string.IsNullOrEmpty(Model.prem_TabApplicableDiscount))
+                        {
+                            <input asp-for="prem_TabApplicableDiscount" type="text" value="" id="Tab_Applicable_Discoun_value" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="prem_TabApplicableDiscount" type="text" value="@Model.prem_TabApplicableDiscount" id="Tab_Applicable_Discoun_value" class="Inputborder" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Tab Applicable service charge
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="4" data-target="#Applicableservicecharge">
+
+                        @if (string.IsNullOrEmpty(Model.prem_TabApplicableservicecharge))
+                        {
+                            <input asp-for="prem_TabApplicableservicecharge" type="text" value="" id="Tab_Applicable_service_charge_value" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="prem_TabApplicableservicecharge" type="text" value="@Model.prem_TabApplicableservicecharge" id="Tab_Applicable_service_charge_value" class="Inputborder" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Tab Auto add item
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="4" data-target="#AutoAddItem">
+
+                        @if (string.IsNullOrEmpty(Model.prem_TabAutoadditem))
+                        {
+                            <input asp-for="prem_TabAutoadditem" type="text" value="" id="Tab_Auto_add_item_value" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="prem_TabAutoadditem" type="text" value="@Model.prem_TabAutoadditem" id="Tab_Auto_add_item_value" class="Inputborder" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Tab Default category
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="4" data-target="#DefaultCategorymodal">
+
+                        @if (string.IsNullOrEmpty(Model.prem_TabDefaultcategory))
+                        {
+                            <input asp-for="prem_TabDefaultcategory" type="text" value="" id="Tab_Default_category_value" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="prem_TabDefaultcategory" type="text" value="@Model.prem_TabDefaultcategory" id="Tab_Default_category_value" class="Inputborder" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Tab Select cover before open
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_TabSelectcoverbeforeopen" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Tab Select seat position type
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_TabSelectseatpositiontype" asp-items="Html.GetEnumSelectList<enSelectseatpositiontype>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Tab Select waiter before open
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prm_TabSelectwaiterbeforeopen" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Tab Table selection type
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_TabTableselectiontype" asp-items="Html.GetEnumSelectList<enTableSelectionType>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Begin Table Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Table
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_EnableTable" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Table Applicable Discount
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="5" data-target="#deliveryapplicationDiacount">
+
+                        @if (string.IsNullOrEmpty(Model.prem_TableApplicableDiscount))
+                        {
+                            <input asp-for="prem_TableApplicableDiscount" type="text" value="" id="Table_Applicable_Discount_value" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="prem_TableApplicableDiscount" type="text" value="@Model.prem_TableApplicableDiscount" id="Table_Applicable_Discount_value" class="Inputborder" />
+
+                        }
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Table Applicable service charge
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="5" data-target="#Applicableservicecharge">
+
+                        @if (string.IsNullOrEmpty(Model.prem_TableApplicableservicecharge))
+                        {
+                            <input asp-for="prem_TableApplicableservicecharge" type="text" value="" id="Table_Applicable_service_charge_value" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="prem_TableApplicableservicecharge" type="text" value="@Model.prem_TableApplicableservicecharge" id="Table_Applicable_service_charge_value" class="Inputborder" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Table Auto add item
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="5" data-target="#AutoAddItem">
+
+                        @if (string.IsNullOrEmpty(Model.prem_TableAutoadditem))
+                        {
+                            <input asp-for="prem_TableAutoadditem" type="text" value="" id="Table_Auto_add_item_value" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="prem_TableAutoadditem" type="text" value="@Model.prem_TableAutoadditem" id="Table_Auto_add_item_value" class="Inputborder" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Table Default category
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="5" data-target="#DefaultCategorymodal">
+                        @if (string.IsNullOrEmpty(Model.prem_TableDefaultcategory))
+                        {
+                            <input asp-for="prem_TableDefaultcategory" type="text" value="" id="Table_Default_category_value" class="Inputborder" />
+
+                        }
+                        else
+                        { <input asp-for="prem_TableDefaultcategory" type="text" value="@Model.prem_TableDefaultcategory" id="Table_Default_category_value" class="Inputborder" />
+
+                        }
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Table Select cover before open
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_TableSelectcoverbeforeopen" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Table Select seat position type
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_TableSelectseatpositiontype" asp-items="Html.GetEnumSelectList<enSelectseatpositiontype>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Table Select waiter before open
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_TableSelectwaiterbeforeopen" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Table Table selection type
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_TableTableselectiontype" asp-items="Html.GetEnumSelectList<enTableSelectionType>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Begin Takeaway Settings
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Takeaway
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_EnableTakeaway" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Takeaway Applicable Discount
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="6" data-target="#deliveryapplicationDiacount">
+
+                        @if (string.IsNullOrEmpty(Model.prem_TakeawayApplicableDiscount))
+                        {
+                            <input asp-for="prem_TakeawayApplicableDiscount" type="text" value="" id="Takeaway_Applicable_Discount_value" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="prem_TakeawayApplicableDiscount" type="text" value="@Model.prem_TakeawayApplicableDiscount" id="Takeaway_Applicable_Discount_value" class="Inputborder" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Takeaway Applicable service charge
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="6" data-target="#Applicableservicecharge">
+
+                        @if (string.IsNullOrEmpty(Model.prem_TakeawayApplicableservicecharge))
+                        {
+                            <input asp-for="prem_TakeawayApplicableservicecharge" type="text" value="" id="Takeaway_Applicable_service_charge_value" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="prem_TakeawayApplicableservicecharge" type="text" value="@Model.prem_TakeawayApplicableservicecharge" id="Takeaway_Applicable_service_charge_value" class="Inputborder" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Takeaway Auto add item
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="6" data-target="#AutoAddItem">
+
+                        @if (string.IsNullOrEmpty(Model.prem_TakeawayAutoadditem))
+                        {
+                            <input asp-for="prem_TakeawayAutoadditem" type="text" value="" id="Takeaway_Auto_add_item_value" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="prem_TakeawayAutoadditem" type="text" value="@Model.prem_TakeawayAutoadditem" id="Takeaway_Auto_add_item_value" class="Inputborder" />
+
+                        }
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Takeaway Default category
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="6" data-target="#DefaultCategorymodal">
+
+                        @if (string.IsNullOrEmpty(Model.prem_TakeawayDefaultcategory))
+                        {
+                            <input asp-for="prem_TakeawayDefaultcategory" type="text" value="" id="Takeaway_Default_category_value" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="prem_TakeawayDefaultcategory" type="text" value="@Model.prem_TakeawayDefaultcategory" id="Takeaway_Default_category_value" class="Inputborder" />
+
+                        }
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Takeaway Select cover before open
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_TakeawaySelectcoverbeforeopen" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Takeaway Select seat position type
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_TakeawaySelectseatposition" asp-items="Html.GetEnumSelectList<enSelectseatpositiontype>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Takeaway Select waiter before open
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_TakeawaySelectwaiterbeforeopen" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Takeaway Table selection type
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_TakeawayTableselectiontype" asp-items="Html.GetEnumSelectList<enTableSelectionType>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+
+                @{sysoldvalue = sysoldvalue + 1;}
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Closing  Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                      Accuracy Tolerance
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (Model.prem_AccuracyTolerance == 0)
+                        {
+                            <input asp-for="prem_AccuracyTolerance" type="text" class="Inputborder" value="0" onkeypress="return iscloseschedule(event)" />
+                        }
+                        else
+                        {
+                            <input asp-for="prem_AccuracyTolerance" type="text" value="@Model.prem_AccuracyTolerance" class="Inputborder" maxlength="9" onkeypress="return iscloseschedule(event)" />
+
+                        }
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Check Voucher Integrity
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_CheckVoucherIntegrity" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Clear Held Bill
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_ClearHeldBill" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Closing Frequency
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_ClosingFrequency" asp-items="Html.GetEnumSelectList<enpremClosingFrequency>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        DownLoad EJ
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_DownLoadEJ" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        FiscalReconciliation
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_FiscalReconciliation" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Summary Difference Tolerance
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (Model.prem_SummaryDifferenceTolerance == 0)
+                        {
+                            <input asp-for="prem_SummaryDifferenceTolerance" type="text" class="Inputborder" value="0" onkeypress="return iscloseschedule(event)" />
+                        }
+                        else
+                        {
+                            <input asp-for="prem_SummaryDifferenceTolerance" type="text" value="@Model.prem_SummaryDifferenceTolerance" class="Inputborder" maxlength="9" onkeypress="return iscloseschedule(event)" />
+
+                        }
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Zeroing Voucher
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_ZeroingVoucher" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        General Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Allow multiple Instance Of Table
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_AllowmultipleInstanceOfTable" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Capture Fiscal Information
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_CaptureFiscalInformation" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Default Payment
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_DefaultPayment" asp-items="Html.GetEnumSelectList<enpremDefaultPayment>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Default Transaction Type
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_DefaultTransactionType" asp-items="Html.GetEnumSelectList<enpremDefaultTransactionType>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Disable Void On Retrieve
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_DisableVoidOnRetrieve" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Bill Management
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_EnableBillManagement" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Order Function
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_EnableOrderFunction" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable Package Design
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_EnablePackageDesign" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Need Credentials For Removal
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_NeedCredentialsForRemoval" asp-items="Html.GetEnumSelectList<enpremNeedCredentialsForRemoval>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Open Drawer After Print
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_OpenDrawerAfterPrint" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Order Station Mandatory
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_OrderStationMandatory" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Order Verification Method
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_OrderVerificationMethod" asp-items="Html.GetEnumSelectList<enOrderVerificationMethod>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        POS Store
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#premPOSStoremodal">
+
+                        @if (string.IsNullOrEmpty(Model.prem_POSStore))
+                        {
+                            <input asp-for="prem_POSStore" type="text" value="" id="premium_pos_store" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="prem_POSStore" type="text" value="@Model.prem_POSStore" id="premium_pos_store" class="Inputborder" />
+
+                        }
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        POS Trigger Article Removal
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_POSTriggerArticleRemoval" asp-items="Html.GetEnumSelectList<enpremPOSTriggerArticleRemoval>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Price Type
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#premPriceTypemodal">
+
+                        @if (string.IsNullOrEmpty(Model.prem_PriceType))
+                        {
+                            <input asp-for="prem_PriceType" type="text" value="" id="premium_price_type" class="Inputborder" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="prem_PriceType" type="text" value="@Model.prem_PriceType" id="premium_price_type" class="Inputborder" />
+
+                        }
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Print Discount & Additional Charge Per LineItem
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_PrintDiscountAdditionalChargePerLineItem" asp-items="Model.accuracy_Tolerances" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        QR Code Destination
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_QRCodeDestination" asp-items="Html.GetEnumSelectList<enpremQRCodeDestination>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Station Type
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="prem_StationType" asp-items="Html.GetEnumSelectList<enStationType>()" class="form-control custom-select Inputborder">
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            <input asp-for="prem_devicecode" value="@Model.deviceId" hidden />
+
+        </form>
+
+
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $("#filterpremiumSetting").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#Premium_Setting_table > tbody > tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+<script>
+    function TreeFunctionproprty() {
+        $(document).ready(function () {
+            $('.tree-basic').treegrid();
+
+            $('.tree-loadprem').treegrid({
+                source: function (id, response) {
+                    if (id != 1) response(['']);
+                    else response(['']);
+                }
+            });
+
+        });
+    }
+    TreeFunctionproprty();
+</script>
+<script>
+    $('.attributdata').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).children('.inputfield').val();*/
+        var value = $(this).text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).closest("tr").addClass('boderclr');
+        $('#deviceproperty').html(value);
+
+    });
+    $('.attributcurrvalue').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).siblings().children('.inputfield').val();*/
+        var value = $(this).siblings().text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).siblings().addClass("boderclr");
+        $('#deviceproperty').html(value);
+
+    });
+    $("#propertysect").change(function () {
+        var value = $(this).select2('data')[0].text;
+        $(".boderclr").removeClass("boderclr");
+        $("input[name*='" + value + "']").addClass('boderclr');
+        $("input[name*='" + value + "']").closest("tr").addClass('boderclr');
+
+        $('#deviceproperty').html(value);
+    });
+
+</script>
+<script>
+
+$(function () {
+
+    $('#@nameof(Model.rmsthemeChangedDate)').datepicker();
+
+    });
+</script>
+
+<script>
+    function iscloseschedule(evt) {
+
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        else {
+
+            return true;
+        }
+
+    }
+  
+</script>
+<script>
+    var selectedCountry = "";
+
+    var row = ""
+
+    $("select.select2").change(function () {
+        selectedCountry = $(this).children("option:selected").text();
+        console.log(selectedCountry);
+
+        $(".bg-blue").removeClass("bg-blue");
+        //var row = $(".addvaluepropertyLisearch:contains(" + selectedCountry + "));
+        $("input[name*='" + selectedCountry + "']").addClass("bg-blue");
+        /*location.href = '#resp-table'*/
+    });
+
+
+</script>

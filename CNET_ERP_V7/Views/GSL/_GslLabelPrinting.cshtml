@@ -1,0 +1,125 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model GSLmodel
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+
+@{
+   
+}
+
+<div class="modal fade" id="PrinterMapmodelForarticle">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <span>Tax Type</span>
+                </h5>
+            </div>
+            <div class="box-body">
+                <div class="modal-body">
+                    <div class="row">
+                        <form class="form-horizontal" id="VoucherTaxFormData" method="post">
+
+
+                            <div class="col-md-12" style="margin-top:25px">
+
+                                <div class="row">
+
+                                    <div class="divTable">
+
+                                        <div class="col-md-6" style="margin-left:0px ;">
+                                            <ul class="sidebar-men secondNav tree " data-widget="tree" id="">
+
+                                                <li class="nav-item treeview menu-open attachmentType" id="parentVoucher">
+                                                    <a data-toggle="tab" data-value="" data-types="Send To OneNote 2013" style="text-decoration-line:none!important" name="catagory" class="addlabelprinteritem">
+                                                        <span class="labelcss" selectedValue="">Send To OneNote 2013</span>
+                                                    </a>
+
+                                                    <ul class="treeview-menu" style="padding-left:35px; background-color:white;" id="">
+                                                    </ul>
+                                                </li>
+                                                <li class="nav-item treeview menu-open attachmentType" id="parentVoucher">
+                                                    <a data-toggle="tab" data-value="OneNote for Windows 10" data-types="" style="text-decoration-line:none!important" name="catagory" class="addlabelprinteritem">
+                                                        <span class="labelcss" selectedValue="">OneNote for Windows 10</span>
+                                                    </a>
+
+                                                    <ul class="treeview-menu" style="padding-left:35px; background-color:white;" id="">
+                                                    </ul>
+                                                </li>
+                                                <li class="nav-item treeview menu-open attachmentType" id="parentVoucher">
+                                                    <a data-toggle="tab" data-value="Microsoft XPS Document Writer" data-types="" style="text-decoration-line:none!important" name="catagory" class="addlabelprinteritem">
+                                                        <span class="labelcss" selectedValue="">Microsoft XPS Document Writer</span>
+                                                    </a>
+
+                                                    <ul class="treeview-menu" style="padding-left:35px; background-color:white;" id="">
+                                                    </ul>
+                                                </li>
+                                                <li class="nav-item treeview menu-open attachmentType" id="parentVoucher">
+                                                    <a data-toggle="tab" data-value="Microsoft Print to PDF" data-types="" style="text-decoration-line:none!important" name="catagory" class="addlabelprinteritem">
+                                                        <span class="labelcss" selectedValue="">Microsoft Print to PDF</span>
+                                                    </a>
+
+                                                    <ul class="treeview-menu" style="padding-left:35px; background-color:white;" id="">
+                                                    </ul>
+                                                </li>
+                                                <li class="nav-item treeview menu-open attachmentType" id="parentVoucher">
+                                                    <a data-toggle="tab" data-value="" data-types="Fax" style="text-decoration-line:none!important" name="catagory" class="addlabelprinteritem">
+                                                        <span class="labelcss" selectedValue="">Fax</span>
+                                                    </a>
+
+                                                    <ul class="treeview-menu" style="padding-left:35px; background-color:white;" id="">
+                                                    </ul>
+                                                </li>
+
+
+
+
+                                            </ul>
+
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+
+
+
+
+                        </form>
+                    </div>
+
+                </div>
+                <div class="col-md-12">
+                    <button type="button" action="addRow" class="btn btn-default btn-sm" id="LabelPrinterbtnSave">Ok</button>
+                    <button class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+    var labeltitem = "";
+    $(document).ready(function () {
+
+        $(".addlabelprinteritem").click(function () {
+            labeltitem = $(this).data("value");
+
+        });
+
+        $("#LabelPrinterbtnSave").click(function () {
+
+            $('#label_printer_Type').val(labeltitem);
+            console.log(labeltitem);
+            console.log(labeltitem);
+        });
+
+    });
+
+</script>

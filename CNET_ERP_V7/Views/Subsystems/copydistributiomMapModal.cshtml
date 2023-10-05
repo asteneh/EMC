@@ -1,0 +1,182 @@
+﻿@model  VoucherSearchModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var organizationTypes = await sharedHelpers.GetsystemConstantById(Convert.ToInt32(Model.documentType));
+    var copydistributionList = await sharedHelpers.GetLookUpByType("Copy Description");
+    var copydistributionListType = copydistributionList?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Description }).ToArray();
+    var DESTINATIONList = await sharedHelpers.GetConsigneeByType1(1721);
+
+    var DESTINATIONListType = DESTINATIONList?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Name }).ToArray();
+
+}
+
+<div class="modal fade" id="copydistributionModal">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <img src="~/images/Cnets.jpg" alt="CNET" />
+                    <span>Copy Distribution</span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                </h5>
+
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form class="form-horizontal" id="DistributionNewFormData" onsubmit="return copydistributionNewFormFunction()" asp-controller="Subsystems" asp-action="CreatecopyDistribution" method="post">
+                        <div class="col-md-12">
+                            <div>
+                                <button class="btn btn-app" type="reset" id="IssuedbtnNew"> <i class="fa fa-file-o"></i>New</button>
+                                <button type="submit" action="addRow" class="btn btn-app" id="CopyDistributionNewsave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                                <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12" style="margin-top:25px">
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Copy</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="copydis" class="form-control select2" style="width:340px;" id="@nameof(Model.copydis)">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="copydis"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Destination</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="destinatindis" class="form-control select2" style="width:340px;" id="@nameof(Model.destinatindis)">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="destinatindis"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Printer</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="printerdis" class="form-control select2" style="width:340px;" asp-items="Model.copydistributionprinnters" id="@nameof(Model.printerdis)">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="printerdis"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <input hidden asp-for="codefordeletedistribution" />
+                        <input hidden asp-for="codeforselectedistribution" />
+                        <input hidden asp-for="codeforupdatedistribution" />
+                        <input hidden asp-for="VoucherSettingCodeforcopydistribution" />
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+    var getdistributioncopyyyy = "";
+    $(document).ready(function () {
+        $(".distributionselection").click(function () {
+            getdistributioncopyyyy = "1578";
+
+           
+        });
+    });
+
+    function copydistributionNewFormFunction() {
+        var vcode = $('#@nameof(Model.documentType)').val();
+        var discode = $('#@nameof(Model.distrutionType)').val();
+        var $form = $('#DistributionNewFormData');
+        var data = $form.serialize();
+        var action = $('#DistributionNewFormData').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            success: function (data) {
+                swal("",data,"success")
+                $(function () {
+                    $.ajax({
+                        url: '/Subsystems/getCopydistribution',
+                        type: 'POST',
+                        data: { id: discode, vouchercode: vcode }, // send the data object with the request
+                        success: function (result) {
+                            $('#copydistribution').html(result);
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+                });
+                 ClearcopydistributiionModal();
+
+          },
+        });
+        return false;
+    };
+
+</script>
+<script>
+    $('#@nameof(Model.VoucherSettingCodeforcopydistribution)').val($('#@nameof(Model.documentType)').val());
+</script>
+<script>
+        $('#@nameof(Model.copydis)').select2({
+                    data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(copydistributionListType)),
+                    placeholder: "",
+                    allowClear: true
+
+        });
+    $('#@nameof(Model.destinatindis)').select2({
+                    data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(DESTINATIONListType)),
+                    placeholder: "",
+                    allowClear: true
+
+                });
+</script>
+<script>
+var getdistribution = "";
+    $(document).ready(function () {
+        $(".distributionselection").click(function () {
+            getdistribution = $(this).data('types');
+
+            switch (getdistribution) {
+                case "1578":
+
+                    $('#@nameof(Model.codeforselectedistribution)').val("1578");
+                    break;
+               
+
+            }
+
+        });
+    });
+</script>
+<script>
+ 
+    function ClearcopydistributiionModal() {
+
+                $('#@nameof(Model.codeforupdatedistribution)').val("");
+                $('#@nameof(Model.copydis)').val("").trigger('change');
+                $('#@nameof(Model.destinatindis)').val("").trigger('change');
+                $('#@nameof(Model.printerdis)').val("").trigger('change');
+
+                }
+
+</script>

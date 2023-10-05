@@ -1,0 +1,45 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Newtonsoft.Json;
+@model VoucherSearchModel
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var termDefn = Model?._termDefinitionDTOs;
+}
+<div class="box box-primary">
+            
+            <div class="box-body">
+                <table id="Term_and_condition" class="table table-striped tree-load mapstorefordestination" style="background-color:#ffffff">
+                    <thead>
+                        <tr>
+                            <th width="250px">Category</th>
+                            <th width="250px">Description</th>
+                            <th width="250px">Default Value</th>
+                            <th width="250px">Is Mandatory</th>
+                            <th width="250px">Remark</th>
+                            <th>Edit</th>
+                            <th>delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @if (termDefn != null && termDefn.Count() > 0)
+                        {
+                            @foreach (var childItem in termDefn)
+                            {
+                                <tr>
+                                      <td>@childItem.Category</td>
+                                      <td>@childItem.Description</td>
+                                      <td>@childItem.DefaultValue</td>
+                                      <td> <input class="form-check-input" type="checkbox" id="" @(Convert.ToBoolean(childItem?.IsMandatory) ? "checked" : "") onclick="return false" /></td>
+                                       <td>@childItem?.Remark</td>
+                                       <td> <a class="btnUpdatetermandcondition btn btn-xs" data-code="@childItem?.Id" data-cata="@childItem?.Categorycode" data-desc="@childItem?.Description" data-defa="@childItem?.DefaultValue" data-isma="@childItem?.IsMandatory" data-rema="@childItem?.Remark" data-toggle="modal" data-target="#termandconditionModal"><i class="fa fa-edit text-info"></i></a></td>
+                                       <td><a data-code="@childItem?.Id" class="btnDeletetermandcondition btn  btn-xs"><i class="fa fa-trash text-danger"></i></a> </td>
+                                </tr>
+                            } 
+                        }
+                   
+                    </tbody>
+                </table>
+
+            </div>
+ </div>

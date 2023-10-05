@@ -1,0 +1,92 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model moduleModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var lostArticle = await sharedHelpers.SelectArticleByGSLtype(4);
+
+
+}
+
+<div class="modal fade" id="LostarticleModal">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5>
+                    <span>rowLostFreeArticle</span>
+
+                </h5>
+
+            </div>
+            <div class="box-body">
+                <div class="modal-body accountmapping" >
+                    <div class="row">
+
+                        <div class="col-md-12" style="margin-top:25px">
+
+                            <div class="row">
+
+                                <div class="divTable">
+
+                                    <div class="col-md-6" style="margin-left:0px ;" id="div23">
+                                        <ul class="sidebar-men secondNav tree " data-widget="tree" id="attachement_nav">
+
+                                            @foreach (var item in lostArticle)
+                                            {
+                                                <li class="nav-item treeview menu-open attachmentType" id="parent">
+                                                    <a data-toggle="tab" data-value="@item.Id" data-types="@item.Id" id="a123" style="text-decoration-line:none!important" name="catagory" class="lostfreearticleselector">
+
+                                                        <span class="labelcss" selectedValue="@item.Name ">@item.Id/@item.Name</span>
+                                                    </a>
+
+                                                    <ul class="treeview-menu" style="padding-left:35px; background-color:white;" id="@item.Id">
+                                                    </ul>
+                                                </li>
+                                            }
+
+                                        </ul>
+
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="col-md-12">
+                    <button type="button" action="addRow" class="btn btn-default btn-sm" id="lostartilceebtnSave">Ok</button>
+                    <button class="btn btn-default btn-sm" data-dismiss="modal" id="datadismislostarticle">Close</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+</div>
+<script>
+    var valueitem = "";
+    $(document).ready(function () {
+
+        $(".lostfreearticleselector").click(function () {
+            valueitem = $(this).data("value");
+
+        });
+
+        $("#lostartilceebtnSave").click(function () {
+
+            $('#pmslostfrrearticle').val(valueitem);
+            $('#datadismislostarticle').trigger('click');
+
+
+        });
+
+    });
+
+</script>

@@ -1,0 +1,205 @@
+﻿@model Companymodel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var jobdescriptionCategory = await sharedHelpers.GetLookUpByType("Job Description Category");
+    var jobdescriptionCategoryType = jobdescriptionCategory?.Select(s => new CNET_ERP_V7.Models.SelectorModel.Select2Result
+    {
+        id = s.Id,
+        text = s.Description
+    });
+
+    var jobdescriptionStatus = await sharedHelpers.GetLookUpByType("Job Description Status");
+
+    var jobdescriptionStatusType = jobdescriptionStatus?.Select(s => new CNET_ERP_V7.Models.SelectorModel.Select2Result
+    {
+        id = s.Id,
+        text = s.Description
+    });
+    int? index = 0;
+
+    //var mediaviewList = await sharedHelpers.Selectmediaview();
+    //if (mediaviewList.Count()>=1)
+    //{
+    //    index = mediaviewList?.LastOrDefault().index;
+
+    //    index = ++index;
+
+    //}
+    //else
+    //{
+    //    index = 0;
+    //}
+
+    }
+
+
+
+<style>
+    .display {
+        display: none;
+    }
+</style>
+
+<div class="modal fade" id="RoleOrganizationUnitModal">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <img src="~/images/Cnets.jpg" alt="CNET" />
+                    <span>Job Description</span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form class="form-horizontal" id="JobdescriptionNewFormData" onsubmit="return JobdescriptionNewFormFunction()" asp-controller="Company" asp-action="createJobdescription" method="post">
+                        <div class="col-md-12">
+                            <button class="btn btn-app" type="reset" id="organizationaddressbtnnew"> <i class="fa fa-file-o"></i>New</button>
+                            <button type="submit" action="addRow" class="btn btn-app" id="organizationUnitDefinationSaverole"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                            <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                        </div>
+                        <input asp-for="organizationCode" type="hidden" />
+                        <input type="hidden" asp-for="organizationType" />
+                        <input asp-for="orgUnitDefCode" type="hidden" />
+                        <input asp-for="organizationunittypeedit" type="hidden" />
+
+                        <input asp-for="job_indexTemp" value="@index" hidden/>
+
+
+                        <div class="form-horizontal" style="margin-top:25px">
+                            <div class="form-group  form-group-sm">
+                                <label asp-for="job_index" class="col-md-3 control-label">Index</label>
+                                <div class="col-md-8">
+                                    <input asp-for="job_index" value="@index" min="0" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="form-group  form-group-sm">
+                                <label asp-for="job_status" class="col-md-3 control-label">Status</label>
+                                <div class="col-md-8">
+                                    <select asp-for="job_status" class="form-control select2" style="width:100%">
+                                   <option></option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group  form-group-sm">
+                                <label asp-for="job_category" class="col-md-3 control-label">Category</label>
+                                <div class="col-md-8">
+                                    <select asp-for="job_category" class="form-control select2" style="width:100%">
+                                   <option></option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group  form-group-sm">
+                                <label asp-for="job_description" class="col-md-3 control-label"> Description</label>
+                                <div class="col-md-8">
+
+                                    <textarea asp-for="job_description" style="width:100%; overflow:auto" class="form-control" ></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group  form-group-sm">
+                                <label asp-for="job_remark" class="col-md-3 control-label"> Remark</label>
+                                <div class="col-md-8">
+                                    <textarea asp-for="job_remark" style="width:100%; overflow:auto" class="form-control"></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+                        <input asp-for="job_orgUnitDefn" hidden />
+                        <input asp-for="job_orgUnitDefncode" hidden />
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+    function JobdescriptionNewFormFunction() {
+        var role = $('#@nameof(Model.job_orgUnitDefn)').val();
+        var $form = $('#JobdescriptionNewFormData');
+        var data = $form.serialize();
+        var action = $('#JobdescriptionNewFormData').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            success: function (data) {
+                  var create = data.increament;
+                if (data.increament == true ) {
+                      swal("",data.result,"success");
+                    var idd = $('#@nameof(Model.job_orgUnitDefn)').val();
+                        $.ajax({
+                            type: "GET",
+                            dataType: 'html',
+                            url: '@Url.Action("JobdescriptionList", "Company")',
+                            data: { idd: idd },
+
+                            success: function (data) {
+
+                                $('#JobDescriptionData').html(data);
+
+                            }
+                        });
+                       var assetvalue = $("#@nameof(Model.job_indexTemp)").val();
+
+                       var middlID = "";
+
+                        middlID = assetvalue;
+
+                        middlID = ++middlID;
+
+                        $("#@nameof(Model.job_index)").val(middlID);
+
+                        $("#@nameof(Model.job_indexTemp)").val(middlID);
+                        ClearOrgunitdefModalRole();
+                }
+                else {
+                    swal("", data.result, "error");
+                    var assetvaluecode = $("#@nameof(Model.job_indexTemp)").val();
+
+                    $("#@nameof(Model.job_index)").val(assetvaluecode);
+
+                }
+                
+            },
+        });
+        return false;
+    };
+
+</script>
+
+<script>
+     $('#@nameof(Model.job_category)').select2({
+        data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(jobdescriptionCategoryType)),
+        placeholder: "Please select",
+        theme: "classic"
+     });
+
+    $('#@nameof(Model.job_status)').select2({
+        data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(jobdescriptionStatusType)),
+        placeholder: "Please select",
+        theme: "classic"
+    });
+</script>
+<script>
+    function ClearOrgunitdefModalRole() {
+     
+
+            $('#@nameof(Model.job_orgUnitDefncode)').val("");
+            $('#@nameof(Model.job_description)').val("");
+            $('#@nameof(Model.job_category)').val("").trigger('change');
+            $('#@nameof(Model.job_status)').val("").trigger('change');
+            $('#@nameof(Model.job_remark)').val("");
+      
+    }
+</script>

@@ -1,0 +1,201 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Newtonsoft.Json;
+@model VoucherSearchModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    
+    var termsandconditionList = await sharedHelpers.GetLookUpByType("Term Category");
+    var termsandconditionListType = termsandconditionList?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Description }).ToArray();
+}
+
+<div class="modal fade" id="termandconditionModal">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <img src="~/images/Cnets.jpg" alt="CNET" />
+                    <span>Terms and Coditions For Job Order Voucher</span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                </h5>
+
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form class="form-horizontal" id="TermsandConditionsNewFormData" onsubmit="return termsandconditionsNewFormFunction()" asp-controller="Subsystems" asp-action="CreateTermsandConditions" method="post">
+                        <div class="col-md-12">
+                                <button class="btn btn-app" type="reset" id="IssuedbtnNew"> <i class="fa fa-file-o"></i>New</button>
+                                <button type="submit" action="addRow" class="btn btn-app" id="TermsandConditionsNewsave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                                <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                          
+                        </div>
+
+                        <div class="col-md-12" style="margin-top:25px">
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Category</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="TermCategory" class="form-control select2" style="width:340px;" id="@nameof(Model.TermCategory)">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="TermCategory"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Description</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="Termdescription" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="Termdescription"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Default Value</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="Termdefaultvalue" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="Termdefaultvalue"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Is Mandatory</label>
+                                    <div class="col-md-1">
+                                        <input asp-for="TermisMandatory" />
+                                        <span asp-validation-for="TermisMandatory"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Remark</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="Termremark" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="Termremark"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <input hidden asp-for="codefordeleteterms" />
+                        <input hidden asp-for="codeforUpdatetermandcondition" />
+                        <input hidden asp-for="VoucherSettingCodeforTermsandConditions" />
+                      
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<script>
+    var getvoucherTermsandcoditionsget = "";
+
+    function termsandconditionsNewFormFunction() {
+        getvoucherTermsandcoditionsget = $('#@nameof(Model.documentType)').val();
+        var $form = $('#TermsandConditionsNewFormData');
+        var data = $form.serialize();
+        var action = $('#TermsandConditionsNewFormData').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            success: function (data) {
+                swal("", data, "success");
+                GetTerandCondition(getvoucherTermsandcoditionsget)
+                Cleartermsandcondidtions();
+            },
+        });
+        return false;
+    };
+
+</script>
+
+<script>
+    $('#@nameof(Model.VoucherSettingCodeforTermsandConditions)').val($('#@nameof(Model.documentType)').val());
+</script>
+<script>
+        $('#@nameof(Model.TermCategory)').select2({
+                    data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(termsandconditionListType)),
+                    placeholder: "",
+                    allowClear: true
+
+        });
+
+</script>
+
+<script>
+    $('#@nameof(Model.VoucherSettingCode)').val($('#@nameof(Model.documentType)').val());
+</script>
+
+<script>
+
+    $(document).on("click", ".btnUpdatetermandcondition", function () {
+        $("#TermsandConditionsNewsave").attr("action", "updatePRT");
+            var code = $(this).data('code');
+            var category = $(this).data('cata');
+            var description = $(this).data('desc');
+            var defaultva = $(this).data('defa');
+            var ismandatory = $(this).data('isma');
+            var remark = $(this).data('rema');
+                $('#@nameof(Model.codeforUpdatetermandcondition)').val(code);
+                $('#@nameof(Model.TermCategory)').val(category).trigger('change');
+                $('#@nameof(Model.Termdescription)').val(description);
+                $('#@nameof(Model.Termdefaultvalue)').val(defaultva);
+                $('#@nameof(Model.TermisMandatory)').prop('checked', ismandatory);
+               $('#@nameof(Model.Termremark)').val(remark);
+
+
+
+     });
+
+    $(document).on("click", ".btnDeletetermandcondition", function () {
+        var code = $(this).data('code');
+        var voucerCode = $('#@nameof(Model.documentType)').val();
+        swal({
+            title: "are you sure to delete this ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "POST",
+                        dataType: 'json',
+                        url: '@Url.Action("deletetermandcondition", "Subsystems")',
+                        data: { code: code},
+
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        success: function (data) {
+                            swal("", data, "success");
+                            GetTerandCondition(voucerCode)
+
+                        }
+                    });
+                }
+            });
+
+      });
+
+    function Cleartermsandcondidtions() {
+                $('#@nameof(Model.codeforUpdatetermandcondition)').val("");
+                $('#@nameof(Model.TermCategory)').val("").trigger('change');
+                $('#@nameof(Model.Termdescription)').val("");
+                $('#@nameof(Model.Termdefaultvalue)').val("");
+                $('#@nameof(Model.TermisMandatory)').prop('checked', "");
+                $('#@nameof(Model.Termremark)').val("");
+    }
+</script>

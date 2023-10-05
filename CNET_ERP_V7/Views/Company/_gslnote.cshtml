@@ -1,0 +1,57 @@
+﻿@model Companymodel
+@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+<style>
+    .cke_reset {
+        height: 60vh !important;
+    }
+
+    .cke_contents {
+        height: 50vh !important;
+    }
+</style>
+<div class="box box-info">
+    <div class="box-header">
+
+        <!-- tools box -->
+        <!-- /. tools -->
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body pad">
+        <form id="companyForm" method="post" enctype="multipart/form-data">
+            <div class="row">
+                <textarea asp-for="contentnote" class="form-control"></textarea>
+            </div>
+
+        </form>
+    </div>
+
+</div>
+<script>
+
+    function shownotes()
+    {
+        $.ajax({
+                    url: '@Url.Action("DisplayNote", "Company")',
+                    type: "POST",
+                    dataType: 'json',
+                    contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+
+                    success: function (data) {
+
+                           CKEDITOR.instances['@nameof(Model.contentnote)'].setData(data.note);
+                            $('#@nameof(Model.notecode)').val(data.id);
+                     
+                    },
+                    error: function (jqXHR, textStatus, errorThrown)
+                    {
+                        console.log(errorThrown);
+
+                    }
+                });
+    }
+
+</script>

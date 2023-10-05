@@ -1,0 +1,48 @@
+﻿@using CNET_ERP_V7.Models.Security;
+@using CNET_V7_Domain.Domain.CommonSchema;
+@using Newtonsoft.Json;
+@model systemSettingModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var scheduleTypesList = "";
+    var scheduleTypescode = 0;
+    var Scheduleheaderlist = await sharedHelpers.GetLookUpByType("Schedule Header");
+
+    if (Scheduleheaderlist != null && Scheduleheaderlist.Count > 0)
+    {
+        var OpenScheduleheader = Scheduleheaderlist.FirstOrDefault(x => x.Description == "Open Hour");
+        if (OpenScheduleheader != null)
+        {
+            scheduleTypesList = OpenScheduleheader.Description;
+            scheduleTypescode = OpenScheduleheader.Id;
+        }
+        else
+        {
+            scheduleTypesList = Scheduleheaderlist.FirstOrDefault().Description;
+            scheduleTypescode = Scheduleheaderlist.FirstOrDefault().Id;
+        }
+    }
+    var conunitCode = Model?.consineeCode;
+    var companyworkschedule = await sharedHelpers.GetScheduleByReference(conunitCode);
+    List<ScheduleHeaderDTO> ScheduleHeader = new List<ScheduleHeaderDTO>();
+
+    if (companyworkschedule != null)
+    {
+        ScheduleHeader = await sharedHelpers.SelectScheduleHeaderById(companyworkschedule?.ScheduledHeader);
+
+    }
+    var description = ScheduleHeader?.FirstOrDefault()?.Description;
+    var scheduleheadercode = ScheduleHeader?.FirstOrDefault()?.Id;
+    var startdate = ScheduleHeader?.FirstOrDefault()?.StartDate;
+    var enddate = ScheduleHeader?.FirstOrDefault()?.EndDate;
+    var todate = DateTime.Now.Date.ToString("yyyy-MM-dd");
+
+   
+}
+
+<div class="box-body basicinfo">
+    <div class="row">
+       
+    </div>
+</div>

@@ -1,0 +1,67 @@
+﻿@model SecurityModel
+@using CNET_ERP_V7.Models.Security;
+@using CNET_V7_Domain.Domain.SecuritySchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Newtonsoft.Json;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@inject CNET_ERP_V7.Common.AuthNavigation.AuthenticationManager _authenticationManager
+@{
+}
+<div class="row">
+    <div class="col-md-5">
+        <div id="ReportTypecontent">
+            @await Html.PartialAsync("_ReportPrivilageList")
+
+        </div>
+    </div>
+    <div class="col-md-7">
+        <div id="ReportData">
+            @await Html.PartialAsync("_ReportPrivilageDetail")
+        </div>
+        <div class="form-group form-group-sm">
+            <div class="col-md-4">
+                <button type="button" class="btn btn btn-outline-primary btn-sm" style="border:dotted; height:30px;" id="reportprivilegebtn">Select All</button>
+                <input asp-for="reportselectall" />
+
+            </div>
+        </div>
+
+    </div>
+</div>
+<script>
+        var code;
+        $(document).on("click", ".reportprvilegeItem", function () {
+            $(".prefrenceheader").removeClass("prefrenceheader");
+            $(this).closest("tr").addClass('prefrenceheader');
+            var roleType = $('#@nameof(Model.reportrolecode)').val();
+            code = $(this).data('value');
+            $.ajax({
+                type: "GET",
+                dataType: 'html',
+                url: '@Url.Action("AccessPrivlageReport", "Security")',
+                data: { code: code, role: roleType },
+
+                success: function (data) {
+                    $('#ReportData').html(data);
+                }
+            });
+      });
+    $(document).on("click", "#reportprivilegebtn", function () {
+
+        $('#reportselectall').trigger('click');
+    });
+
+    $(document).on("change", "#reportselectall", function () {
+
+        var checkedvaluebut = $(this).is(":checked");
+        if (checkedvaluebut == true) {
+
+            $(".checkreport").prop("checked", true);
+        }
+        else {
+
+            $(".checkreport").prop("checked", false);
+        }
+
+    });
+</script>

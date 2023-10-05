@@ -1,0 +1,106 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model moduleModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var accountcode = await sharedHelpers.GetAccount();
+
+}
+<style>
+    .accountmapping {
+        position: relative;
+        padding: 20px;
+        height: 200px;
+        overflow-y: scroll;
+    }
+</style>
+
+<div class="modal fade" id="DefaultAccountModal">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <span>Default Payable Account</span>
+
+                </h5>
+
+            </div>
+
+            <div class="box-body">
+                <div class="modal-body accountmapping">
+                    <div class="row">
+
+                        <div class="col-md-12" style="margin-top:25px">
+
+                            <div class="row">
+
+                                <div class="divTable">
+
+                                    <div class="col-md-6" style="margin-left:0px ;" id="div23">
+                                        <ul class="sidebar-men secondNav tree " data-widget="tree" id="">
+                                            @foreach (var item in accountcode)
+                                            {
+                                                <li class="nav-item treeview menu-open attachmentType" id="parent">
+                                                    <a data-toggle="tab" data-value="@item.Id" data-types="@item.Id" id="a123" style="text-decoration-line:none!important" name="catagory" class="defaultpayableaccount">
+
+                                                        <span class="labelcss" selectedValue="@item.Description">@item.Id</span>
+                                                    </a>
+
+                                                    <ul class="treeview-menu" style="padding-left:35px; background-color:white;" id="@item.Id">
+                                                    </ul>
+                                                </li>
+                                            }
+
+                                        </ul>
+
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="col-md-12">
+                    <button type="button" action="addRow" class="btn btn-default btn-sm" id="defaultpayableaccountbtnSave">Ok</button>
+                    <button class="btn btn-default btn-sm" data-dismiss="modal" id="datadismissBtn">Close</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+</div>
+<script>
+    var valueitem = "";
+    $(document).ready(function () {
+
+        $(".defaultpayableaccount").click(function () {
+            valueitem = $(this).data("value");
+
+        });
+
+        $("#defaultpayableaccountbtnSave").click(function () {
+
+             $('#payment_account').val(valueitem);
+             $('#datadismissBtn').trigger('click');
+            //$('#recivable_account').val(valueitem);
+            //$('#git_account').val(valueitem);
+            //$('#incomesummery_account').val(valueitem);
+            //$('#interst_account').val(valueitem);
+            //$('#production_account').val(valueitem);
+            //$('#service_account').val(valueitem);
+            //$('#peachtree').val(valueitem);
+            //$('#peachtreeTax').val(valueitem);
+
+
+        });
+
+    });
+
+</script>

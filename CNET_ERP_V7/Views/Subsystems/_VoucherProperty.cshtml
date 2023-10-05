@@ -1,0 +1,3191 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain;
+@using Newtonsoft.Json;
+@model VoucherSearchModel
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+
+@{
+    var VocuerSetting = await sharedHelpers.GetConfigurationByRefandPref(Model?.documentType.ToString(),CNETConstants.VOUCHER_COMPONENET);
+    int oldvalue = 1111111111;
+}
+<style>
+    .sptablecontent {
+        border-collapse: collapse;
+        background-color: #fff;
+        width: 98%;
+        margin-left: 15px;
+    }
+
+        .sptablecontent .asth {
+            font-weight: bold;
+        }
+
+        .sptablecontent th, table td {
+            padding: 0px !important;
+            border: 1px solid #ccc;
+        }
+
+
+
+        .sptablecontent, .sptablecontent .sptablecontent td {
+            border: 0px solid #ccc;
+            padding: 0px !important;
+        }
+
+            .sptablecontent [type=text], select {
+                width: 100%;
+            }
+
+            .sptablecontent [type=password] {
+                width: 100%;
+            }
+
+            .sptablecontent div {
+                width: 97%;
+            }
+
+
+    #name {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #DocumentBrowserLibraryURL {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #LabelDesignFileabso {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #template_Documentabso {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #fileUrlabso {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #VoucherTemplateabso {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #PullURLabso {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #PushURLabso {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    .labelwidth {
+        height: 15px;
+    }
+
+    .custom-select {
+        max-height: 28px;
+        font-size: 13px;
+    }
+
+    .vouproperty {
+        height: 95vh;
+        overflow-y: scroll;
+    }
+
+    .prefrenceheader {
+        background-color: dodgerblue;
+    }
+
+    .inputfield {
+        pointer-events: none;
+        opacity: 30;
+        width: 80%;
+        height: 16px !important;
+        padding: 0px 0px !important;
+        font-size: 13px !important;
+    }
+
+    .Inputborder:focus {
+        border: 1px solid #1670BE;
+        box-shadow: 0 0 3px #1670BE;
+        outline-offset: 0px;
+        outline: none;
+    }
+
+    .Inputborder {
+        border: 1px solid #eee;
+        font-size: 13px !important;
+        height: 17px !important;
+        line-height: 2px !important;
+        text-emphasis-position: initial !important;
+        margin-top: 0px !important;
+        padding: 0px 0px !important;
+    }
+
+
+    .mainparent {
+        color: dodgerblue;
+        background-color: #eee;
+    }
+
+    .boderclr {
+        background-color: dodgerblue;
+    }
+    .voucherTable {
+        overflow-y: auto; /* make the table scrollable if height is more than 200 px  */
+        height: 5%; /* gives an initial height of 200px to the table */
+    }
+
+        .voucherTable thead th {
+            position: sticky; /* make the table heads sticky */
+            top: 0px; /* table head will be placed from the top of the table and sticks to it */
+        }
+
+    table {
+        border-collapse: collapse; /* make the table borders collapse to each other */
+        width: 100%;
+    }
+
+    th,
+    td {
+        padding: 0px 0px !important;
+        border: 1px solid #ccc;
+    }
+</style>
+
+    <div class="col-md-12">
+
+        <div class="box box-primary">
+
+            <div class="box-header with-border">
+                <div class="row">
+                    <div class="col-md-11">
+                        <div class="row">
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-1 control-labell"> Find</label>
+                                <div class="col-md-9">
+                                    <input type="text" id="filterSetting" style="display:flex;width:100%;" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="box-body vouproperty">
+                @foreach (var item in VocuerSetting)
+                {
+                    switch (item.Attribute)
+
+                    {
+                        case "Allow LineItem Duplication":
+                            Model.allow_LineItem_Duplication = item.CurrentValue;
+
+                            break;
+                        case "Card List Type":
+                            Model.card_List_Type = item.CurrentValue;
+                            break;
+                        case "Default Additional Charge Check":
+                            Model.default_Additional_Charge_Check = item.CurrentValue;
+
+
+                            break;
+                        case "Default Discount Check":
+                            Model.default_Discount_Check = item.CurrentValue;
+
+
+                            break;
+                        case "Default ObjectState":
+                            Model.default_ObjectState = item.CurrentValue;
+
+
+                            break;
+                        case "Enable Attachment":
+                            Model.enable_Attachment = item.CurrentValue;
+
+
+                            break;
+                        case "Enable Barcode Scanning":
+                            Model.enable_Barcode_Scanning = item.CurrentValue;
+                            break;
+
+                        case "Enable Cart":
+                            Model.enable_Cart = item.CurrentValue;
+
+
+                            break;
+                        case "Enable Consignee Extension Mapping":
+                            Model.enable_Consignee_Extension_Mapping = item.CurrentValue;
+
+
+                            break;
+                        case "Enable Credit Account":
+                            Model.enable_Credit_Account = item.CurrentValue;
+
+
+                            break;
+                        case "Enable Credit Limit":
+                            Model.enable_Credit_Limit = item.CurrentValue;
+
+
+                            break;
+                        case "Enable Currency":
+                            Model.enable_Currency = item.CurrentValue;
+
+                            break;
+                        case "Print Activity Reference":
+                            Model.Print_Activity_Reference = (enPrintActivityReference)Enum.Parse(typeof(enPrintActivityReference), item.CurrentValue, false);
+
+                            break;
+                        case "Enable Debit Account":
+                            Model.enable_Debit_Account = item.CurrentValue;
+
+
+                            break;
+                        case "Sync Void Document":
+                            Model.sync_Void_Document = item.CurrentValue;
+
+
+                            break;
+                        case "Enable Denomination":
+                            Model.enable_Denomination = item.CurrentValue;
+
+
+                            break;
+                        case "Enable Fiscal Reference":
+                            Model.enable_Fiscal_Reference = item.CurrentValue;
+
+
+                            break;
+                        case "Enable LineItem Extension":
+                            Model.enable_LineItem_Extension = item.CurrentValue;
+
+
+                            break;
+                        case "Enable LineItem Note":
+                            Model.enable_LineItem_Note = item.CurrentValue;
+
+                            break;
+                        case "Enable New Consignee Maintenance":
+                            Model.enable_new_consinemaintenance = item.CurrentValue;
+
+                            break;
+
+                        case "Enable Payment Option":
+                            Model.enable_Payment_Option = item.CurrentValue;
+
+
+                            break;
+                        case "Enable Term":
+                            Model.enable_Term = item.CurrentValue;
+
+
+                            break;
+                        case "Enable Transaction Type":
+                            Model.enable_Transaction_Type = item.CurrentValue;
+
+
+                            break;
+                        case "Enable Voucher Note":
+                            Model.enable_Voucher_note = item.CurrentValue;
+
+
+                            break;
+                        case "Enable Weight Bridge":
+                            Model.enable_Weight_Bridge = item.CurrentValue;
+
+
+                            break;
+                        case "Enforce Credit Limit Notification":
+                            Model.enforce_Credit_Limit_Notification = item.CurrentValue;
+
+
+                            break;
+                        case "Fixed Direct Article Selection":
+                            Model.fixed_Direct_Article_Selection = item.CurrentValue;
+
+
+                            break;
+                        case "Flexible Referred Consignee":
+                            Model.flexible_Referred_Consignee = item.CurrentValue;
+
+
+                            break;
+                        case "IdgenerationStyle":
+                            Model.idgeneration_Style = item.CurrentValue;
+
+
+                            break;
+                        case "Mandatory Weight Bridge":
+                            Model.mandatory_Weight_Bridge = item.CurrentValue;
+
+
+                            break;
+                        case "Max Line Item":
+                            Model.max_Line_Item = item.CurrentValue;
+
+
+                            break;
+                        case "Organization Unit":
+                            Model.organization_Unit = item.CurrentValue;
+
+
+                            break;
+                        case "Payment Direction":
+                            Model.payment_Direction = item.CurrentValue;
+
+
+                            break;
+                        case "Save Ancestor Reference":
+                            Model.save_Ancestor_Reference = item.CurrentValue;
+
+
+                            break;
+                        case "Transaction Library URL":
+                            Model.transaction_Library_URL = item.CurrentValue;
+
+
+                            break;
+                        case "Trigger Article Removal":
+                            Model.trigger_Article_Removal = item.CurrentValue;
+
+
+                            break;
+                        case "Use Flexible Date":
+                            Model.use_Flexible_Date = item.CurrentValue;
+
+
+                            break;
+                        case "Use Flexible Period":
+                            Model.use_Flexible_Period = item.CurrentValue;
+
+
+                            break;
+                        case "Use Period":
+                            Model.use_Period = item.CurrentValue;
+
+
+                            break;
+                        case "Voucher Type Lookup":
+                            Model.voucher_Type_Lookup = item.CurrentValue;
+
+
+                            break;
+                        case "Use Only Assigned Article":
+                            Model.use_Only_Assigned_Article = item.CurrentValue;
+
+
+                            break;
+                        case "Default Document":
+                            Model.default_Document = item.CurrentValue;
+
+
+                            break;
+                        case "Document Browser Library URL":
+                            Model.document_Browser_Library_url = item.CurrentValue;
+
+
+                            break;
+                        case "Document Browser Type":
+                            Model.document_Browser_Type = item.CurrentValue;
+
+
+                            break;
+                        case "Document Show User":
+                            Model.document_Show_User = item.CurrentValue;
+
+
+                            break;
+                        case "Enforce Workflow Sequence":
+                            Model.enforce_Workflow_Sequence = item.CurrentValue;
+
+
+                            break;
+                        case "Show Find Panel":
+                            Model.show_Find_Panel = item.CurrentValue;
+
+
+                            break;
+                        case "Show Group Panel":
+                            Model.show_Group_Panel = item.CurrentValue;
+
+
+                            break;
+                        case "Enable Qty Conversion":
+                            Model.enable_Qty_Conversion = item.CurrentValue;
+
+
+                            break;
+                        case "Language":
+                            Model.prolanguage = item.CurrentValue;
+
+
+                            break;
+                        case "Enable Label Printing":
+                            Model.enable_Label_Printing = item.CurrentValue;
+
+
+                            break;
+                        case "Label Articles":
+                            Model.label_Articles = item.CurrentValue;
+
+
+                            break;
+                        case "Label Design File":
+                            Model.label_Design_File = item.CurrentValue;
+
+
+                            break;
+                        case "Label Event":
+                            Model.label_Event = item.CurrentValue;
+
+
+                            break;
+                        case "Label Printer":
+                            Model.label_Printer = item.CurrentValue;
+
+
+                            break;
+                        case "Label Type":
+                            Model.label_Type = item.CurrentValue;
+
+
+                            break;
+                        case "Preview Label Before Print":
+                            Model.preview_Label_Before_Print = item.CurrentValue;
+
+
+                            break;
+                        case "Article Selection Type":
+                            Model.article_Selection_Type = item.CurrentValue;
+
+
+                            break;
+                        case "Customer Visibility":
+                            Model.customer_Visibility = item.CurrentValue;
+
+
+                            break;
+                        case "Customer's Near Me In Meter":
+                            Model.customers_Near_Me_In_Meter = item.CurrentValue;
+
+
+                            break;
+                        case "Enable Mobile Transaction":
+                            Model.enable_Mobile_Transaction = item.CurrentValue;
+
+
+                            break;
+                        case "Date Format":
+                            Model.date_Format = item.CurrentValue;
+
+
+                            break;
+                        case "Default Printer":
+                            Model.default_Printer = item.CurrentValue;
+
+
+                            break;
+                        case "Max No Of Printing":
+                            Model.max_No_Of_Printing = item.CurrentValue;
+
+                            break;
+                        case "Merge Item code and Description":
+                            Model.merge_Item_code_and_Description = item.CurrentValue;
+
+                            break;
+                        case "No Of Copies":
+
+                            Model.no_Of_Copies = item.CurrentValue;
+
+                            break;
+                        case "No Of Line Item Per Page":
+
+                            Model.no_Of_Line_Item_Per_Page = item.CurrentValue;
+
+                            break;
+                        case "Paper Size":
+                            Model.paper_Size = item.CurrentValue;
+
+                            break;
+                        case "Paper Type":
+                            Model.paper_Type = item.CurrentValue;
+
+                            break;
+                        case "Print Amount In Word":
+                            Model.print_Amount_In_Word = item.CurrentValue;
+
+                            break;
+                        case "Print Ancestor Extension":
+                            Model.print_Ancestor_Extension = item.CurrentValue;
+
+                            break;
+                        case "Print Ancestor Reference":
+                            Model.Print_Ancestor_Reference = item.CurrentValue;
+
+                            break;
+                        case "Print Article Code":
+                            Model.print_Article_Code = item.CurrentValue;
+
+                            break;
+                        case "Print Article Picture":
+                            Model.print_Article_Picture = item.CurrentValue;
+
+                            break;
+                        case "Print Article Volume":
+                            Model.print_Article_Volume = item.CurrentValue;
+
+                            break;
+                        case "Print Bank Info":
+                            Model.print_Bank_nfo = item.CurrentValue;
+
+                            break;
+                        case "Print Barcode on Document":
+                            Model.print_Barcode_on_Document = item.CurrentValue;
+
+                            break;
+                        case "Print Batch":
+                            Model.print_Batch = item.CurrentValue;
+
+                            break;
+                        case "Print Catalogue Automatically":
+                            Model.print_Catalogue_Automatically = item.CurrentValue;
+
+                            break;
+                        case "Print Consignee Code":
+                            Model.print_Consignee_Code = item.CurrentValue;
+
+                            break;
+                        case "Print Copy Distribution":
+                            Model.print_Copy_Distribution = item.CurrentValue;
+
+                            break;
+                        case "Print Expiry Date":
+                            Model.print_Expiry_Date = item.CurrentValue;
+
+                            break;
+                        case "Print Formulation As Spec":
+                            Model.print_Formulation_As_Spec = item.CurrentValue;
+
+                            break;
+                        case "Print Image Code On Voucher":
+                            Model.print_Image_Code_On_Voucher = item.CurrentValue;
+
+                            break;
+                        case "Print Immediate Reference":
+                            Model.print_Immediate_Reference = item.CurrentValue;
+
+                            break;
+                        case "Print Journal":
+                            Model.print_Journal = item.CurrentValue;
+
+                            break;
+                        case "Print LineItem Conversion":
+                            Model.print_LineItem_Conversion = item.CurrentValue;
+
+                            break;
+                        case "Print Lineitem Count":
+                            Model.print_LineItem_Count = item.CurrentValue;
+
+                            break;
+                        case "Print Production Date":
+                            Model.print_Production_Date = item.CurrentValue;
+
+                            break;
+                        case "Print Quantity Sum":
+                            Model.print_Quantity_Sum = item.CurrentValue;
+
+                            break;
+                        case "Print Remote Distribution":
+                            Model.print_Remote_Distribution = item.CurrentValue;
+
+                            break;
+                        case "Print Seasonal message":
+                            Model.print_Seasonal_message = item.CurrentValue;
+
+                            break;
+                        case "Print Specification":
+                            Model.print_Specification = item.CurrentValue;
+
+                            break;
+                        case "Print Sum. Art. Phy. dim.":
+                            Model.print_Sum_Art_Phy_dim = item.CurrentValue;
+
+                            break;
+                        case "Print Values":
+                            Model.print_Values = item.CurrentValue;
+
+                            break;
+
+                        case "Print Water mark":
+                            Model.print_Water_mark = item.CurrentValue;
+
+                            break;
+                        case "Print Without Preview":
+                            Model.print_Without_Preview = item.CurrentValue;
+
+                            break;
+                        case "Printing Method":
+                            Model.printing_Method = item.CurrentValue;
+
+                            break;
+                        case "Sort Line Item":
+                            Model.sort_Line_Item = item.CurrentValue;
+
+                            break;
+                        case "Template Document":
+                            Model.template_Document = item.CurrentValue;
+
+                            break;
+                        case "URl":
+                            Model.isetuRL = item.CurrentValue;
+
+                            break;
+                        case "Use Darker Lines":
+                            Model.use_Darker_Lines = item.CurrentValue;
+
+                            break;
+                        case "Use only UnExpired Article":
+                            Model.use_only_UnExpired_Article = item.CurrentValue;
+
+                            break;
+                        case "Voucher Orientation":
+                            Model.voucher_Orientation = item.CurrentValue;
+
+                            break;
+                        case "Voucher Template":
+                            Model.voucher_Template = item.CurrentValue;
+
+                            break;
+                        case "Voucher User Orientation":
+                            Model.Voucher_User_Orientation = item.CurrentValue;
+
+                            break;
+                        case "Use Only Available Article":
+                            Model.use_Only_Available_Article = item.CurrentValue;
+
+                            break;
+                        case "Round Digit Quantity":
+                            Model.round_Digit_Quantity = item.CurrentValue;
+
+                            break;
+                        case "Round Digit Total":
+                            Model.round_Digit_Total = item.CurrentValue;
+
+                            break;
+                        case "Round Digit Unit Price":
+                            Model.round_Digit_Unit_Price = item.CurrentValue;
+
+                            break;
+                        case "Enable Serial Number Or LifeSpan":
+                            Model.enable_Serial_Number_Or_LifeSpan = item.CurrentValue;
+
+                            break;
+                        case "Serial Input Type":
+                            Model.serial_Input_Type = item.CurrentValue;
+
+                            break;
+                        case "Serial Movement Suggestion":
+                            Model.serial_Movement_Suggestion = item.CurrentValue;
+
+                            break;
+                        case "Use Automatic Life span":
+                            Model.use_Automatic_Life_span = item.CurrentValue;
+
+                            break;
+                        case "Enable Destination Store":
+                            Model.enable_Destination_Store = item.CurrentValue;
+
+                            break;
+                        case "Enable Source Store":
+                            Model.enable_Source_Store = item.CurrentValue;
+
+                            break;
+                        case "Is Store Moving Voucher":
+                            Model.is_Store_Moving_Voucher = item.CurrentValue;
+
+                            break;
+                        case "Mandatory Destination Store":
+                            Model.mandatory_Destination_Store = item.CurrentValue;
+
+                            break;
+                        case "Mandatory Source Store":
+                            Model.mandatory_Source_Store = item.CurrentValue;
+
+                            break;
+                        case "Stock Balance View Option":
+                            Model.stock_Balance_View_Option = item.CurrentValue;
+
+                            break;
+                        case "Use Mapped Store":
+                            Model.use_Mapped_Store = item.CurrentValue;
+
+                            break;
+                        case "Activity Sync Type":
+                            Model.activity_Sync_Type = item.CurrentValue;
+
+                            break;
+                        case "Enable Smart Synchronization":
+                            Model.enable_Smart_Synchronization = item.CurrentValue;
+
+                            break;
+                        case "Sync in as Not-Issued":
+                            Model.Sync_in_as_Not_Issued = item.CurrentValue;
+
+                            break;
+                        case "Sync LineItem Reference Mandatory":
+                            Model.sync_LineItem_Reference_Mandatory = item.CurrentValue;
+
+                            break;
+                        case "Enable Flexible Tax":
+                            Model.enable_Flexible_Tax = item.CurrentValue;
+
+                            break;
+                        case "Tax Priority":
+                            Model.tax_Priority = item.CurrentValue;
+
+                            break;
+                        case "Value is Tax Inclusive":
+                            Model.value_is_Tax_Inclusive = item.CurrentValue;
+
+                            break;
+                        case "Voucher Tax Type":
+
+                            Model.voucher_Tax_Type = item.CurrentValue;
+
+                            break;
+                        case "With holding Type":
+                            Model.With_holding_Type = item.CurrentValue;
+
+                            break;
+                        case "Enable Interface":
+                            Model.enable_Interface = item.CurrentValue;
+
+                            break;
+                        case "File Type":
+                            Model.file_Type = item.CurrentValue;
+
+                            break;
+                        case "Interface Operation":
+                            Model.interface_Operation = item.CurrentValue;
+
+                            break;
+                        case "Interface Type":
+                            Model.interface_Type = item.CurrentValue;
+
+                            break;
+                        case "Pull URL":
+                            Model.pull_URL = item.CurrentValue;
+
+                            break;
+                        case "Push URL":
+                            Model.push_URL = item.CurrentValue;
+
+                            break;
+                        case "Third party System":
+                            Model.Third_party_System = item.CurrentValue;
+
+                            break;
+                        case "Applicable Additional Charge":
+                            Model.applicable_Additional_Charge = item.CurrentValue;
+
+                            break;
+                        case "Applicable Discount":
+                            Model.applicable_Discount = item.CurrentValue;
+
+                            break;
+                        case "Apply Discount on unit price":
+                            Model.apply_Discount_on_unit_price = item.CurrentValue;
+
+                            break;
+                        case "Use Flexible Additional Charge":
+                            Model.use_Flexible_Additional_Charge = item.CurrentValue;
+
+                            break;
+                        case "Use Flexible Discount":
+                            Model.use_Flexible_Discount = item.CurrentValue;
+
+                            break;
+                        case "Use Preferential Additional Charge":
+                            Model.use_Preferential_Additional_Charge = item.CurrentValue;
+
+                            break;
+                        case "Use Preferential Discount":
+                            Model.use_Preferential_Discount = item.CurrentValue;
+
+                            break;
+                        case "Calculate Cost At Real Time":
+                            Model.calculate_Cost_At_Real_Time = item.CurrentValue;
+
+                            break;
+                        case "Capture Value Tag":
+                            Model.capture_Value_Tag = item.CurrentValue;
+
+                            break;
+                        case "Check Price Validation":
+                            Model.check_Price_Validation = item.CurrentValue;
+
+                            break;
+                        case "Referred Quantity Rule":
+                            Model.referred_Quantity_Rule = item.CurrentValue;
+
+                            break;
+                        case "Referred Price Rule":
+                            Model.referred_Price_Rule = item.CurrentValue;
+
+                            break;
+                        case "Value Is Mandatory":
+                            Model.value_Is_Mandatory = item.CurrentValue;
+
+                            break;
+                        case "Value Rule":
+                            Model.value_Rule = item.CurrentValue;
+
+                            break;
+                        case "Value Type":
+                            Model.value_Type = item.CurrentValue;
+
+                            break;
+                        case "Allow Account Merge":
+                            Model._allowAccountMerge = (envoucherFlag)Enum.Parse(typeof(envoucherFlag), item.CurrentValue, false);
+
+                            break;
+                        case "Enable New Article Maintenance":
+                            Model._enableNewArticleMaintenance = (envoucherFlag)Enum.Parse(typeof(envoucherFlag), item.CurrentValue, false);
+
+                            break;
+                        case "Voucher Note Size":
+                            Model._VoucherNoteSize = (enVoucherNoteSize)Enum.Parse(typeof(enVoucherNoteSize), item.CurrentValue, false);
+
+                            break;
+                        case "Set Source store as current store":
+                            Model._setSourcestoreascurrentstore = (envoucherFlag)Enum.Parse(typeof(envoucherFlag), item.CurrentValue, false);
+
+                            break;
+                        case "Set Destination store as current store":
+                            Model._setDestinationstoreascurrentstore = (envoucherFlag)Enum.Parse(typeof(envoucherFlag), item.CurrentValue, false);
+
+                            break;
+                        case "Enable Synchronization":
+                            Model._enableSynchronization = (envoucherFlag)Enum.Parse(typeof(envoucherFlag), item.CurrentValue, false);
+
+                            break;
+                        case "Protect Bottom Margin":
+                            Model._ProtectBottomMargin = (envoucherFlag)Enum.Parse(typeof(envoucherFlag), item.CurrentValue, false);
+
+                            break;
+                        case "Default payment Option":
+                            Model._DefaultpaymentOption = item.CurrentValue;
+
+                            break;
+                            case "Origin organization Unit":
+                        Model.originorganization_Unit = (enorganationunit)Enum.Parse(typeof(enorganationunit), item.CurrentValue, false);
+
+                            break; 
+                            case "Destination organization Unit":
+                        Model.destinationorganization_Unit = (enorganationunit)Enum.Parse(typeof(enorganationunit), item.CurrentValue, false);
+
+                            break;
+                      case "Enable Purpose":
+                        Model.EnablePurpose = (envoucherFlag)Enum.Parse(typeof(envoucherFlag), item.CurrentValue, false);
+
+                            break; 
+                            case "Enable Source Bank Account":
+                        Model.EnableSourcebankAccount = (envoucherFlag)Enum.Parse(typeof(envoucherFlag), item.CurrentValue, false);
+
+                            break;
+                            case "Enable destination Bank Account":
+                        Model.EnabledstinitionbankAccount = (envoucherFlag)Enum.Parse(typeof(envoucherFlag), item.CurrentValue, false);
+
+                            break; 
+                            case "Enable Delivery Method":
+                        Model.EnableDeliveryMethod = (envoucherFlag)Enum.Parse(typeof(envoucherFlag), item.CurrentValue, false);
+
+                            break; 
+                         case "Enable Group panel":
+                        Model.EnableGrouppanel = (envoucherFlag)Enum.Parse(typeof(envoucherFlag), item.CurrentValue, false);
+
+                            break; 
+                          case "Enable Search bar":
+                        Model.EnableSearchbar = (envoucherFlag)Enum.Parse(typeof(envoucherFlag), item.CurrentValue, false);
+
+                            break;
+
+                       case "Enable Filter":
+                            Model.EnableFilter = (envoucherFlag)Enum.Parse(typeof(envoucherFlag), item.CurrentValue, false);
+                            break;
+                            case "Enable Field search":
+                         Model.EnableFieldsearch = (envoucherFlag)Enum.Parse(typeof(envoucherFlag), item.CurrentValue, false);
+                            break;
+                            case "ISODocumentNumber":
+                         Model.ISODocumentNumber = item.CurrentValue;
+                            break;
+                            
+                            case "abbriviation":
+                         Model.abbriviation = item.CurrentValue;
+                            break;
+                            case "journalType":
+                        Model.journalType = item.CurrentValue;
+                            break;
+
+                    }
+                }
+                    <div>
+                        <table id="voucherSetting_Table" cellpadding="0" cellspacing="0" class="sptablecontent tree_loadvoucherprop" width="100%">
+                            <tr class="asth">
+                                <td></td>
+                                <td></td>
+
+                            </tr>
+
+                            <tr class="treegrid-@oldvalue mainparent">
+                                <td colspan="2">
+                                    Componenet Setting
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Allow LineItem Duplication
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="allow_LineItem_Duplication" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Card List Type
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="card_List_Type" asp-items="Model.card_List_Types" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Default Additional Charge Check
+
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="default_Additional_Charge_Check" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Default Discount Check
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="default_Discount_Check" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Default ObjectState
+
+                                </td>
+                                <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#ObjectsateMapMOdal">
+                                    @if (string.IsNullOrEmpty(Model.default_ObjectState))
+                                    {
+
+                                        <input asp-for="default_ObjectState" type="text" value="" id="Default_object_state" class="form-control" style="height:20px !important;" />
+
+                                    }
+                                    else
+                                    {
+
+                                        <input asp-for="default_ObjectState" type="text" value="@Model.default_ObjectState" id="Default_object_state" class="form-control" style="height:20px !important;" />
+
+                                    }
+
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable Attachment
+
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_Attachment" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable Barcode Scanning
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_Barcode_Scanning" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable Cart
+
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_Cart" asp-items="Model.enable_Carts" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable Consignee Extension Mapping
+
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_Consignee_Extension_Mapping" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable Credit Account
+
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_Credit_Account" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable Credit Limit
+
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_Credit_Limit" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable Currency
+
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_Currency" asp-items="Model.enable_Currencys" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable Debit Account
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_Debit_Account" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Sync Void Document
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="sync_Void_Document" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable Denomination
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_Denomination" asp-items="Model.enable_Denominations" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable Fiscal Reference
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_Fiscal_Reference" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable LineItem Extension
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_LineItem_Extension" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select  Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable LineItem Note
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_LineItem_Note" asp-items="Model.enable_LineItem_Notes" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable New Consignee Maintenance
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_new_consinemaintenance" asp-items="Model.enable_LineItem_Notes" class="form-control custom-select Inputborder">
+                                    </select>
+
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable Payment Option
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_Payment_Option" asp-items="Model.enable_Payment_Options" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable Term
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_Term" asp-items="Model.enable_Terms" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable Transaction Type
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_Transaction_Type" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable Voucher Note
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_Voucher_note" asp-items="Model.enable_Voucher_Notes" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable Weight Bridge
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_Weight_Bridge" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enforce Credit Limit Notification
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enforce_Credit_Limit_Notification" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Fixed Direct Article Selection
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="fixed_Direct_Article_Selection" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Flexible Referred Consignee
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="flexible_Referred_Consignee" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Id generation Style
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="idgeneration_Style" asp-items="Model.idgenerationStyles" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Mandatory Weight Bridge
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="mandatory_Weight_Bridge" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Max Line Item
+                                </td>
+                                <td class="attributcurrvalue">
+                                    @if (string.IsNullOrEmpty(Model.max_Line_Item))
+                                    {
+                                        <input asp-for="max_Line_Item" value="10" max="10" onkeypress="return isMaxlineItem(event)" class="form-control" style="height:20px !important;" />
+
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="max_Line_Item" value="@Model.max_Line_Item" max="10" onkeypress="return isMaxlineItem(event)" class="form-control" style="height:20px !important;" />
+                                    }
+                                </td>
+
+                           </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Origin organization Unit
+                                </td>
+                                <td class="attributcurrvalue">
+                            <select asp-for="originorganization_Unit" asp-items="Html.GetEnumSelectList<enorganationunit>()" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                destination organization Unit
+                                </td>
+                                <td class="attributcurrvalue">
+                                 <select asp-for="destinationorganization_Unit" asp-items="Html.GetEnumSelectList<enorganationunit>()" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                   Enable  Purpose
+                                </td>
+                                <td class="attributcurrvalue">
+                                     <select asp-for="EnablePurpose" asp-items="Html.GetEnumSelectList<envoucherFlag>()" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                   Enable Source Bank Account
+                                </td>
+                                <td class="attributcurrvalue">
+                                     <select asp-for="EnableSourcebankAccount" asp-items="Html.GetEnumSelectList<envoucherFlag>()" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                   Enable Destinition Bank Account
+                                </td>
+                                <td class="attributcurrvalue">
+                            <select asp-for="EnabledstinitionbankAccount" asp-items="Html.GetEnumSelectList<envoucherFlag>()" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                   Enable Delivery Method
+                                </td>
+                                <td class="attributcurrvalue">
+                                   <select asp-for="EnableDeliveryMethod" asp-items="Html.GetEnumSelectList<envoucherFlag>()" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Payment Direction
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="payment_Direction" asp-items="Model.payment_Directions" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Save Ancestor Reference
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="save_Ancestor_Reference" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Transaction Library URL
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <div class="input-group">
+
+                                        @if (string.IsNullOrEmpty(Model.transaction_Library_URL))
+                                        {
+                                            <input asp-for="transaction_Library_URL" id="display-filenameprop" value="\\server.." class="form-control" style="height:20px !important;">
+                                            <label for="enter" id="name" class="Inputborder">...</label>
+                                        }
+                                        else
+                                        {
+                                            <input asp-for="transaction_Library_URL" id="display-filenameprop" value="@Model.transaction_Library_URL" class="form-control" style="height: 20px !important;">
+                                            <label for="enter" id="name" class="Inputborder">...</label>
+
+                                        }
+                                    </div>
+                                </td>
+
+                            </tr>
+
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Trigger Article Removal
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="trigger_Article_Removal" asp-items="Model.trigger_Article_Removals" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Use Flexible Date
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="use_Flexible_Date" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Use Flexible Period
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="use_Flexible_Period" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Use Only Assigned Article
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="use_Only_Assigned_Article" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Use Period
+                                </td>
+                                <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#UserPeriodmodel">
+                                        @if (string.IsNullOrEmpty(Model.use_Period))
+                                        {
+                                        <input asp-for="use_Period" type="text" value="None" id="Use_Period" class="form-control" style="height: 20px !important;" />
+
+                                        }
+                                        else
+                                        {
+                                        <input asp-for="use_Period" type="text" value="@Model.use_Period" id="Use_Period" class="form-control" style="height: 20px !important;" />
+
+                                        }
+                                </td>
+
+                            </tr>
+
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Voucher Type Lookup
+                                </td>
+                                <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#VoucherTypeMap">
+                                        @if (string.IsNullOrEmpty(Model.voucher_Type_Lookup))
+                                        {
+                                        <input asp-for="voucher_Type_Lookup" type="text" value="" id="Voucher_Type_Lookup" class="form-control" style="height: 20px !important;" />
+
+                                        }
+                                        else
+                                        {
+                                        <input asp-for="voucher_Type_Lookup" type="text" value="@Model.voucher_Type_Lookup" id="Voucher_Type_Lookup" class="form-control" style="height: 20px !important;" />
+
+                                        }
+                                </td>
+
+                            </tr>
+
+                                @{
+                                    oldvalue = oldvalue + 1;
+                                }
+
+                            <tr class="treegrid-@oldvalue mainparent">
+                                <td colspan="2">
+                                    Document Browser
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Default Document
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="default_Document" asp-items="Model.default_Documents" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Document Browser Library URL
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <div class="input-group">
+
+                                            @if (string.IsNullOrEmpty(Model.document_Browser_Library_url))
+                                            {
+                                            <input asp-for="document_Browser_Library_url" id="display-DocumentBrowserfille" value="\\server.." onfocus="this.style.background='white'" class="form-control" style="height: 20px !important;">
+                                            <label for="Document_Browser" id="DocumentBrowserLibraryURL" class="Inputborder">...</label>
+
+                                            }
+                                            else
+                                            {
+                                            <input asp-for="document_Browser_Library_url" id="display-DocumentBrowserfille" value="@Model.document_Browser_Library_url" onfocus="this.style.background='white'" class="form-control" style="height: 20px !important;">
+                                    <label for="Document_Browser" id="DocumentBrowserLibraryURL" class="Inputborder">...</label>
+
+                                            }
+                                    </div>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Document Browser Type
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="document_Browser_Type" asp-items="Model.document_Browser_Types" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable Group panel
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="EnableGrouppanel" asp-items="Html.GetEnumSelectList<envoucherFlag>()" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                             <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                     Enable Search bar
+                                </td>
+                                <td class="attributcurrvalue">
+                            <select asp-for="EnableSearchbar" asp-items="Html.GetEnumSelectList<envoucherFlag>()" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr> 
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                      Enable Filter
+                                </td>
+                                <td class="attributcurrvalue">
+                            <select asp-for="EnableFilter" asp-items="Html.GetEnumSelectList<envoucherFlag>()" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr> 
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                     Enable Field search
+                                </td>
+                                <td class="attributcurrvalue">
+                            <select asp-for="EnableFieldsearch" asp-items="Html.GetEnumSelectList<envoucherFlag>()" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Document Show User
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="document_Show_User" asp-items="Model.document_Show_Users" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enforce Workflow Sequence
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enforce_Workflow_Sequence" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Show Find Panel
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="show_Find_Panel" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Show Group Panel
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="show_Group_Panel" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                                @{
+                                    oldvalue = oldvalue + 1;
+                                }
+
+                            <tr class="treegrid-@oldvalue mainparent">
+                                <td colspan="2">
+                                    General
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable New Article Maintenance
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="_enableNewArticleMaintenance" asp-items="Html.GetEnumSelectList<envoucherFlag>()" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Default payment Option
+                                </td>
+                                <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#paymnetgetwaymodel">
+                                        @if (string.IsNullOrEmpty(Model._DefaultpaymentOption))
+                                        {
+                                        <input asp-for="_DefaultpaymentOption" type="text" value="" id="default_payment_getway" class="form-control" style="height: 20px !important;" autocomplete="off" />
+
+                                        }
+                                        else
+                                        {
+                                        <input asp-for="_DefaultpaymentOption" type="text" value="@Model._DefaultpaymentOption" id="default_payment_getway" class="form-control" style="height: 20px !important;" autocomplete="off" />
+                                        }
+                                </td>
+                            </tr> 
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                     ISODocumentNumber
+                                </td>
+                                <td class="attributcurrvalue">
+                                        @if (string.IsNullOrEmpty(Model.ISODocumentNumber))
+                                        {
+                                        <input asp-for="ISODocumentNumber" type="text" value=""  class="form-control" style="height: 20px !important;" autocomplete="off    " />
+
+                                        }
+                                        else
+                                        {
+                                        <input asp-for="ISODocumentNumber" type="text" value="@Model.ISODocumentNumber"  class="form-control" style="height: 20px !important;"  autocomplete="off"/>
+                                        }
+                                </td>
+                            </tr> 
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                      abbriviation
+                                </td>
+                                <td class="attributcurrvalue">
+                                        @if (string.IsNullOrEmpty(Model.abbriviation))
+                                        {
+                                        <input asp-for="abbriviation" type="text" value=""  class="form-control" style="height: 20px !important;" autocomplete="off" />
+
+                                        }
+                                        else
+                                        {
+                                        <input asp-for="abbriviation" type="text" value="@Model.abbriviation"  class="form-control" style="height: 20px !important;" autocomplete="off" />
+                                        }
+                                </td>
+                            </tr> 
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                      journalType
+                                </td>
+                                <td class="attributcurrvalue">
+                                        @if (string.IsNullOrEmpty(Model.journalType))
+                                        {
+                                        <input asp-for="journalType" type="text" value=""  class="form-control" style="height: 20px !important;" autocomplete="off" />
+
+                                        }
+                                        else
+                                        {
+                                        <input asp-for="journalType" type="text" value="@Model.journalType"  class="form-control" style="height: 20px !important;" autocomplete="off" />
+                                        }
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Allow Account Merge
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="_allowAccountMerge" asp-items="Html.GetEnumSelectList<envoucherFlag>()" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable Qty Conversion
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_Qty_Conversion" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Language
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="prolanguage" asp-items="Model.languages" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Voucher Note Size
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="_VoucherNoteSize" asp-items="Html.GetEnumSelectList<enVoucherNoteSize>()" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+
+                                @{
+                                    oldvalue = oldvalue + 1;
+                                }
+
+                            <tr class="treegrid-@oldvalue mainparent">
+                                <td colspan="2">
+                                    Label Printing
+                                </td>
+                            </tr>
+
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable Label Printing
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_Label_Printing" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+
+                                    Label Articles
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="label_Articles" asp-items="Model.label_Articless" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Label Design File
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <div class="input-group">
+                                            @if (string.IsNullOrEmpty(Model.label_Design_File))
+                                            {
+                                            <input asp-for="label_Design_File" id="displayLabel_Design_File" value="\\server.." onfocus="this.style.background='white'" class="form-control" style="height: 20px !important;">
+                                            <label for="Label_Design_File" id="LabelDesignFileabso" class="labelwidth Inputborder">...</label>
+
+                                            }
+                                            else
+                                            {
+                                            <input asp-for="label_Design_File" id="displayLabel_Design_File" value="@Model.label_Design_File" onfocus="this.style.background='white'" class="form-control" style="height: 20px !important;">
+                                    <label for="Label_Design_File" id="LabelDesignFileabso" class="labelwidth Inputborder">...</label>
+
+                                            }
+                                    </div>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Label Event
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="label_Event" asp-items="Model.interface_Operations" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Label Printer
+                                </td>
+                                <td class="attributcurrvalue">
+                                        @if (string.IsNullOrEmpty(Model.label_Printer))
+                                        {
+                                        <input asp-for="label_Printer" value="Fax" class="form-control" style="height: 20px !important;" />
+
+                                        }
+                                        else
+                                        {
+                                        <input asp-for="label_Printer" value="@Model.label_Printer" class="form-control" style="height: 20px !important;" />
+
+                                        }
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Label Type
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="label_Type" asp-items="Model.label_Types" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Preview Label Before Print
+
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="preview_Label_Before_Print" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+
+                                @{
+                                    oldvalue = oldvalue + 1;
+                                }
+
+                            <tr class="treegrid-@oldvalue mainparent">
+                                <td colspan="2">
+                                    Mobile Setting
+                                </td>
+                            </tr>
+
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Article Selection Type
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="article_Selection_Type" asp-items="Model.article_Selection_Types" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Customer Visibility
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="customer_Visibility" asp-items="Model.customer_Visibilitys" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Customer's Near Me In Meter
+                                </td>
+                                <td class="attributcurrvalue">
+                                        @if (string.IsNullOrEmpty(Model.customers_Near_Me_In_Meter))
+                                        {
+                                        <input asp-for="customers_Near_Me_In_Meter" value="1000" class="form-control" style="height: 20px !important;" max="1000" onkeypress="return isLineItemperpageNumber(event)" />
+
+                                        }
+                                        else
+                                        {
+                                        <input asp-for="customers_Near_Me_In_Meter" value="@Model.customers_Near_Me_In_Meter" class="form-control" style="height: 20px !important;" max="1000" onkeypress="return isLineItemperpageNumber(event)" />
+
+                                        }
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable Mobile Transaction
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_Mobile_Transaction" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+
+                                @{
+                                    oldvalue = oldvalue + 1;
+                                }
+
+                            <tr class="treegrid-@oldvalue mainparent">
+                                <td colspan="2">
+                                    Print Setting
+                                </td>
+                            </tr>
+
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Date Format
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="date_Format" asp-items="Model.date_Formats" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Default Printer
+                                </td>
+                                <td class="attributcurrvalue">
+                                        @if (string.IsNullOrEmpty(Model.default_Printer))
+                                        {
+                                        <input asp-for="default_Printer" value="\\server.." class="form-control" style="height: 20px !important;" />
+
+                                        }
+                                        else
+                                        {
+                                        <input asp-for="default_Printer" value="@Model.max_No_Of_Printing" class="form-control" style="height: 20px !important;" />
+
+                                        }
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+
+                                    Max No Of Printing
+                                </td>
+                                <td class="attributcurrvalue">
+                                        @if (string.IsNullOrEmpty(Model.max_No_Of_Printing))
+                                        {
+                                        <input asp-for="max_No_Of_Printing" value="4" max="4" class="form-control" style="height: 20px !important;" onkeypress="return isMaxNumberofprint(event)" />
+
+                                        }
+                                        else
+                                        {
+                                        <input asp-for="max_No_Of_Printing" value="@Model.max_No_Of_Printing" max="4" class="form-control" style="height: 20px !important;" onkeypress="return isMaxNumberofprint(event)" />
+                                        }
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Merge Item code and Description
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="merge_Item_code_and_Description" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    No Of Copies
+                                </td>
+                                <td class="attributcurrvalue">
+                                        @if (string.IsNullOrEmpty(Model.no_Of_Copies))
+                                        {
+                                        <input asp-for="no_Of_Copies" value="2" max="2" class="form-control" style="height: 20px !important;" onkeypress="return isLineItemperpageNumber(event)" />
+
+                                        }
+                                        else
+                                        {
+                                        <input asp-for="no_Of_Copies" value="@Model.no_Of_Copies" max="2" class="form-control" style="height: 20px !important;" onkeypress="return isLineItemperpageNumber(event)" />
+
+                                        }
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    No Of Line Item Per Page
+                                </td>
+                                <td class="attributcurrvalue">
+                                        @if (string.IsNullOrEmpty(Model.no_Of_Line_Item_Per_Page))
+                                        {
+                                        <input asp-for="no_Of_Line_Item_Per_Page" value="5" max="5" class="form-control" style="height: 20px !important;" onkeypress="return isLineItemperpageNumber(event)" />
+
+                                        }
+                                        else
+                                        {
+                                        <input asp-for="no_Of_Line_Item_Per_Page" value="@Model.no_Of_Line_Item_Per_Page" max="5" class="form-control" style="height: 20px !important;" onkeypress="return isLineItemperpageNumber(event)" />
+
+                                        }
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Paper Size
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="paper_Size" asp-items="Model.paper_Sizes" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Paper Type
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="paper_Type" asp-items="Model.paper_Types" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Activity Reference
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="Print_Activity_Reference" asp-items="Html.GetEnumSelectList<enPrintActivityReference>()" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Amount In Word
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="print_Amount_In_Word" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Ancestor Extension
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="print_Ancestor_Extension" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Ancestor Reference
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="Print_Ancestor_Reference" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Article Code
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="print_Article_Code" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Article Picture
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="print_Article_Picture" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Article Volume
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="print_Article_Volume" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Bank Info
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="print_Bank_nfo" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Barcode on Document
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="print_Barcode_on_Document" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Batch
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="print_Batch" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Catalogue Automatically
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="print_Catalogue_Automatically" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Consignee Code
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="print_Consignee_Code" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Copy Distribution
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="print_Copy_Distribution" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Expiry Date
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="print_Expiry_Date" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Formulation As Spec
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="print_Formulation_As_Spec" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Image Code On Voucher
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="print_Image_Code_On_Voucher" asp-items="Model.print_Image_Code_On_Vouchers" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Immediate Reference"
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="print_Immediate_Reference" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Journal
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="print_Journal" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print LineItem Conversion
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="print_LineItem_Conversion" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Lineitem Count
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="print_LineItem_Count" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Production Date
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="print_Production_Date" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Quantity Sum
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="print_Quantity_Sum" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Remote Distribution
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="print_Remote_Distribution" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Seasonal message
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="print_Seasonal_message" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Specification
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="print_Specification" asp-items="Model.print_Specifications" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Sum. Art. Phy. dim.
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="print_Sum_Art_Phy_dim" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Values
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="print_Values" asp-items="Model.print_Valuess" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Watermark
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="print_Water_mark" asp-items="Model.print_Water_marks" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Print Without Preview
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="print_Without_Preview" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Printing Method
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="printing_Method" asp-items="Model.printing_Methods" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Sort Line Item
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="sort_Line_Item" asp-items="Model.sort_Line_Items" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Template Document
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <div class="input-group">
+                                            @if (string.IsNullOrEmpty(Model.template_Document))
+                                            {
+
+                                            <input asp-for="template_Document" id="dispaly-template_Document" value="\\server.." onfocus="this.style.background='white'" class="form-control" style="height: 20px !important;">
+                                            <label for="Template-Document" id="template_Documentabso" class="Inputborder">...</label>
+
+                                            }
+                                            else
+                                            {
+                                            <input asp-for="template_Document" id="dispaly-template_Document" value="@Model.template_Document" onfocus="this.style.background='white'" class="form-control" style="height: 20px !important;">
+                                            <label for="Template-Document" id="template_Documentabso" class="Inputborder">...</label>
+
+                                            }
+                                    </div>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    URL
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <div class="input-group">
+                                            @if (string.IsNullOrEmpty(Model.isetuRL))
+                                            {
+                                            <input asp-for="isetuRL" id="display-Url_file" value="\\server.." onfocus="this.style.background='white'" class="form-control" style="height: 20px !important;">
+                                            <label for="url_file" id="fileUrlabso" class="Inputborder">...</label>
+
+                                            }
+                                            else
+                                            {
+                                            <input asp-for="isetuRL" id="display-Url_file" value="@Model.isetuRL" onfocus="this.style.background='white'" class="form-control" style="height: 20px !important;">
+                                    <label for="url_file" id="fileUrlabso" class="Inputborder">...</label>
+
+                                            }
+                                    </div>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Use Darker Lines
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="use_Darker_Lines" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Use only UnExpired Article
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="use_only_UnExpired_Article" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Voucher Orientation
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="voucher_Orientation" asp-items="Model.voucher_Orientations" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Voucher Template
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <div class="input-group">
+                                            @if (string.IsNullOrEmpty(Model.voucher_Template))
+                                            {
+                                            <input asp-for="voucher_Template" id="display-VoucherTemplate" value="\\server.." onfocus="this.style.background='white'" class="form-control" style="height: 20px !important;">
+                                            <label for="Voucher_Template" id="VoucherTemplateabso" class="Inputborder">...</label>
+
+                                            }
+                                            else
+                                            {
+                                            <input asp-for="voucher_Template" id="display-VoucherTemplate" value="@Model.voucher_Template" onfocus="this.style.background='white'" class="form-control" style="height: 20px !important;">
+                                    <label for="Voucher_Template" id="VoucherTemplateabso" class="Inputborder">...</label>
+
+                                            }
+
+                                    </div>
+                                </td>
+
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Voucher User Orientation
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="Voucher_User_Orientation" asp-items="Model.Voucher_User_Orientations" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+
+                            </tr>
+                                @{
+                                    oldvalue = oldvalue + 1;
+                                }
+
+                            <tr class="treegrid-@oldvalue mainparent">
+                                <td colspan="2">
+                                    Process Setting
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Use Only Available Article
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="use_Only_Available_Article" asp-items="Model.use_Only_Available_Articles" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+
+
+                                @{
+                                    oldvalue = oldvalue + 1;
+                                }
+
+                            <tr class="treegrid-@oldvalue mainparent">
+                                <td colspan="2">
+                                    Round Calculator
+                                </td>
+                            </tr>
+
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Round Digit Quantity
+                                </td>
+                                <td class="attributcurrvalue">
+                                        @if (string.IsNullOrEmpty(Model.round_Digit_Quantity))
+                                        {
+                                        <a data-toggle="tab" data-value="" data-types="" style="text-decoration-line:none!important;">
+
+                                            <input asp-for="round_Digit_Quantity" value="3" class="form-control" style="height: 20px !important;" max="3" onkeypress="return isLineItemperpageNumber(event)" />
+                                        </a>
+
+                                        }
+                                        else
+                                        {
+
+                                        <a data-toggle="tab" data-value="" data-types="" style="text-decoration-line:none!important;">
+
+                                            <input asp-for="round_Digit_Quantity" value="@Model.round_Digit_Quantity" class="form-control" style="height: 20px !important;" max="3" onkeypress="return isLineItemperpageNumber(event)" />
+                                        </a>
+                                        }
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Round Digit Total
+                                </td>
+                                <td class="attributcurrvalue">
+                                        @if (string.IsNullOrEmpty(Model.round_Digit_Total))
+                                        {
+                                        <input asp-for="round_Digit_Total" value="3" class="form-control" style="height: 20px !important;" max="3" onkeypress="return isLineItemperpageNumber(event)" />
+
+                                        }
+                                        else
+                                        {
+                                        <input asp-for="round_Digit_Total" value="@Model.round_Digit_Total" class="form-control" style="height: 20px !important;" max="3" onkeypress="return isLineItemperpageNumber(event)" />
+
+                                        }
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Round Digit Unit Price
+                                </td>
+                                <td class="attributcurrvalue">
+                                        @if (string.IsNullOrEmpty(Model.round_Digit_Unit_Price))
+                                        {
+                                        <input asp-for="round_Digit_Unit_Price" value="3" class="form-control" style="height: 20px !important;" max="3" onkeypress="return isLineItemperpageNumber(event)" />
+
+                                        }
+                                        else
+                                        {
+                                        <input asp-for="round_Digit_Unit_Price" value="@Model.round_Digit_Unit_Price" class="form-control" style="height: 20px !important;" onkeypress="return isLineItemperpageNumber(event)" />
+
+                                        }
+                                </td>
+                            </tr>
+
+                                @{
+                                    oldvalue = oldvalue + 1;
+                                }
+
+                            <tr class="treegrid-@oldvalue mainparent">
+                                <td colspan="2">
+                                    Serial
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable Serial Number Or LifeSpan
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_Serial_Number_Or_LifeSpan" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Serial Input Type
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="serial_Input_Type" asp-items="Model.serial_Input_Types" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Serial Movement Suggestion
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="serial_Movement_Suggestion" asp-items="Model.serial_Movement_Suggestions" class=" form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Use Automatic Life span
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="use_Automatic_Life_span" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+
+                                @{
+                                    oldvalue = oldvalue + 1;
+                                }
+
+                            <tr class="treegrid-@oldvalue mainparent">
+                                <td colspan="2">
+                                    Store Settings
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable Destination Store
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_Destination_Store" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable Source Store
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_Source_Store" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Is Store Moving Voucher
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="is_Store_Moving_Voucher" asp-items="Model.is_Store_Moving_Vouchers" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Mandatory Destination Store
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="mandatory_Destination_Store" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Mandatory Source Store
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="mandatory_Source_Store" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Set Destination store as current store
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="_setDestinationstoreascurrentstore" asp-items="Html.GetEnumSelectList<envoucherFlag>()" class="form-control custom-select Inputborder">
+                                    </select>
+
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Set Source store as current store
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="_setSourcestoreascurrentstore" asp-items="Html.GetEnumSelectList<envoucherFlag>()" class="form-control custom-select Inputborder">
+                                    </select>
+
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Stock Balance View Option
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="stock_Balance_View_Option" asp-items="Model.stock_Balance_View_Options" class="form-control custom-select Inputborder">
+                                    </select>
+
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Use Mapped Store
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="use_Mapped_Store" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+
+                                </td>
+                            </tr>
+
+
+                                @{
+                                    oldvalue = oldvalue + 1;
+                                }
+
+                            <tr class="treegrid-@oldvalue mainparent">
+                                <td colspan="2">
+                                    Syncronization Setting
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Activity Sync Type
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="activity_Sync_Type" asp-items="Model.activity_Sync_Types" class="form-control custom-select Inputborder">
+                                    </select>
+
+                                </td>
+                            </tr>
+
+
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable Smart Synchronization
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_Smart_Synchronization" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable Synchronization
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="_enableSynchronization" asp-items="Html.GetEnumSelectList<envoucherFlag>()" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Sync in as Not-Issued
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="Sync_in_as_Not_Issued" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Sync LineItem Reference Mandatory
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="sync_LineItem_Reference_Mandatory" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Sync Void Document
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="sync_Void_Document" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+
+                                </td>
+                            </tr>
+
+                                @{
+                                    oldvalue = oldvalue + 1;
+                                }
+
+                            <tr class="treegrid-@oldvalue mainparent">
+                                <td colspan="2">
+                                    Tax Setting
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable Flexible Tax
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_Flexible_Tax" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+
+
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Tax Priority
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="tax_Priority" asp-items="Model.tax_Prioritys" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Value is Tax Inclusive
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="value_is_Tax_Inclusive" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Voucher Tax Type
+                                </td>
+                                <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#propertyMapmodel">
+                                        @if (string.IsNullOrEmpty(Model.voucher_Tax_Type))
+                                        {
+                                        <input asp-for="voucher_Tax_Type" type="text" value="VAT" id="Voucher_Tax_Type" class="form-control" style="height: 20px !important;" />
+
+                                        }
+                                        else
+                                        {
+                                        <input asp-for="voucher_Tax_Type" type="text" value="@Model.voucher_Tax_Type" id="Voucher_Tax_Type" class="form-control" style="height: 20px !important;" />
+                                        }
+                                </td>
+                            </tr>
+
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Withholding Type
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="With_holding_Type" asp-items="Model.With_holding_Types" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+
+                                @{
+                                    oldvalue = oldvalue + 1;
+                                }
+
+                            <tr class="treegrid-@oldvalue mainparent">
+                                <td colspan="2">
+                                    Third Party Interface Settings
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Enable Interface
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="enable_Interface" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    File Type
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="file_Type" asp-items="Model.file_Types" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Interface Operation
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="interface_Operation" asp-items="Model.interface_Operations" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Interface Type
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="interface_Type" asp-items="Model.interface_Types" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Pull URL
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <div class="input-group">
+                                            @if (string.IsNullOrEmpty(Model.pull_URL))
+                                            {
+                                            <input asp-for="pull_URL" id="display-PullURL" value="\\server.." onfocus="this.style.background='white'" class="form-control" style="height: 20px !important;">
+                                            <label for="Pull_URL" id="PullURLabso" class="Inputborder">...</label>
+
+                                            }
+                                            else
+                                            {
+                                            <input asp-for="pull_URL" id="display-PullURL" value="@Model.pull_URL" onfocus="this.style.background='white'" class="form-control" style="height: 20px !important;">
+                                            <label for="Pull_URL" id="PullURLabso" class="Inputborder">...</label>
+
+                                            }
+
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Push URL
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <div class="input-group">
+                                    @if (string.IsNullOrEmpty(Model.push_URL))
+                                            {
+                                            <input asp-for="push_URL" id="display-PushURL" value="\\server.." onfocus="this.style.background='white'" class="form-control" style="height: 20px;width:50px !important;">
+                                            <label for="Push_URL" id="PushURLabso" class="Inputborder">..</label>
+
+                                            }
+                                            else
+                                            {
+                                            <input asp-for="push_URL" id="display-PushURL" value="@Model.push_URL" onfocus="this.style.background='white'" class="form-control" style="height: 20px !important;">
+                                    <label for="Push_URL" id="PushURLabso" class="Inputborder">..</label>
+                                            }
+
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Third party System
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="Third_party_System" asp-items="Model.Third_party_Systems" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                                @{
+                                    oldvalue = oldvalue + 1;
+                                }
+
+                            <tr class="treegrid-@oldvalue mainparent">
+                                <td colspan="2">
+                                    Value Factor
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Applicable Additional Charge
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="applicable_Additional_Charge" asp-items="Model.applicable_Additional_Charges" class=" form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Applicable Discount
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="applicable_Discount" asp-items="Model.applicable_Discounts" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Apply Discount on unit price
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="apply_Discount_on_unit_price" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Use Flexible Additional Charge
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="use_Flexible_Additional_Charge" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Use Flexible Discount
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="use_Flexible_Discount" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Use Preferential Additional Charge
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="use_Preferential_Additional_Charge" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Use Preferential Discount
+                                </td>
+                                <td class="attributcurrvalue">
+
+                                    <select asp-for="use_Preferential_Discount" asp-items="Model.use_Preferential_Discounts" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+
+
+                                @{
+                                    oldvalue = oldvalue + 1;
+                                }
+
+                            <tr class="treegrid-@oldvalue mainparent">
+                                <td colspan="2">
+                                    Value Settings
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Calculate Cost At Real Time
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="calculate_Cost_At_Real_Time" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Capture Value Tag
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="capture_Value_Tag" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Check Price Validation
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="check_Price_Validation" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Protect Bottom Margin
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="_ProtectBottomMargin" asp-items="Html.GetEnumSelectList<envoucherFlag>()" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Referred Quantity Rule
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="referred_Quantity_Rule" asp-items="Model.referred_Quantity_Rules" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Referred Price Rule
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="referred_Price_Rule" asp-items="Model.referred_Quantity_Rules" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Value Is Mandatory
+                                </td>
+                                <td class="attributcurrvalue">
+                                    <select asp-for="value_Is_Mandatory" asp-items="Model.mandatory_Source_Stores" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Value Rule
+                                </td>
+                                <td class="attributcurrvalue">
+
+                                    <select asp-for="value_Rule" asp-items="Model.value_Rules" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="treegrid-parent-@oldvalue">
+                                <td class="attributdata">
+                                    Value Type
+                                </td>
+                                <td class="attributcurrvalue">
+
+                                    <select asp-for="value_Type" asp-items="Model.value_Types" class="form-control custom-select Inputborder">
+                                    </select>
+                                </td>
+                            </tr>
+
+                        </table>
+
+                    </div>
+
+                    <input class="form-control" type="file" name="fille" id="enter" style="display:none;" onchange="getfile(this.value);">
+                    <input class="form-control" type="file" name="DocumentBrowserfille" id="Document_Browser" style="display:none; visibility:hidden;" onchange="getDocumentfile(this.value);">
+                    <input class="form-control" type="file" name="LabelDesignfille" id="Label_Design_File" style="display:none; visibility:hidden;" onchange="getdisplayLabelDesignFilefile(this.value);">
+                    <input class="form-control" type="file" name="Template-Documentfille" id="Template-Document" style="display:none; visibility:hidden;" onchange="getTemplateDocumentfile(this.value);">
+                    <input class="form-control" type="file" name="urlfille" id="url_file" style="display:none; visibility:hidden;" onchange="getUrlfile(this.value);">
+                    <input class="form-control" type="file" name="VoucherTemplate" id="Voucher_Template" style="display:none; visibility:hidden;" onchange="getVoucherTemplatefile(this.value);">
+                    <input class="form-control" type="file" name="PullURL" id="Pull_URL" style="display:none; visibility:hidden;" onchange="getPullURLfile(this.value);">
+                    <input class="form-control" type="file" name="PushURL" id="Push_URL" style="display:none; visibility:hidden;" onchange="getPushURLfile(this.value);">
+
+                    <input asp-for="proprtyVoucherCode" hidden />
+
+
+            </div>
+
+        </div>
+    </div>
+
+<script>
+ 
+    function TreeFunctionproprty() {
+        $(document).ready(function () {
+            $('.tree-basic').treegrid();
+
+            $('.tree_loadvoucherprop').treegrid({
+                source: function (id, response) {
+                    if (id != 1) response(['']);
+                    else response(['']);
+                }
+            });
+
+        });
+    }
+    TreeFunctionproprty();
+</script>
+<script>
+    $(document).on("click", "#btnSavePropertysetting", function () {
+        var data = @Html.Raw(JsonConvert.SerializeObject(Model));
+        $.ajax({
+            url: 'Home/AddUser',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (result) {
+                // handle success
+            },
+            error: function (xhr, status, error) {
+                // handle error
+            }
+        });
+    });
+    $('.attributdata').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).children('.inputfield').val();*/
+        var value = $(this).text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).closest("tr").addClass('boderclr');
+        $('#VoucherVal').html(value);
+
+    });
+    $('.attributcurrvalue').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).siblings().children('.inputfield').val();*/
+        var value = $(this).siblings().text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).siblings().addClass("boderclr");
+        $('#VoucherVal').html(value);
+
+    });
+    $("#propertysect").change(function () {
+        var value = $(this).select2('data')[0].text;
+        $(".boderclr").removeClass("boderclr");
+        $("input[name*='" + value + "']").addClass('boderclr');
+        $("input[name*='" + value + "']").closest("tr").addClass('boderclr');
+
+        $('#VoucherVal').html(value);
+    });
+</script>
+<script>
+    $(function () {
+        $("#filterSetting").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#voucherSetting_Table > tbody > tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+<script>
+    function getfile(filename) {
+        $('#display-filenameprop').val(filename);
+    }
+</script>
+<script>
+    function getDocumentfile(filename) {
+        $('#display-DocumentBrowserfille').val(filename);
+    }
+</script>
+<script>
+    function getdisplayLabelDesignFilefile(filename) {
+        $('#displayLabel_Design_File').val(filename);
+    }
+</script>
+<script>
+    function getTemplateDocumentfile(filename) {
+        $('#dispaly-template_Document').val(filename);
+    }
+</script>
+<script>
+    function getUrlfile(filename) {
+        var urltest = $('#display-Url_file').val(filename);
+        console.log(urltest);
+    }
+</script>
+<script>
+    function getVoucherTemplatefile(filename) {
+        $('#display-VoucherTemplate').val(filename);
+    }
+</script>
+<script>
+    function getPushURLfile(filename) {
+        $('#display-PushURL').val(filename);
+    }
+</script>
+<script>
+    function getPullURLfile(filename) {
+        $('#display-PullURL').val(filename);
+    }
+</script>
+<script>
+    $('#btnSavePropertysetting').click(function () {
+        $('#PropertyFormData').submit();
+    });
+
+</script>

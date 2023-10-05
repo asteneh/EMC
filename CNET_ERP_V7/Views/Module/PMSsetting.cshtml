@@ -1,0 +1,1061 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain;
+@using Newtonsoft.Json;
+@model moduleModel
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var organizationTypes = await sharedHelpers.GetsystemConstantById(Model.subSyType);
+
+    var _submoduleSetting = await sharedHelpers.GetConfigurationByRefandPref("49", CNETConstants.PROPERTY_MGT_SYS);
+    int oldvalue = 1111111111;
+}
+
+<style>
+    #designprinter {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #reportarchive {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    .custom-select {
+        max-height: 28px;
+        font-size: 13px;
+    }
+
+
+    .sptablecontent {
+        border-collapse: collapse;
+        background-color: #fff;
+        width: 98%;
+        margin-left: 15px;
+    }
+
+        .sptablecontent .asth {
+            font-weight: bold;
+        }
+
+        .sptablecontent th, table td {
+            padding: 1px;
+            border: 1px solid #ccc;
+        }
+
+        .sptablecontent, .sptablecontent .sptablecontent td {
+            border: 0px solid #ccc;
+        }
+
+            .sptablecontent [type=text], select {
+                width: 100%;
+            }
+
+            .sptablecontent div {
+                width: 97%;
+            }
+
+    .inputfield {
+        pointer-events: none;
+        opacity: 30;
+        width: 80%;
+        height: 16px !important;
+        padding: 0px 0px !important;
+        font-size: 13px !important;
+    }
+
+    .Inputborder:focus {
+        border: 1px solid #1670BE;
+        box-shadow: 0 0 3px #1670BE;
+        outline-offset: 0px;
+        outline: none;
+    }
+
+    .Inputborder {
+        border: 1px solid #eee;
+        font-size: 13px !important;
+        height: 17px !important;
+        line-height: 2px !important;
+        text-emphasis-position: initial !important;
+        margin-top: 0px !important;
+        padding: 0px 0px !important;
+    }
+
+
+    .mainparent {
+        color: dodgerblue;
+        background-color: #eee;
+    }
+
+    .boderclr {
+        background-color: dodgerblue;
+    }
+
+    .vouproperty {
+        height: 95vh;
+        overflow-y: scroll;
+    }
+
+    .ui-timepicker-wrapper{
+        width:18%;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="box box-primary">
+
+            <div class="box-header with-border">
+                <div class="row">
+                    <div class="col-md-11">
+                        <div class="row">
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-1 control-labell"> Find</label>
+                                <div class="col-md-9">
+                                    <select class="form-control select2" asp-for="PmsPropertysetting" style="width:100%"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="box-body vouproperty">
+                @foreach (var item in _submoduleSetting)
+                {
+                    switch (item.Attribute)
+
+                    {
+                        case "Message Check Frequency":
+                            Model.pms_MessageCheckFrequency = item.CurrentValue;
+                            break;
+                        case "Summary Voucher":
+                            Model.pms_SummaryVoucher = item.CurrentValue;
+                            break;
+                        case "Enforce Closing":
+                            Model.pms_EnforceClosing = item.CurrentValue;
+                            break;
+                        case "Closing Period":
+                            Model.pms_ClosingPeriod = item.CurrentValue;
+                            break;
+                        case "Closing Frequency":
+                            Model.pms_ClosingFrequency = item.CurrentValue;
+                            break;
+                        case "Generate Report For Null Data":
+                            Model.pms_GenerateReportForNullData = item.CurrentValue;
+                            break;
+                        case "Enable Cloud Reporting":
+                            Model.pms_EnableCloudReporting = item.CurrentValue;
+                            break;
+                        case "CheckInTime":
+                            Model.pms_CheckInTime = item.CurrentValue;
+                            break;
+                        case "CheckOutTime":
+                            Model.pms_CheckOutTime = item.CurrentValue;
+                            break;
+                        case "LateCheckoutTime":
+                            Model.pms_LateCheckoutime = item.CurrentValue;
+                            break;
+                        case "NightAuditTime":
+                            Model.pms_NightAuditTime = item.CurrentValue;
+                            break;
+                        case "UndoCheckinMin":
+                            Model.pms_UndoCheckinTime = item.CurrentValue;
+                            break;
+                        case "MinRateAdjustment":
+                            Model.pms_MinimumRateAdujstment = item.CurrentValue;
+                            break;
+                        case "MattressAmount":
+                            Model.pms_MattressAmount = item.CurrentValue;
+                            break;
+                        case "ArchivePath":
+                            Model.pms_repoArchivePath = item.CurrentValue;
+                            break;
+                        case "UseLateCheckout":
+                            Model.pms_UseLateCheckout = item.CurrentValue;
+                            break;
+                        case "ArchivePrint":
+                            Model.pms_autoprint = item.CurrentValue;
+                            break;
+                        case "LateCheckoutRequiredPayment":
+                            Model.pms_RequiredPayment = item.CurrentValue;
+                            break;
+
+                        case "LateCheckoutAdditionPayment":
+                            Model.pms_AdditionalPaymentperhour = item.CurrentValue;
+                            break;
+                        case "EnforceCheckoutCardReturn":
+                            Model.pms_EnforceCardReturn = item.CurrentValue;
+                            break;
+                        case "LostCardFeeArticle":
+                            Model.pms_LostFeeArticle = item.CurrentValue;
+                            break;
+                        case "Label Design File":
+                            Model.pms_LabelDesignFile = item.CurrentValue;
+                            break;
+                        case "Label Printer":
+                            Model.pms_LabelPrinter = item.CurrentValue;
+                            break;
+                        case "EnableJournalization":
+                            Model.pms_EnableJournalize = item.CurrentValue;
+                            break;
+                        case "NightAuditPostingRoutine":
+                            Model.pms_PostineRoutine = item.CurrentValue;
+                            break;
+
+                        case "DefaultFiscalBillType":
+                            Model.pms_DefaultFiscalBillType = item.CurrentValue;
+                            break;
+                        case "CustHighBalance":
+                            Model.pms_CustomerHighBalance = item.CurrentValue;
+                            break;
+                        case "Payroll Journal Posting Type":
+                            Model.finan_PayrollJournalPostingType = item.CurrentValue;
+                            break;
+                        case "ValidateExternalReference":
+                            Model.pms_ValidateExternalReference = item.CurrentValue;
+                            break;
+                        case "ChargeAtCheckin":
+                            Model.pms_ChargeAtCheckin = item.CurrentValue;
+                            break;
+                        case "Early CheckIn":
+                            Model.pms_EarlyCheckIn = item.CurrentValue;
+                            break;
+                    }
+                }
+                <form id="PropertySettingFormData" asp-controller="Module" asp-action="SavingPropertySetting" method="post">
+
+                    <table cellpadding="0" cellspacing="0" class="sptablecontent tree_loadpmsprop">
+                        <tr class="asth">
+                            <td></td>
+                            <td></td>
+                        </tr>
+
+                        <tr class="treegrid-@oldvalue mainparent">
+                            <td colspan="2">
+                                Card-Holder Label Print
+                            </td>
+                        </tr>
+
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Label Design File" name="Label Design File" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+                                <div class="input-group">
+
+                                    @if (string.IsNullOrEmpty(Model.pms_LabelDesignFile))
+                                    {
+                                        <input asp-for="pms_LabelDesignFile" id="labeldesignprint" value="\\Server" class="Inputborder">
+                                        <label for="labeldesignpath_print" id="designprinter">...</label>
+
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="pms_LabelDesignFile" id="labeldesignprint" value="@Model.pms_LabelDesignFile" class="Inputborder">
+                                        <label for="labeldesignpath_print" id="designprinter">...</label>
+
+                                    }
+
+
+                                </div>
+
+                            </td>
+                        </tr>
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Label Printer" name="Label Printer" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="table-body-cell attributcurrvalue" data-toggle="modal" data-id="1" data-target="#LAbelprntrModal">
+                                <input asp-for="pms_LabelPrinter" type="text" id="label_printer_value" class="Inputborder" />
+
+                            </td>
+                        </tr>
+
+                        @*//group Tow*@
+                        @{oldvalue = oldvalue + 1;}
+
+                        <tr class="treegrid-@oldvalue mainparent">
+                            <td colspan="2">
+                                Closing Setting
+                            </td>
+                        </tr>
+
+
+                        <tr class="treegrid-parent-@oldvalue">
+
+                            <td class="attributdata">
+
+                                <input value="Closing Frequency" name="Closing Frequency" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="pms_ClosingFrequency" asp-items="Model.ClosingFrequency" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+
+
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Closing Period" name="Closing Period" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="table-body-cell attributcurrvalue" data-toggle="modal" data-id="1" data-target="#closingPeriodModal">
+                                @if (string.IsNullOrEmpty(Model.pms_ClosingPeriod))
+                                {
+                                    <input asp-for="pms_ClosingPeriod" id="pmsclosingperiod" value="None" class="Inputborder">
+                                }
+                                else
+                                {
+                                    <input asp-for="pms_ClosingPeriod" id="pmsclosingperiod" value="@Model.pms_ClosingPeriod" class="Inputborder">
+                                }
+
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Enforce Closing" name="Enforce Closing" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="pms_EnforceClosing" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Summary Voucher" name="Summary Voucher" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="pms_SummaryVoucher" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+
+                        @*//group Three*@
+
+                        @{ oldvalue = oldvalue + 1;}
+                        <tr class="treegrid-@oldvalue mainparent">
+                            <td colspan="2">
+                                Door Lock
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+
+                            <td class="attributdata">
+
+                                <input value="Enforce Checkout Card Return" name="Enforce Checkout Card Return" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="pms_EnforceCardReturn" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Lost Card Fee Article" name="Lost Card Fee Article" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="table-body-cell attributcurrvalue" data-toggle="modal" data-id="1" data-target="#LostarticleModal">
+
+                                <input asp-for="pms_LostFeeArticle" id="pmslostfrrearticle" class="Inputborder">
+
+                            </td>
+                        </tr>
+                        @{ oldvalue = oldvalue + 1;}
+                        <tr class="treegrid-@oldvalue mainparent">
+                            <td colspan="2">
+                                FTP Settings
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Enable Cloud Reporting" name="Enable Cloud Reporting" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+
+                                <select asp-for="pms_EnableCloudReporting" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Generate Report For Null Data" name="Generate Report For Null Data" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="pms_GenerateReportForNullData" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+                        @{ oldvalue = oldvalue + 1;}
+                        <tr class="treegrid-@oldvalue mainparent">
+                            <td colspan="2">
+                                General Settings
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Charge After Check-In" name="Charge After Check-In" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+
+                                <select asp-for="pms_ChargeAtCheckin" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Customer High-Balance" name="Customer High-Balance" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+                                @if (string.IsNullOrEmpty(Model.pms_CustomerHighBalance))
+                                {
+                                    <input asp-for="pms_CustomerHighBalance" value="0" maxlength="29" onkeypress="return isNumber(event)" id="customerHighBalance" class="Inputborder" onInput="return edValuecustomerKeyPress(eve)">
+
+                                }
+                                else
+                                {
+                                    <input asp-for="pms_CustomerHighBalance" maxlength="29" value="@Model.pms_CustomerHighBalance" id="customerHighBalance" onkeypress="return isNumber(event)" class="Inputborder" onInput="return edValuecustomerKeyPress(eve)">
+
+                                }
+
+                            </td>
+                        </tr>
+
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Default Fiscal Bill Type" name="Default Fiscal Bill Type" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+
+                                <select asp-for="pms_DefaultFiscalBillType" asp-items="Model.defaultfiscalbill" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Early CheckIn" name="Early CheckIn" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+
+                                <select asp-for="pms_EarlyCheckIn" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Mattress Amount" name="Mattress Amount" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+                                @if (string.IsNullOrEmpty(Model.pms_MattressAmount))
+                                {
+                                    <input asp-for="pms_MattressAmount" value="0" maxlength="29" onkeypress="return isNumber(event)" id="mattressAmount" class="Inputborder" onInput="return edValuematressKeyPress(eve)">
+
+                                }
+                                else
+                                {
+                                    <input asp-for="pms_MattressAmount" maxlength="29" value="@Model.pms_MattressAmount" id="mattressAmount" onkeypress="return isNumber(event)" class="Inputborder" onInput="return edValuematressKeyPress(eve)">
+
+                                }
+                            </td>
+                        </tr>
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Charge After Check-In" name="Charge After Check-In" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+
+                                <select asp-for="pms_ChargeAtCheckin" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Generate Report For Null Data" name="Generate Report For Null Data" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+                                @if (string.IsNullOrEmpty(Model.pms_GenerateReportForNullData))
+                                {
+                                    <input asp-for="pms_GenerateReportForNullData" value="0" maxlength="10" onkeypress="return isNumber(event)" class="Inputborder">
+
+                                }
+                                else
+                                {
+                                    <input asp-for="pms_GenerateReportForNullData" maxlength="10" value="@Model.pms_GenerateReportForNullData" onkeypress="return isNumber(event)" class="Inputborder">
+
+                                }
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Message Check Frequency" name="Message Check Frequency" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="pms_MessageCheckFrequency" asp-items="Model.messagecheckfrequ" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Min. Rate Adjustment Value" name="Min. Rate Adjustment Value" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+
+                                @if (string.IsNullOrEmpty(Model.pms_MinimumRateAdujstment))
+                                {
+                                    <input asp-for="pms_MinimumRateAdujstment" value="0" maxlength="29" onkeypress="return isNumber(event)" id="minimumRateAdujstment" class="Inputborder" onInput="return edValueminKeyPress(eve)">
+
+                                }
+                                else
+                                {
+                                    <input asp-for="pms_MinimumRateAdujstment" maxlength="29" value="@Model.pms_MinimumRateAdujstment" id="minimumRateAdujstment" onkeypress="return isNumber(event)" class="Inputborder" onInput="return edValueminKeyPress(eve)">
+
+                                }
+
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Validate External Reference" name="Validate External Reference" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="pms_ValidateExternalReference" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+
+                        @{ oldvalue = oldvalue + 1;}
+                        <tr class="treegrid-@oldvalue mainparent">
+                            <td colspan="2">
+                                Late Check-Out
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Additional Payment Per Hour(%)" name="Additional Payment Per Hour(%)" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+                                @if (string.IsNullOrEmpty(Model.pms_AdditionalPaymentperhour))
+                                {
+                                    <input asp-for="pms_AdditionalPaymentperhour" value="0" maxlength="18" onkeypress="return isNumber(event)" id="additionalPaymentperhour" class="Inputborder" onInput="return edValueadditionalKeyPress(eve)">
+
+                                }
+                                else
+                                {
+                                    <input asp-for="pms_AdditionalPaymentperhour" maxlength="18" value="@Model.pms_AdditionalPaymentperhour" onkeypress="return isNumber(event)" id="additionalPaymentperhour" class="Inputborder" onInput="return edValueadditionalKeyPress(eve)">
+
+                                }
+                            </td>
+                        </tr>
+
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Late Check-Out Time" name="Late Check-Out Time" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+
+                                @if (string.IsNullOrEmpty(Model.pms_LateCheckoutime))
+                                {
+                                    <input asp-for="pms_LateCheckoutime" value="00:00" class="Inputborder">
+
+                                }
+                                else
+                                {
+                                    <input asp-for="pms_LateCheckoutime" value="@Model.pms_LateCheckoutime" class="Inputborder">
+
+                                }
+                            </td>
+                        </tr>
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Required Payment (%)" name="Required Payment (%)" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+
+                                @if (string.IsNullOrEmpty(Model.pms_RequiredPayment))
+                                {
+                                    <input asp-for="pms_RequiredPayment" value="0" maxlength="18" id="requiredPayment" onkeypress="return isNumber(event)" class="Inputborder" onInput="return edValuerequireKeyPress(eve)">
+
+                                }
+                                else
+                                {
+                                    <input asp-for="pms_RequiredPayment" maxlength="18" id="requiredPayment" value="@Model.pms_RequiredPayment" onkeypress="return isNumber(event)" class="Inputborder" onInput="return edValuerequireKeyPress(eve)">
+
+                                }
+                            </td>
+                        </tr>
+
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Use Late Check-Out" name="Use Late Check-Out" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="pms_UseLateCheckout" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+                        @{ oldvalue = oldvalue + 1;}
+                        <tr class="treegrid-@oldvalue mainparent">
+                            <td colspan="2">
+                                Night Audit
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Auto-Print PDF Archive" name="Auto-Print PDF Archive" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="pms_autoprint" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Enable Journalize" name="Enable Journalize" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="pms_EnableJournalize" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Posting Routine Header" name="Posting Routine Header" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="pms_PostineRoutine" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Report Archive Path" name="Report Archive Path" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+                                <div class="input-group">
+
+                                    @if (string.IsNullOrEmpty(Model.pms_repoArchivePath))
+                                    {
+                                        <input asp-for="pms_repoArchivePath" id="reportarchivepath" value="\\Server" class="Inputborder">
+                                        <label for="report_archivepath" id="reportarchive">...</label>
+
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="pms_repoArchivePath" id="reportarchivepath" value="@Model.pms_repoArchivePath" class="Inputborder">
+                                        <label for="report_archivepath" id="reportarchive">...</label>
+
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+
+                        @{ oldvalue = oldvalue + 1;}
+                        <tr class="treegrid-@oldvalue mainparent">
+                            <td colspan="2">
+                                Time Setting
+                            </td>
+                        </tr>
+
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Check-In Time" name="Check-In Time" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+                                @if (string.IsNullOrEmpty(Model.pms_CheckInTime))
+                                {
+                                    <input asp-for="pms_CheckInTime" value="00:00" type="text" class="Inputborder" />
+
+                                }
+                                else
+                                { <input asp-for="pms_CheckInTime" value="@Model.pms_CheckInTime" type="text" class="Inputborder" />
+
+                                }
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Check-Out Time" name="Check-Out Time" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+                                @if (string.IsNullOrEmpty(Model.pms_CheckOutTime))
+                                {
+                                    <input asp-for="pms_CheckOutTime" value="00:00" type="text" class="Inputborder" />
+
+                                }
+                                else
+                                { <input asp-for="pms_CheckOutTime" value="@Model.pms_CheckOutTime" type="text" class="Inputborder" />
+
+                                }
+                            </td>
+                        </tr>
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Night Audit Time" name="Night Audit Time" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+                                @if (string.IsNullOrEmpty(Model.pms_NightAuditTime))
+                                {
+                                    <input asp-for="pms_NightAuditTime" value="00:00" type="text" class="Inputborder" />
+
+                                }
+                                else
+                                { <input asp-for="pms_NightAuditTime" value="@Model.pms_NightAuditTime" type="text" class="Inputborder" />
+
+                                }
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                <input value="Undo Check-In Minute" name="Undo Check-In Minute" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+                            <td class="attributcurrvalue">
+                                @if (string.IsNullOrEmpty(Model.pms_UndoCheckinTime))
+                                {
+                                    <input asp-for="pms_UndoCheckinTime" value="0" type="text" class="Inputborder" id="undoCheckinTime" onInput="return edValueundoeKeyPress(eve)" />
+
+                                }
+                                else
+                                { <input asp-for="pms_UndoCheckinTime" value="@Model.pms_UndoCheckinTime" id="undoCheckinTime" type="text" class="Inputborder" onInput="return edValueundoeKeyPress(eve)" />
+
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                    <input class="form-control" type="file" name="labeldesignpath" id="labeldesignpath_print" style="display:none; visibility:hidden;" onchange="getlabeldesignpathfile(this.value);">
+                    <input class="form-control" type="file" name="reportarchive" id="report_archivepath" style="display:none; visibility:hidden;" onchange="getreportarchivepathfile(this.value);">
+                   
+                </form>
+        </div>
+      </div>
+    </div>
+ </div>
+
+<script>
+    $(function () {
+        $('#pms_LateCheckoutime').timepicker({
+            'timeFormat': 'H:i'
+        });
+    });
+
+    $('#pms_NightAuditTime').timepicker({ 'timeFormat': 'H:i' });
+    $('#pms_CheckOutTime').timepicker({ 'timeFormat': 'H:i' });
+    $('#pms_CheckInTime').timepicker({ 'timeFormat': 'H:i' });
+
+    function TreeFunctionpmsproprty() {
+        $(document).ready(function () {
+            $('.tree-basic').treegrid();
+
+            $('.tree_loadpmsprop').treegrid({
+                source: function (id, response) {
+                    if (id != 1) response(['']);
+                    else response(['']);
+                }
+            });
+
+        });
+    }
+    TreeFunctionpmsproprty();
+
+
+</script>
+
+ <script>
+    var inputcustomervalue;
+     function edValuecustomerKeyPress(e) {
+
+         var str = $("#customerHighBalance").val();
+            if (str != "") {
+                inputcustomervalue = parseFloat(str);
+            }
+            else {
+                inputcustomervalue = 0
+            }
+
+            return true;
+        }
+     $("#customerHighBalance").mouseout(function () {
+         if (inputcustomervalue != undefined) {
+             $("#customerHighBalance").val(inputcustomervalue);
+            }
+     });
+
+     var inputmattrixvalue;
+     function edValuematressKeyPress(e) {
+
+         var str = $("#mattressAmount").val();
+            if (str != "") {
+                inputmattrixvalue = parseFloat(str);
+            }
+            else {
+                inputmattrixvalue = 0
+            }
+
+            return true;
+        }
+     $("#mattressAmount").mouseout(function () {
+         if (inputmattrixvalue != undefined) {
+             $("#mattressAmount").val(inputmattrixvalue);
+            }
+     });
+
+     
+     
+     var inputminvalue;
+     function edValueminKeyPress(e) {
+
+         var str = $("#minimumRateAdujstment").val();
+            if (str != "") {
+                inputminvalue = parseFloat(str);
+            }
+            else {
+                inputminvalue = 0
+            }
+
+            return true;
+        }
+     $("#minimumRateAdujstment").mouseout(function () {
+         if (inputminvalue != undefined) {
+             $("#minimumRateAdujstment").val(inputminvalue);
+            }
+     });
+
+
+     var inputaddvalue;
+     function edValueadditionalKeyPress(e) {
+
+         var str = $("#additionalPaymentperhour").val();
+            if (str != "") {
+                inputaddvalue = parseFloat(str);
+            }
+            else {
+                inputaddvalue = 0
+            }
+
+            return true;
+        }
+     $("#additionalPaymentperhour").mouseout(function () {
+         if (inputaddvalue != undefined) {
+             $("#additionalPaymentperhour").val(inputaddvalue);
+            }
+     });
+     
+     
+
+     var inputrequirevalue;
+     function edValuerequireKeyPress(e) {
+
+         var str = $("#requiredPayment").val();
+            if (str != "") {
+                inputrequirevalue = parseFloat(str);
+            }
+            else {
+                inputrequirevalue = 0
+            }
+
+            return true;
+        }
+     $("#requiredPayment").mouseout(function () {
+         if (inputrequirevalue != undefined) {
+             $("#requiredPayment").val(inputrequirevalue);
+            }
+     });
+
+     var inputundovalue;
+     function edValueundoeKeyPress(e) {
+
+         var str = $("#undoCheckinTime").val();
+            if (str != "") {
+                inputundovalue = parseFloat(str);
+            }
+            else {
+                inputundovalue = 0
+            }
+
+            return true;
+        }
+     $("#undoCheckinTime").mouseout(function () {
+         if (inputundovalue != undefined) {
+             $("#undoCheckinTime").val(inputundovalue);
+            }
+        });
+     
+     
+
+        function isNumberundo(evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
+            }
+            else {
+
+                return true;
+            }
+        }
+        function isNumberpayment(evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
+            }
+            else {
+
+                return true;
+            }
+        }
+        function isNumberAddtion(evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
+            }
+            else {
+
+                return true;
+            }
+        }
+
+        function isNumber(evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
+            }
+            else {
+
+                return true;
+            }
+        }
+
+
+        function isNumberamount(evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
+            }
+            else {
+
+                return true;
+            }
+
+        }
+        function isNumberrate(evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
+            }
+            else {
+
+                return true;
+            }
+
+        }
+
+    </script>
+
+
+
+ <script>
+     var selectedCountry = "";
+
+     var row = ""
+
+     $("select.select2").change(function () {
+         selectedCountry = $(this).children("option:selected").text();
+
+         $(".bg-blue").removeClass("bg-blue");
+         //var row = $(".addvaluepropertyLisearch:contains(" + selectedCountry + "));
+         $("input[name*='" + selectedCountry + "']").addClass("bg-blue");
+
+
+
+ </script>
+<script>
+    $('.attributdata').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).children('.inputfield').val();*/
+        var value = $(this).text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).closest("tr").addClass('boderclr');
+        $('#FinanicalSePropertySettingValttingVal').html(value);
+
+    });
+    $('.attributcurrvalue').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).siblings().children('.inputfield').val();*/
+        var value = $(this).siblings().text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).siblings().addClass("boderclr");
+        $('#PropertySettingVal').html(value);
+
+    });
+    $("#PmsPropertysetting").change(function () {
+        var value = $(this).select2('data')[0].text;
+        $(".boderclr").removeClass("boderclr");
+        $("input[name*='" + value + "']").addClass('boderclr');
+        $("input[name*='" + value + "']").closest("tr").addClass('boderclr');
+
+        $('#PropertySettingVal').html(value);
+    });
+</script>
+
+<script>
+        function getlabeldesignpathfile(filename) {
+            $('#labeldesignprint').val(filename);
+        }
+        function getreportarchivepathfile(filename) {
+            $('#reportarchivepath').val(filename);
+        }
+
+</script>

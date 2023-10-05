@@ -1,0 +1,40 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model moduleModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var sunsystemComp = await sharedHelpers.GetsystemConstantById(Model.subSyType);
+
+    var sunsystemCompType = sunsystemComp?.FirstOrDefault().Id;
+
+}
+<div class="row">
+
+    <div class="col-md-12">
+        @if (sunsystemCompType == 52)
+        {
+            @await Html.PartialAsync("_subsysProperty")
+
+        }
+        else if (sunsystemCompType == 48)
+        {
+            @await Html.PartialAsync("_financialProperty")
+        }
+         else if (sunsystemCompType == 49)
+        {
+            @await Html.PartialAsync("_productionProperty")
+        } 
+        else if (sunsystemCompType == 58)
+        {
+            @await Html.PartialAsync("_FixedassetProperty")
+        }
+        else if (sunsystemCompType == 50)
+        {
+            @await Html.PartialAsync("_HrmsSetting")
+        }
+
+
+    </div>
+</div>
+

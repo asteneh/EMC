@@ -1,0 +1,754 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain;
+@using Newtonsoft.Json;
+@model moduleModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+   
+    var value = await sharedHelpers.GetConfigurationByRefandPref("ECommerce Setting", CNETConstants.ECOMMERCE_MGT_SYS);
+   
+    int oldvalue = 1111311112;
+    var article = await sharedHelpers.SelectArticleByGSLtype(4);
+
+    var articleType = article?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Name }).ToArray();
+
+}
+<style>
+    .custom-select {
+        max-height: 28px;
+        font-size: 13px;
+    }
+
+
+    .sptablecontent {
+        border-collapse: collapse;
+        background-color: #fff;
+        width: 100%;
+        margin-left: 15px;
+    }
+
+    OrganizationUnit
+    .sptablecontent .asth {
+        font-weight: bold;
+    }
+
+    .sptablecontent th, table td {
+        padding: 1px;
+        border: 1px solid #ccc;
+    }
+
+    .sptablecontent, .sptablecontent .sptablecontent td {
+        border: 0px solid #ccc;
+    }
+
+        .sptablecontent [type=text], select {
+            width: 100%;
+        }
+
+        .sptablecontent div {
+            width: 97%;
+        }
+
+    .inputfield {
+        pointer-events: none;
+        opacity: 30;
+        width: 80%;
+        height: 16px !important;
+        padding: 0px 0px !important;
+        font-size: 13px !important;
+    }
+
+    .Inputborder:focus {
+        border: 1px solid #1670BE;
+        box-shadow: 0 0 3px #1670BE;
+        outline-offset: 0px;
+        outline: none;
+    }
+
+    .Inputborder {
+        border: 1px solid #eee;
+        font-size: 13px !important;
+        height: 17px !important;
+        line-height: 2px !important;
+        text-emphasis-position: initial !important;
+        margin-top: 0px !important;
+        padding: 0px 0px !important;
+    }
+
+
+    .mainparent {
+        color: dodgerblue;
+        background-color: #eee;
+    }
+
+    .boderclr {
+        background-color: dodgerblue;
+    }
+
+   
+</style>
+<div class="row">
+    <div class="col-md-12">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <div class="row">
+                    <div class="col-md-11">
+                        <div class="row">
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-1 control-labell"> Find</label>
+                                <div class="col-md-9">
+                                    <select class="form-control select2" asp-for="ecommerceSelection" style="width:100%"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="box-body vouproperty">
+                @foreach (var va in value)
+                {
+                    switch (va.Attribute)
+                    {
+                        case "Default OrganizationUnit Definition":
+                            var branchcode = await sharedHelpers.GetConsigneeunitById(Convert.ToInt32(va.CurrentValue));
+                            var DefaultOrganizationUnitDef = branchcode?.FirstOrDefault().Id + "/" + branchcode?.FirstOrDefault()?.Name;
+                            Model.defaultOrganizationUnitDef = DefaultOrganizationUnitDef;
+                            break;
+                        case "Control Stock":
+                            Model.controlStock = va.CurrentValue;
+                            break;
+                        case "Ecommerce Order Print":
+                            Model.ecommerceOrderPrint = va.CurrentValue;
+                            break;
+                        case "Use Service Charge":
+                            Model.useServiceCharge = va.CurrentValue;
+                            break;
+                        case "Show Stock Below":
+                            Model.showStockBelow = va.CurrentValue;
+                            break;
+                        case "Take Away Box Article":
+                            var TakeAwayBoxArticle = va.CurrentValue.ToString();
+                            if (!string.IsNullOrEmpty(TakeAwayBoxArticle))
+                            {
+                                var TakeAwayBoxItem = await sharedHelpers.SelectArticleById(Convert.ToInt32(TakeAwayBoxArticle));
+                                if (TakeAwayBoxItem != null)
+                                {
+                                    TakeAwayBoxArticle = TakeAwayBoxItem.Id  + "/" + TakeAwayBoxItem.Name ;
+                                }
+                                else
+                                    TakeAwayBoxArticle = "";
+
+                                Model.takeAwayBoxArticle = TakeAwayBoxArticle;
+                            }
+                            break;
+                        case "Use Price Type":
+                            var UsePriceType = va.CurrentValue;
+                            if (!string.IsNullOrEmpty(UsePriceType))
+                            {
+                                var UsePriceTypelookup = await sharedHelpers.GetsystemConstantById(Convert.ToInt32(UsePriceType));
+                                if (UsePriceTypelookup != null)
+                                {
+                                    UsePriceType = UsePriceTypelookup.FirstOrDefault().Id + "/" + UsePriceTypelookup.FirstOrDefault().Description;
+                                }
+                                else
+                                    UsePriceType = "";
+                                Model.usePriceType = UsePriceType;
+                            }
+                            break;
+                        case "Receive order during off working hours":
+                            Model.receiveorderduringoffworkinghours = va.CurrentValue;
+                            break;
+                        case "Receive Order On Closing Hours":
+                            Model.receiveOrderOnClosingHours = va.CurrentValue;
+                            break;
+                        case "Organization Unit Selection":
+                            Model.organizationUnitSelection = va.CurrentValue;
+                            break;
+                        case "Maximum Seat":
+                            Model.ecommerce_Maximum_Seat = va.CurrentValue;
+                            break;
+                        case "Seat Availability":
+                            Model.seat_Availability = va.CurrentValue;
+                            break;
+
+                        case "Stock Article":
+                            var  StockArticle = va.CurrentValue;
+                            if (!string.IsNullOrEmpty(StockArticle))
+                            {
+                                var StockArticleItem = await sharedHelpers.SelectArticleById(Convert.ToInt32(StockArticle));
+                                if (StockArticleItem != null)
+                                {
+                                    StockArticle = StockArticleItem.Id + "/" + StockArticleItem.Name;
+                                }
+                                else
+                                    StockArticle = "";
+                            }
+                            Model.ecommerce_StockArticle = StockArticle;
+                            break;
+                        case "Service Charge Article":
+                            var  ServiceChargeArticle = va.CurrentValue;
+                            if (!string.IsNullOrEmpty(ServiceChargeArticle))
+                            {
+                                var ServiceChargeArticleItem = await sharedHelpers.SelectArticleById(Convert.ToInt32(ServiceChargeArticle));
+                                if (ServiceChargeArticleItem != null)
+                                {
+                                    ServiceChargeArticle = ServiceChargeArticleItem.Id + "/" + ServiceChargeArticleItem.Name;
+                                }
+                                else
+                                    ServiceChargeArticle = "";
+                            }
+                            Model.ecommerce_Charge_Article = ServiceChargeArticle;
+                            break;
+                        case "Terms and Conditions URL":
+                            Model.ecommerce_TermandCondition_URL = va.CurrentValue.ToString();
+                            break;
+                        case "Year of Establishment":
+                            Model.ecommerce_Yearof_Establishment = va.CurrentValue.ToString();
+                            break;
+                        case "Founder/CEO":
+                            Model.ecommerce_Founder = va.CurrentValue.ToString();
+                            break;
+                        case "No of Employee":
+                            Model.ecommerce_Noof_Employee = va.CurrentValue;
+                            break;
+                        case "Minimum Stock Quantity":
+                            Model.ecommerce_Minimstock_Quality = va.CurrentValue;
+                            break;
+                        case "Maximum Stock Quantity":
+                            Model.ecommerce_maxstock_quantity= va.CurrentValue;
+                            break;
+                        case "2nd Instalment Percent":
+                            Model.ecommerce_2nd_InvestmentMax_Percent = va.CurrentValue;
+                            break;
+                        case "2nd Instalment Range":
+                            Model.ecommerce_2nd_InvestmentMax_Range = (va.CurrentValue.ToString());
+                            break;
+                        case "2nd Instalment Max Age":
+                            Model.ecommerce_2nd_InvestmentMax_Age = va.CurrentValue;
+                            break;
+                        case "3rd Instalment Percent":
+                            Model.ecommerce_3rd_InvestmentMax_Percent = va.CurrentValue;
+                            break;
+                        case "3rd Instalment Range":
+                            Model.ecommerce_3rd_InvestmentMax_Range = va.CurrentValue;
+                            break;
+                        case "3rd Instalment Max Age":
+                            Model.ecommerce_3nd_InvestmentMax_Age = va.CurrentValue;
+                            break;
+                        case "4th Instalment Percent":
+                            Model.ecommerce_4th_Investment_percent = va.CurrentValue;
+                            break;
+                        case "4th Instalment Range":
+                            Model.ecommerce_4th_Investment_Range = va.CurrentValue;
+                            break;
+                        case "4th Instalment Max Age":
+                            Model.ecommerce_4thd_InvestmentMax_Age = va.CurrentValue;
+                            break;
+                        case "5th Instalment Percent":
+                            Model.ecommerce_5th_Investment_percent = va.CurrentValue;
+                            break;
+                        case "5th Instalment Range":
+                            Model.ecommerce_5th_Investment_Range = va.CurrentValue;
+                            break;
+                        case "5th Instalment Max Age":
+                            Model.ecommerce_5th_InvestmentMax_Age = va.CurrentValue;
+                            break;
+                        case "6th Instalment Percent":
+                            Model.ecommerce_6th_InvestmentMax_percent = va.CurrentValue;
+                            break;
+                        case "6th Instalment Range":
+                            Model.ecommerce_6th_InvestmentMax_Range = va.CurrentValue;
+                            break;
+                        case "6th Instalment Max Age":
+                            Model.ecommerce_6th_InvestmentMax_Age = va.CurrentValue;
+                            break;
+                        case "7th Instalment Percent":
+                            Model.ecommerce_7th_InvestmentMax_Percent = va.CurrentValue;
+                            break;
+                        case "7th Instalment Range":
+                            Model.ecommerce_7th_InvestmentMax_Range = va.CurrentValue;
+                            break;
+                        case "7th Instalment Max Age":
+                            Model.ecommerce_7th_InvestmentMax_Age = va.CurrentValue;
+                            break;
+                        case "8th Instalment Percent":
+                            Model.ecommerce_8th_InvestmentMax_Percent = va.CurrentValue;
+                            break;
+                        case "8th Instalment Range":
+                            Model.ecommerce_8th_InvestmentMax_Range = va.CurrentValue;
+                            break;
+                        case "8th Instalment Max Age":
+                            Model.ecommerce_8th_InvestmentMax_age = va.CurrentValue;
+                            break;
+                    }
+                }
+                <form id="ecommercePropertyFormData" asp-controller="Module" asp-action="SavingecommProperty" method="post">
+
+                    <table cellpadding="0" cellspacing="0" class="sptablecontent tree_loadecomm">
+                        <tr class="asth">
+                            <td></td>
+                            <td></td>
+                        </tr>
+
+                        <tr class="treegrid-@oldvalue mainparent">
+                            <td colspan="2">
+                                ECommerce Setting
+                            </td>
+                        </tr>
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                <input value="Default OrganizationUnit Definition" name="Default OrganizationUnit Definition" readonly class="inputfield" style="height: auto; background-color: white; border: none;" />
+                            </td>
+
+
+                            <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#DefaultorgunitDefn">
+                                <input asp-for="defaultOrganizationUnitDef" type="text" id="Default_organ_branch" class="Inputborder  form-control" />
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Maximum Seat
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_Maximum_Seat" type="text" class="Inputborder  form-control" />
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Seat Availability
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="seat_Availability" asp-items="Model.seat_Availabilitys" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                E-Commerce Order Print
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="ecommerceOrderPrint" asp-items="Model.ecommerceOrderPrinttype" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Control Stock
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="controlStock" asp-items="Model.ecommerceOrderPrinttype" class="form-control custom-select Inputborder">
+                                </select>
+
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Show Stock Below
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="showStockBelow" value="5" maxlength="10" class="Inputborder form-control" onkeypress="return isNumber(event)">
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Use Service Charge
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="useServiceCharge" asp-items="Model.ecommerceOrderPrinttype" class="form-control custom-select Inputborder">
+                                </select>
+
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Take Away Box Article
+                            </td>
+                            <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#boxArticleModal">
+                                <input asp-for="takeAwayBoxArticle" type="text" id="takeaway_articlebox" class="Inputborder  form-control" />
+
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Use Price Type
+                            </td>
+                            <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#PriceTypeModal">
+                                <input asp-for="usePriceType" type="text" id="price_description_Type" class="Inputborder  form-control" />
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Receive order during off working hours
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="receiveorderduringoffworkinghours" asp-items="Model.ecommerceOrderPrinttype" class="form-control custom-select Inputborder">
+                                </select>
+
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Receive Order On Closing Hours
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="receiveOrderOnClosingHours" asp-items="Model.ecommerceOrderPrinttype" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Organization Unit Selection
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="organizationUnitSelection" asp-items="Model.organizationUnitSelectionType" class="form-control custom-select Inputborder">
+                                </select>
+
+                            </td>
+                        </tr>
+                        @{oldvalue = oldvalue + 1;}
+                        <tr class="treegrid-@oldvalue mainparent">
+                            <td colspan="2">
+                                Invest App Setting
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                2nd Instalment Max Age
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_2nd_InvestmentMax_Age" value="0" maxlength="10" class="Inputborder form-control" onkeypress="return isNumber(event)">
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                2nd Instalment Percent
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_2nd_InvestmentMax_Percent" class="Inputborder form-control">
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                2nd Instalment Range
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_2nd_InvestmentMax_Range" class="Inputborder form-control">
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                3rd Instalment Max Age
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_3nd_InvestmentMax_Age" value="0" maxlength="10" class="Inputborder form-control" onkeypress="return isNumber(event)">
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                3rd Instalment Percent
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_3rd_InvestmentMax_Percent" class="Inputborder form-control">
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                3rd Instalment Range
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_3rd_InvestmentMax_Range" class="Inputborder form-control">
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                4th Instalment Max Age
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_4thd_InvestmentMax_Age" value="0" maxlength="10" class="Inputborder form-control" onkeypress="return isNumber(event)">
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                4th Instalment Percent
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_4th_Investment_percent" class="Inputborder form-control">
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                4th Instalment Range
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_4th_Investment_Range" class="Inputborder form-control">
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                5th Instalment Max Age
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_5th_InvestmentMax_Age" value="0" maxlength="10" class="Inputborder form-control" onkeypress="return isNumber(event)">
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                5th Instalment Percent
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_5th_Investment_percent" class="Inputborder form-control">
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                5th Instalment Range
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_5th_Investment_Range" class="Inputborder form-control">
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                6th Instalment Max Age
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_6th_InvestmentMax_Age" value="0" maxlength="10" class="Inputborder form-control" onkeypress="return isNumber(event)">
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                6th Instalment Percent
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_6th_InvestmentMax_percent" class="Inputborder form-control">
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                6th Instalment Range
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_6th_InvestmentMax_Range" class="Inputborder form-control">
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                7th Instalment Max Age
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_7th_InvestmentMax_Age" value="0" maxlength="10" class="Inputborder form-control" onkeypress="return isNumber(event)">
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                7th Instalment Percent
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_7th_InvestmentMax_Percent" class="Inputborder form-control">
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                7th Instalment Range
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_7th_InvestmentMax_Range" class="Inputborder form-control">
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                8th Instalment Max Age
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_8th_InvestmentMax_age" value="0" maxlength="10" class="Inputborder form-control" onkeypress="return isNumber(event)">
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                8th Instalment Percent
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_8th_InvestmentMax_Percent" class="Inputborder form-control">
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                8th Instalment Range
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_8th_InvestmentMax_Range" class="Inputborder form-control">
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Founder/CEO
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_Founder" class="Inputborder form-control">
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Minimum Stock Quantity
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_Minimstock_Quality" value="0" maxlength="10" class="Inputborder form-control" onkeypress="return isNumber(event)">
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Maximum Stock Quantity
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_maxstock_quantity" value="0" maxlength="10" class="Inputborder form-control" onkeypress="return isNumber(event)">
+                            </td>
+                        </tr>
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                No of Employee
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_Noof_Employee" value="0" maxlength="10" class="Inputborder form-control" onkeypress="return isNumber(event)">
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Service Charge Article
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="ecommerce_Charge_Article" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Stock Article
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="ecommerce_StockArticle" class="form-control custom-select Inputborder">
+                                </select>
+
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Terms and Conditions URL
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_TermandCondition_URL" class="Inputborder form-control">
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Year of Establishment
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ecommerce_Yearof_Establishment" value="0" maxlength="10" class="Inputborder form-control" onkeypress="return isNumber(event)">
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function TreeFunctionecomproprty() {
+        $(document).ready(function () {
+            $('.tree-basic').treegrid();
+
+            $('.tree_loadecomm').treegrid({
+                source: function (id, response) {
+                    if (id != 1) response(['']);
+                    else response(['']);
+                }
+            });
+
+        });
+    }
+    TreeFunctionecomproprty();
+
+
+
+    function isNumber(evt) {
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        else {
+
+            return true;
+        }
+
+    }
+</script>
+
+<script>
+    var selectedCountry = "";
+
+    var row = ""
+
+    $("select.select2").change(function () {
+        selectedCountry = $(this).children("option:selected").text();
+
+        $(".bg-blue").removeClass("bg-blue");
+        //var row = $(".addvaluepropertyLisearch:contains(" + selectedCountry + "));
+        $("input[name*='" + selectedCountry + "']").addClass("bg-blue");
+        /*location.href = '#resp-table'*/
+    });
+
+</script>
+
+<script>
+    $('.attributdata').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).children('.inputfield').val();*/
+        var value = $(this).text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).closest("tr").addClass('boderclr');
+        $('#ecommSettingVal').html(value);
+
+    });
+    $('.attributcurrvalue').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).siblings().children('.inputfield').val();*/
+        var value = $(this).siblings().text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).siblings().addClass("boderclr");
+        $('#ecommSettingVal').html(value);
+
+    });
+    $("#ecommerceSelection").change(function () {
+        var value = $(this).select2('data')[0].text;
+        $(".boderclr").removeClass("boderclr");
+        $("input[name*='" + value + "']").addClass('boderclr');
+        $("input[name*='" + value + "']").closest("tr").addClass('boderclr');
+
+        $('#ecommSettingVal').html(value);
+    });
+</script>
+<script>
+        $('#@nameof(Model.ecommerce_Charge_Article)').select2({
+        data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(articleType)),
+        placeholder: "",
+        allowClear: false
+
+        });
+    $('#@nameof(Model.ecommerce_StockArticle)').select2({
+        data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(articleType)),
+        placeholder: "",
+        allowClear: false
+
+        });
+</script>
+

@@ -1,0 +1,111 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model Devicemodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var defaultart = await sharedHelpers.GetArticlesByGSL(14);
+}
+<style>
+    .modalbody {
+        position: relative;
+        padding: 20px;
+        height: 200px;
+        overflow-y: scroll;
+    }
+
+    .modaldialog {
+        width: 700px; /* New width for default modal */
+        height: 50%; /* New width for default modal */
+    }
+
+    .btnlength {
+        min-width: 100px;
+    }
+    .activeidSetting {
+        background-color: dodgerblue;
+        width: auto;
+    }
+
+    .defaultart
+    {
+        list-style:none;
+    }
+</style>
+<div class="modal fade" id="DefaultArticleebtnsaveMap">
+    <div class="modal-dialog modaldialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <span>Defualt Article</span>
+                </h5>
+            </div>
+            <div class="box-body">
+                <div class="modal-body modalbody">
+                    <div class="row">
+                        <form class="form-horizontal" method="post">
+
+                            <div class="col-md-12" style="margin-top:25px">
+
+                                <div class="row">
+
+                                    <div class="divTable">
+
+                                        <div class="col-md-8" style="margin-left:0px ;" id="div23">
+                                            <ul class="sidebar-men secondNav tree " data-widget="tree" id="attachement_nav">
+                                                @foreach (var item in defaultart)
+                                                {
+                                                    <li class="nav-item treeview menu-open defaultart" id="parent">
+                                                        <a data-toggle="tab" data-value="@item.Name" data-types="@item.Id/@item.Name" id="a123" style="text-decoration-line:none!important" name="catagory" class="addposStorevalue">
+                                                            <span class="labelcss" selectedValue="@item.Name">@item.Name</span>
+                                                        </a>
+
+                                                        <ul class="treeview-menu" style="padding-left:35px; background-color:white;" id="@item.Id">
+                                                        </ul>
+                                                    </li>
+                                                }
+
+                                            </ul>
+
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <button class="btn btn-default btn-sm btnlength" type="reset" id="defaultartbtnsave">Ok</button>
+
+                    <button class="btn btn-default btn-sm btnlength" id="defaultdatadismis" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+    var valueitem = "";
+    $(document).ready(function () {
+        $(".defaultart").click(function () {
+            $(".activeidSetting").removeClass("activeidSetting");
+            $(this).addClass('activeidSetting');
+
+        });
+        $(".addposStorevalue").click(function () {
+            valueitem = $(this).data("types");
+        });
+        $("#defaultartbtnsave").click(function () {
+            $('#Default_Article_value').val(valueitem);
+            $('#defaultdatadismis').trigger('click');
+        });
+    });
+</script>
+

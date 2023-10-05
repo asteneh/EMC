@@ -1,0 +1,258 @@
+﻿@using CNET_V7_Domain.Domain.ViewSchema;
+@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_ERP_V7.Common.Helpers;
+@model CNET_ERP_V7.Models.SubSytsemModel.VoucherSearchModel
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+     var subSystem = await sharedHelpers.GetSytemConstantBytype("Subsystem");
+    var voucherdefinitionList = await sharedHelpers.GetSytemConstantBytype("Transaction");
+   
+    //var voucherdefinitionListType = voucherdefinitionList?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Id + "- " + t.Description }).ToArray();
+
+    var voucherdefinitionListType = subSystem?.Select(d => new CNET_ERP_V7.Models.SelectorModel.Select2Result()
+            {
+                text = "Type: " + d.Description,
+                children = voucherdefinitionList?.Where(y => y.ParentId == d.Id).Select(x => new CNET_ERP_V7.Models.SelectorModel.Select2Result() { id = x.Id, text = x.Id + "- " + x.Description }).ToList()
+
+            }).ToArray();
+}
+<style>
+    .modaldialog {
+        width: 60%;
+    }
+
+    .select2-container--default .select2-results__group {
+        border: solid 0.3px lightgray;
+        cursor: grabbing;
+        margin-left: 5px;
+    }
+
+    .select2-results__options--nested > li {
+        background-color: #ecf0f5;
+        font-size: 14px;
+        margin-left: 15px;
+        border-left: solid 0.3px lightgray;
+        border-left: solid 0.3px lightgray;
+    }
+</style>
+
+
+<div class="modal fade" id="Nesteds_ForJobOrderVoucher">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <img src="~/images/Cnets.jpg" alt="CNET" />
+                    <span id="nestedandinternalModel"></span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                </h5>
+
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form class="form-horizontal" id="gslnestedandinternalreferenceFormData" onsubmit="return nestedandinternalNewFormFunction()" asp-controller="Subsystems" asp-action="creategslnestedandinternalreference" method="post">
+                        <div class="col-md-12">
+                                <button class="btn btn-app" type="reset" id="IssuedbtnNew"> <i class="fa fa-file-o"></i>New</button>
+                                <button type="submit" action="addRow" class="btn btn-app" id="gslreferencefornestedandinternalbtnNewsave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                                <button class="btn btn-app closebutnIngslreq" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                          
+                        </div>
+
+                        <div class="col-md-12" style="margin-top:25px">
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Voucher definition</label>
+                                    <div class="col-md-9">
+                                        <select asp-for="namerefe" class="form-control select2 gslreferenceforname" style="width:340px;">
+                                            <option></option>
+                                            <option value="" disabled="disabled">transaction</option>
+                                        </select>
+                                        <span asp-validation-for="namerefe"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <fieldset class=" col-md-10 filedset form-group form-group-sm" style="border:0.5px solid #e5e5e5;margin-left:30px;">
+                                    <legend class="text-sm" style="padding-left:10px; border-bottom: none;">type</legend>
+
+                                    <div class="form-group form-group-sm">
+
+
+                                        <div class="col-md-6">
+
+                                            <input asp-for="ismandatoryrefe" />
+                                            <label class="col-md-6 control-label text right">Is Mandatory</label>
+                                            <span asp-validation-for="ismandatoryrefe"></span>
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    <div class="form-group form-group-sm box-body" id="Modalforonlynested" disabled>
+
+                                        <div class="col-md-9">
+
+                                            <input asp-for="checkboxobjectstateradio" value="Until Ends" type="radio" name="checkboxobjectstateradio" class="select_type" checked disabled id="untilend">
+                                            <label style="font-weight:400;">Until Ends</label>
+
+                                        </div>
+                                        <div class="col-md-9">
+
+                                            <input asp-for="checkboxobjectstateradio" value="Once" type="radio" name="checkboxobjectstateradio" class="select_type" disabled>
+                                            <label style="font-weight:400;">Once</label>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <input asp-for="checkboxobjectstateradio" value="Unlimited" type="radio" name="checkboxobjectstateradio" class="select_type" disabled>
+                                            <label style="font-weight:400;">Unlimited</label>
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+
+
+
+                                    <div class="row">
+                                        <fieldset class=" col-md-10 filedset form-group form-group-sm" style="border:0.5px solid #e5e5e5;margin-left:30px;">
+                                            <legend class="text-sm" style="padding-left:10px; border-bottom: none;">state</legend>
+
+
+                                            <div class="form-group form-group-sm box-body">
+
+
+                                                <div class="col-md-9">
+                                                    <select asp-for="checkboxobjectstate" class="form-control select2" name="checkboxobjectstate[]" multiple="multiple" id="@nameof(Model.checkboxobjectstate)" style="width:340px;"></select>
+                                                    <span asp-validation-for="checkboxobjectstate"></span>
+                                                </div>
+
+                                            </div>
+
+                                        </fieldset>
+
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group form-group-sm">
+                                            <label class="col-md-3 control-label">Remark</label>
+                                            <div class="col-md-7">
+                                                <input asp-for="remarkrefe" class="form-control" />
+                                                <span asp-validation-for="remarkrefe"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+
+                            </div>
+
+
+                        </div>
+                        <input asp-for="getselectedvoucherheader"  hidden/>
+                        <input asp-for="deletecoderefefronested"  hidden/>
+                        <input asp-for="coderefeforupdateforinretandnested"  hidden/>
+                        <input asp-for="VouchercoderefeforCreateforinretandnested"  hidden/>
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+    function nestedandinternalNewFormFunction() {
+        var getVouhercodeforreference = $('#@nameof(Model.documentType)').val();
+        var getheader = $('#@nameof(Model.getselectedvoucherheader)').val();
+
+        var $form = $('#gslnestedandinternalreferenceFormData');
+        var data = $form.serialize();
+        var action = $('#gslnestedandinternalreferenceFormData').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            success: function (data) {
+                swal("", data, "success");
+                if (getheader == "Nested") {
+                    submitfunctionnested(getheader, getVouhercodeforreference);
+
+                }
+                else if (getheader == "Internal Reference") {
+
+                }{
+                    submitfunctionforinternal(getheader, getVouhercodeforreference);
+                }
+                  
+                ClearreferentialModal();
+
+          },
+        });
+        return false;
+    };
+
+</script>
+
+<script>
+    $('#@nameof(Model.VouchercoderefeforCreateforinretandnested)').val($('#@nameof(Model.documentType)').val());
+</script>
+
+
+<script>
+    $('#@nameof(Model.namerefe)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(voucherdefinitionListType)),
+        placeholder: "",
+        allowClear: true,
+        //templateResult: funcsubSystem,
+        dropdownAutoWidth: true,
+    });
+
+
+    $("body").on('click', '.select2-results__group', function () {
+        $(this).siblings().toggle();
+
+    })
+</script>
+
+
+<script>
+    $('#@nameof(Model.namerefe)').on("select2:select", function () {
+        var selectedgslstate = $('#namerefe').val();
+      
+        $('#@nameof(Model.checkboxobjectstate)').select2({
+            placeholder: '',
+            allowclear: true,
+        ajax: {
+                url: '@Url.Action("getvoucherdefstate", "Subsystems")',
+            dataType: 'json',
+            data: { getsecondselectedList: selectedgslstate },
+                data: function (params)
+                {
+                return {
+                    q: params.term,
+                    page: params.page,
+                    other: selectedgslstate,
+                };
+                },
+                processResults: function (data, params)
+                {
+                return data;
+                },
+                cache: true
+        },
+        });
+    });
+</script>
+<script>
+    function ClearreferentialModal() {
+        $('#@nameof(Model.coderefeforupdateforinretandnested)').val("");
+        $('#@nameof(Model.namerefe)').val("").trigger('change');
+        $('#@nameof(Model.checkboxobjectstateradio)').prop('checked', "");;
+        $('#@nameof(Model.checkboxobjectstate)').val("").trigger('change');
+        $('#@nameof(Model.remarkrefe)').val("");
+    }
+
+</script>

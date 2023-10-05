@@ -1,0 +1,140 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model GSLmodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var comp = sharedHelpers.GetCompany();
+    var comptin = comp?.Result?.Tin;
+    var consineeunitlist = await sharedHelpers.GetCompanyBranchsByTin(comptin);
+    var ArticleTypes = await sharedHelpers.GetdeviceById(Convert.ToInt32(Model.gslType));
+
+    var category = ArticleTypes?.FirstOrDefault()?.Type == "GSL Article" ? 3 : 4;
+}
+<style>
+    .activeidSetting {
+        background-color: dodgerblue;
+        width: auto;
+    }
+
+    .mainsysType {
+        height: 76vh;
+        white-space: nowrap;
+        cursor: pointer;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    .idSetting {
+        cursor: pointer;
+        white-space: nowrap;
+    }
+</style>
+
+
+    <div class="box-body">
+        <input asp-for="idseorganaizationunitart" hidden />
+        <input asp-for="idsettingdelVouchercodeart" hidden />
+    <div style="border:1px solid #e5e5e5;" class="mainsysType">
+            <table class="table table-sm" id="GslIdSetting_table" width="100%">
+                <thead>
+                    <tr class="treegrid-3 treegrid-parent-1">
+                       <th colspan="2" style="border:1px solid #e5e5e5; background-color:lightgray">Description</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in consineeunitlist)
+                    {
+                        <tr onclick="GetGslConsineeunitIdSetting('@item.Id')">
+                          <td width="20px" style="border:none !important"></td>
+                           <td class="activeconsinee">
+                                    @item.Name
+                            </td>
+
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+<script>
+    $(document).on("click", ".activeconsinee", function () {
+
+        $(".activeidSetting").removeClass("activeidSetting");
+        $(this).addClass('activeidSetting');
+    });
+    function GetGslConsineeunitIdSetting(code) {
+       
+        var category = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(category));
+        $('#@nameof(Model.organizationundefart)').val(code);
+        $('#@nameof(Model.gslcategory)').val(category);
+        var gslCode  = $('#@nameof(Model.gslType)').val();
+        $.ajax({
+            type: "GET",
+            dataType: 'html',
+            url: '@Url.Action("GetGSLidDefinition", "GSL")',
+            data: { BranchCode: code, category: category, gslCode: gslCode },
+
+            success: function (data) {
+
+                $('#gslIdDefinitionContent').html(data);
+
+            }
+        });
+    }
+    
+    function articleIdsettingNewFormFunction() {
+        var gslCode = $('#@nameof(Model.gslType)').val();
+        var branch = $('#@nameof(Model.organizationundefart)').val();
+        var category = $('#@nameof(Model.gslcategory)').val();
+        var $form = $('#articleidsettingNewFormData');
+        var data = $form.serialize();
+        var action = $('#articleidsettingNewFormData').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            success: function (data) {
+                swal("", data.result, "success");
+
+                $('#@nameof(Model.id_definitionart)').empty();
+                $('#@nameof(Model.deviceart)').empty();
+                $.ajax({
+                    type: "GET",
+                    dataType: 'html',
+                    url: '@Url.Action("GetGSLidDefinition", "GSL")',
+                    data: { BranchCode: branch, category: category, gslCode: gslCode },
+
+                    success: function (data) {
+
+                        $('#gslIdDefinitionContent').html(data);
+
+                    }
+                });
+
+                if (data.check == true) {
+                    CleararticleidsettingModal();
+
+                }
+
+            },
+        });
+        return false;
+    };
+
+
+
+    function CleararticleidsettingModal() {
+        $('#@nameof(Model.code_idsettingart)').val("");
+        $('#@nameof(Model.id_definitionart)').val("").trigger('change');
+        $('#@nameof(Model.deviceart)').val("").trigger('change');
+        $('#@nameof(Model.start_Fromart)').val("");
+        $('#@nameof(Model.iS_flexibleart)').prop('checked', "");
+        $('#@nameof(Model.remarkart)').val("");
+    }
+</script>

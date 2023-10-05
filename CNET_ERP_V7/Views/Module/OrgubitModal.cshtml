@@ -1,0 +1,81 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model moduleModel
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var cnetcomponenet = await sharedHelpers.GetsystemConstantById(50);
+
+    var orgunitdef = await sharedHelpers.GetConsigneeunit();
+    var consineeunitlist = orgunitdef.DistinctBy(y => y.Name).ToList();
+
+    var orgunitdefTypelist = consineeunitlist?.Select(s => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = s.Id, text = s.Name });
+
+
+}
+
+<div class="modal fade" id="modal_cnetcompoModal" role="dialog">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 style=" color:dodgerblue; font-weight:bold">
+                    <img src="~/images/Cnets.jpg" />
+                    Organization Unit
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+
+                    <form class="form-horizontal" id="OrgunitdefNewFormData" onsubmit="return OrgunitdefNewFormFunction()" asp-controller="Module" asp-action="createOrgunit" method="post">
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-app" id="btnnewsysList"> <i style="color:darkblue" class="fa fa-sticky-note-o"></i>New</button>
+                            <button type="submit" class="btn btn-app" action="addRow" id="btnSuubsystemdetailSave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                            <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                        </div>
+
+
+                        <div class="col-md-12" style="margin-top:25px">
+
+
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="Org_unit" class="col-md-3 control-label">Organization unit</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="Org_unit" class="form-control select2" style="width:100%">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div><br />
+
+
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="Org_remark" class="col-md-3 control-label"> Remark</label>
+                                    <div class="col-md-7">
+                                        <textarea asp-for="Org_remark" style="width:100%; overflow:auto"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <input type="hidden" asp-for="Org_unitcode" />
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+</div>
+
+
+<script>
+    $('#@nameof(Model.Org_unit)').select2({
+        data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(orgunitdefTypelist)),
+        placeholder: "Please select",
+        allowClear: true,
+
+    });
+
+</script>

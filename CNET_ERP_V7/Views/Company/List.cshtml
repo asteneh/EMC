@@ -1,0 +1,726 @@
+﻿@model Companymodel
+@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+}
+<style>
+    .note {
+        display: none;
+    }
+
+    .disabled-link {
+        pointer-events: none;
+    }
+</style>
+<link rel="stylesheet" href="~/dist/virtual-select.min.css">
+<link rel="stylesheet" href="~/css/vendor.css" asp-append-version="true" />
+<!-- Tell the browser to be responsive to screen width -->
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<!-- Bootstrap 3.3.7 -->
+<link rel="stylesheet" href="~/node_modules/bower_components/bootstrap/dist/css/bootstrap.min.css">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="~/node_modules/bower_components/font-awesome/css/font-awesome.min.css">
+<!-- Ionicons -->
+<link rel="stylesheet" href="~/node_modules/bower_components/Ionicons/css/ionicons.min.css">
+<!-- Theme style -->
+<link rel="stylesheet" href="~/dist/css/AdminLTE.min.css">
+<!-- AdminLTE Skins. Choose a skin from the css/skins
+     folder instead of downloading all of them to reduce the load. -->
+<link rel="stylesheet" href="~/dist/css/skins/skin-black-light.min.css">
+<!-- Morris chart -->
+<link rel="stylesheet" href="~/node_modules/bower_components/morris.js/morris.css">
+<!-- jvectormap -->
+<link rel="stylesheet" href="~/node_modules/bower_components/jvectormap/jquery-jvectormap.css">
+<!-- Date Picker -->
+<link rel="stylesheet" href="~/node_modules/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+<!-- Daterange picker -->
+<link rel="stylesheet" href="~/node_modules/bower_components/bootstrap-daterangepicker/daterangepicker.css">
+<!-- Select2 -->
+<link rel="stylesheet" href="~/node_modules/bower_components/select2/dist/css/select2.min.css">
+<!-- bootstrap wysihtml5 - text editor -->
+<link rel="stylesheet" href="~/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+<!-- Pace style -->
+<link rel="stylesheet" href="~/plugins/pace/pace.min.css" />
+<link href="~/css/site.css" rel="stylesheet" />
+<link href="~/node_modules/jquery-treegrid/css/jquery.treegrid.css" rel="stylesheet" />
+<section class="content-header">
+
+    <h5>
+        Company Setting
+    </h5>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#"><i class="fa fa-cart-plus"></i> Company Setting </a></li>
+    </ol>
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-body">
+                    <div style="float:left ;padding-top:1px">
+                        <a href="#" class="btn btn-app note" id="btnNew"> <i class="fa fa-file-o"></i>New</a>
+                        <a href="#" class="btn btn-app note disabled-link" title="The Document alread has an Attachment" id="btnNewFile"> <i class="fa fa-file-o "></i>Attach a <br />Document</a>
+                        <a href="#" class="btn btn-app" id="btnSaveOrg"> <i style="color:darkblue" class="fa fa-save"></i>Save</a>
+                        <a href="#" class="btn btn-app note" id="btnNeworgunit"> <i style="color:darkblue" class="fa fa-file-o"></i>New</a>
+
+                    </div>
+
+                </div>
+                <input type="hidden" id="selecteTab" value="" />
+                <input type="hidden" id="selecteTabInner" value="" />
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs" id="main-tab-nav">
+                    <li class="active"><a href="#General" data-toggle="tab">Basic Information</a></li>
+                    <li><a href="#organizationUnit" data-toggle="tab">Consignee Unit</a></li>
+                    <li><a href="#bankDetail" data-toggle="tab">Bank Detail</a></li>
+                    <li><a href="#Attachment" data-toggle="tab">Attachment</a></li>
+                    <li><a href="#CompanyDocument" data-toggle="tab">Company Document </a></li>
+                    <li><a href="#Note" data-toggle="tab">Note</a></li>
+
+                </ul>
+                <div class="tab-content">
+                    <div class="active tab-pane" id="General">
+                        <div class="row">
+                            <form class="form-horizontal" id="OrganizationNewFormData" method="post">
+
+                                @*<input asp-for="owncodeforupdateList" name="owncodeforupdateList[]" hidden />*@
+                                <div class="col-md-12">
+                                    @await Html.PartialAsync("General.cshtml")
+                                </div>
+                               
+                            </form>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="Attachment">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <!---->
+                                @await Html.PartialAsync("Attachment.cshtml")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="CompanyDocument">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <!---->
+                                @await Html.PartialAsync("_companyDocument.cshtml")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="bankDetail">
+                        <div class="row">
+                            <div class="col-md-12">
+                                @await Html.PartialAsync("_BankDetail.cshtml")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="Note">
+                        <div class="row">
+                            <div class="col-md-12">
+                                @await Html.PartialAsync("_gslnote.cshtml")
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- /.tab-pane -->
+                    <div class="tab-pane" id="organizationUnit">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="nav-tabs-custom">
+                                    <ul class="nav nav-tabs" id="main_tab_navv">
+                                        <li class="active"><a href="#OUD" data-toggle="tab">Consignee Unit Defination</a></li>
+                                        <li><a href="#jobDescription" data-toggle="tab">Job Description</a></li>
+                                        <li><a href="#Address" data-toggle="tab">Address</a></li>
+                                    </ul>
+
+                                </div>
+                                <div class="tab-content">
+                                    <div class="active tab-pane" id="OUD">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                @await Html.PartialAsync("_Organization_Unit_Defination.cshtml")
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane" id="jobDescription">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                @await Html.PartialAsync("_jobDescriptionGeneral.cshtml")
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="tab-pane" id="Address">
+                                        <div class="row">
+                                            <div class="col-md-2">
+                                                @await Html.PartialAsync("organizationAddressList")
+
+                                            </div>
+                                            <div class="col-md-10">
+                                                <div class="nav-tabs-custom">
+                                                    <ul class="nav nav-tabs" id="main-tab">
+                                                        <li class="active"><a href="#AddressTab" data-toggle="tab">Address</a></li>
+                                                    </ul>
+
+                                                </div>
+
+                                                <div class="tab-content">
+                                                    <div class="active tab-pane" id="AddressTab">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                @await Html.PartialAsync("CompanyAddress")
+
+
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.tab-pane -->
+                  
+                    <!-- /.tab-pane -->
+                    <!-- /.tab-pane -->
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--/Beginning Balance Modal-->
+@await Html.PartialAsync("OwnersMapModal.cshtml")
+<!--./Beginning Balance Modal-->
+<!--/Organization Relationsecond Modal-->
+<div id="organizationDefncode">
+    @await Html.PartialAsync("_oudModal.cshtml")
+</div>
+@await Html.PartialAsync("_OrganizationUnitDefModal.cshtml")
+
+<!--./Organization Relationsecond Modal-->
+<!--/Organization Relationsecond Modal-->
+@await Html.PartialAsync("roleorganizationunitdefnsModel.cshtml")
+<!--./Organization Relationsecond Modal-->
+<!--/Organization Relationsecond Modal-->
+@await Html.PartialAsync("_fontModel.cshtml")
+<!--./Organization Relationsecond Modal-->
+
+<script>
+    var notecontent = "";
+    $(function () {
+        CKEDITOR.replace('contentnote');
+    });
+
+    $(function () {
+        $('#btnSaveOrg').click(function () {
+              var tab =  $('#selecteTab').val();
+              ValidateForm();
+          if (tab == "#organizationUnit") {
+                    var formData = $('#OrganizationUnitAddressFormData').serialize();
+                    $.ajax({
+                        url: '/Company/CreateOrganizationUnitAddress',
+                        type: 'POST',
+                        data: formData,
+                        success: function (result) {
+                            swal("", result, "success");
+                        },
+                        error: function () {
+                            console.log('Error occurred.');
+                        }
+                    });
+               
+            }
+            else {
+                var formData = $('#OrganizationNewFormData').serialize();
+                $.ajax({
+                    url: '/Company/saveOrganization',
+                    type: 'POST',
+                    data: formData,
+                    success: function (result) {
+                        swal("", result, "success");
+                    },
+                    error: function () {
+                        console.log('Error occurred.');
+                    }
+                });
+            }
+
+        });
+    });
+    var notecontent = "";
+    function ValidateForm() {
+        let Form = $("#companyForm")[0];
+        let Form_Data = new FormData(Form);
+
+        CKEDITOR.instances.contentnote.updateElement();
+        notecontent = document.getElementById('contentnote').value;
+        $('#@nameof(Model.companyNote)').val(notecontent);
+      
+    }
+
+</script>
+<script>
+    function TreeFunction() {
+        $(document).ready(function () {
+            $('.tree-basic').treegrid();
+
+            $('.tree-load').treegrid({
+                source: function (id, response) {
+                    if (id != 1) response(['']);
+                    else response(['']);
+                }
+            });
+
+        });
+    }
+    TreeFunction();
+
+    $('#btnNew').bind("click", function () {
+        var selectedPage = $('#selecteTab').val();
+       var innerpage = $('#selecteTabInner').val();
+        if (selectedPage) {
+            switch (selectedPage) {
+                case "#Attachment":
+                    showNewAttachement();
+                    break;
+                //case "#organizationUnit":
+                //case "#OUD":
+                //    var OrgUnitDefType = $('#org_unit_def .active a').data('value');
+                //    if (OrgUnitDefType != null) {
+                //        OUD_Popup();
+                //    }
+                //    else {
+                //        alert(" please select the catagory");
+                //    }
+                //    break;
+                case "#CompanyDocument":
+                   var companydocumentdescription =  $('#@nameof(Model.organizationType)').val();
+                    if (companydocumentdescription != "0" && companydocumentdescription != undefined) {
+                        $('#modal_companyDocument').modal({ backdrop: 'static', keyboard: false });
+                    }
+                    else {
+                        swal("", "please select the catagory", "error");
+                    }
+                    break;
+
+                case "#bankDetail":
+                    var catagory = $('#@nameof(Model.banktype)').val();
+                    if (catagory != "0" && catagory != undefined) {
+                        $('#modal-BankDetail').modal({ backdrop: 'static', keyboard: false });
+                    }
+                    else {
+                        swal("", "please select Bank type", "error");
+                    }
+                    break;
+                case "#fontList":
+                    $('#FontModelMap').modal({ backdrop: 'static', keyboard: false });
+                  
+
+                    break;
+
+
+                default:
+                    clearGeneralTab();
+                    break;
+            }
+        }
+    });
+
+    $('#btnNewFile').bind("click", function () {
+        var selectedPage = $('#selecteTab').val();
+
+        if (selectedPage) {
+            switch (selectedPage) {
+
+                case "#CompanyDocument":
+                    $('#modal_companyDocumentattachment').modal({ backdrop: 'static', keyboard: false });
+                    break;
+
+
+                default:
+                    clearGeneralTab();
+                    break;
+            }
+        }
+    });
+
+
+
+    $('#main-tab-nav li a').click(function (e) {
+        var selecteTab = e.target.attributes['href'].value;
+        $('#selecteTab').val(selecteTab);
+        if (selecteTab) {
+            switch (selecteTab) {
+
+                case "#General":
+                    $("#btnSaveNote").addClass('note');
+                    $("#btnSaveOrg").show()
+                    $("#btnNew").addClass('note');
+                    $("#btnSaveaddress").addClass('note');
+                    $("#btnNewFile").addClass('note');
+                    $("#btnNeworgunit").addClass('note');
+                    break;
+
+                case "#organizationUnit":
+                    $("#btnSaveOrg").hide();
+                    $("#btnNew").addClass('note');
+                    $("#btnNewFile").addClass('note');
+                    $("#btnNeworgunit").removeClass('note');
+                    break;
+                case "#bankDetail":
+                    $("#btnSaveaddress").addClass('note');
+                    $("#btnSaveaddress").addClass('note');
+                    $("#btnSaveNote").addClass('note');
+                    $("#btnSaveOrg").hide();
+                    $("#btnNew").removeClass('note');
+                    $("#btnNewFile").addClass('note');
+                    $("#btnNeworgunit").addClass('note');
+                    break;
+
+                case "#Attachment":
+                    Attachment_update();
+                    $("#btnSaveNote").addClass('note');
+                    $("#btnSaveOrg").hide();
+                    $("#btnNew").removeClass('note');
+                    $("#btnSaveaddress").addClass('note');
+                    $("#btnNewFile").addClass('note');
+                    $("#btnNeworgunit").addClass('note');
+
+                    break;
+                case "#CompanyDocument":
+                    $("#btnSaveNote").addClass('note');
+                    $("#btnSaveOrg").hide();
+                    $("#btnNew").removeClass('note');
+                    $("#btnSaveaddress").addClass('note');
+                    $("#btnNewFile").removeClass('note');
+                    $("#btnNeworgunit").addClass('note');
+                    break;
+                case "#Note":
+                    $("#btnSaveOrg").show();
+                    $("#btnNew").addClass('note');
+                    $("#btnSaveaddress").addClass('note');
+                    $("#btnNewFile").addClass('note');
+                    $("#btnNeworgunit").addClass('note');
+                    shownotes();
+                    break;
+              
+            }
+
+        }
+    });
+
+</script>
+<script>
+
+    $('#btnNeworgunit').bind("click", function () {
+        var selectedPage = $('#selecteTabInner').val();
+        if (selectedPage) {
+            switch (selectedPage) {
+
+
+                case "#jobDescription":
+                    var role = $('#@nameof(Model.job_orgUnitDefn)').val();
+                    if (role != "0") {
+                        $('#RoleOrganizationUnitModal').modal({ backdrop: 'static', keyboard: false });
+                    }
+                    else {
+                        swal("", "please select the role", "error");
+                    }
+                    break;
+                case "#OUD":
+                  var oud =    $('#@nameof(Model.branchcode)').val();
+                    if (oud != "0" && oud != undefined) {
+                        $('#OrganizationUnitModal').modal({ backdrop: 'static', keyboard: false });
+                    }
+                    else {
+                        swal("", "please select type", "error");
+                    }
+                    break;
+            }
+        }
+        else {
+            var oud = $('#@nameof(Model.branchcode)').val();
+            if (oud != "0" && oud != undefined) {
+                $('#OrganizationUnitModal').modal({ backdrop: 'static', keyboard: false });
+            }
+            else {
+                swal("", "please select type", "error");
+            }
+        }
+
+    });
+
+    $('#main_tab_navv li a').click(function (e) {
+        var selecteTab = e.target.attributes['href'].value;
+
+        $('#selecteTabInner').val(selecteTab);
+        if (selecteTab) {
+            switch (selecteTab) {
+
+                case "#jobDescription":
+                    $("#btnSaveNote").addClass('note');
+                    $("#btnSaveOrg").hide();
+                    $("#btnNew").addClass('note');
+                    $("#btnSaveaddress").addClass('note');
+                    $("#btnNeworgunit").removeClass('note');
+                    $("#btnNewFile").addClass('note');
+                    break;
+                case "#OUD":
+                    $("#btnSaveaddress").addClass('note');
+                    $("#btnSaveNote").addClass('note');
+                    $("#btnSaveOrg").hide();
+                    $("#btnNew").addClass('note');
+                    $("#btnNeworgunit").addClass('note');
+                    $("#btnNewFile").addClass('note');
+                    $("#btnNeworgunit").removeClass('note');
+                    break;
+                case "#Address":
+                    $("#btnSaveNote").addClass('note');
+                    $("#btnSaveOrg").show();
+                    $("#btnNew").addClass('note');
+                    $("#btnSaveaddress").removeClass('note');
+                    $("#btnNeworgunit").addClass('note');
+                    $("#btnNewFile").addClass('note');
+                    break;
+            }
+        }
+        else{
+            $('#selecteTabInner').val("#OUD");
+        }
+    });
+
+</script>
+
+
+
+
+<script>
+    var attachmentcategory;
+     $(document).ready(function () {
+        $('.attachmentType').click(function (e) {
+            $('.secondNav .attachmentType').removeClass('active');
+            $(this).addClass('active');
+
+            //attachmentcategory = "LKUP000006630";
+                /*$('#attachement_nav .active a').data('value');*/
+
+        });
+    });
+    function Attachment_update()
+    {
+        var x, i;
+        x = document.querySelectorAll(".Attachment-List");
+
+
+        if (x.length >= 1)
+        {
+            for (var i = 0; i < x.length; i++) {
+                x[i].remove();
+            }
+        }
+
+        attachmentcategory =  $('#@nameof(Model.attachmentcategorytw)').val()
+
+        $.ajax({
+            url: '@Url.Action("Retrive_Attachement", "Company")',
+
+            type: "post",
+            dataType: 'json',
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+
+            success: function (data) {
+                var Data = data.data;
+                var Lenght = Data.length;
+
+                for (var i = 0; i < Lenght; i++) {
+                    var Dataa = data.data[i];
+                    var AttCatagory = data.data[i].catagory;
+                    var AttCode = data.data[i].attcode;
+                    var Attdesc = data.data[i].description;
+                    var AttData = JSON.stringify(Dataa);
+                    var Atturl = data.data[i].url;
+                    var idd = AttCatagory + "+1"
+
+                    $("#" + AttCatagory).append(`<li id=${AttCode}><a class="Attachment-List" onclick="DisplayContent()" href="#" data-value2=${AttCode} data-value=${Atturl}>${Attdesc}</a></li>`);
+                    document.getElementById(idd).style.visibility = "visible";
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+
+            }
+
+        });
+    }
+
+
+    function DisplayContent() {
+        $('.Attachment-List').click(function () {
+            var d = $(this).data('value');
+            var id = $(this).data('value2');
+            var pageurl = d+"*"+id;
+
+
+            $("#dispaly").attr("src", "../../Company/readAttachmentFile?id=" + pageurl);
+                $('#@nameof(Model.attachmentcodee)').val(id);
+
+
+            document.getElementById("att_edit").style.visibility = "visible";
+            document.getElementById("att_delete").style.visibility = "visible";
+            document.getElementById("att_cleare").style.visibility = "visible";
+
+        });
+    }
+</script>
+
+<script>
+    var documentType = "";
+
+    var attachmentcategory = "";
+    $(document).ready(function () {
+        $('.comattachmentType').click(function (e) {
+            $('.secondNav .comattachmentType').removeClass('active');
+            $(this).addClass('active');
+
+            attachmentcategory = $('#com_attachment_nav .active a').data('value');;
+
+        });
+    });
+
+
+    $(document).on("click", ".companydocument", function () {
+
+
+            documentType = $(this).attr('id');
+
+        });
+
+    function Com_Attachment_update()
+    {
+
+
+        $.ajax({
+            url: '@Url.Action("Retrive_Attachement_docu", "Company")',
+            data: { attchcode: documentType, comcategory: attachmentcategory },
+            type: "post",
+            dataType: 'json',
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+
+            success: function (data) {
+                var Data = data.data;
+
+                var Lenght = Data.length;
+
+                for (var i = 0; i < Lenght; i++) {
+                    var Dataa = data.data[i];
+                    var AttCatagory = data.data[i].com_catagory;
+                    var AttCode = data.data[i].com_attcode;
+                    var Attdesc = data.data[i].com_description;
+                    var AttData = JSON.stringify(Dataa);
+                    var Atturl = data.data[i].com_url;
+                    var idd = AttCatagory + "+2"
+
+                    $("#" + AttCatagory).append(`<li id=${AttCode}><a class="Attachment-List-com" onclick="DisplayContentCom()" href="#" data-value2=${AttCode} data-value=${Atturl}>${Attdesc}</a></li>`);
+                    document.getElementById(idd).style.visibility = "visible";
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+
+            }
+
+        });
+    }
+    function DisplayContentCom() {
+        $('.Attachment-List-com').click(function () {
+            var d = $(this).data('value');
+            var id = $(this).data('value2');
+            var pageurl = "/images/" + d;
+
+            $('#@nameof(Model.com_attachmentcode)').val(id);
+            $("#dispaly_attach").attr("src", pageurl);
+
+            document.getElementById("att_edit_com").style.visibility = "visible";
+            document.getElementById("att_delete_com").style.visibility = "visible";
+            document.getElementById("att_cleare_com").style.visibility = "visible";
+
+        });
+    }
+
+</script>
+
+<script>
+
+function showOrgUnitaddress()
+{
+
+    if (true) {
+
+
+       // var test ="suponeadd";
+        var test = $('#@nameof(Model.comporganizationunitbranchcode)').val();
+
+        $('#@nameof(Model.comporganizationunitbranchcode)').val(test);
+
+        $.ajax({
+            url: '@Url.Action("getOrganizationAddressList", "Company")',
+            type: "POST",
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            data: {"code":test},
+            dataType: 'json',
+
+            success: function (data) {
+                var Data = data.data.data;
+                var leng = Data.length;
+
+                var arr = $('input[name=orgaddressDescription]').map(function () {
+                    return this.value;
+                }).get();
+
+             //   console.log(arr)
+
+                for (var i = 0; i < leng; i++) {
+                    var orgunitadd = Data[i].orgaddressValue;
+                    var orgunitaddDesc = Data[i].orgaddressDescription;
+
+                    for (j = 0; j < arr.length; j++) {
+                        if (arr[j] == orgunitaddDesc) {
+                            var desc = arr[j]
+                            $("#" + desc).val(orgunitadd);
+                        }
+
+                    }
+
+
+                  //  console.log(orgunitaddDesc)
+                  //  console.log(orgunitadd)
+
+                }
+                  //  console.log(desc)
+
+            }
+        })
+    }
+}
+
+</script>
+
+

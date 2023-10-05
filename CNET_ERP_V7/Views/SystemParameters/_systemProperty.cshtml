@@ -1,0 +1,1186 @@
+﻿@using CNET_ERP_V7.Models.Security;
+@using CNET_V7_Domain;
+@using Newtonsoft.Json;
+@model systemSettingModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var propertyList = await sharedHelpers.GetConfigurationByRefandPref("Company", CNETConstants.COMPANY_COMPONENT);
+   
+    var mapurl = "";
+    var clocserver = "";
+    var noofinsta = 0;
+    var noofnested = 0;
+    var saveattac = "";
+    var localroot = "";
+    var enablemap = false;
+    var synctype = "";
+    var thirdparty = "";
+    var enablethrd = false;
+    var errorlog = "";
+    var databaseback = "";
+    var inventorround = 0;
+    var allowmultiple = false;
+    var photoman = false;
+    var phonoman = false;
+    var defaultdiscount = "";
+    var duplicatecad = false;
+    var exportcas = false;
+    var expirydate = 0;
+    var custom = "";
+    var xml = "";
+    var xmldam = "";
+    var accesscontrol = 0;
+
+    int sysoldvalue = 1212121212;
+
+
+    List<string> prifxsufix = new List<string>();
+    prifxsufix.Add("ApplicationServer");
+    prifxsufix.Add("EventBased");
+    prifxsufix.Add("ClockServer");
+    prifxsufix.Add("DatabaseServer");
+    prifxsufix.Add("LocalMachine");
+
+    var prifxsufixType = prifxsufix?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { idd = t, text = t }).ToArray();
+
+}
+<style>
+    .sptablecontent {
+        border-collapse: collapse;
+        background-color: #fff;
+        width: 95%;
+        margin-left: 15px;
+    }
+
+        .sptablecontent .asth {
+            font-weight: bold;
+        }
+
+        .sptablecontent th, table td {
+            padding: 1px;
+            border: 1px solid #ccc;
+        }
+
+        .sptablecontent, .sptablecontent .sptablecontent td {
+            border: 0px solid #ccc;
+        }
+
+            .sptablecontent [type=text], select {
+                width: 100%;
+            }
+
+            .sptablecontent div {
+                width: 97%;
+            }
+
+    #clockurl {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #data_path {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #logpath {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #datastyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #mapurl {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #damppath {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #xmlrecopath {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #localparty {
+        position: absolute;
+        background-color: #eee;
+    }
+
+
+    .inputfield {
+        pointer-events: none;
+        opacity: 30;
+        width: 80%;
+        height: 16px !important;
+        padding: 0px 0px !important;
+        font-size: 13px !important;
+    }
+
+    .Inputborder:focus {
+        border: 1px solid #1670BE;
+        box-shadow: 0 0 3px #1670BE;
+        outline-offset: 0px;
+        outline: none;
+    }
+
+    .Inputborder {
+        border: 1px solid #eee;
+        font-size: 13px !important;
+        height: 17px !important;
+        line-height: 2px !important;
+        text-emphasis-position: initial !important;
+        margin-top: 0px !important;
+        padding: 0px 0px !important;
+    }
+
+
+    .mainparent {
+        color: dodgerblue;
+        background-color: #eee;
+    }
+
+    .boderclr {
+        background-color: dodgerblue;
+    }
+
+
+    .custom-select {
+        max-height: 28px;
+        font-size: 13px;
+    }
+
+    .prefrenceheader {
+        background-color: dodgerblue;
+    }
+
+    .parasystem {
+        height: 92vh;
+        overflow-y: scroll;
+    }
+
+    .prefrenceheader {
+        background-color: dodgerblue;
+    }
+</style>
+
+<div class="box box-primary">
+    <br />
+
+    <div class="box-header with-border">
+        <div class="row">
+            <div class="col-md-11">
+                <div class="row">
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-1 control-labell"> Find</label>
+                        <div class="col-md-9">
+                            <input type="text" id="filtersysParaSetting" style="display:flex;width:100%;" class="form-control" placeholder="Search By Name">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="box-body parasystem">
+        @foreach (var item in propertyList)
+        {
+            switch (item.Attribute)
+
+            {
+                case "MapURL":
+                    mapurl = item.CurrentValue;
+                    break;
+                case "Clock Server":
+                    clocserver = item.CurrentValue;
+                    break;
+
+                case "No Of Instances":
+                   if (!string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                        noofinsta = Convert.ToInt32(item.CurrentValue);
+                    }
+                    break;
+                case "No OfNested Windows":
+                    if (!string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                         noofnested = Convert.ToInt32(item.CurrentValue);
+                    }
+
+                    break;
+                case "Save Attachment":
+                    saveattac = item.CurrentValue;
+
+                    break;
+                case "Local Root Path 3rd Party Interfacing":
+                    localroot = item.CurrentValue;
+
+                    break;
+                case "Enable MAP":
+                    if (!string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                        enablemap = Convert.ToBoolean(item.CurrentValue);
+                    }
+
+                    break;
+                case "Sync Type":
+                    synctype = item.CurrentValue;
+
+                    break;
+                case "Third Party Sync Method":
+                    thirdparty = item.CurrentValue;
+
+                    break;
+                case "Enable ThirdParty Interfacing":
+                    if (!string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                        enablethrd = Convert.ToBoolean(item.CurrentValue);
+                    }
+
+                    break;
+                case "Error Log Path":
+                    errorlog = item.CurrentValue;
+
+                    break;
+                case "Database Backup Path":
+                    databaseback = item.CurrentValue;
+
+                    break;
+                case "Inventory Round Quantity":
+                 if (!string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                    inventorround = Convert.ToInt32(item.CurrentValue);
+                    }
+
+                    break;
+
+                case "Allow Multiple Instance":
+                    if (!string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                        allowmultiple = Convert.ToBoolean(item.CurrentValue);
+                    }
+
+                    break;
+                case "Photo Mandatory":
+                 if (!string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                    photoman = Convert.ToBoolean(item.CurrentValue);
+                    }
+
+                    break;
+                case "Default Discount Account":
+                    defaultdiscount = item.CurrentValue;
+
+                    break;
+                case "Duplicate Card Issue":
+                 if (!string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                    duplicatecad = Convert.ToBoolean(item.CurrentValue);
+                    }
+
+                    break;
+                case "Phone Number Mandatory":
+                 if (!string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                    phonoman = Convert.ToBoolean(item.CurrentValue);
+                    }
+                    break;
+                case "Export Cash As Credit":
+                     if (!string.IsNullOrEmpty(item.CurrentValue))
+                     {
+                      exportcas = Convert.ToBoolean(item.CurrentValue);
+                    }
+
+                    break;
+                case "Expiry Date Notification In Date":
+                    if (!string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                        expirydate = Convert.ToInt32(item.CurrentValue);
+                    }
+
+                    break;
+                case "Custom Report Library URL":
+                    custom = item.CurrentValue;
+
+                    break;
+                case "XML Reconciliation Path":
+                    xml = item.CurrentValue;
+
+                    break;
+                case "XML DampYard Path":
+                    xmldam = item.CurrentValue;
+
+                    break;
+                case "Access Control Subscription Alert Before":
+                    if (!string.IsNullOrEmpty(item.CurrentValue))
+                    {
+                        accesscontrol = Convert.ToInt32(item.CurrentValue);
+                    }
+
+                    break;
+            }
+        }
+        <form id="PropertyFormDatasystempara" asp-controller="SystemParameters" asp-action="SavingsystemparaSettingProperty" method="post">
+
+            <table cellpadding="0" cellspacing="0" class="sptablecontent tree_loadsyspa" id="system_parameter_table">
+                <tr class="asth">
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        System Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Access Control Subscription Alert Before
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (@accesscontrol == 0)
+                        {
+                            <input asp-for="_AlertBefore" type="text" id="alertBefore" value="5" class="Inputborder" onkeypress="return isaccesscontrolNumber(event)" maxlength="10" onInput="return edValueaccesscontrolKeyPress(eve)" autocomplete="off" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="_AlertBefore" type="text" id="alertBefore" value="@accesscontrol" class="Inputborder" onkeypress="return isaccesscontrolNumber(event)" maxlength="10" onInput="return edValueaccesscontrolKeyPress(eve)" autocomplete="off" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Allow Multiple Instance
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="_AllowMultipleInstance" class="form-control custom-select Inputborder">
+                            @if (@allowmultiple == true)
+                            {
+                                <option value="True">True</option>
+                                <option value="False">False</option>
+                            }
+                            else
+                            {
+                                <option value="False">False</option>
+                                <option value="True">True</option>
+
+                            }
+
+                        </select>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+
+                        Clock Server
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="_ClockServer" class="form-control custom-select Inputborder">
+                             @if (@clocserver == null)
+                                {
+                                    <option value="ApplicationServer">ApplicationServer</option>
+                                    <option value="EventBased">EventBased</option>
+                                    <option value="ClockServer">ClockServer</option>
+                                    <option value="DatabaseServer">DatabaseServer</option>
+                                    <option value="LocalMachine">LocalMachine</option>
+                                }
+                                else
+                                {
+                                    <option value="@clocserver">@clocserver</option>
+                                    <option value="ApplicationServer">ApplicationServer</option>
+                                    <option value="EventBased">EventBased</option>
+                                    <option value="ClockServer">ClockServer</option>
+                                    <option value="DatabaseServer">DatabaseServer</option>
+                                    <option value="LocalMachine">LocalMachine</option>
+                                }
+
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Custom Report Library URL
+                    </td>
+                    <td class="attributcurrvalue">
+                        <div class="input-group">
+
+                            @if (string.IsNullOrEmpty(@custom))
+                            {
+                                <input asp-for="_CustomReportLibraryUrl" id="display_clock_libraryurl" value="\\server.." class="Inputborder" autocomplete="off">
+                                <label for="clocklliberaryurl" id="clockurl">...</label>
+                            }
+                            else
+                            {
+                                <input asp-for="_CustomReportLibraryUrl" id="display_clock_libraryurl" value="@custom" class="Inputborder" autocomplete="off">
+                                <label for="clocklliberaryurl" id="clockurl">...</label>
+
+                            }
+                        </div>
+
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Database Backup Path
+                    </td>
+                    <td class="attributcurrvalue">
+                        <div class="input-group col-md-10">
+
+                            @if (string.IsNullOrEmpty(@databaseback))
+                            {
+                                <input asp-for="_DatabaseBackupPath" id="database_backup_path" value="\\server.." class="Inputborder" autocomplete="off">
+                                <label for="database_backup" id="data_path">...</label>
+                            }
+                            else
+                            {
+                                <input asp-for="_DatabaseBackupPath" id="database_backup_path" value="@databaseback" class="Inputborder" autocomplete="off">
+                                <label for="database_backup" id="data_path">...</label>
+
+                            }
+                        </div>
+
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Default Discount Account
+                    </td>
+                    <td class="attributcurrvalue" data-toggle="modal" data-id="1" data-target="#DefaultdiscountAccountModal">
+                        @if (string.IsNullOrEmpty(@defaultdiscount))
+                        {
+                            <input asp-for="_DefaultDiscountAccount" type="text" value="" id="Defaultdiscount_object_state" class="Inputborder" readonly="readonly" autocomplete="off" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="_DefaultDiscountAccount" type="text" value="@defaultdiscount" id="Defaultdiscount_object_state" class="Inputborder" readonly="readonly" autocomplete="off" />
+
+                        }
+
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Duplicate Card Issue
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="_DuplicateCardIssue" class="form-control custom-select Inputborder">
+
+                            @if (@duplicatecad == true)
+                            {
+                                <option value="True">True</option>
+                                <option value="False">False</option>
+                            }
+                            else
+                            {
+                                <option value="False">False</option>
+                                <option value="True">True</option>
+
+                            }
+
+
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Enable MAP
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="_EnableMAP" class="form-control custom-select Inputborder">
+
+                            @if (@enablemap == true)
+                            {
+                                <option value="True">True</option>
+                                <option value="False">False</option>
+                            }
+                            else
+                            {
+                                <option value="False">False</option>
+                                <option value="True">True</option>
+
+                            }
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+
+                        Error Log Path
+                    </td>
+                    <td class="attributcurrvalue">
+                        <div class="input-group">
+                            @if (string.IsNullOrEmpty(@errorlog))
+                            {
+                                <input asp-for="_ErrorLogPath" id="display_error_log_path_file" value="" class="Inputborder" autocomplete="off">
+                                <label for="error_logpath" id="logpath">...</label>
+
+                            }
+                            else
+                            {
+                                <input asp-for="_ErrorLogPath" id="display_error_log_path_file" value="@errorlog" class="Inputborder" autocomplete="off">
+                                <label for="error_logpath" id="logpath">...</label>
+
+                            }
+                        </div>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Expiry Date Notification In Date
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (@expirydate == 0)
+                        {
+                            <input asp-for="_ExpiryDateNotificationInDate" type="text" value="0" id="expiryDateNotificationInDate" class="Inputborder" onkeypress="return isexpairedateNumber(event)" maxlength="9" onInput="return edValueexpairedateKeyPress(eve)" autocomplete="off" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="_ExpiryDateNotificationInDate" type="text" value="@expirydate" id="expiryDateNotificationInDate" class="Inputborder" onkeypress="return isexpairedateNumber(event)" maxlength="9" onInput="return edValueexpairedateKeyPress(eve)"  autocomplete="off"/>
+
+                        }
+                    </td>
+                  
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Export Cash As Credit
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="_ExportCashAsCredit" class="form-control custom-select Inputborder">
+                            @if (@exportcas == true)
+                            {
+                                <option value="True">True</option>
+                                <option value="False">False</option>
+                            }
+                            else
+                            {
+                                <option value="False">False</option>
+                                <option value="True">True</option>
+
+                            }
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Inventory Round Quantity
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (@inventorround == 0)
+                        {
+                            <input asp-for="_InventoryRoundQuantity" type="text" value="2" id="inventoryRoundQuantity" class="Inputborder" onkeypress="return isexpairedateNumber(event)" maxlength="9" onInput="return edValueinventoryKeyPress(eve)" autocomplete="off" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="_InventoryRoundQuantity" type="text" value="@inventorround" id="inventoryRoundQuantity" class="Inputborder" onkeypress="return isexpairedateNumber(event)" maxlength="9" onInput="return edValueinventoryKeyPress(eve)" autocomplete="off" />
+
+                        }
+                    </td>
+
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        MapURL
+                    </td>
+                    <td class="attributcurrvalue">
+                        <div class="input-group">
+                            @if (string.IsNullOrEmpty(@mapurl))
+                            {
+                                <input asp-for="_MAPURL" id="display_mapurl_file" value="" class="Inputborder" autocomplete="off">
+                                <label for="map_url" id="mapurl">...</label>
+
+                            }
+                            else
+                            {
+                                <input asp-for="_MAPURL" id="display_mapurl_file" value="@mapurl" class="Inputborder" autocomplete="off">
+                                <label for="map_url" id="mapurl">...</label>
+
+                            }
+                        </div>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        No Of Instances
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (@noofinsta == 0)
+                        {
+                            <input asp-for="_NoOfInstances" type="text" value="2" id="noOfInstances" class="Inputborder" onkeypress="return isexpairedateNumber(event)" maxlength="10" onInput="return edValueNoinstanceKeyPress(eve)" autocomplete="off" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="_NoOfInstances" type="text" value="@noofinsta" id="noOfInstances" class="Inputborder" onkeypress="return isexpairedateNumber(event)" maxlength="10" onInput="return edValueNoinstanceKeyPress(eve)" autocomplete="off" />
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+
+                        No Of Nested Windows
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (@noofnested == 0)
+                        {
+                            <input asp-for="_NoOfNestedWindows" type="text" value="2" id="noOfNestedWindows" class="Inputborder" onkeypress="return isexpairedateNumber(event)" maxlength="10" onInput="return edValueNestedwidKeyPress(eve)" autocomplete="off" />
+
+                        }
+                        else
+                        {
+                            <input asp-for="_NoOfNestedWindows" type="text" value="@noofnested" id="noOfNestedWindows" class="Inputborder" onkeypress="return isexpairedateNumber(event)" maxlength="10" onInput="return edValueNestedwidKeyPress(eve)" autocomplete="off" />
+
+                        }
+                    </td>
+                   
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Phone Number Mandatory
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="_PhoneNumberMandatory" class="form-control custom-select Inputborder">
+                            @if (@phonoman == true)
+                            {
+                                <option value="True">True</option>
+                                <option value="False">False</option>
+                            }
+                            else
+                            {
+                                <option value="False">False</option>
+                                <option value="True">True</option>
+
+                            }
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Photo Mandatory
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="_PhotoMandatory" class="form-control custom-select Inputborder">
+
+                            @if (@photoman == true)
+                            {
+                                <option value="True">True</option>
+                                <option value="False">False</option>
+                            }
+                            else
+                            {
+                                <option value="False">False</option>
+                                <option value="True">True</option>
+
+                            }
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Save Attachment
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="_SaveAttachment" class="form-control custom-select Inputborder">
+                            @if (@saveattac == "DB")
+                            {
+                                <option value="DB">DB</option>
+                                <option value="URLOnly">URLOnly</option>
+                            }
+                            else
+                            {
+                                <option value="URLOnly">URLOnly</option>
+                                <option value="DB">DB</option>
+                            }
+
+
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        XML Dampyard Path
+                    </td>
+                    <td class="attributcurrvalue">
+                        <div class="input-group">
+                            @if (string.IsNullOrEmpty(@xmldam))
+                            {
+                                <input asp-for="_XMLDampYardPath" id="display_xmldamp_file" value="\\server.." class="Inputborder" autocomplete="off">
+                                <label for="xml_damp_path" id="damppath">...</label>
+
+                            }
+                            else
+                            {
+                                <input asp-for="_XMLDampYardPath" id="display_xmldamp_file" value="@xmldam" class="Inputborder" autocomplete="off">
+                                <label for="xml_damp_path" id="damppath">...</label>
+
+                            }
+                        </div>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        XML Reconciliation Path
+                    </td>
+                    <td class="attributcurrvalue">
+                        <div class="input-group">
+                            @if (string.IsNullOrEmpty(@xml))
+                            {
+                                <input asp-for="_XMLRequanselationPath" id="display_xmldreconcilation_file" value="\\server.." class="Inputborder" autocomplete="off">
+                                <label for="xml_reconcilation_path" id="xmlrecopath">...</label>
+
+                            }
+                            else
+                            {
+                                <input asp-for="_XMLRequanselationPath" id="display_xmldreconcilation_file" value="@xml" class="Inputborder" autocomplete="off">
+                                <label for="xml_reconcilation_path" id="xmlrecopath">...</label>
+
+                            }
+                        </div>
+                    </td>
+
+                </tr>
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Third Party Sync Settings
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata1">
+                        Enable ThirdParty Interfacing
+                    </td>
+                    <td class="attributcurrvalue1">
+                        <select asp-for="_EnableThirdPartyInterfacing" class="form-control custom-select Inputborder">
+
+                            @if (@enablethrd == true)
+                            {
+                                <option value="True">True</option>
+                                <option value="False">False</option>
+                            }
+                            else
+                            {
+                                <option value="False">False</option>
+                                <option value="True">True</option>
+
+                            }
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata1">
+                        Local Root Path 3rd Party Interfacing
+                    </td>
+                    <td class="attributcurrvalue1">
+                        <div class="input-group">
+
+                            @if (string.IsNullOrEmpty(@localroot))
+                            {
+                                <input asp-for="_LocalRootPath3rdPartyInterfacing" id="display_localroot_path" value="" class="Inputborder" autocomplete="off">
+                                <label for="local_root_path_party" id="localparty">...</label>
+                            }
+                            else
+                            {
+                                <input asp-for="_LocalRootPath3rdPartyInterfacing" id="display_localroot_path" value="@localroot" class="Inputborder" autocomplete="off">
+                                <label for="local_root_path_party" id="localparty">...</label>
+
+                            }
+                        </div>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata1">
+                        Sync Type
+                    </td>
+                    <td class="attributcurrvalue1">
+                        <select asp-for="_SyncType" class="form-control custom-select Inputborder">
+                            <option value="Peachtree">Peachtree</option>
+                            <option value="IRIUM">IRIUM</option>
+                            <option value="Hospital">Hospital</option>
+
+                        </select>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata1">
+                        Third Party Sync Method
+                    </td>
+                    <td class="attributcurrvalue1">
+                        <select asp-for="_ThirdPartySyncMethod" class="form-control custom-select Inputborder">
+                            @if (@thirdparty == "Automatic")
+                            {
+                                <option value="Automatic">Automatic</option>
+                                <option value="Manual">Manual</option>
+                            }
+                            else
+                            {
+                                <option value="Manual">Manual</option>
+                                <option value="Automatic">Automatic</option>
+
+                            }
+                        </select>
+
+                    </td>
+
+                </tr>
+            </table>
+
+            <input class="form-control" type="file" name="fille" id="clocklliberaryurl" style="display:none; visibility:hidden;" onchange="getcustomReport(this.value);">
+            <input class="form-control" type="file" name="fille" id="database_backup" style="display:none; visibility:hidden;" onchange="getdatabasebackup(this.value);">
+            <input class="form-control" type="file" name="fille" id="error_logpath" style="display:none; visibility:hidden;" onchange="geterrorlog(this.value);">
+            <input class="form-control" type="file" name="fille" id="map_url" style="display:none; visibility:hidden;" onchange="getmapurl(this.value);">
+            <input class="form-control" type="file" name="fille" id="xml_damp_path" style="display:none; visibility:hidden;" onchange="getxmldamp(this.value);">
+            <input class="form-control" type="file" name="fille" id="xml_reconcilation_path" style="display:none; visibility:hidden;" onchange="getxmlrecons(this.value);">
+            <input class="form-control" type="file" name="fille" id="local_root_path_party" style="display:none; visibility:hidden;" onchange="getlocalroot(this.value);">
+
+        </form>
+
+    </div>
+</div>
+<script>
+    $(function () {
+        $("#filtersysParaSetting").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#system_parameter_table > tbody > tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+<script>
+   
+    function TreeFunctionsysPara() {
+        $(document).ready(function () {
+            $('.tree-basic').treegrid();
+
+            $('.tree_loadsyspa').treegrid({
+                source: function (id, response) {
+                    if (id != 1) response(['']);
+                    else response(['']);
+                }
+            });
+
+        });
+    }
+    TreeFunctionsysPara();
+</script>
+
+<script>
+     $('#@nameof(Model._ClockServer)').select2({
+           data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(prifxsufixType)),
+           placeholder: "",
+           allowClear: false
+
+    });
+</script>
+
+<script>
+    function isaccesscontrolNumber(evt) {
+
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        else {
+
+            return true;
+        }
+
+    }
+
+    function isexpairedateNumber(evt) {
+
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        else {
+
+            return true;
+        }
+
+    }
+    var inputvalue;
+    function edValueaccesscontrolKeyPress(e) {
+
+        var str = $("#alertBefore").val();
+        if (str != "") {
+            inputvalue = parseInt(str);
+        }
+        else {
+            inputvalue = 0;
+        }
+
+
+        return true;
+    }
+    $("#alertBefore").mouseout(function () {
+        if (inputvalue != undefined) {
+            $("#alertBefore").val(inputvalue);
+        }
+
+    });
+
+    var inputExdatevalue;
+    function edValueexpairedateKeyPress(e) {
+
+        var str = $("#expiryDateNotificationInDate").val();
+        if (str != "") {
+            inputExdatevalue = parseInt(str);
+        }
+        else {
+            inputExdatevalue = 0
+        }
+
+        return true;
+    }
+    $("#expiryDateNotificationInDate").mouseout(function () {
+        if (inputExdatevalue != undefined) {
+            $("#expiryDateNotificationInDate").val(inputExdatevalue);
+        }
+    });
+
+    var inputinventoryvalue;
+    function edValueinventoryKeyPress(e) {
+
+        var str = $("#inventoryRoundQuantity").val();
+        if (str != "") {
+            inputinventoryvalue = parseInt(str);
+        }
+        else {
+            inputinventoryvalue = 0;
+        }
+        return true;
+    }
+    $("#inventoryRoundQuantity").mouseout(function () {
+        if (inputinventoryvalue != undefined) {
+            $("#inventoryRoundQuantity").val(inputinventoryvalue);
+        }
+    });
+
+    var inputinstancevalue;
+    function edValueNoinstanceKeyPress(e) {
+
+        var str = $("#noOfInstances").val();
+        if (str != "") {
+            inputinstancevalue = parseInt(str);
+        }
+        else {
+            inputinstancevalue = 0;
+        }
+
+
+        return true;
+    }
+    $("#noOfInstances").mouseout(function () {
+        if (inputinstancevalue != undefined) {
+            $("#noOfInstances").val(inputinstancevalue);
+        }
+    });
+    var inputNestdevalue;
+    function edValueNestedwidKeyPress(e) {
+
+        var str = $("#noOfNestedWindows").val();
+        if (str != "") {
+            inputNestdevalue = parseInt(str);
+        }
+        else {
+            inputNestdevalue = 0;
+        }
+
+        return true;
+    }
+    $("#noOfNestedWindows").mouseout(function () {
+        if (inputNestdevalue != undefined) {
+            $("#noOfNestedWindows").val(inputNestdevalue);
+        }
+    });
+</script>
+<script>
+    var selectedCountry = "";
+
+    var row = ""
+
+    $("select.select2").change(function () {
+        selectedCountry = $(this).children("option:selected").text();
+
+        $(".bg-blue").removeClass("bg-blue");
+        //var row = $(".addvaluepropertyLisearch:contains(" + selectedCountry + "));
+        $("input[name*='" + selectedCountry + "']").addClass("bg-blue");
+        /*location.href = '#resp-table'*/
+    });
+
+
+</script>
+
+
+<script>
+
+    $('.attributdata').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        var value = $(this).text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).closest("tr").addClass('boderclr');
+        $('#SystemParaVal').html(value);
+        var value = $(this).parent().html();
+        $('#parentParaVal').html("System Settings");
+
+    });
+    $('.attributcurrvalue').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        var value = $(this).siblings().text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).siblings().addClass("boderclr");
+        $('#SystemParaVal').html(value);
+        var value = $(this).parent().html();
+        $('#parentParaVal').html("System Settings");
+
+    });
+
+    $('.attributdata1').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        var value = $(this).text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).closest("tr").addClass('boderclr');
+        $('#SystemParaVal').html(value);
+        var value = $(this).parent().html();
+        $('#parentParaVal').html("Third Party Sync Settings");
+
+    });
+
+
+    $('.attributcurrvalue1').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        var value = $(this).siblings().text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).siblings().addClass("boderclr");
+        $('#SystemParaVal').html(value);
+        var value = $(this).parent().html();
+        $('#parentParaVal').html("Third Party Sync Settings");
+
+    });
+
+
+    $("#systemParameterProperty").change(function () {
+        var value = $(this).select2('data')[0].text;
+        $(".boderclr").removeClass("boderclr");
+        $("input[name*='" + value + "']").addClass('boderclr');
+        $("input[name*='" + value + "']").closest("tr").addClass('boderclr');
+        $('#SystemParaVal').html(value);
+    });
+
+</script>
+<script>
+    function getcustomReport(filename) {
+        $('#display_clock_libraryurl').val(filename);
+    }
+</script>
+<script>
+    function getdatabasebackup(filename) {
+        $('#database_backup_path').val(filename);
+    }
+</script>
+<script>
+    function geterrorlog(filename) {
+        $('#display_error_log_path_file').val(filename);
+    }
+</script>
+<script>
+    function getmapurl(filename) {
+        $('#display_mapurl_file').val(filename);
+    }
+</script>
+<script>
+    function getxmldamp(filename) {
+        $('#display_xmldamp_file').val(filename);
+    }
+</script>
+
+<script>
+    function getxmlrecons(filename) {
+        $('#display_xmldreconcilation_file').val(filename);
+    }
+</script>
+<script>
+    function getlocalroot(filename) {
+        $('#display_localroot_path').val(filename);
+    }
+</script>
+
+<script>
+    var DataList = [false, false];
+    var valueitemid = "";
+    $('.hiddebutn').click(function () {
+
+        valueitemid = $(this).attr('id');
+        switch (valueitemid) {
+
+            case "butsystem1":
+
+                DataList[0] = !DataList[0];
+                if (DataList[0] == true) {
+                    $('#systemchild1').addClass('displaychild');
+                    $(this).find("i").removeClass("fa-arrow-circle-down").addClass("fa-arrow-circle-right");
+
+                }
+
+                else {
+                    $('#systemchild1').removeClass('displaychild');
+                    $(this).find("i").removeClass("fa-arrow-circle-right").addClass("fa-arrow-circle-down");
+                }
+                break;
+
+            case "butsystem2":
+
+                DataList[1] = !DataList[1];
+                if (DataList[1] == true) {
+                    $('#systemchild2').addClass('displaychild');
+                    $(this).find("i").removeClass("fa-arrow-circle-down").addClass("fa-arrow-circle-right");
+
+                }
+
+                else {
+                    $('#systemchild2').removeClass('displaychild');
+                    $(this).find("i").removeClass("fa-arrow-circle-right").addClass("fa-arrow-circle-down");
+                }
+                break;
+
+        }
+
+    });
+</script>
+

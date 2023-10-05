@@ -1,0 +1,100 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Cnetv7BufferHolder;
+@using Newtonsoft.Json;
+@model VoucherSearchModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var use_period = GeneralBufferHolder.SystemConstants.Where(c => c.Category == "Period Type");
+}
+<style>
+    .activeidSetting {
+        background-color: dodgerblue;
+        width: auto;
+    }
+</style>
+<div class="modal fade" id="UserPeriodmodel">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <span>User Period</span>
+                </h5>
+            </div>
+            <div class="box-body">
+                <div class="modal-body">
+                    <div class="row">
+                        <form class="form-horizontal" id="IdentificationFormData" asp-action="EditIdentificationn" asp-controller="Organization" method="post">
+
+
+                            <div class="col-md-12" style="margin-top:25px">
+
+                                <div class="row">
+
+                                    <div class="divTable">
+
+                                        <div class="col-md-6" style="margin-left:0px ;" id="div23">
+                                            <ul class="sidebar-men secondNav tree " data-widget="tree" id="attachement_nav">
+                                                @foreach (var item in use_period)
+                                                {
+                                                    <li class="nav-item treeview menu-open usePeriod" id="parent">
+                                                        <a data-toggle="tab" data-value="@item.Description" data-types="@item.Id" id="a123" style="text-decoration-line:none!important" name="catagory" class="addUserPeriodItem">
+
+                                                            <span class="labelcss" selectedValue="@item.Description">@item.Description</span>
+                                                        </a>
+
+                                                        <ul class="treeview-menu" style="padding-left:35px; background-color:white;" id="@item.Id">
+                                                        </ul>
+                                                    </li>
+                                                }
+
+                                            </ul>
+
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+
+                        </form>
+                    </div>
+
+                </div>
+                <div class="col-md-12">
+                    <button type="button" action="addRow" class="btn btn-default btn-sm" id="UserPeriodbtnSave">Ok</button>
+                    <button class="btn btn-default btn-sm" id="userperioddatadismis" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+</div>
+<script>
+    var valueitem = "";
+    $(document).ready(function () {
+
+        $(".usePeriod").click(function () {
+            $(".activeidSetting").removeClass("activeidSetting");
+            $(this).addClass('activeidSetting');
+
+        }); 
+        
+        $(".addUserPeriodItem").click(function () {
+            valueitem = $(this).data("value");
+        });
+
+        $("#UserPeriodbtnSave").click(function () {
+
+            $('#Use_Period').val(valueitem);
+            $('#userperioddatadismis').trigger('click');
+
+        });
+
+    });
+
+</script>

@@ -1,0 +1,216 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_V7_Entities.DataModels;
+@using Newtonsoft.Json;
+@model GSLmodel;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var ArticleTypes = await sharedHelpers.GetsystemConstantById(Convert.ToInt32(Model.gslType));
+
+    var acccontrolList = await sharedHelpers.GetControlAccount();
+    var acccontrolListchild = await sharedHelpers.GetControlAccount();
+
+    var acccontrolListparent = acccontrolList?.GroupBy(x => x.AccCategory).Select(x => x.First());
+
+    var acccontrolListType = acccontrolListparent?.Select(d => new CNET_ERP_V7.Models.SelectorModel.Select2Result()
+    {
+        text = "Category:"+ d.AccCategory,
+
+        children = acccontrolListchild?.Where(y => y.AccCategory == d.AccCategory).Select(x => new CNET_ERP_V7.Models.SelectorModel.Select2Result() { id = x.Id, text = x.Description }).Distinct().ToList()
+
+    }).ToArray();
+
+}
+
+<style>
+    .select2-container--default .select2-results__group {
+        border: solid 0.3px lightgray;
+        cursor: grabbing;
+        margin-left: 5px;
+      
+    }
+
+    .select2-results__options--nested > li {
+        background-color: #ecf0f5;
+        font-size: 14px;
+        margin-left: 15px;
+        border-left: solid 0.3px lightgray;
+        border-left: solid 0.3px lightgray;
+    }
+</style>
+
+<div class="modal fade" id="articleacccontrolModelMap">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <img src="~/images/Cnets.jpg" alt="CNET" />
+                    <span>Account Requirement For @ArticleTypes?.FirstOrDefault()?.Description</span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                </h5> 
+
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form class="form-horizontal" id="articleaccrequireNewFormData" onsubmit="return articleaccrequireNewFormFunction()" asp-controller="GSL" asp-action="createaccrequirearticle" method="post">
+                        <div class="col-md-12">
+                            <div>
+                                <button class="btn btn-app" type="reset" id="IssuedbtnNew"> <i class="fa fa-file-o"></i>New</button>
+                                <button type="submit" action="addRow" class="btn btn-app" id="articleaccrequirebtnNewsave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                                <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12" style="margin-top:25px">
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Control Account</label>
+                                    <div class="col-md-9">
+                                        <select asp-for="acccontrol" class="form-control select2" style="width:340px;">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="acccontrol"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Is Mandatory</label>
+                                    <div class="col-md-1">
+                                        <input asp-for="accismandatory" />
+                                        <span asp-validation-for="accismandatory"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Restriction Section</label>
+                                    <div class="col-md-1">
+                                        <input asp-for="accresirictionselection" />
+                                        <span asp-validation-for="accresirictionselection"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Remark</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="accremark" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="accremark"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <input hidden asp-for="accode" />
+                        <input hidden asp-for="code_idsettingart" />
+                         <input asp-for="idsettingdelcodeart" type="text" hidden />
+                        <input asp-for="gsltypecodefordelete"  hidden />
+                        <input asp-for="gsltypecodeforInsert"  hidden />
+
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<script>
+  var acountcontro = '@Model.gslType';
+
+    function articleaccrequireNewFormFunction() {
+        var $form = $('#articleaccrequireNewFormData');
+        var data = $form.serialize();
+        var action = $('#articleaccrequireNewFormData').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            success: function (data) {
+                swal("", data, "success");
+                    $.ajax({
+                            type: "GET",
+                            dataType: 'html',
+                            url: '@Url.Action("getaccrequireList", "GSL")',
+                            data: { gslcode: gslcode },
+
+                            success: function (data) {
+
+                                $('#gslaccrequContent').html(data);
+                            }
+                     });
+                CleararticleaccrequModal();
+
+  },
+        });
+        return false;
+    };
+
+
+ $("body").on('click', '.select2-results__group', function () {
+        $(this).siblings().slideToggle("slow");
+    })
+</script>
+
+
+<script>
+     var codeitem = '@Model.gslType';
+    $('#@nameof(Model.gsltypecodeforInsert)').val(codeitem);
+
+
+</script>
+
+<script>
+
+      $('#@nameof(Model.acccontrol)').select2({
+          data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(acccontrolListType)),
+          placeholder: "Select account map",
+          allowClear: true
+
+      });
+</script>
+<script>
+    $(document).on("click", ".btnDeletetearticleaccountreq", function () {
+        var gslcode = '@Model.gslType';
+        var codesacc = $(this).data('code');
+        swal({
+            title: "are you sure to delete this ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "POST",
+                        dataType: 'json',
+                        url: '@Url.Action("Deletearticleaccrequ", "GSL")',
+                        data: { CODE: codesacc },
+
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        success: function (data) {
+                            swal("", data, "success");
+                            GetAccountrequirement(gslcode);
+                        }
+                    });
+                }
+            });
+
+      });
+    function CleararticleaccrequModal() {
+
+        $('#@nameof(Model.acccontrol)').val("").trigger('change');
+        $('#@nameof(Model.accismandatory)').prop('checked', "");
+        $('#@nameof(Model.accresirictionselection)').prop('checked', "");
+        $('#@nameof(Model.accremark)').val("");
+    }
+</script>
+
+

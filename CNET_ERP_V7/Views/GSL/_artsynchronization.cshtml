@@ -1,0 +1,67 @@
+﻿@model GSLmodel
+@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    int count = 1;
+    var comp = sharedHelpers.GetCompany();
+    var comptin = comp?.Result?.Tin;
+    var selectsynchronization = await sharedHelpers.GetCompanyBranchsByTin(comptin);
+    var distri = await sharedHelpers.GetDistrubtionByRefeandTye(Model.gslType, 1580);
+
+    var distributionandorguntdef = selectsynchronization?.Select(y => new
+    {
+        y.Id,
+        y.Name,
+        sn = count++,
+        index = distri.Where(x => x.Destination == y.Id).Any() ? true : false,
+        addresssynch = ""
+
+
+    }).ToList();
+}
+    <style>
+        .gsldistributiontable {
+            height: 76vh;
+            overflow-y: scroll;
+        }
+    </style>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+
+                <div class="box-body gsldistributiontable">
+
+                 
+                        <table id="article_synchronization_distribution" class="table table-striped tree-load mapstorefordestination" style="background-color:#ffffff">
+                            <thead>
+                                <tr>
+
+                                    <th width="250px">Use</th>
+                                    <th width="250px">Organaization Unit</th>
+                                    <th width="250px">Addresse</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                    @if (distributionandorguntdef != null && distributionandorguntdef.Count() >0)
+                                    {
+                                         @foreach (var item in distributionandorguntdef)
+                                        {
+                                            <tr>
+                                            <td> <input class="form-check-input" type="checkbox" name="branchcode[]" value="@item.Id@("/")@item.Name@("/")@item.sn" @(item.index ? "checked" : "") onclick="return true" /></td>
+                                                <td>@item.Name</td>
+                                                <td>@item.addresssynch</td>
+                                            </tr>
+                                        }
+                                     }
+                               
+                            </tbody>
+                        </table>
+                   
+                </div>
+            </div>
+            </div>
+        </div>
+

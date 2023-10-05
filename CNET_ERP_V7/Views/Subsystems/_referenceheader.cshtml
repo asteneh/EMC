@@ -1,0 +1,343 @@
+﻿@using CNET_V7_Domain.Domain.ViewSchema;
+@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_ERP_V7.Common.Helpers;
+@using Cnetv7BufferHolder;
+@model CNET_ERP_V7.Models.SubSytsemModel.VoucherSearchModel
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var organizationTypes = await sharedHelpers.GetsystemConstantById(Convert.ToInt32(Model.documentType));
+
+    var moduledescription = organizationTypes?.FirstOrDefault()?.Description;
+    var cnetcomponent = GeneralBufferHolder.SystemConstants;
+    var voucherdefn = await sharedHelpers.GetSytemConstantBytype("Transaction");
+   
+    var voucherdefncompo = (from vouch in voucherdefn
+                            join compo in cnetcomponent
+                          on vouch.Id equals compo.Id
+
+                            select new
+                            {
+                                compo.Id,
+                                compo.Description
+
+                            }).ToList();
+
+    var voucherdefinitionListType = voucherdefncompo?.Select(d => new CNET_ERP_V7.Models.SelectorModel.Select2Result()
+    {
+        text = d.Description,
+        children = voucherdefn?.Where(y => y.Id == d.Id).Select(x => new CNET_ERP_V7.Models.SelectorModel.Select2Result() { id = x.Id, text = x.Description }).ToList()
+
+    }).ToArray();
+}
+
+<style>
+    .activeidSetting {
+        background-color: dodgerblue;
+        width: auto;
+    }
+
+    .mainsysType {
+        height: 76vh;
+        white-space: nowrap;
+        cursor: pointer;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    .idSetting {
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    td a {
+        width: 100px; /* Set the desired width */
+    }
+</style>
+<div class="box-body ">
+    
+    <div style="border:1px solid #e5e5e5;" class="mainsysType">
+        <table class="table table-sm" id="consineeUnit_Table" width="100%">
+            <thead>
+                <tr class="treegrid-3 treegrid-parent-1">
+                    <th colspan="2" style="border:1px solid #e5e5e5; background-color:lightgray">Description</th>
+
+                </tr>
+            </thead>
+
+            <tbody>
+
+                <tr class="activerefrence" data-value="Nested">
+                    <td>
+                        <a data-toggle="tab" data-value="Nested" data-types="" style="text-decoration-line:none!important; width:100%" name="catagory" class="getvaluereferencesearch">
+                            <i class="fa fa-user"></i>
+                            <i class="fa fa-angle-left pull-right" style="visibility:hidden"></i>
+                            Nested
+                        </a>
+                    </td>
+                </tr>
+                <tr class="activerefrence" data-value="Internal Reference">
+                    <td>
+                        <a data-toggle="tab" data-value="Internal Reference" data-types="" style="text-decoration-line:none!important;" name="catagory" class="getvaluereferencesearch">
+                            <i class="fa fa-user"></i>
+                            <i class="fa fa-angle-left pull-right" style="visibility:hidden"></i>
+                            Internal Reference
+                        </a>
+                    </td>
+                </tr>
+                <tr class="activerefrence" data-value="LineItem Extension">
+                    <td>
+                        <a data-toggle="tab" data-value="LineItem Extension" data-types="" style="text-decoration-line:none!important;" name="catagory" class="getvaluereferencesearch">
+                            <i class="fa fa-user"></i>
+                            LineItem Extension
+                        </a>
+                    </td>
+                </tr>
+                <tr class="activerefrence" data-value="Voucher Extension">
+                    <td>
+                        <a data-toggle="tab" data-value="Voucher Extension" data-types="" style="text-decoration-line:none!important;" name="catagory" class="getvaluereferencesearch">
+                            <i class="fa fa-user"></i>
+                            <i class="fa fa-angle-left pull-right" style="visibility:hidden"></i>
+                            Voucher Extension
+                        </a>
+                    </td>
+                </tr>
+                    
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="Relation_Detail">
+    <div class="modal-dialog  ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <img src="~/images/Cnets.jpg" alt="CNET" />
+                    <span>Relation Detail</span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                </h5>
+
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form class="form-horizontal" id="relationdetailNewFormData" onsubmit="return relationdetailNewFormFunction()" asp-controller="Subsystems" asp-action="Createrelationdetail" method="post">
+                        <div class="col-md-12">
+                            <div class="box">
+                                <button class="btn btn-app" type="reset" id="IssuedbtnNew"> <i class="fa fa-file-o"></i>New</button>
+                                <button type="submit" action="addRow" class="btn btn-app" id="relationdetailNewsave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                                <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12" style="margin-top:25px">
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Voucher Definition</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="rela_vouchDefn" class="form-control select2" style="width:340px;" id="@nameof(Model.rela_vouchDefn)">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="rela_vouchDefn"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Operator</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="rela_oprator" class="form-control select2" style="width:340px;" id="@nameof(Model.rela_oprator)">
+                                            <option></option>
+                                            <option value="+">+</option>
+                                            <option value="-">-</option>
+                                        </select>
+                                        <span asp-validation-for="rela_oprator"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Remark</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="rela_remark" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="rela_remark"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <br />
+                            <div class="row">
+
+                                <table id="reference_relation_detail" class="table table-striped tree-load" style="background-color:#ffffff">
+                                    <thead>
+                                        <tr>
+                                            <th>Voucher Definition</th>
+                                            <th>Oprator</th>
+                                            <th>Remark</th>
+                                            <th>Edit</th>
+                                            <th>Delete</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody id="">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <input asp-for="rela_voucherdef" hidden/>
+                        <input asp-for="rela_code" hidden/>
+                       <input asp-for="rela_relation" hidden/>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+    $(document).on("click", ".activerefrence", function () {
+         
+        $(".activeidSetting").removeClass("activeidSetting");
+        $(this).addClass('activeidSetting');
+     
+    });
+    $('#@nameof(Model.rela_vouchDefn)').select2({
+        data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(voucherdefinitionListType)),
+        placeholder: "",
+          allowClear: false
+      });
+    var getheader = "";
+    var getVouhercodeforreference = "";
+    $(document).on("click", ".activerefrence", function () {
+      var   moduledesc = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(moduledescription));
+            getheader = $(this).data('value');
+            $('#@nameof(Model.refreceType)').val(getheader);
+            getVouhercodeforreference = $('#@nameof(Model.documentType)').val();
+        $('#@nameof(Model.getselectedvoucherheader)').val(getheader);
+        $('#@nameof(Model.getselectedvoucherheadertow)').val(getheader);
+        $('#@nameof(Model.headerType)').val(getheader);
+           switch (getheader) {
+              case "Nested":
+                $('#nestedandinternalModel').text("Nesteds For " + moduledesc);
+                    $('#referenceMapItem').removeClass('voucherreferenceitemlist')
+                    $('#linetemAndvoucherextensionItem').addClass('voucherreferenceitemlist')
+                    $('#InnternalreferenceItem').addClass('voucherreferenceitemlist')
+                   $('#modalfornestednadinternalref').prop('disabled', false)
+                  $('#modalfornestednadinternalref').removeClass('modalfornestednadinternalref')
+                   $('#modalforlineitemandvoucherextension').addClass('modalfornestednadinternalref')
+                   $('input[name=checkboxobjectstateradio]').attr("disabled", false);
+                 $('#untilend').prop("checked", true);
+                    submitfunctionnested(getheader, getVouhercodeforreference);
+                   $('#relationdetail').removeClass('displayapp');
+                    break;
+                case "Internal Reference":
+                     $('#nestedandinternalModel').text("Internal Reference For " + moduledesc);
+                    $('#InnternalreferenceItem').removeClass('voucherreferenceitemlist')
+                    $('#referenceMapItem').addClass('voucherreferenceitemlist')
+                    $('#linetemAndvoucherextensionItem').addClass('voucherreferenceitemlist')
+                   $('#modalfornestednadinternalref').prop('disabled', false)
+                   $('#relationdetail').addClass('displayapp');
+                    $('#modalfornestednadinternalref').removeClass('modalfornestednadinternalref')
+                   $('#modalforlineitemandvoucherextension').addClass('modalfornestednadinternalref')
+                   $('#boxid').addClass('bg-info');
+                    $('input[name=checkboxobjectstateradio]').attr("disabled", true);
+                    $('input:radio').attr('disabled');
+                    submitfunctionforinternal(getheader, getVouhercodeforreference);
+                    break;
+                case "LineItem Extension":
+                case "Voucher Extension":
+                    $('#referenceModel').text("LineItem Extension For " + moduledesc);
+                    $('#linetemAndvoucherextensionItem').removeClass('voucherreferenceitemlist')
+                    $('#referenceMapItem').addClass('voucherreferenceitemlist')
+                    $('#InnternalreferenceItem').addClass('voucherreferenceitemlist')
+                    $('#relationdetail').addClass('displayapp');
+                    $('#modalfornestednadinternalref').addClass('modalfornestednadinternalref');
+                    $('#modalforlineitemandvoucherextension').removeClass('modalfornestednadinternalref');
+                    submitfunctionforlineandvoucher(getheader, getVouhercodeforreference);
+                    break;
+            }
+
+         });
+
+        function submitfunctionnested(getheader, getVouhercodeforreference) {
+
+            $(function () {
+                $.ajax({
+                    url: '/Subsystems/getReferenceResult',
+                    type: 'POST',
+                    data: { code: getheader, vouherCode: getVouhercodeforreference }, // send the data object with the request
+                    success: function (result) {
+                        $('#referenceMapItem').html(result);
+                    },
+                    error: function () {
+                        console.log('Error occurred.');
+                    }
+                });
+            });
+        }
+        
+        function submitfunctionforinternal(getheader, getVouhercodeforreference) {
+
+            $(function () {
+                $.ajax({
+                    url: '/Subsystems/getInternalReferenceResult',
+                    type: 'POST',
+                    data: { code: getheader, vouherCode: getVouhercodeforreference }, // send the data object with the request
+                    success: function (result) {
+                        $('#InnternalreferenceItem').html(result);
+                    },
+                    error: function () {
+                        console.log('Error occurred.');
+                    }
+                });
+            });
+        } 
+        function submitfunctionforlineandvoucher(getheader, getVouhercodeforreference) {
+
+            $(function () {
+                $.ajax({
+                    url: '/Subsystems/getlineandvoucherReferenceResult',
+                    type: 'POST',
+                    data: { code: getheader, vouherCode: getVouhercodeforreference }, // send the data object with the request
+                    success: function (result) {
+                        $('#linetemAndvoucherextensionItem').html(result);
+                    },
+                    error: function () {
+                        console.log('Error occurred.');
+                    }
+                });
+            });
+        }
+ 
+    function relationdetailNewFormFunction() {
+
+        var referringObject = $('#@nameof(Model.documentType)').val();
+        $('#@nameof(Model.rela_voucherdef)').val(referringObject);
+       
+        var $form = $('#relationdetailNewFormData');
+        var data = $form.serialize();
+        var action = $('#relationdetailNewFormData').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            success: function (data) {
+                submitfunctionrelationdetail(referringObject);
+
+
+                //ClearIpParametreModal();
+
+  },
+        });
+        return false;
+    };
+
+</script>

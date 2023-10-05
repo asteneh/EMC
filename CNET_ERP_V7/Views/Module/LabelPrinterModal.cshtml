@@ -1,0 +1,129 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model moduleModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+   
+}
+<style>
+    .accountmapping {
+        position: relative;
+        padding: 20px;
+        height: 200px;
+        overflow-y: scroll;
+    }
+</style>
+
+<div class="modal fade" id="LAbelprntrModal">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <span>Label Printer</span>
+
+                </h5>
+
+            </div>
+
+            <div class="box-body">
+                <div class="modal-body accountmapping">
+                    <div class="row">
+
+                        <div class="col-md-12" style="margin-top:25px">
+
+                            <div class="row">
+
+                                <div class="divTable">
+
+                                    <div class="col-md-6" style="margin-left:0px ;" id="div23">
+                                        <ul class="sidebar-men secondNav tree " data-widget="tree" id="">
+                                             <li class="nav-item treeview menu-open attachmentType" id="parent">
+                                                    <a data-toggle="tab" data-value="Send To OneNote 2013" data-types="Send To OneNote 2013" id="a123" style="text-decoration-line:none!important" name="catagory" class="labelPrinterselector">
+
+                                                        <span class="labelcss" selectedValue="Send To OneNote 2013">Send To OneNote 2013</span>
+                                                    </a>
+
+                                                    <ul class="treeview-menu" style="padding-left:35px; background-color:white;" >
+                                                    </ul>
+                                                </li> 
+                                            <li class="nav-item treeview menu-open attachmentType" id="parent">
+                                                    <a data-toggle="tab" data-value="OneNote for Windows 10" data-types="OneNote for Windows 10" id="a123" style="text-decoration-line:none!important" name="catagory" class="labelPrinterselector">
+
+                                                        <span class="labelcss" selectedValue="OneNote for Windows 10">OneNote for Windows 10</span>
+                                                    </a>
+
+                                                    <ul class="treeview-menu" style="padding-left:35px; background-color:white;">
+                                                    </ul>
+                                                </li> 
+                                            <li class="nav-item treeview menu-open attachmentType" id="parent">
+                                                    <a data-toggle="tab" data-value="Microsoft XPS Document Writer" data-types="Microsoft XPS Document Writer" id="a123" style="text-decoration-line:none!important" name="catagory" class="labelPrinterselector">
+
+                                                        <span class="labelcss" selectedValue="Microsoft XPS Document Writer">Microsoft XPS Document Writer</span>
+                                                    </a>
+
+                                                    <ul class="treeview-menu" style="padding-left:35px; background-color:white;">
+                                                    </ul>
+                                                </li> 
+                                            <li class="nav-item treeview menu-open attachmentType" id="parent">
+                                                    <a data-toggle="tab" data-value="Microsoft Print to PDF" data-types="Microsoft Print to PDF" id="a123" style="text-decoration-line:none!important" name="catagory" class="labelPrinterselector">
+
+                                                        <span class="labelcss" selectedValue="Microsoft Print to PDF">Microsoft Print to PDF</span>
+                                                    </a>
+
+                                                    <ul class="treeview-menu" style="padding-left:35px; background-color:white;">
+                                                    </ul>
+                                                </li> 
+                                            <li class="nav-item treeview menu-open attachmentType" id="parent">
+                                                    <a data-toggle="tab" data-value="Fax" data-types="Fax" id="a123" style="text-decoration-line:none!important" name="catagory" class="labelPrinterselector">
+
+                                                        <span class="labelcss" selectedValue="Fax">Fax</span>
+                                                    </a>
+
+                                                    <ul class="treeview-menu" style="padding-left:35px; background-color:white;">
+                                                    </ul>
+                                                </li>
+                                          
+                                        </ul>
+
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="col-md-12">
+                    <button type="button" action="addRow" class="btn btn-default btn-sm" id="laberlprinterbtnSave">Ok</button>
+                    <button class="btn btn-default btn-sm" data-dismiss="modal" id="datadismisslabelprinter">Close</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+</div>
+<script>
+    var valueitem = "";
+    $(document).ready(function () {
+
+        $(".labelPrinterselector").click(function () {
+            valueitem = $(this).data("value");
+
+        });
+
+        $("#laberlprinterbtnSave").click(function () {
+
+            $('#label_printer_value').val(valueitem);
+            $('#datadismisslabelprinter').trigger('click');
+
+        });
+
+    });
+
+</script>

@@ -1,0 +1,44 @@
+﻿@model SecurityModel
+@using CNET_ERP_V7.Models.Security;
+@using CNET_V7_Domain.Domain.SecuritySchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Newtonsoft.Json;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@inject CNET_ERP_V7.Common.AuthNavigation.AuthenticationManager _authenticationManager
+@{
+    var reportType = Model?.ReportType;
+}
+<style>
+    .createacount {
+        height: 80vh;
+        overflow-y: scroll
+    }
+</style>
+<div class="border createacount">
+    <form class="form-horizontal" id="reportaccessmatrixNewFormData" method="post">
+
+        <table id="reportprvilage_detail_List" class="table table-striped tree-load" style="background-color:#ffffff">
+            <thead>
+                <tr>
+                    <th width="10px">Access</th>
+                    <th>Description</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @if (reportType != null && reportType.Count() > 0)
+                {
+                    foreach (var item in reportType)
+                    {
+                        <tr>
+                            <td> <input class="checkreport" name="reportpriviligeCode[]" value="@item.id" type="checkbox" @(Convert.ToBoolean(item?.accessLevel) ? "checked" : "") onclick="return true" /></td>
+                            <td>@item?.remark</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        <input asp-for="reportId" value="@Model?.reportId" hidden />
+        <input asp-for="reportrolecode" value="@Model?.reportrolecode" hidden />
+    </form>
+</div>

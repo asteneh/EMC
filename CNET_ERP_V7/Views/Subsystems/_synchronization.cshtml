@@ -1,0 +1,75 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_V7_Entities.DataModels;
+@using Newtonsoft.Json;
+@model VoucherSearchModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var copyDis = Model?.distribution;
+
+}
+
+<style>
+    .vIdDefiniation {
+        height: 77vh;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    .vIdDefiniation {
+        white-space: nowrap
+    }
+
+    .vIdDefiniation {
+        overflow-y: auto; /* make the table scrollable if height is more than 200 px  */
+        height: 77vh /* gives an initial height of 200px to the table */
+    }
+
+        .vIdDefiniation th {
+            position: sticky; /* make the table heads sticky */
+            top: 0px; /* table head will be placed from the top of the table and sticks to it */
+        }
+
+    /*table {
+                    border-collapse: collapse;*/ /* make the table borders collapse to each other */
+    /*width: 100%;
+                }*/
+
+    th,
+    td {
+        padding: 0 0 !important;
+        border: 1px solid #ccc;
+    }
+
+    th {
+        background-color: rgb(179, 236, 255)
+    }
+</style>
+
+
+<div class="border vIdDefiniation" style="border:1px solid #e5e5e5;">
+    <table id="synchronization_distribution" class="table table-striped container-fluid" style="background-color:#ffffff" width="100%">
+        <thead>
+            <tr class="attendancesum">
+                <th>Use</th>
+                <th>Organaization Unit</th>
+                <th>Addresse</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (copyDis != null && copyDis.Count() > 0)
+            {
+                @foreach (var item in copyDis)
+                {
+                    <tr class="attendancesum">
+                        <td><input type="checkbox" name="Branchcode[]" value="@item.idd@("/")@item.descrption@("/")@item.sn" @(item.index ? "checked" : "") onclick="return true" /></td>
+                        <td>@item?.descrption</td>
+                        <td>@item?.addresse</td>
+
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

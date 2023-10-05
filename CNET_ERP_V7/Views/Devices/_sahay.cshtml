@@ -1,0 +1,291 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model Devicemodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+
+    int sysoldvalue = 1212121214;
+
+}
+<style>
+    .sptablecontent {
+        border-collapse: collapse;
+        background-color: #fff;
+        width: 98%;
+        margin-left: 15px;
+    }
+
+        .sptablecontent .asth {
+            font-weight: bold;
+        }
+
+        .sptablecontent th, table td {
+            padding: 1px;
+            border: 1px solid #ccc;
+        }
+
+        .sptablecontent th, table tr {
+            height: 3px;
+        }
+
+        .sptablecontent, .sptablecontent .sptablecontent td {
+            border: 0px solid #ccc;
+        }
+
+            .sptablecontent [type=text], select {
+                width: 100%;
+            }
+
+            .sptablecontent [type=password] {
+                width: 100%;
+            }
+
+            .sptablecontent div {
+                width: 97%;
+            }
+
+
+    .inputfield {
+        border-top-style: hidden;
+        border-right-style: hidden;
+        border-left-style: hidden;
+        border-bottom-style: hidden;
+        background-color: #eee;
+        font-size: 14px;
+        max-height: 25px;
+    }
+
+    .Inputborder:focus {
+        border: 1px solid #1670BE;
+        box-shadow: 0 0 3px #1670BE;
+        outline-offset: 0px;
+        outline: none;
+    }
+
+    .Inputborder {
+        border: 1px solid #eee;
+        font-size: 13px !important;
+        height: 17px !important;
+        line-height: 2px !important;
+        text-emphasis-position: initial !important;
+        margin-top: 0px !important;
+        padding: 0px 0px !important;
+    }
+
+
+    .mainparent {
+        color: dodgerblue;
+        background-color: #eee;
+    }
+
+    .boderclr {
+        background-color: dodgerblue;
+    }
+
+    .vouproperty {
+        height: 95vh;
+        overflow-y: scroll;
+    }
+</style>
+<div class="box box-primary">
+    <br />
+
+    <div class="box-header with-border">
+        <div class="row">
+            <div class="col-md-11">
+                <div class="row">
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-1 control-labell"> Find</label>
+                        <div class="col-md-9">
+                            <select class="form-control select2" asp-for="devicesettingproperty" style="width:100%"></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body">
+
+        <form id="PropertyFormDataForsahay" asp-controller="Devices" asp-action="SavingsahaySettingProperty" method="post">
+
+            <table cellpadding="0" cellspacing="0" class="sptablecontent tree-loadsah">
+                <tr class="asth">
+                    <td></td>
+                    <td></td>
+
+                </tr>
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        General Setting
+                    </td>
+                </tr>
+
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        ConsumerKey
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="sa_consumerKey" value="@Model.sa_consumerKey" class="Inputborder form-control" />
+                    </td>
+
+                </tr>
+
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        ConsumerSecret
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="sa_consumerSecret" value="@Model.sa_consumerSecret" class="Inputborder form-control" />
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        BaseUrl
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="sa_baseUrl" value="@Model.amole_apiPassword" class="Inputborder form-control" />
+                    </td>
+
+                </tr>
+            </table>
+            <input asp-for="sa_devicecode" hidden />
+        </form>
+    </div>
+</div>
+<script>
+    function TreeFunctionproprty() {
+        $(document).ready(function () {
+            $('.tree-basic').treegrid();
+
+            $('.tree-loadsah').treegrid({
+                source: function (id, response) {
+                    if (id != 1) response(['']);
+                    else response(['']);
+                }
+            });
+
+        });
+    }
+    TreeFunctionproprty();
+</script>
+<script>
+    $('.attributdata').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).children('.inputfield').val();*/
+        var value = $(this).text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).closest("tr").addClass('boderclr');
+        $('#deviceproperty').html(value);
+
+    });
+    $('.attributcurrvalue').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).siblings().children('.inputfield').val();*/
+        var value = $(this).siblings().text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).siblings().addClass("boderclr");
+        $('#deviceproperty').html(value);
+
+    });
+    $("#propertysect").change(function () {
+        var value = $(this).select2('data')[0].text;
+        $(".boderclr").removeClass("boderclr");
+        $("input[name*='" + value + "']").addClass('boderclr');
+        $("input[name*='" + value + "']").closest("tr").addClass('boderclr');
+
+        $('#deviceproperty').html(value);
+    });
+
+</script>
+<script>
+    var devicecode = "";
+
+    $(document).on("click", ".devicepropertysetting", function () {
+        devicecode = $(this).data('types');
+
+        $('#@nameof(Model.sa_devicecode)').val(devicecode);
+
+        $('#@nameof(Model.devicesettingproperty)').select2({
+            placeholder: 'device',
+            allowclear: true,
+        ajax: {
+            url: '@Url.Action("getdeviceforPROPERTY", "Devices")',
+            dataType: 'json',
+            data: { DEVICECODE: devicecode },
+                data: function (params)
+                {
+                return {
+                    q: params.term,
+                    page: params.page,
+                    other: devicecode,
+                };
+                },
+                processResults: function (data, params)
+                {
+                return data;
+                },
+                cache: true
+        },
+        });
+    });
+</script>
+
+<script>
+
+    var getdevicecode = "";
+    var getpassword = "";
+
+    $(document).on("click", ".devicepropertysetting", function () {
+        getdevicecode = $(this).data('types');
+        sahaySetting(getdevicecode);
+
+        });
+    $(document).on("click", '#btnDevicesettingImport', function () {
+        var devcode = $('#devicesettingpropertyInindex').val();
+        sahaySetting(devcode);
+    });
+    function sahaySetting(devcode) {
+          $.ajax({
+                type: "POST",
+                dataType: 'json',
+                url: '@Url.Action("getPropertycurrentvalue", "Devices")',
+              data: { code: devcode},
+
+                success: function (data) {
+                      $('#@nameof(Model.sa_consumerKey)').val("");
+                      $('#@nameof(Model.sa_consumerSecret)').val("");
+                      $('#@nameof(Model.sa_baseUrl)').val("");
+                       $.each(data, function (index, item) {
+
+                              switch (item.attribute) {
+                                  case "ConsumerKey":
+                                      $('#@nameof(Model.sa_consumerKey)').val(item?.currentValue);
+
+                                      break;
+                                  case "ConsumerSecret":
+                                      $('#@nameof(Model.sa_consumerSecret)').val(item?.currentValue);
+                                      break;
+                                  case "BaseUrl":
+                                      $('#@nameof(Model.sa_baseUrl)').val(item.currentValue);
+                                      break;
+
+                              }
+                      });
+
+                },
+                error: function (x) {
+                    alert(x.responseText);
+
+                }
+            });
+    }
+
+</script>

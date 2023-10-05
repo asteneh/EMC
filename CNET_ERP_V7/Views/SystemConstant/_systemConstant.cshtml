@@ -1,0 +1,283 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using Cnetv7BufferHolder;
+@using Newtonsoft.Json;
+@model systemSettingModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    List<ObjectDefnition> ObjectDefngsl = new List<ObjectDefnition>();
+    List<ObjectDefnition> ObjectDefnvoucher = new List<ObjectDefnition>();
+    List<ObjectDefnition> ObjectDefnevenstate = new List<ObjectDefnition>();
+    List<ObjectDefnition> ObjectDefnhouskeeping = new List<ObjectDefnition>();
+    List<ObjectDefnition> ObjectDefnpms = new List<ObjectDefnition>();
+    List<ObjectDefnition> ObjectDefnitionList = new List<ObjectDefnition>();
+
+    List<ObjectDefnitionchid> ObjectDefngslListch = new List<ObjectDefnitionchid>();
+    List<ObjectDefnitionchid> ObjectDefnvoucherch = new List<ObjectDefnitionchid>();
+    List<ObjectDefnitionchid> ObjectDefnevenstatech = new List<ObjectDefnitionchid>();
+    List<ObjectDefnitionchid> ObjectDefnhouskeepingch = new List<ObjectDefnitionchid>();
+    List<ObjectDefnitionchid> ObjectDefnpmsch = new List<ObjectDefnitionchid>();
+    List<ObjectDefnitionchid> ObjectDefnitionListch = new List<ObjectDefnitionchid>();
+    List<SystemConstantDTO> _sysdTOs = new List<SystemConstantDTO>();
+    var name = Model?.name;
+    var _sysconsList = GeneralBufferHolder.SystemConstants;
+    if (name == "Gsl Type List")
+    {
+        _sysdTOs = _sysconsList.Where(x => x.Id == 3 || x.Id == 4).ToList();
+    
+    }
+    else if (name == "Voucher Definition")
+    {
+        _sysdTOs = _sysconsList.Where(x => x.Type == "Subsystem").ToList();
+    } 
+    else if (name == "List Of Device")
+    {
+        _sysdTOs = _sysconsList.Where(x => x.Type == "Device" && x.ParentId == 9).ToList();
+    }  
+    else if (name == "Object State Definition")
+    {
+     
+        var gsltypeList = _sysconsList.Where(x => x.Type == "GSL Article" || x.Type == "GSL Consignee").ToList();
+        var vGsltype = gsltypeList?.Where(c => c.Id == 0).ToList();
+
+        var gsltype = gsltypeList?.Where(x => x.Type == "GSL Article"
+                                      || x.Type == "GSL Consignee").ToList();
+      
+        var cnetComponent = (from gsl in gsltype
+                             join cnt in _sysconsList
+                                  on gsl.Id equals cnt.Id
+
+                         select new
+                         {
+                             cnt.Id,
+                             parent = "",
+                             cnt.Description,
+                             gslcode = gsl.Id,
+                             gslcategory = gsl.Category,
+                             gsldescription = gsl.Description
+                         }).ToList();
+
+
+
+    ObjectDefngsl = cnetComponent.Select(x => new ObjectDefnition
+    {
+        code = x.Id.ToString(),
+        description = x.Description,
+        parent = "",
+        defaultcode = x.gslcode.ToString()
+
+
+
+    }).ToList();
+    ObjectDefngslListch = gsltype.Select(x => new ObjectDefnitionchid
+    {
+        category = x.Category,
+        chldcode = x.Id.ToString(),
+        chlddescription = x.Description
+
+
+
+
+    }).ToList();
+
+
+    ObjectDefnvoucher = vGsltype.Select(x => new ObjectDefnition
+    {
+        code = "Voucher",
+        description = "Voucher",
+        parent = "",
+        defaultcode = "999",
+
+    }).ToList();
+    ObjectDefnevenstate = vGsltype.Select(x => new ObjectDefnition
+    {
+        code = "Event State",
+        description = "Event State",
+        parent = "",
+        defaultcode = "1000",
+
+    }).ToList();
+    ObjectDefnpms = vGsltype.Select(x => new ObjectDefnition
+    {
+        code = "PMS",
+        description = "PMS",
+        parent = "",
+        defaultcode = "1000",
+
+    }).ToList();
+    ObjectDefnhouskeeping = vGsltype.Select(x => new ObjectDefnition
+    {
+        code = "Housekeeping",
+        description = "Housekeeping",
+        parent = "",
+        defaultcode = "1001"
+
+    }).ToList();
+
+
+
+    ObjectDefnvoucherch = vGsltype.Select(x => new ObjectDefnitionchid
+    {
+        category = "Voucher",
+        chldcode = "999",
+        chlddescription = "Voucher"
+
+    }).ToList();
+    ObjectDefnevenstatech = vGsltype.Select(x => new ObjectDefnitionchid
+    {
+        category = "Event State",
+        chldcode = "1000",
+        chlddescription = "Event State"
+
+    }).ToList();
+    ObjectDefnpmsch = vGsltype.Select(x => new ObjectDefnitionchid
+    {
+
+        category = "PMS",
+        chldcode = "1000",
+        chlddescription = "PMS"
+
+    }).ToList();
+    ObjectDefnhouskeepingch = vGsltype.Select(x => new ObjectDefnitionchid
+    {
+        category = "Housekeeping",
+        chldcode = "1001",
+        chlddescription = "Housekeeping"
+
+    }).ToList();
+
+
+    ObjectDefnitionList.AddRange(ObjectDefngsl);
+    ObjectDefnitionList.AddRange(ObjectDefnvoucher);
+    ObjectDefnitionList.AddRange(ObjectDefnevenstate);
+    ObjectDefnitionList.AddRange(ObjectDefnpms);
+    ObjectDefnitionList.AddRange(ObjectDefnhouskeeping);
+
+    ObjectDefnitionListch.AddRange(ObjectDefngslListch);
+    ObjectDefnitionListch.AddRange(ObjectDefnvoucherch);
+    ObjectDefnitionListch.AddRange(ObjectDefnevenstatech);
+    ObjectDefnitionListch.AddRange(ObjectDefnpmsch);
+    ObjectDefnitionListch.AddRange(ObjectDefnhouskeepingch);
+    }
+   
+}
+<style>
+    .systemConstantList {
+        height: 76vh;
+        white-space: nowrap;
+        cursor: pointer;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+    .activeidSetting {
+        background-color: dodgerblue;
+        width: auto;
+    }
+</style>
+
+<div style="border:1px solid #e5e5e5;" class="systemConstantList">
+    @if (name == "Object State Definition")
+    {
+        <table class="table table-border tree_loadobjectstate" id="consineeUnit_Table" width="100%">
+            <thead>
+                <tr class="asth">
+                    <th colspan="2">Description</th>
+
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in ObjectDefnitionList)
+                {
+
+                    if (string.IsNullOrEmpty(item.parent))
+                    {
+                        <tr class="treegrid-@item.code activesysConstant" onclick="GetSystemConstantDetailList('@item.code')">
+                            <td style="height:10px;">
+                                <a data-toggle="tab" onclick="ObjectDefnFunction('@item.defaultcode')" style="text-decoration-line: none; color: black !important" name="catagory" id="@item.code" class="objectstateDefinition">
+
+                                    @item.description
+                                </a>
+                            </td>
+
+                        </tr>
+
+                        var neatedchilds = ObjectDefnitionListch.Where(t => t.category == item.code).ToList();
+                        if (neatedchilds.Count > 0)
+                        {
+                            @foreach (var childitem in neatedchilds)
+                            {
+                                <tr class="treegrid-parent-@item.code activesysConstant" onclick="GetSystemConstantDetailList('@item.code')">
+                                    <td>
+                                        <a data-toggle="tab" onclick="ObjectDefnFunction('@childitem.chldcode')" style="text-decoration-line:none;text-decoration-color:black; color:black !important" name="catagory" id="@childitem.chldcode" class="objectstateDefinition">
+                                            @childitem.chlddescription
+
+                                        </a>
+                                    </td>
+
+                                </tr>
+                            }
+
+
+                        }
+
+                    }
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <table class="table table-border" id="consineeUnit_Table" width="100%">
+            <thead>
+                <tr>
+                    <th colspan="2">Description</th>
+
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in _sysdTOs)
+                {
+                    <tr onclick="GetSystemConstantDetailList('@item.Id')">
+                        <td width="20px" style="border:none !important"></td>
+                        <td style="height:17px !important" class="activesysConstant">
+                            @item.Description
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+
+    </table>
+}
+</div>
+<script>
+    $(document).on("click", ".activesysConstant", function () {
+
+        $(".activeidSetting").removeClass("activeidSetting");
+        $(this).addClass('activeidSetting');
+    });
+</script>
+<script>
+    function GetSystemConstantDetailList(code) {
+         var cate = $('#@nameof(Model.category)').val();
+         $('#@nameof(Model.chlidcategory)').val(code);
+        var type = $('#@nameof(Model.object_type)').val(code);
+        $(function () {
+            $.ajax({
+                url: '/SystemConstant/GetDetailData',
+                type: 'POST',
+                data: { code: code, cate: cate }, // send the data object with the request
+                success: function (result) {
+                    $('#SystemConsatantDetailContent').html(result);
+                },
+                error: function () {
+                    console.log('Error occurred.');
+                }
+            });
+        });
+    }
+</script>

@@ -1,0 +1,84 @@
+﻿@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var comp = sharedHelpers.GetCompany();
+    var comptin = comp?.Result?.Tin;
+    var consineeunitlist = await sharedHelpers.GetCompanyBranchsByTin(comptin);
+}
+
+
+
+<style>
+    .activeidSetting {
+        background-color: dodgerblue;
+        width: auto;
+    }
+
+    .mainsysType {
+        height: 76vh;
+        white-space: nowrap;
+        cursor: pointer;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    .idSetting {
+        cursor: pointer;
+        white-space: nowrap;
+    }
+</style>
+
+
+<div class="box-body">
+    <div style="border:1px solid #e5e5e5;" class="mainsysType">
+        <table class="table table-sm" id="GslIdSetting_table" width="100%">
+            <thead>
+                <tr class="treegrid-3 treegrid-parent-1">
+                    <th colspan="2" style="border:1px solid #e5e5e5; background-color:lightgray">Description</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in consineeunitlist)
+                {
+                    <tr onclick="GetBranchAddress('@item.Id')" class="activejobDesc">
+                        <td width="20px" style="border:none !important"></td>
+                        <td class="activeconsinee">
+                            @item.Name
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+    function GetBranchAddress(id) {
+        $('#@nameof(Model.comporgtbranchcode)').val(id);
+        $('#@nameof(Model.referenceaddress)').val(id);
+        $.ajax({
+            type: "GET",
+            dataType: 'html',
+            url: '@Url.Action("GetOrgunitdefvalue", "Company")',
+            data: { BRanchCOde: id },
+
+            success: function (data) {
+              
+                $('#Addressvaluesection').html(data);
+                showcomplocationonmap(id);
+
+            }
+        });
+    }
+    $(document).on("click", "#searchLoactionOnMap", function () {
+        compinitMap();
+    });
+</script>

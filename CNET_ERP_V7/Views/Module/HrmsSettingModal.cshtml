@@ -1,0 +1,89 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model moduleModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var comp = sharedHelpers.GetCompany();
+    var comptin = comp?.Result?.Tin;
+    var consineeunitlist = await sharedHelpers.GetCompanyBranchsByTin(comptin);
+   
+}
+
+<div class="modal fade" id="HrmsSettingModal">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <span>Sync In Branch</span>
+                </h5>
+            </div>
+            <div class="box-body">
+                <div class="modal-body">
+                    <div class="row">
+
+                        <div class="col-md-12" style="margin-top:25px">
+
+                            <div class="row">
+
+                                <div class="divTable">
+
+                                    <div class="col-md-6" style="margin-left:0px ;" id="div23">
+                                        <ul class="sidebar-men secondNav tree " data-widget="tree">
+                                            @foreach (var item in consineeunitlist)
+                                            {
+                                                <li class="nav-item treeview menu-open attachmentType" id="parent">
+                                                    <a data-toggle="tab" data-value="@item.Id/@item.Description" data-types="@item.Id" id="a123" style="text-decoration-line:none!important" name="catagory" class="Syncinorganization">
+
+                                                        <span class="labelcss" selectedValue="@item.Description">@item.Description</span>
+                                                    </a>
+
+                                                    <ul class="treeview-menu" style="padding-left:35px; background-color:white;" id="@item.Id">
+                                                    </ul>
+                                                </li>
+                                            }
+
+                                        </ul>
+
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="col-md-12">
+                    <button type="button" action="addRow" class="btn btn-default btn-sm" id="syncorgbtnSave">Ok</button>
+                    <button class="btn btn-default btn-sm" data-dismiss="modal" id="datadismisssynck">Close</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+</div>
+<script>
+    var valueitem = "";
+    $(document).ready(function () {
+
+        $(".Syncinorganization").click(function () {
+            valueitem = $(this).data("value");
+
+        });
+
+        $("#syncorgbtnSave").click(function () {
+
+            $('#syncInorg').val(valueitem);
+            $('#datadismisssynck').trigger('click');
+
+        });
+
+    });
+
+</script>

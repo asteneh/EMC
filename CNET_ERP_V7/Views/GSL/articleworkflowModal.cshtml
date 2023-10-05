@@ -1,0 +1,272 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_V7_Entities.DataModels;
+@using Newtonsoft.Json;
+@model GSLmodel;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var ArticleTypes = await sharedHelpers.GetsystemConstantById(Convert.ToInt32(Model.gslType));
+
+
+   
+    var ObjectstatedefType = await sharedHelpers.SelectsysConstantByTypeAndCategory("ObjectState Definition", "Transaction");
+    var ObjectstatedefTypeList = ObjectstatedefType?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Description }).ToArray();
+
+    var TimeFactorDefinitionType = await sharedHelpers.GetLookUpByType("Time factor");
+    var TimeFactorDefinitionTypeList = TimeFactorDefinitionType?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Description }).ToArray();
+
+    var LookupType = await sharedHelpers.SelectsysConstantByTypeAndCategory("Activity Lookup", "Activity");
+    var LookupTypeList = LookupType?.Select(t => new CNET_ERP_V7.Models.SelectorModel.Select2Result { id = t.Id, text = t.Description }).ToArray();
+
+}
+
+<style>
+   .workflowmodal{
+        width:50%;
+    }
+</style>
+
+
+<div class="modal fade" id="articleworkflowMdalMap">
+    <div class="modal-dialog workflowmodal ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <img src="~/images/Cnets.jpg" alt="CNET" />
+                    <span>Work Flow For @ArticleTypes?.FirstOrDefault()?.Description </span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                </h5>
+
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form class="form-horizontal" id="articleworkflowmodulNewFormData" onsubmit="return articleworkflowNewFormFunction()"  asp-controller="GSL" asp-action="createArticleworkflow" method="post">
+                        <div class="col-md-12">
+                                <button class="btn btn-app" type="reset" id="IssuedbtnNew"> <i class="fa fa-file-o"></i>New</button>
+                                <button type="submit" action="addRow" class="btn btn-app" id="articleworkflowbtnNewsave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                                <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                           
+                        </div>
+
+                        <div class="col-md-12" style="margin-top:25px">
+                            <input asp-for="codewrflart" hidden />
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Description</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="descriptionwrflart" class="form-control select2" style="width:100%;">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="descriptionwrflart"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Index</label>
+                                    <div class="col-md-9">
+                                        <input asp-for="indexwrflart" class="form-control" value="" min="0" style="width:77%;">
+                                        <span asp-validation-for="indexwrflart"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    
+                                    <label class="col-md-3 control-label text right">Is Manual</label>
+                                    <div class="col-md-1">
+                                        <input asp-for="isManualwrflart" type="checkbox" />
+                                        <span asp-validation-for="isManualwrflart"></span>
+                                    </div>
+                                    <label class="col-md-2 col-md-offset-2 control-label text right">Is Print</label>
+                                    <div class="col-md-1">
+                                        <input asp-for="isPrintwrflart" type="checkbox"  />
+                                        <span asp-validation-for="isPrintwrflart"></span>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label text right">Max Repeat</label>
+                                    <div class="col-md-3">
+                                        <input asp-for="maxRepeatwrflart" class="form-control" min="0" />
+                                        <span asp-validation-for="maxRepeatwrflart"></span>
+                                    </div>
+
+                                    <label class="col-md-2 control-label text right">sequence</label>
+                                    <div class="col-md-1">
+                                        <input asp-for="sequencewrflart"  />
+                                        <span asp-validation-for="sequencewrflart"></span>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Object State</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="objectStateDefinitionwrflart" class="form-control select2" style="width:100%;">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="objectStateDefinitionwrflart"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label text right">Required Time</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="requiredTimewrflart" class="form-control" min="0" />
+                                        <span asp-validation-for="requiredTimewrflart"></span>
+                                    </div>
+                                    
+
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Remark</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="remarkwrflart" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="remarkwrflart"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <input asp-for="Vouchercodeforworkflowart" hidden />
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+    var getGSLCODE= '@Model.gslType';
+    $('#@nameof(Model.Vouchercodeforworkflowart)').val(getGSLCODE);
+</script>
+<script>
+
+    var getgslworkflow = '@Model.gslType';
+
+    function articleworkflowNewFormFunction() {
+        var $form = $('#articleworkflowmodulNewFormData');
+        var data = $form.serialize();
+        var action = $('#articleworkflowmodulNewFormData').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+           
+            success: function (data) {
+                if (data.saved == true) {
+                    GetGslWorkFlow(getgslworkflow);
+                    CleararticleworkflowModal();
+                    swal("", data.result, "success");
+                }
+                else {
+                    swal("", data.result, "error");
+
+                }
+            
+            },
+        });
+        return false;
+    };
+
+
+</script>
+
+<script>
+
+
+    $('#@nameof(Model.timeFactorwrflart)').select2({
+        data:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(TimeFactorDefinitionTypeList)),
+        placeholder: "",
+        allowClear: true
+
+    });
+
+    $('#@nameof(Model.objectStateDefinitionwrflart)').select2({
+        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ObjectstatedefTypeList)),
+        placeholder: "",
+        allowClear: true
+
+    });
+    $('#@nameof(Model.descriptionwrflart)').select2({
+      data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(LookupTypeList)),
+        placeholder: "",
+        allowClear: true
+  });
+</script>
+
+<script>
+    $(document).on("click", "#btnNewgslSetting", function () {
+                $('#@nameof(Model.codewrflart)').val("");
+                $('#@nameof(Model.descriptionwrflart)').val("").trigger('change');
+                $('#@nameof(Model.isManualwrflart)').prop('checked', "");
+                $('#@nameof(Model.objectStateDefinitionwrflart)').val("").trigger('change');
+                $('#@nameof(Model.requiredTimewrflart)').val("");
+                $('#@nameof(Model.timeFactorwrflart)').val("").trigger('change');
+                $('#@nameof(Model.maxRepeatwrflart)').val("");
+                $('#@nameof(Model.sequencewrflart)').prop('checked', "");
+                $('#@nameof(Model.isPrintwrflart)').prop('checked', "");
+                $('#@nameof(Model.remarkwrflart)').val("");
+    });
+     $(document).on("click", ".btnDeletetearticleworkflow", function () {
+        var code = $(this).data('code');
+        var  gslcode = '@Model.gslType';
+        swal({
+            title: "are you sure to delete this ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "POST",
+                        dataType: 'json',
+                        url: '@Url.Action("DeletearticleWorkflow", "GSL")',
+                        data: { code: code, gslcode: gslcode },
+
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        success: function (data) {
+                            swal("", data, "success");
+                            GetGslWorkFlow(gslcode);
+                        }
+                    });
+                }
+            });
+
+      });
+    function CleararticleworkflowModal() {
+                $('#@nameof(Model.codewrflart)').val("");
+                $('#@nameof(Model.descriptionwrflart)').val("").trigger('change');
+                $('#@nameof(Model.isManualwrflart)').prop('checked', "");
+                $('#@nameof(Model.objectStateDefinitionwrflart)').val("").trigger('change');
+                $('#@nameof(Model.requiredTimewrflart)').val("");
+                $('#@nameof(Model.timeFactorwrflart)').val("").trigger('change');
+                $('#@nameof(Model.maxRepeatwrflart)').val("");
+                $('#@nameof(Model.sequencewrflart)').prop('checked', "");
+                $('#@nameof(Model.isPrintwrflart)').prop('checked', "");
+                $('#@nameof(Model.remarkwrflart)').val("");
+    }
+</script>
+
+
+
+
+
+

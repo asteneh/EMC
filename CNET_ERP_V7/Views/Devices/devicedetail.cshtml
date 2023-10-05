@@ -1,0 +1,153 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Cnetv7BufferHolder;
+@using Newtonsoft.Json;
+@model Devicemodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var deviceDetail = Model.deviceDetail;
+
+    var connectionList = await sharedHelpers.GetSystemConstantByCat("Connection Type");
+    var deviceviewList = await sharedHelpers.SelectDevice();
+}
+<style>
+    .vIdDefiniation {
+        height: 77vh;
+        overflow-y: scroll;
+        overflow-x: scroll;
+    }
+
+    .vIdDefiniation {
+        white-space: nowrap
+    }
+
+    .vIdDefiniation {
+        overflow-y: auto; /* make the table scrollable if height is more than 200 px  */
+        height: 77vh /* gives an initial height of 200px to the table */
+    }
+
+    .vIdDefiniation th {
+            position: sticky; /* make the table heads sticky */
+            top: 0px; /* table head will be placed from the top of the table and sticks to it */
+        }
+
+   /*.vIdDefiniation::-webkit-scrollbar {
+        display: none;
+    }*/
+
+    /*table {
+            border-collapse: collapse;*/ /* make the table borders collapse to each other */
+    /*width: 100%;
+        }*/
+
+    th,
+    td {
+        padding: 0 0 !important;
+        border: 1px solid #ccc;
+    }
+
+    th {
+        background-color: rgb(179, 236, 255)
+    }
+
+    .devHeader{
+        white-space:nowrap;
+    }
+
+    .devicedetail {
+        white-space:nowrap;
+    }
+    </style>
+<div class="box box-primary">
+
+    <div class="box-body vIdDefiniation">
+        <table id="application_server_device" class="table table-striped" style="background-color:#ffffff">
+            <thead class="devHeader">
+                <tr>
+                    <th>Device Name</th>
+                    <th>Connection TYpe</th>
+                    <th>Host</th>
+                    <th>Device Value</th>
+                    <th>Ip Port</th>
+                    <th>Serial Port</th>
+                    <th>Ip Address</th>
+                    <th>Mac Address</th>
+                    <th>BaudRate</th>
+                    <th>Is Active</th>
+                    <th>Brand</th>
+                    <th>Model</th>
+                    <th>remark</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (deviceDetail != null && deviceDetail.Count() > 0)
+                {
+                    @foreach (var item in deviceDetail)
+                    {
+                   
+                            var conntype = connectionList.Where(x => x.Id == item.ConnectionType)?.FirstOrDefault()?.Description;
+                            var host = deviceviewList.Where(x => x.Id == item.Host)?.FirstOrDefault()?.MachineName;
+                           var baudrate = GeneralBufferHolder.SystemConstants.Where(x => x.Id == item.BaudRate)?.FirstOrDefault()?.Description;
+                        <tr class="devicedetail">
+                                <td>@item.Name</td>
+                                <td>@conntype</td>
+                                <td>@host</td>
+                                <td>@item.DeviceValue</td>
+                                <td>@item.IpPort</td>
+                                <td>@item.SerialPort</td>
+                                <td>@item.IpAddress</td>
+                                <td>@item.MacAddress</td>
+                                <td>@item?.BaudRate</td>
+                                <td> <input class="form-check-input" type="checkbox" id="" @(Convert.ToBoolean(item.IsActive) ? "checked" : "") onclick="return false" /></td>
+                                <td>@item.Brand</td>
+                                <td>@item.Model</td>
+                                <td>@item.Remark</td>
+                                <td><a class=" btn btn-social-icon btn-xs" onclick="EditDevicesMaintainFunction('@item.Article','true')" data-toggle="modal"><i class="fa fa-edit"></i></a></td>
+                                <td><a href="#" class=" btn btn-social-icon btn-xs btnDeletedevicedetail" data-code="@item.Article"><i class="fa fa-trash"></i></a></td>
+
+                            </tr>
+                        }
+                  
+                }
+            </tbody>
+        </table>
+        @*<span id="appliserver"
+        </span>*@
+
+    </div>
+</div>
+
+<script>
+    function EditDevicesMaintainFunction(CODE,isUpdate) {
+        var code = CODE;
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: '@Url.Action("GetdevicemINBycode", "Devices")',
+            data: { code: code },
+            success: function (data) {
+                $('#@nameof(Model.fixedassetid)').val(data.artcode);
+                $('#@nameof(Model.fixedassetidupdate)').val(data.artupdate);
+                $('#@nameof(Model.devicename)').val(data.deviname);
+                $('#@nameof(Model.connctionTYpe)').val(data.conntype).trigger('change');
+                $('#@nameof(Model.host)').val(data.hostname).trigger('change');
+                $('#@nameof(Model.devicevalue)').val(data.devicevalue);
+                $('#@nameof(Model.Isactive)').prop('checked', data.isactive);
+                $('#@nameof(Model.brand)').val(data.brand);
+                $('#@nameof(Model.model)').val(data.model).trigger('change');
+                $('#@nameof(Model.baud_rate)').val(data.baud).trigger('change');
+                $('#@nameof(Model.remark)').val(data.remark);
+                $('#@nameof(Model.devie_Port)').val(data.ipport);
+                $('#@nameof(Model.ip_address)').val(data.ipadd);
+                $('#@nameof(Model.device_mac)').val(data.macadd);
+                $('#@nameof(Model.serial_port)').val(data.serialport);
+                $('#@nameof(Model.DeviceMaintanflage)').val(isUpdate);
+
+                $('#devicemaintainmapmodal').modal("show");
+            },
+        });
+    }
+
+</script>

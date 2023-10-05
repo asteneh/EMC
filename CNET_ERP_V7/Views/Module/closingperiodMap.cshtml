@@ -1,0 +1,95 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model moduleModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var use_period = await sharedHelpers.GetSystemConstantByCat("Period Type");
+
+}
+
+<div class="modal fade" id="closingPeriodModal">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+          
+            <div class="box-body">
+                <div class="modal-body">
+                    <div class="row">
+                      
+                            <div class="col-md-12" style="margin-top:25px">
+
+                                <div class="row">
+
+                                    <div class="divTable">
+
+                                        <div class="col-md-6" style="margin-left:0px ;" id="div23">
+                                            <ul class="sidebar-men secondNav tree " data-widget="tree" id="attachement_nav">
+                                                <li class="nav-item treeview menu-open attachmentType" id="parent">
+                                                    <a data-toggle="tab" data-value="None" data-types="None" id="a123" style="text-decoration-line:none!important" name="catagory" class="addUserPeriodItem">
+
+                                                        <span class="labelcss" selectedValue="None">None</span>
+                                                    </a>
+
+                                                    <ul class="treeview-menu" style="padding-left:35px; background-color:white;" id="None">
+                                                    </ul>
+                                                </li>
+                                                @foreach (var item in use_period)
+                                                {
+                                                    <li class="nav-item treeview menu-open attachmentType" id="parent">
+                                                        <a data-toggle="tab" data-value="@item.Description" data-types="@item.Id" id="a123" style="text-decoration-line:none!important" name="catagory" class="addUserPeriodItem">
+
+                                                            <span class="labelcss" selectedValue="@item.Description">@item.Description</span>
+                                                        </a>
+
+                                                        <ul class="treeview-menu" style="padding-left:35px; background-color:white;" id="@item.Id">
+                                                        </ul>
+                                                    </li>
+                                                }
+
+                                            </ul>
+
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+                    </div>
+
+                </div>
+                <div class="col-md-12">
+                    <button type="button" action="addRow" class="btn btn-default btn-sm" id="closfrequencybtnSave">Ok</button>
+                    <button class="btn btn-default btn-sm" data-dismiss="modal" id="datadismisclosingperiod">Close</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+</div>
+<script>
+    var valueitem = "";
+    $(document).ready(function () {
+
+        $(".addUserPeriodItem").click(function () {
+            valueitem = $(this).data("value");
+
+        });
+
+        $("#closfrequencybtnSave").click(function () {
+
+            $('#financhclosing_period_type').val(valueitem);
+            $('#closing_period_type').val(valueitem);
+            $('#product_closing_period').val(valueitem);
+            $('#pmsclosingperiod').val(valueitem);
+            $('#datadismisclosingperiod').trigger('click');
+          
+           
+        });
+
+    });
+
+</script>

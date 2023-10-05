@@ -1,0 +1,715 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain;
+@using Newtonsoft.Json;
+@model Devicemodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var codemodel = Model.DeviceType;
+    var devicename = await sharedHelpers.GetdeviceById(Model?.DeviceType);
+    var deviceTypecode = devicename?.FirstOrDefault()?.Description;
+    int sysoldvalue = 1212121212;
+    var deviceConfig = await sharedHelpers.GetConfigurationByRefandPref(Model?.deviceId.ToString(), CNETConstants.DEVICE);
+
+}
+<style>
+    .sptablecontent {
+        border-collapse: collapse;
+        background-color: #fff;
+        width: 98%;
+        margin-left: 15px;
+    }
+
+        .sptablecontent .asth {
+            font-weight: bold;
+        }
+
+        .sptablecontent th, table td {
+            padding: 1px;
+            border: 1px solid #ccc;
+           
+        }
+        .sptablecontent th, table tr {
+          
+            height:3px;
+        }
+
+        .sptablecontent, .sptablecontent .sptablecontent td {
+            border: 0px solid #ccc;
+        }
+
+            .sptablecontent [type=text], select {
+                width: 100%;
+            } 
+            .sptablecontent div {
+                width: 98%;
+            }
+    #tvlogostyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #weastyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #phystyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #alarmstyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #hotelstyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #roomstyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #mediastyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #IIsustyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+    #attachstyle {
+        position: absolute;
+        background-color: #eee;
+    }
+
+  
+
+  
+    .inputfield {
+        border-top-style: hidden;
+        border-right-style: hidden;
+        border-left-style: hidden;
+        border-bottom-style: hidden;
+        background-color: #eee;
+      
+        font-size: 14px;
+        max-height: 25px;
+    }
+
+    .inputfield {
+        border-top-style: hidden;
+        border-right-style: hidden;
+        border-left-style: hidden;
+        border-bottom-style: hidden;
+        background-color: #eee;
+        font-size: 14px;
+        max-height: 25px;
+    }
+
+    .Inputborder:focus {
+        border: 1px solid #1670BE;
+        box-shadow: 0 0 3px #1670BE;
+        outline-offset: 0px;
+        outline: none;
+    }
+
+    .Inputborder {
+        border: 1px solid #eee;
+        font-size: 13px !important;
+        height: 17px !important;
+        line-height: 2px !important;
+        text-emphasis-position: initial !important;
+        margin-top: 0px !important;
+        padding: 0px 0px !important;
+    }
+
+
+    .mainparent {
+        color: dodgerblue;
+        background-color: #eee;
+    }
+
+    .boderclr {
+        background-color: dodgerblue;
+    }
+
+</style>
+
+<div class="box box-primary">
+    <br />
+
+    <div class="box-header with-border">
+      @*  <div class="box-tools">*@
+            <div class="row">
+                <div class="col-md-11">
+                    <div class="row">
+                        <div class="form-group form-group-sm">
+                        <label class="col-md-1 control-labell"> Find</label>
+                            <div class="col-md-10">
+                                <input type="text" id="filterIpserverSetting" style="display:flex;width:100%;" class="form-control" placeholder="Search By Name">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+    <div class="box-body">
+        @foreach (var item in deviceConfig)
+        {
+            switch (item.Attribute)
+            {
+
+                case "CloseScheduleAfter":
+                    Model.close_schedule_after = item.CurrentValue;
+                    break;
+                case "IISUpdateURl":
+                    Model.iIIS_UPDATE_url = item.CurrentValue;
+                    break;
+
+                case "UpdateFrequancy":
+                    Model.Update_frequancy = item.CurrentValue;
+                    break;
+                case "PhysicalUpdateURl":
+                    Model.physical_update_url = item.CurrentValue;
+                    break;
+                case "AttachmentURl":
+                    Model.attachement_url = item.CurrentValue;
+                    break;
+                case "ScrollText":
+                    Model.scroll_text = item.CurrentValue;
+                    break;
+
+                case "TV Logo":
+                    Model.tv_logo = item.CurrentValue;
+                    break;
+                case "Back Ground Music":
+                    Model.back_ground_music = item.CurrentValue;
+                    break;
+                case "Back Ground Music Volume":
+                    Model.back_ground_music_volume = item.CurrentValue;
+                    break;
+                case "Alarm Music":
+                    Model.Alarm_music = item.CurrentValue;
+                    break;
+                case "Weather Service URL":
+                    Model.weather_services_url = item.CurrentValue;
+                    break;
+                case "Room Service POS":
+                    Model.room_servies_pos = item.CurrentValue;
+                    break;
+                case "MediaRootPath":
+                    Model.midia_root_path = item.CurrentValue;
+                    break;
+                case "VOD Purchase Rule":
+                    Model.vod_purshes_rule = item.CurrentValue;
+                    break;
+                case "Hotel Picture":
+                    Model.hotel_picture = item.CurrentValue;
+                    break;
+                case "City":
+                    Model.city_name = item.CurrentValue;
+                    break;
+                case "Refresh":
+                    Model.refresh_time = item.CurrentValue;
+                    break;
+
+            }
+        }
+        <form id="IptVFormData" method="post">
+            <table cellpadding="0" cellspacing="0" class="sptablecontent  tree-loadiptv" width="100%" id="IpserverSetting">
+                <tr class="asth">
+                    <td></td>
+                    <td></td>
+
+                </tr>
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        App Update Settings
+                    </td>
+                </tr>
+
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        CloseScheduleAfter
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (string.IsNullOrEmpty(Model.close_schedule_after))
+                        {
+                            <input asp-for="close_schedule_after" value="0" type="text" maxlength="9" class="Inputborder" onkeypress="return iscloseschedule(event)" autocomplete="off" />
+                        }
+                        else
+                        {
+                            <input asp-for="close_schedule_after" value="@Model.close_schedule_after" type="text" maxlength="9" class="Inputborder" onkeypress="return iscloseschedule(event)"  autocomplete="off"/>
+
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        IISUpdateURl
+                    </td>
+                    <td class="attributcurrvalue">
+                        <div class="input-group">
+                            @if (string.IsNullOrEmpty(Model.iIIS_UPDATE_url))
+                            {
+                                <input asp-for="iIIS_UPDATE_url" id="display_iisufile" value="/server.." onfocus="this.style.background='white'" class="Inputborder" autocomplete="off">
+                                <label for="Iupdate_URL_file" id="IIsustyle">...</label>
+
+                            }
+                            else
+                            {
+                                <input asp-for="iIIS_UPDATE_url" id="display_iisufile" value="@Model.iIIS_UPDATE_url" onfocus="this.style.background='white'" class="Inputborder" autocomplete="off">
+                                <label for="Iupdate_URL_file" id="IIsustyle">...</label>
+
+                            }
+                        </div>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        PhysicalUpdateURl
+                    </td>
+                    <td class="attributcurrvalue">
+                        <div class="input-group">
+                            @if (string.IsNullOrEmpty(Model.physical_update_url))
+                            {
+                                <input asp-for="physical_update_url" id="display_physicalfile" value="/server.." onfocus="this.style.background='white'" class="Inputborder" autocomplete="off">
+                                <label for="physical_update_file" id="phystyle">...</label>
+
+                            }
+                            else
+                            {
+                                <input asp-for="physical_update_url" id="display_physicalfile" value="@Model.physical_update_url" onfocus="this.style.background='white'" class="Inputborder" autocomplete="off">
+                                <label for="physical_update_file" id="phystyle">...</label>
+
+                            }
+                        </div>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        UpdateFrequancy
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (string.IsNullOrEmpty(Model.Update_frequancy))
+                        {
+                            <input asp-for="Update_frequancy" value="0" class="Inputborder" maxlength="9" onkeypress="return iscloseschedule(event)" autocomplete="off" />
+
+                        }
+                        else
+                        {
+
+                            <input asp-for="Update_frequancy" value="@Model.Update_frequancy" class="Inputborder" maxlength="9" onkeypress="return iscloseschedule(event)" autocomplete="off" />
+
+                        }
+                    </td>
+
+                </tr>
+
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        IP TV Setting
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Alarm Music
+                    </td>
+                    <td class="attributcurrvalue">
+                        <div class="input-group">
+                            @if (string.IsNullOrEmpty(Model.Alarm_music))
+                            {
+                                <input asp-for="Alarm_music" id="display_alarmusicfile" value="/server.." onfocus="this.style.background='white'" class="Inputborder" autocomplete="off">
+                                <label for="alarm_music_file" id="alarmstyle">...</label>
+
+                            }
+                            else
+                            {
+                                <input asp-for="Alarm_music" id="display_alarmusicfile" value="@Model.Alarm_music" onfocus="this.style.background='white'" class="Inputborder" autocomplete="off">
+                                <label for="alarm_music_file" id="alarmstyle">...</label>
+
+                            }
+                        </div>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        AttachmentURl
+                    </td>
+                    <td class="attributcurrvalue">
+                        <div class="input-group">
+                            @if (string.IsNullOrEmpty(Model.attachement_url))
+                            {
+                                <input asp-for="attachement_url" id="display_attachfile" value="/server.." onfocus="this.style.background='white'" class="Inputborder" autocomplete="off">
+                                <label for="attach_url_file" id="attachstyle">...</label>
+
+                            }
+                            else
+                            {
+                                <input asp-for="attachement_url" id="display_attachfile" value="@Model.attachement_url" onfocus="this.style.background='white'" class="Inputborder" autocomplete="off">
+                                <label for="attach_url_file" id="attachstyle">...</label>
+
+                            }
+                        </div>
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Back Ground Music
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="back_ground_music" value="@Model.back_ground_music" class="Inputborder"  autocomplete="off"/>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Back Ground Music Volume
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (string.IsNullOrEmpty(Model.back_ground_music_volume))
+                        {
+                            <input asp-for="back_ground_music_volume" value="50" maxlength="9" class="Inputborder" onkeypress="return iscloseschedule(event)" autocomplete="off" />
+                        }
+                        else
+                        {
+                            <input asp-for="back_ground_music_volume" value="@Model.back_ground_music_volume" class="Inputborder" onkeypress="return iscloseschedule(event)" maxlength="9" autocomplete="off"/>
+
+                        }
+
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Hotel Picture
+                    </td>
+                    <td class="attributcurrvalue">
+                        <div class="input-group">
+                            @if (string.IsNullOrEmpty(Model.hotel_picture))
+                            {
+                                <input asp-for="hotel_picture" id="display_hotelfile" value="/server.." onfocus="this.style.background='white'" class="Inputborder" autocomplete="off">
+                                <label for="hotel_picture_file" id="hotelstyle">...</label>
+
+                            }
+                            else
+                            {
+                                <input asp-for="hotel_picture" id="display_hotelfile" value="@Model.hotel_picture" onfocus="this.style.background='white'" class="Inputborder" autocomplete="off">
+                                <label for="hotel_picture_file" id="hotelstyle">...</label>
+
+                            }
+                        </div>
+
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Media Root Path
+                    </td>
+                    <td class="attributcurrvalue">
+                        <div class="input-group">
+                            @if (string.IsNullOrEmpty(Model.midia_root_path))
+                            {
+                                <input asp-for="midia_root_path" id="display_mediafile" value="/server.." onfocus="this.style.background='white'" class="Inputborder" autocomplete="off">
+                                <label for="midia_root_path_file" id="mediastyle">...</label>
+
+                            }
+                            else
+                            {
+                                <input asp-for="midia_root_path" id="display_mediafile" value="@Model.midia_root_path" onfocus="this.style.background='white'" class="Inputborder" autocomplete="off">
+                                <label for="midia_root_path_file" id="mediastyle">...</label>
+
+                            }
+                        </div>
+
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Scroll Text
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (string.IsNullOrEmpty(Model.scroll_text))
+                        {
+                            <input asp-for="scroll_text" value="" class="Inputborder" autocomplete="off" />
+                        }
+                        else
+                        {
+                            <input asp-for="scroll_text" value="@Model.scroll_text" class="Inputborder"  autocomplete="off"/>
+                        }
+
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        TV Logo
+                    </td>
+                    <td class="attributcurrvalue">
+                        <div class="input-group">
+                            @if (string.IsNullOrEmpty(Model.tv_logo))
+                            {
+                                <input asp-for="tv_logo" id="display_tvlogofile" value="/server.." onfocus="this.style.background='white'" class="Inputborder" autocomplete="off">
+                                <label for="TV_logo_file" id="tvlogostyle">...</label>
+
+                            }
+                            else
+                            {
+                                <input asp-for="tv_logo" id="display_tvlogofile" value="@Model.tv_logo" onfocus="this.style.background='white'" class="Inputborder" autocomplete="off">
+                                <label for="TV_logo_file" id="tvlogostyle">...</label>
+
+                            }
+                        </div>
+
+                    </td>
+
+                </tr>
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Room Service POS
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Room Service POS
+                    </td>
+                    <td class="attributcurrvalue">
+                        <div class="input-group">
+                            @if (string.IsNullOrEmpty(Model.room_servies_pos))
+                            {
+                                <input asp-for="room_servies_pos" id="display_roomfile" value="/server.." onfocus="this.style.background='white'" class="Inputborder" autocomplete="off">
+                                <label for="room_srvices_file" id="roomstyle">...</label>
+
+                            }
+                            else
+                            {
+                                <input asp-for="room_servies_pos" id="display_roomfile" value="@Model.room_servies_pos" onfocus="this.style.background='white'" class="Inputborder" autocomplete="off">
+                                <label for="room_srvices_file" id="roomstyle">...</label>
+
+                            }
+                        </div>
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        VOD Purchase Rule
+                    </td>
+                    <td class="attributcurrvalue">
+                        <select asp-for="vod_purshes_rule" asp-items="Model.vod_purshes_rules" class="form-control custom-select Inputborder">
+                        </select>
+
+                    </td>
+
+                </tr>
+                @{sysoldvalue = sysoldvalue + 1;}
+
+                <tr class="treegrid-@sysoldvalue mainparent">
+                    <td colspan="2">
+                        Weather Service
+                    </td>
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        City
+                    </td>
+                    <td class="attributcurrvalue">
+                        @if (string.IsNullOrEmpty(Model.city_name))
+                        {
+                            <input asp-for="city_name" value="" class="Inputborder" autocomplete="off" />
+                        }
+                        else
+                        {
+                            <input asp-for="city_name" value="@Model.city_name" class="Inputborder" autocomplete="off" />
+                        }
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Refresh
+                    </td>
+                    <td class="attributcurrvalue">
+                        <input asp-for="refresh_time" value="@Model.refresh_time" class="Inputborder" onkeypress="return iscloseschedule(event)" maxlength="19" autocomplete="off" />
+
+
+                    </td>
+
+                </tr>
+                <tr class="treegrid-parent-@sysoldvalue">
+                    <td class="attributdata">
+                        Weather Service URL
+                    </td>
+                    <td class="attributcurrvalue">
+                        <div class="input-group">
+                            @if (string.IsNullOrEmpty(Model.weather_services_url))
+                            {
+                                <input asp-for="weather_services_url" id="display_weather_file" value="/server.." onfocus="this.style.background='white'" class="Inputborder" autocomplete="off">
+                                <label for="displayweather_file" id="weastyle">...</label>
+
+                            }
+                            else
+                            {
+                                <input asp-for="weather_services_url" id="display_weather_file" value="@Model.weather_services_url" onfocus="this.style.background='white'" class="Inputborder" autocomplete="off">
+                                <label for="displayweather_file" id="weastyle">...</label>
+
+                            }
+                        </div>
+                    </td>
+
+                </tr>
+            </table>
+            
+                <input class="form-control" type="file" name="tvlogofile" id="TV_logo_file" style="display:none; visibility:hidden;" onchange="gettvlogofile(this.value);">
+                <input class="form-control" type="file" name="alarmusicfile" id="alarm_music_file" style="display:none; visibility:hidden;" onchange="getalarmmusicfile(this.value);">
+                <input class="form-control" type="file" name="hotelfile" id="hotel_picture_file" style="display:none; visibility:hidden;" onchange="gethotelfile(this.value);">
+                <input class="form-control" type="file" name="updateurlIfile" id="Iupdate_URL_file" style="display:none; visibility:hidden;" onchange="getIsupdateurlfile(this.value);">
+                <input class="form-control" type="file" name="attachfile" id="attach_url_file" style="display:none; visibility:hidden;" onchange="getattachurlfile(this.value);">
+                <input class="form-control" type="file" name="mediafile" id="midia_root_path_file" style="display:none; visibility:hidden;" onchange="getmediafile(this.value);">
+                <input class="form-control" type="file" name="roomfile" id="room_srvices_file" style="display:none; visibility:hidden;" onchange="getroomfile(this.value);">
+                <input class="form-control" type="file" name="physicalfile" id="physical_update_file" style="display:none; visibility:hidden;" onchange="getphysicalfile(this.value);">
+                <input class="form-control" type="file" name="weatherfile" id="displayweather_file" style="display:none; visibility:hidden;" onchange="getweatherfile(this.value);">
+
+                <input asp-for="Iptvreferencecode" value="@Model.deviceId" hidden />
+                <input asp-for="preferencedescrption" hidden />
+
+
+        </form>
+
+
+    </div>
+</div>
+<script>
+    $(function () {
+        $("#filterIpserverSetting").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#IpserverSetting > tbody > tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+
+<script>
+
+    function TreeFunctionproprty() {
+        $(document).ready(function () {
+            $('.tree-basic').treegrid();
+
+            $('.tree-loadiptv').treegrid({
+                source: function (id, response) {
+                    if (id != 1) response(['']);
+                    else response(['']);
+                }
+            });
+
+        });
+    }
+    TreeFunctionproprty();
+</script>
+<script>
+
+    $('.attributdata').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        var value = $(this).text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).closest("tr").addClass('boderclr');
+        $('#deviceproperty').html(value);
+
+    });
+    $('.attributcurrvalue').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        var value = $(this).siblings().text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).siblings().addClass("boderclr");
+        $('#deviceproperty').html(value);
+
+    });
+    $("#devicesettingproperty").change(function () {
+        var value = $(this).select2('data')[0].text;
+        $(".boderclr").removeClass("boderclr");
+        $("input[name*='" + value + "']").addClass('boderclr');
+        $("input[name*='" + value + "']").closest("tr").addClass('boderclr');
+        $('#deviceproperty').html(value);
+    });
+
+</script>
+<script>
+
+    function iscloseschedule(evt) {
+
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        else {
+
+            return true;
+        }
+
+    }
+</script>
+<script>
+    function gettvlogofile(filename) {
+        $('#display_tvlogofile').val(filename);
+    }
+</script>
+<script>
+    function getweatherfile(filename) {
+        $('#display_weather_file').val(filename);
+    }
+</script>
+<script>
+    function getalarmmusicfile(filename) {
+        $('#display_alarmusicfile').val(filename);
+    }
+</script>
+<script>
+    function gethotelfile(filename) {
+        $('#display_hotelfile').val(filename);
+    }
+</script>
+<script>
+    function getIsupdateurlfile(filename) {
+        $('#display_iisufile').val(filename);
+    }
+</script>
+<script>
+    function getattachurlfile(filename) {
+        $('#display_attachfile').val(filename);
+    }
+</script>
+<script>
+    function getmediafile(filename) {
+        $('#display_mediafile').val(filename);
+    }
+</script>
+<script>
+    function getroomfile(filename) {
+        $('#display_roomfile').val(filename);
+    }
+</script>
+<script>
+    function getphysicalfile(filename) {
+        $('#display_physicalfile').val(filename);
+    }
+</script>

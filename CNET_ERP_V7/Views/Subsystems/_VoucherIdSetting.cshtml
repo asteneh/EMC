@@ -1,0 +1,20 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@model VoucherSearchModel
+@{
+
+}
+<div class="row">
+    <div class="box box-primary">
+    <div class="col-md-3">
+        @await Html.PartialAsync("_cosigneeUnitList.cshtml")
+    </div>
+    <div class="col-md-9">
+        <div id="iddefinationContent">
+           @await Html.PartialAsync("_IdSettingMap.cshtml")
+        </div>
+
+    </div>
+    </div>
+</div>
+

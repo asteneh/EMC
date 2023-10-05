@@ -1,0 +1,681 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model Devicemodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var dev = Model?.DeviceType;
+    var id = Model?.deviceId;
+    var deviceTypes = await sharedHelpers.GetdeviceById(Model?.DeviceType);
+    var deviceTypecode = deviceTypes?.FirstOrDefault()?.Description;
+}
+
+<div class="nav-tabs-custom ">
+
+    <ul class="nav nav-tabs" id="main_devicesetting_tab_navv">
+
+        <li class="active">
+            <a href="#deviceProperty" data-toggle="tab" data-value="Property" data-types="" class="getselecteddestinationorsource">
+                Property
+            </a>
+
+        </li>
+        @if (deviceTypecode == "RMS POS" || deviceTypecode == "Premium RMS POS" || deviceTypecode == "PHMS POS" | deviceTypecode == "Recurring POS" || deviceTypecode == "Mobile POS" ||
+        deviceTypecode == "KDS" || deviceTypecode == "Cinema POS" || deviceTypecode == "Cinema Kiosk" || deviceTypecode == "Reservation POS" || deviceTypecode == "PMS POS")
+        {
+            <li>
+                <a href="#deviceOrderStationMapping" data-toggle="tab" data-value="Order Station Mapping" data-types="" class="getselecteddestinationorsource">
+                    Order Station Mapping
+                </a>
+
+            </li>
+        }
+
+        <li>
+            <a href="#deviceClosingReports" data-toggle="tab" data-value="Closing Reports" data-types="" class="getselecteddestinationorsource">
+                Closing Reports
+            </a>
+
+        </li>
+        @if (deviceTypecode == "RMS POS" || deviceTypecode == "Premium RMS POS")
+        {
+            <li>
+                <a href="#deviceMenuManager" data-toggle="tab" data-value="Menu Manager" data-types="" class="getselecteddestinationorsource">
+                    Menu Manager
+                </a>
+
+            </li>
+        }
+
+        <li>
+            <a href="#deviceLogHistory" data-toggle="tab" data-value="Log History" data-types="" class="getselecteddestinationorsource">
+                Log History
+            </a>
+
+        </li>
+    </ul>
+
+</div>
+<div class="tab-content getselecteddestinationorsource">
+    @if (deviceTypecode == "IP TV Server")
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-12">
+                    @await Html.PartialAsync("IpserverSeetting", new Devicemodel() {deviceId = Model.deviceId})
+                </div>
+
+            </div>
+        </div>
+    }
+    else if (deviceTypecode == "Client Cloud Server")
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-6">
+                    @await Html.PartialAsync("ClientServerProperty", new Devicemodel() {deviceId = Model.deviceId})
+                </div>
+                <div class="col-md-6">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">Client Cloud Server Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
+    else if (deviceTypecode == "File Server")
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="col-md-7">
+                        @await Html.PartialAsync("FileserverSetting",new Devicemodel() {deviceId = Model.deviceId})
+                    </div>
+                    <div class="col-md-5">
+                        <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                            <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                            <h5 style="margin-left:10px;">File Serever Setting</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
+    else if (deviceTypecode == "FTP Server")
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-7">
+                    @await Html.PartialAsync("ftpproertySetting",new Devicemodel() {deviceId = Model.deviceId})
+                </div>
+                <div class="col-md-5">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">FTP Server Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
+   
+    else if (deviceTypecode == "Email Server")
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-7">
+                    @await Html.PartialAsync("emailpropertysetting",new Devicemodel() {deviceId = Model.deviceId})
+                </div>
+                <div class="col-md-5">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">Email Server Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (deviceTypecode == "Telegram Bot Server")
+
+
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-7">
+                    @await Html.PartialAsync("telegramPropertysetting",new Devicemodel() {deviceId = Model.deviceId})
+                </div>
+                <div class="col-md-5">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">Telegram Bot Server Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (deviceTypecode == "RMS POS")
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-7">
+                    <div id="rmsContent">
+                        @await Html.PartialAsync("RMSPOSSetting",new Devicemodel() {deviceId = Model.deviceId})
+                    </div>
+
+                </div>
+                <div class="col-md-5">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">Voucher Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (deviceTypecode == "PMS POS")
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-7">
+                    @await Html.PartialAsync("pmsPosProprtysetting",new Devicemodel() {deviceId = Model.deviceId})
+                </div>
+                <div class="col-md-5">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">Voucher Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (deviceTypecode == "SMS POS" || deviceTypecode == "Duty Free POS")
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-7">
+                    @await Html.PartialAsync("smsposPropertysetting", new Devicemodel() {deviceId = Model.deviceId})
+                </div>
+                <div class="col-md-5">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">Voucher Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (deviceTypecode == "Access Control POS")
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-7">
+                    @await Html.PartialAsync("accesscontrolPropertySetting",new Devicemodel() {deviceId = Model.deviceId})
+                </div>
+                <div class="col-md-5">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">Access Control POS Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    else if (deviceTypecode == "Mobile POS")
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-7">
+                    @await Html.PartialAsync("mobileposPeropertySetting",new Devicemodel() {deviceId = Model.deviceId})
+                </div>
+                <div class="col-md-5">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">Mobile POS Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (deviceTypecode == "Cinema POS")
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-7">
+                    @await Html.PartialAsync("cinemaposPropertySetting",new Devicemodel() {deviceId = Model.deviceId})
+                </div>
+                <div class="col-md-5">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">Cinema POS Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (deviceTypecode == "NVS POS")
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-7">
+                    @await Html.PartialAsync("NvsposPropertySetting",new Devicemodel() {deviceId = Model.deviceId})
+                </div>
+                <div class="col-md-5">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">Voucher Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (deviceTypecode == "Amole OTP" || deviceTypecode == "Amole Gift Card" || deviceTypecode == "Amole Cyber Source")
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-7">
+                    @await Html.PartialAsync("amolePropertySetting")
+                </div>
+                <div class="col-md-5">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">Amole Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (deviceTypecode == "Arcade POS" )
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-7">
+                    @await Html.PartialAsync("arcadePOSSetting",new Devicemodel() {deviceId = Model.deviceId})
+                </div>
+                <div class="col-md-5">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">Arcade POS Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (deviceTypecode == "Tele Birr OTP" || deviceTypecode == "Tele Birr USSD")
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-7">
+                    @await Html.PartialAsync("telbirrsetting")
+                </div>
+                <div class="col-md-5">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">Tele Birr Payment Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    else if (deviceTypecode == "Fiscal Printer")
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-7">
+                    @await Html.PartialAsync("fiscalPrinterPropertySetting", new Devicemodel() {deviceId = Model.deviceId})
+                </div>
+                <div class="col-md-5">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">Fiscal Printer Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (deviceTypecode == "Order Printer")
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-7">
+                    @await Html.PartialAsync("OrderprinterPropertysetting",new Devicemodel() {deviceId = Model.deviceId})
+                </div>
+                <div class="col-md-5">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">Station Mapping Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (deviceTypecode == "Door Lock")
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-7">
+                    @await Html.PartialAsync("doorlockPropertySetting",new Devicemodel() {deviceId = Model.deviceId})
+                </div>
+                <div class="col-md-5">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">Voucher Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (deviceTypecode == "Access Controller")
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-7">
+                    @await Html.PartialAsync("accesscontrollerPropertySetting",new Devicemodel() {deviceId = Model.deviceId})
+                </div>
+                <div class="col-md-5">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">Voucher Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (deviceTypecode == "Domain server")
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-7">
+                    @await Html.PartialAsync("_domainServerSetting",new Devicemodel() {deviceId = Model.deviceId})
+                </div>
+                <div class="col-md-5">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">Domain Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (deviceTypecode == "E-Birr")
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-7">
+                    @await Html.PartialAsync("_Ebirrsetting")
+                </div>
+                <div class="col-md-5">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">Ebirr Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (deviceTypecode == "Sahay")
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-7">
+                    @await Html.PartialAsync("_sahay")
+                </div>
+                <div class="col-md-5">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">Sahay Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (deviceTypecode == "REFERENCE POS")
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-7">
+                    @await Html.PartialAsync("ReferencePOSSetting",new Devicemodel() {deviceId = Model.deviceId})
+                </div>
+                <div class="col-md-5">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">Reference POS Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (deviceTypecode == "Recurring POS")
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-7">
+                    @await Html.PartialAsync("_RecurringPOSSetting",new Devicemodel() {deviceId = Model.deviceId})
+                </div>
+                <div class="col-md-5">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">Recurring POS Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (deviceTypecode == "Premium RMS POS")
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-7">
+                    @await Html.PartialAsync("PremiumRMSPOSSetting",new Devicemodel() {deviceId = Model.deviceId})
+                </div>
+                <div class="col-md-5">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">Premium RMS POS Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (deviceTypecode == "Reservation POS")
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-7">
+                    @await Html.PartialAsync("ReservationPOSSetting",new Devicemodel() {deviceId = Model.deviceId})
+                </div>
+                <div class="col-md-5">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">Premium RMS POS Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (deviceTypecode == "Transportation POS")
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-7">
+                    @await Html.PartialAsync("TransportationPOSSetting",new Devicemodel() {deviceId = Model.deviceId})
+                </div>
+                <div class="col-md-5">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">Transportation POS Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (deviceTypecode == "Camera")
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-7">
+                    @await Html.PartialAsync("_CameraSetting",new Devicemodel() {deviceId = Model.deviceId})
+                </div>
+                <div class="col-md-5">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">Camera Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="active tab-pane" id="deviceProperty">
+            <div class="row">
+                <div class="col-md-7 scroll">
+                </div>
+                <div class="col-md-5">
+                    <div class="box" style="background-color: #f7ba5bc4; height:100vh;">
+                        <span id="deviceproperty" style="border:none; width:50%;margin:auto; padding:10px"></span>
+                        <h5 style="margin-left:10px;">Setting</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="tab-pane" id="deviceOrderStationMapping">
+        <div class="row">
+            <div class="col-md-6">
+                @await Html.PartialAsync("oRderstationmapping")
+            </div>
+            <div class="col-md-6">
+                <div id="preferenceValue">
+                    @await Html.PartialAsync("OrderstationCategory")
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <div class="tab-pane" id="deviceClosingReports">
+        <div class="row">
+            <div class="col-md-8">
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane" id="deviceMenuManager">
+        <div class="row">
+            <div class="col-md-12">
+                @await Html.PartialAsync("menudesigner")
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane" id="deviceLogHistory">
+        <div class="row">
+            <div class="col-md-8">
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('#main_devicesetting_tab_navv li a').click(function (e) {
+        var selecteTab = e.target.attributes['href'].value;
+
+        $('#selecteSubTab').val(selecteTab);
+        if (selecteTab) {
+            switch (selecteTab) {
+
+                case "#deviceProperty":
+                    $('#btnNewdevice').hide();
+                    $('#btnSavedeviceSetting').removeClass('displayapp');;
+                    $('#servernameforWithoutparameter').removeClass('sourcePage');
+                    $('#servernameforparameter').addClass('sourcePage');
+                    $('#devicesearch').removeClass('displayapp');
+                    $('#btnDevicesettingImport').removeClass('displayapp');
+                    break;
+                case "#deviceParametrs":
+                    $('#btnNewdevice').show();
+                    $('#btnSavedeviceSetting').addClass('displayapp');
+                    $('#servernameforWithoutparameter').addClass('sourcePage');
+                    $('#servernameforparameter').removeClass('sourcePage');
+                    $('#devicesearch').addClass('displayapp');
+                    $('#btnDevicesettingImport').addClass('displayapp');
+                    break;
+
+                case "#deviceOrderStationMapping":
+                    var stationDevice = $('#@nameof(Model.stationDevice)').val();
+                    SelectOrderStationMap(stationDevice);
+                    $('#btnNewdevice').hide();
+                    $('#btnSavedeviceSetting').removeClass('displayapp');
+                    $('#servernameforWithoutparameter').removeClass('sourcePage');
+                    $('#servernameforparameter').addClass('sourcePage');
+                    $('#devicesearch').addClass('displayapp');
+                    $('#btnDevicesettingImport').addClass('displayapp');
+                    break;
+                case "#deviceClosingReports":
+                    $('#btnNewdevice').show();
+                    $('#btnSavedeviceSetting').addClass('displayapp');
+                    $('#btnSaveForOrderstation').addClass('displayapp');
+                    $('#servernameforWithoutparameter').removeClass('sourcePage');
+                    $('#servernameforparameter').addClass('sourcePage');
+                    $('#devicesearch').addClass('displayapp');
+                    $('#btnDevicesettingImport').addClass('displayapp');
+                    $('#btnNewdeviceSetting').addClass('displayapp');
+                    break;
+                case "#deviceMenuManager":
+                    $('#btnNewdevice').show();
+                    $('#btnSavedeviceSetting').addClass('displayapp')
+                    $('#servernameforWithoutparameter').removeClass('sourcePage');
+                    $('#servernameforparameter').addClass('sourcePage');
+                    $('#devicesearch').addClass('displayapp');
+                    $('#btnDevicesettingImport').addClass('displayapp');
+
+                    break;
+                case "#deviceLogHistory":
+                    $('#btnNewdevice').show();
+                    $('#btnSavedeviceSetting').addClass('displayapp');
+                    $('#btnSaveForOrderstation').addClass('displayapp');
+                    $('#servernameforWithoutparameter').removeClass('sourcePage');
+                    $('#servernameforparameter').addClass('sourcePage');
+                    $('#devicesearch').addClass('displayapp');
+                    $('#btnDevicesettingImport').addClass('displayapp');
+                    $('#btnNewdeviceSetting').addClass('displayapp');
+                    break;
+            }
+        }
+    });
+</script>
+
+<script>
+    var deviceCode = "";
+    $('#btnNewdeviceSetting').bind("click", function () {
+        var selectedPage = $('#selecteSubTab').val();
+
+        if (selectedPage) {
+            switch (selectedPage) {
+                case "#deviceMenuManager":
+                    $('#menudesinerModalMap').modal();
+                    break;
+
+                case "#deviceParametrs":
+                    var getddevicecodeforconn = $('#device_Parameter_list .active a').data('types');
+
+                    if (getddevicecodeforconn != null) {
+                        submitfunctiongetdevicedetailforParametrsetting(getddevicecodeforconn);
+                    }
+                    else {
+                        alert(" please select the device Name");
+                    }
+                    break;
+            }
+        }
+
+    });
+
+
+</script>

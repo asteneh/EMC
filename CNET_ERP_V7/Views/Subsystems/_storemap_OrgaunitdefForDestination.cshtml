@@ -1,0 +1,142 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@model VoucherSearchModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var destination = Model?._destination;
+}
+<style>
+
+    .parentstoremap {
+        background-color: #eee;
+        width: 250px;
+    }
+
+    .icon-logo {
+        font-size: 10px;
+        font-family: FontAwesome;
+        height: 15px;
+        width: 26px;
+    }
+    .addfromtabletoheader {
+        color: dodgerblue;
+    }
+
+    .displayheader {
+        display: none;
+    }
+    .deststore {
+        background-color: #eee;
+    }
+
+    .activeidSetting {
+        background-color: dodgerblue;
+        width: auto;
+    }
+
+    .mainsysType {
+        height: 76vh;
+        white-space: nowrap;
+        cursor: pointer;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    .idSetting {
+        cursor: pointer;
+        white-space: nowrap;
+    }
+</style>
+
+<div class="box box-primary">
+   
+    <div class="box-body">
+
+        <div class="row">
+            <input asp-for="selectsoureanddestination" hidden>
+            <input asp-for="storemapisdefault" id="@nameof(Model.storemapisdefault)" hidden>
+            <input asp-for="storemapStore" id="@nameof(Model.storemapStore)" hidden>
+            <input asp-for="storemapremark" id="@nameof(Model.storemapremark)" hidden>
+            <div style="border:1px solid #e5e5e5;" class="mainsysType col-md-8">
+                <table class="table table-sm" id="consineeUnit_Table" width="100%">
+                    <thead>
+                        <tr class="treegrid-3 treegrid-parent-1">
+                            <th colspan="2" style="border:1px solid #e5e5e5; background-color:lightgray">Description</th>
+
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @if (destination != null && destination.Count() > 0)
+                        {
+                            @foreach (var item in destination)
+                            {
+                                <tr onclick="GetDestinationStoreMap('@item.Id','@item.Name')">
+                                    <td width="20px" style="border:none !important"></td>
+                                    <td class="activeconsinee">
+                                        @item.Name
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+                       
+                    </tbody>
+
+                </table>
+            </div>
+            <div class="box-tools">
+
+                <div class="col-md-3  ">
+                    <div class="box-header with-border">
+
+                        <button action="addRow" type="button" style="margin-left:10px" class="btn btn-box-tool btn-default" id="addfromheadertotabledestination" disabled>
+                            <i style="font-size:17px; height:15px;" class="fa fa-play icon-logo"></i>
+
+
+                        </button>
+                        <br />
+                        <br />
+                        <br />
+                        <button type="button" style="margin-left:10px" class="btn btn-box-tool btn-default " id="addfromtabletoheaderdestination" disabled>
+                            <i style="font-size:17px;" class="fa fa-play fa-flip-horizontal icon-logo"></i>
+                        </button>
+                        <br />
+                        <br />
+                        <br />
+                        <button type="button" style="margin-left:10px" class="btn btn-box-tool btn-default" disabled>
+                            <img class="icon-logo" src="~/images/forward_double-128.png" />
+                        </button>
+                        <br />
+                        <br />
+                        <br />
+                        <button type="button" style="margin-left:10px" class="btn btn-box-tool btn-default " disabled>
+                            <img class="icon-logo" src="~/images/doublplay.png" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <input hidden asp-for="vouchercodeforsourcanddestinationeget" />
+    </div>
+</div>
+
+<script type="text/javascript">
+    
+    function checkedFunction(){
+            var a = "";
+           
+            if ($(this).is(":checked") == true) {
+                $(".checkedvalue").prop("checked", false);
+                $(this).addClass("checkedvalueactive");
+                $(".checkedvalueactive").val();
+                var value = $(".checkedvalueactive").attr('val');
+               
+            }
+        };
+
+</script>

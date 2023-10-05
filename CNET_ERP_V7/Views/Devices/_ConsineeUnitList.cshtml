@@ -1,0 +1,132 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using Newtonsoft.Json;
+@model Devicemodel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    var comp = sharedHelpers.GetCompany();
+    var comptin = comp?.Result?.Tin;
+    var consineeunitlist = await sharedHelpers.GetCompanyBranchsByTin(comptin);
+}
+<style>
+
+    .parentidsetting {
+        padding-left: 0px;
+        padding-right: 0px;
+        margin-left: 0px;
+        margin-right: 0px;
+        font-size: 14px;
+        height: 90vh;
+        overflow-y: scroll;
+        cursor: pointer;
+    }
+
+    .activeidSetting {
+        background-color: dodgerblue;
+        width: auto;
+    }
+
+
+    .idSetting {
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .DeviceConsineeunit{
+        white-space:nowrap;
+        cursor:pointer;
+        height: 80vh;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .InnDeviceConsineeunite::-webkit-scrollbar {
+        display: none;
+    }
+    .InnDeviceConsineeunit {
+        overflow-y: scroll; /* make the table scrollable if height is more than 200 px  */
+        height: 80vh; /* gives an initial height of 200px to the table */
+    }
+
+        .InnDeviceConsineeunit thead th {
+            position: sticky; /* make the table heads sticky */
+            top: 0px; /* table head will be placed from the top of the table and sticks to it */
+        }
+
+    /*table {
+            border-collapse: collapse;*/ /* make the table borders collapse to each other */
+    /*width: 100%;
+        }*/
+
+    th,
+    td {
+        padding: 0 0 !important;
+        border: 1px solid #ccc;
+    }
+
+    th {
+    }
+</style>
+
+<div class="box box-primary">
+
+    <div class="box-body DeviceConsineeunit">
+
+        <div style="border:1px solid #e5e5e5;" class="InnDeviceConsineeunit">
+            <table class="table table-border" id="consineeUnit_Table">
+                <thead>
+                    <tr class="treegrid-3 treegrid-parent-1">
+                        <th colspan="2" style="border:1px solid #e5e5e5; background-color:lightgray">Description</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (consineeunitlist != null  && consineeunitlist.Count() > 0)
+                    {
+                        @foreach (var item in consineeunitlist)
+                        {
+                            <tr onclick="GetDeviceMaintailDetail('@item.Id')">
+                                <td width="20px" style="border:none !important"></td>
+                                <td style="height:17px !important" class="activedeconsinee">
+                                    @item.Name
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).on("click", ".activedeconsinee", function () {
+
+        $(".activeidSetting").removeClass("activeidSetting");
+        $(this).addClass('activeidSetting');
+    });
+    function GetDeviceMaintailDetail(code) {
+        $("#@nameof(Model.branchcodeforsave)").val(code);
+        var deviceCode = '@Model.DeviceType';
+        $(function () {
+            $.ajax({
+                url: '/Devices/getdevicedetailResult',
+                type: 'POST',
+                data: { code: code, deviceCode: deviceCode }, // send the data object with the request
+                success: function (result) {
+                    $('#DeviceMaintainContent').html(result);
+                },
+                error: function () {
+                    console.log('Error occurred.');
+                }
+            });
+        });
+
+    }
+
+</script>
+
+
+

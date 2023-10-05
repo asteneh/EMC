@@ -1,0 +1,45 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_V7_Entities.DataModels;
+@using Newtonsoft.Json;
+@model GSLmodel;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+
+@{
+
+    var ArticleTypes = await sharedHelpers.GetsystemConstantById(Convert.ToInt32(Model.gslType));
+
+
+    var gslTypecode = ArticleTypes?.FirstOrDefault()?.Id;
+    var gslTypecodeItem = ArticleTypes?.FirstOrDefault()?.Id.ToString();
+
+
+}
+
+<style>
+    .displaydistribution {
+        display: none;
+    }
+</style>
+<div class="row">
+    <div class="col-md-3">
+        @await Html.PartialAsync("artdistributionheader")
+
+    </div>
+
+
+    <div class="col-md-9" id="copydistributionart">
+        @await Html.PartialAsync("_artcopydistribution")
+
+    </div>
+  
+        <div class="col-md-9 displaydistribution" id="synchronizationart">
+            @await Html.PartialAsync("_artsynchronization")
+
+        </div>
+        <div class="col-md-9 displaydistribution" id="machinedistributionart">
+            @await Html.PartialAsync("_artmachinedistribution")
+
+        </div>
+
+</div>

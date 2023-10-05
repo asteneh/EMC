@@ -1,0 +1,126 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@using CNET_V7_Entities.DataModels;
+@using Newtonsoft.Json;
+@model GSLmodel;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var FieldFormats = Model.FieldFormats;
+    int count = 0;
+    var filedTYpe = Model?.fieldId;
+}
+    <div class="box box-primary">
+
+        <div class="box-body parentfiekdformattab">
+            <table id="artcle_field_format_module" class="table table-striped tree-load" style="background-color:#ffffff">
+                <thead>
+                    <tr>
+                        <th>SN</th>
+                        <th>Index</th>
+                        <th>Field</th>
+                        <th>Caption</th>
+                        <th>Width</th>
+                        <th>Color</th>
+                        @if (filedTYpe == 1617 || filedTYpe == 1621)
+                        {
+                            <th>Wrap Tex</th>
+                        }   
+                        else
+                        {
+                            <th>Is Required</th>
+                        }
+                        <th>Remark</th>
+                        <th>Edit</th>
+                        <th>delete</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (FieldFormats != null && FieldFormats.Count() > 0)
+                    {
+                        @foreach (var item in FieldFormats)
+                        {
+                            count++;
+                            <tr>
+                                <td>@count</td>
+                                <td>@item.Index</td>
+                                <td>@item.DataType</td>
+                                <td>@item.Caption</td>
+                                <td>@item.Width</td>
+                                <td> <input class="form-check-input" type="color" value="@item.Color" onclick="return false" /></td>
+                                <td> <input class="form-check-input" type="checkbox" @(Convert.ToBoolean(item.IsRequired) ? "checked" : "") onclick="return false" /></td>
+                                <td>@item.Remark</td>
+                               <td><a class="btn btn-social-icon btn-xs" onclick="EditfieldformatFunction('@item.Id')" data-toggle="modal"><i class="fa fa-edit"></i></a></td>
+                               <td><a href="#" class="btn btn-social-icon btn-xs" onclick="DeletefieldFormartFunction('@item.Id')"><i class="fa fa-trash"></i></a></td>
+                            </tr>
+                        }
+                    }
+                  
+                </tbody>
+            </table>
+        </div>
+    </div>
+ <script>
+function EditfieldformatFunction(CODE) {
+        var code = CODE;
+       $.ajax({
+            type: "GET",
+            dataType: 'json',
+            url: '@Url.Action("GetGSLfiledformatBycode", "GSL")',
+            data: { code: code},
+           success: function (data) {
+
+                $('#@nameof(Model.code_feldformatart)').val(data.id);
+               $('#@nameof(Model.fieldfrmatart)').val(data.fieldComponent).trigger('change');
+               $('#@nameof(Model.widthfrmatart)').val(data.width);
+               $('#@nameof(Model.indexfrmatart)').val(data.index);
+               $('#@nameof(Model.fontfrmatart)').val(data.font).trigger('change');
+               $('#@nameof(Model.colorfrmatart)').val(data.color).trigger('change');
+               $('#@nameof(Model.captionfrmatart)').val(data.caption);
+               $('#@nameof(Model.isrequiredfrmatart)').prop('checked', data.isRequired);
+               $('#@nameof(Model.remarkfrmatart)').val(data.remark);
+
+               $('#artfildformatModelMap').modal("show");
+            },
+        });
+    }
+    function DeletefieldFormartFunction(_idd) {
+        var _iddd = $("#@nameof(Model.filedformatcodeforheadersaveart)").val();
+        var gslcode = $('#@nameof(Model.gslType)').val();
+        swal({
+            title: "are you sure to delete this ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "POST",
+                        dataType: 'json',
+                        url: '@Url.Action("DeleteFiledformatarticle", "GSL")',
+                        data: { code: _idd },
+
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        success: function (data) {
+                            swal("", data, "success");
+                          
+                            $.ajax({
+                                type: "GET",
+                                dataType: 'html',
+                                url: '@Url.Action("getFieldformatResult", "GSL")',
+                                data: { idd: _iddd, gslcode: gslcode },
+
+                                success: function (data) {
+                                    $('#gslfieldFormatContent').html(data);
+                                }
+                            });
+
+                        }
+                    });
+                }
+            });
+
+    }
+
+ </script>

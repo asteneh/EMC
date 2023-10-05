@@ -1,0 +1,417 @@
+﻿@using CNET_ERP_V7.Models.SubSytsemModel;
+@using CNET_V7_Domain;
+@using Newtonsoft.Json;
+@model moduleModel
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    var organizationTypes = await sharedHelpers.GetsystemConstantById(Model.subSyType);
+
+    var _submoduleSetting = await sharedHelpers.GetConfigurationByRefandPref("Inventory Setting", CNETConstants.PRODUCT_INVENTORY_SUB_MODULE);
+    int oldvalue = 1111111111;
+}
+
+<style>
+    .custom-select {
+        max-height: 28px;
+        font-size: 13px;
+    }
+   
+    .sptablecontent {
+        border-collapse: collapse;
+        background-color: #fff;
+        width: 98%;
+        margin-left: 15px;
+    }
+
+        .sptablecontent .asth {
+            font-weight: bold;
+        }
+
+        .sptablecontent th, table td {
+            padding: 1px;
+            border: 1px solid #ccc;
+        }
+
+        .sptablecontent, .sptablecontent .sptablecontent td {
+            border: 0px solid #ccc;
+        }
+
+            .sptablecontent [type=text], select {
+                width: 100%;
+            }
+
+            .sptablecontent div {
+                width: 97%;
+            }
+
+    .inputfield {
+        pointer-events: none;
+        opacity: 30;
+        width: 80%;
+        height: 16px !important;
+        padding: 0px 0px !important;
+        font-size: 13px !important;
+    }
+
+    .Inputborder:focus {
+        border: 1px solid #1670BE;
+        box-shadow: 0 0 3px #1670BE;
+        outline-offset: 0px;
+        outline: none;
+    }
+
+    .Inputborder {
+        border: 1px solid #eee;
+        font-size: 13px !important;
+        height: 17px !important;
+        line-height: 2px !important;
+        text-emphasis-position: initial !important;
+        margin-top: 0px !important;
+        padding: 0px 0px !important;
+    }
+
+
+    .mainparent {
+        color: dodgerblue;
+        background-color: #eee;
+    }
+
+    .boderclr {
+        background-color: dodgerblue;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="box box-primary">
+
+            <div class="box-header with-border">
+                <div class="row">
+                    <div class="col-md-11">
+                        <div class="row">
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-1 control-labell"> Find</label>
+                                <div class="col-md-9">
+                                    <select class="form-control select2" asp-for="Warehouseprooperty" style="width:100%"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="box-body vouproperty">
+                @foreach (var item in _submoduleSetting)
+                
+                    switch (item.Attribute)
+
+                    {
+                        case "Enable Expiry Date Notification":
+                            Model.ware_EnableExpiryDateNotification = item.CurrentValue;
+                            break;
+                        case "Enable Dead Stock Notification":
+                            Model.ware_EnableDeadStockNotification = item.CurrentValue;
+                            break;
+                        case "Enable Minimum Level Notification":
+                            Model.ware_EnableMinimumLevelNotification = item.CurrentValue;
+                            break;
+                        case "Dead Stock duration in days":
+                            Model.ware_DeadStockdurationindays = item.CurrentValue;
+                            break;
+                        case "Enforce Closing":
+                            Model.ware_EnforceClosing = item.CurrentValue;
+                            break;
+                        case "Closing Period":
+                            Model.ware_ClosingPeriod = item.CurrentValue;
+                            break;
+                        case "Closing Frequency":
+                            Model.ware_EnableDeadStockNotification = item.CurrentValue;
+                            break;
+                        case "ABCAnalysisValuation":
+                            Model.ware_ABCAnalysisValuation = item.CurrentValue;
+                            break;
+                        case "Show CS Number":
+                            Model.ware_ShowCSNumber = item.CurrentValue;
+                            break;
+                        case "UpdateStockBalanceItems":
+                            Model.ware_UpdateStockBalanceItems = item.CurrentValue;
+                            break;
+                        case "StockBalanceCalculation":
+                            Model.ware_StockBalanceCalculation = item.CurrentValue;
+                            break;
+                        case "EnableStockBalanceService":
+                            Model.ware_EnableStockBalanceService = item.CurrentValue;
+                            break;
+                        case "StockBalanceServiceStarts":
+                            Model.ware_Stock_BalanceServiceStarts = item.CurrentValue;
+                            break;
+
+
+                    }
+                }
+                <form  id="warehousePropertyFormData" asp-controller="Module" asp-action="SavingwarehouseProperty" method="post">
+
+                    <table cellpadding="0" cellspacing="0" class="sptablecontent tree_loadwarehouseprop">
+                        <tr class="asth">
+                            <td></td>
+                            <td></td>
+
+                        </tr>
+
+                        <tr class="treegrid-@oldvalue mainparent">
+                            <td colspan="2">
+                                Closing Setting
+                            </td>
+                        </tr>
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Closing Frequency
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="ware_ClosingFrequency" asp-items="Model.ClosingFrequency" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Closing Period
+                            </td>
+                            <td class="attributcurrvalue" data-toggle="modal" data-1" data-target="#closingPeriodModal">
+                                <input asp-for="ware_ClosingPeriod" type="text" id="closing_period_type" class="Inputborder" readonly/>
+
+                            </td>
+                        </tr>
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Enable Dead Stock Notification
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="ware_EnableDeadStockNotification" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Enable Expiry Date Notification
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="ware_EnableExpiryDateNotification" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Enable Minimum Level Notification
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="ware_EnableMinimumLevelNotification" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder">
+                                </select>
+
+                            </td>
+                        </tr>
+
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Enforce Closing
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="ware_EnforceClosing" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+
+
+                        @*//group one*@
+                        @{oldvalue = oldvalue + 1;}
+
+                        <tr class="treegrid-@oldvalue mainparent">
+                            <td colspan="2">
+                                Inventory Setting
+                            </td>
+                        </tr>
+                      
+
+                        <tr class="treegrid-parent-@oldvalue">
+
+                            <td class="attributdata">
+                                ABC Analysis Valuation
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="ware_ABCAnalysisValuation" asp-items="Model.abcvaluation" class="form-control custom-select Inputborder">
+                                </select>
+
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+
+                                Dead Stock duration in days
+                            </td>
+                            <td class="attributcurrvalue">
+
+                                @if (string.IsNullOrEmpty(Model.ware_DeadStockdurationindays))
+                                {
+                                    <input asp-for="ware_DeadStockdurationindays" value="10" maxlength="10" onkeypress="return isNumber(event)"  class="Inputborder">
+
+                                }
+                                else
+                                {
+                                    <input asp-for="ware_DeadStockdurationindays" value="@Model.ware_DeadStockdurationindays" maxlength="10" onkeypress="return isNumber(event)"  class="Inputborder">
+
+                                }
+
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Enable Stock Balance Service
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="ware_EnableStockBalanceService" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Show CS Number
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="ware_ShowCSNumber" asp-items="Model.ENABLENOTIFICATION" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Stock Balance Calculation
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="ware_StockBalanceCalculation" asp-items="Model.stokebalance" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Stock Balance Service Starts
+                            </td>
+                            <td class="attributcurrvalue">
+                                <input asp-for="ware_Stock_BalanceServiceStarts" type="text" class="Inputborder" />
+
+                            </td>
+                        </tr>
+                        <tr class="treegrid-parent-@oldvalue">
+                            <td class="attributdata">
+                                Update Stock Balance Items
+                            </td>
+                            <td class="attributcurrvalue">
+                                <select asp-for="ware_UpdateStockBalanceItems" asp-items="Model.updaetstokebalance" class="form-control custom-select Inputborder">
+                                </select>
+                            </td>
+                        </tr>
+                      
+
+                    </table>
+
+          </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function TreeFunctionwareproprty() {
+        $(document).ready(function () {
+            $('.tree-basic').treegrid();
+
+            $('.tree_loadwarehouseprop').treegrid({
+                source: function (id, response) {
+                    if (id != 1) response(['']);
+                    else response(['']);
+                }
+            });
+
+        });
+    }
+    TreeFunctionwareproprty();
+
+</script>
+
+
+<script>
+
+
+    function isNumber(evt) {
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        else {
+
+            return true;
+        }
+
+    }
+
+
+</script>
+
+<script>
+    $('#ware_Stock_BalanceServiceStarts').timepicker({ 'timeFormat': 'H:i' });
+
+</script>
+
+
+<script>
+    var selectedCountry = "";
+
+    var row = ""
+
+    $("select.select2").change(function () {
+        selectedCountry = $(this).children("option:selected").text();
+
+        $(".bg-blue").removeClass("bg-blue");
+        //var row = $(".addvaluepropertyLisearch:contains(" + selectedCountry + "));
+        $("input[name*='" + selectedCountry + "']").addClass("bg-blue");
+        /*location.href = '#resp-table'*/
+    });
+
+
+</script>
+<script>
+    $('.attributdata').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).children('.inputfield').val();*/
+        var value = $(this).text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).closest("tr").addClass('boderclr');
+        $('#WarehouseSettingVal').html(value);
+
+    });
+    $('.attributcurrvalue').click(function () {
+        $(".boderclr").removeClass("boderclr");
+        /* var value = $(this).siblings().children('.inputfield').val();*/
+        var value = $(this).siblings().text();
+        $("input[name*='" + value + "']").addClass("boderclr");
+        $(this).siblings().addClass("boderclr");
+        $('#WarehouseSettingVal').html(value);
+
+    });
+    $("#Warehouseprooperty").change(function () {
+        var value = $(this).select2('data')[0].text;
+        $(".boderclr").removeClass("boderclr");
+        $("input[name*='" + value + "']").addClass('boderclr');
+        $("input[name*='" + value + "']").closest("tr").addClass('boderclr');
+
+        $('#WarehouseSettingVal').html(value);
+    });
+</script>

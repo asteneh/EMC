@@ -1,0 +1,245 @@
+﻿@model Companymodel
+@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+
+    //var FONTSTYLEList = await sharedHelpers.SelectLookupByType(CNET_ERP_WEB.Data_Service.CNETConstantes.FONT_STYLE);
+    //var FONTSTYLEListType = FONTSTYLEList?.Select(t => new CNET_ERP_WEB.Models.CloudSync.Select2Result { id = t.code, text = t.description }).ToArray();
+
+
+    //var FaceList = await sharedHelpers.AllselectFace();
+    //var FaceListType = FaceList?.Select(t => new CNET_ERP_WEB.Models.CloudSync.Select2Result { id = t.code, text = t.face1 }).ToArray();
+
+}
+
+<div class="modal fade" id="FontModelMap">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>
+                    <img src="~/images/Cnets.jpg" alt="CNET" />
+                    <span>Font</span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                </h5>
+
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form class="form-horizontal" id="FontNewFormData" onsubmit="return FontNewFormFunction()" asp-controller="Company" asp-action="createfont" method="post">
+                        <div class="col-md-12">
+                            <div class="box">
+                                <button class="btn btn-app" type="reset" id="IssuedbtnNew"> <i class="fa fa-file-o"></i>New</button>
+                                <button type="submit" action="addRow" class="btn btn-app" id="fontbtnNewsave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                                <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12" style="margin-top:25px">
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Description</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="font_desc" class="form-control" type="text" autocomplete="off" />
+                                        <span asp-validation-for="font_desc"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Font Face</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="font_face" class="form-control select2" style="width:86%;">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="font_face"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Color</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="font_color" class="form-control" type="color" />
+                                        <span asp-validation-for="font_color"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Font Style</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="font_style" class="form-control select2" style="width:86%;">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="font_style"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Font Size</label>
+                                    <div class="col-md-7">
+                                        <select asp-for="font_size" class="form-control select2" style="width:86%;">
+
+                                            <option></option>
+                                            <option value="6">6</option>
+                                            <option value="7">7</option>
+                                            <option value="8">8</option>
+                                            <option value="9">9</option>
+                                            <option value="10">10</option>
+                                            <option value="11">11</option>
+                                            <option value="12">12</option>
+                                            <option value="13">13</option>
+                                            <option value="14">14</option>
+                                            <option value="15">15</option>
+                                            <option value="16">16</option>
+                                            <option value="17">17</option>
+                                            <option value="18">18</option>
+                                            <option value="19">19</option>
+                                            <option value="20">20</option>
+                                            <option value="21">21</option>
+                                            <option value="22">22</option>
+
+                                        </select>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Is Default</label>
+                                    <div class="col-md-1">
+                                        <input asp-for="font_isdefault" />
+                                        <span asp-validation-for="font_isdefault"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Remark</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="font_remark" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="font_remark"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <input asp-for="fontcodeforupdate"  hidden/>
+
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+
+    function FontNewFormFunction() {
+
+        var $form = $('#FontNewFormData');
+        var data = $form.serialize();
+        var action = $('#FontNewFormData').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            success: function (data) {
+                alert(data);
+                submitfunctionforFont();
+
+                ClearFontModal();
+
+          },
+        });
+
+        return false;
+
+    };
+
+</script>
+
+
+<script>
+    $(document).on("click", ".btnUpdatefont", function () {
+        $("#fontbtnNewsave").attr("action", "updatePRT");
+
+             var code = $(this).data('code');
+             var desc = $(this).data('fdesc');
+             var style = $(this).data('fstyle');
+             var color = $(this).data('col');
+             var face = $(this).data('facode');
+             var size = $(this).data('size');
+             var isdefa = $(this).data('isdefa');
+            var remark = $(this).data('rema');
+
+
+                    $('#@nameof(Model.fontcodeforupdate)').val(code);
+                    $('#@nameof(Model.font_desc)').val(desc);
+                    $('#@nameof(Model.font_style)').val(style).trigger('change');
+                    $('#@nameof(Model.font_color)').val(color).trigger('change');
+                    $('#@nameof(Model.font_face)').val(face).trigger('change');
+                    $('#@nameof(Model.font_size)').val(size).trigger('change');
+                    $('#@nameof(Model.font_isdefault)').prop('checked', isdefa);
+                    $('#@nameof(Model.font_remark)').val(remark);
+
+        
+     });
+
+    $(document).on("click", ".btnDeletefont", function () {
+
+        var deletefont = $(this).data('code');
+        var table = $('#Org_unit_Defn_font').DataTable();
+        if (confirm('are you sure to delete this record?')) {
+
+            table
+                .row($(this).parents('tr'))
+                .remove()
+                .draw()
+
+            $.ajax({
+                type: "POST",
+                dataType: 'json',
+                url: '@Url.Action("Deletefont", "Company")',
+                data: { FONTCODE: deletefont },
+
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                success: function (data) {
+                    alert(data);
+
+
+                }
+            });
+
+        }
+      });
+    function ClearFontModal() {
+        $('#@nameof(Model.font_desc)').val("");
+        $('#@nameof(Model.font_face)').val("").trigger('change');
+        $('#@nameof(Model.font_color)').val("");
+        $('#@nameof(Model.font_style)').val("").trigger('change');
+        $('#@nameof(Model.font_size)').val("").trigger('change');
+        $('#@nameof(Model.font_isdefault)').prop('checked', false);
+        $('#@nameof(Model.font_remark)').val("");
+    }
+</script>
+
+
+
+
+
+
+

@@ -1,0 +1,754 @@
+﻿@model Companymodel
+@using CNET_ERP_V7.Models.SubSytsemModel
+@using CNET_ERP_V7.Models.FramworkModels
+@using CNET_V7_Domain.Domain.ConsigneeSchema;
+@using CNET_V7_Domain.Domain.SettingSchema;
+
+@inject CNET_ERP_V7.Common.Company.SharedHelpers sharedHelpers
+@{
+    //var voucherList = await sharedHelpers.GetVoucherConsigneeListBygsltype(CNETConstantes.COMPANY_PENSION);
+    //var voucherListType = voucherList?.Select(t => new CNET_ERP_WEB.Models.CloudSync.Select2Result { id = t.code.ToString(), text = t.name }).ToArray();
+
+
+    var companydocucmentattachdesc = await sharedHelpers.GetSystemConstantByCat("Attachment Catagory");
+   
+
+    var companydocucment = await sharedHelpers.GetLookUpByType("Company Documents File Type");
+    var IdentificationList = await sharedHelpers.GetIIdentification();
+    var idencount = 0;
+
+    var idenList = (from llk in companydocucment
+                    join iden in IdentificationList
+                     on llk.Id equals iden.Type
+
+                    select new
+                    {
+                        iden.Type
+
+                    }).ToList();
+
+    var idenListType = idenList?.GroupBy(x => x.Type).Select(x => x.First());
+
+}
+<style type="text/css">
+    .sptable {
+        border: 1px solid #ccc;
+        border-collapse: collapse;
+        background-color: #fff;
+        width: 100%;
+    }
+
+        .sptable .asth {
+            background-color: #3c8dbc;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .sptable th, table td {
+            padding: 1px;
+            border: 1px solid #ccc;
+        }
+
+        .sptable, .sptable .sptable td {
+            border: 0px solid #ccc;
+        }
+
+            .sptable [type=text], select {
+                width: 100%;
+            }
+
+    .prefrenceheader {
+        background-color: dodgerblue;
+    }
+
+    .spn {
+        display: flex !important;
+        margin: unset !important;
+        padding: unset !important;
+    }
+
+        .spn > input {
+            margin-right: 5px;
+        }
+
+    .attadia {
+        width: 60%;
+    }
+    .docu {
+        white-space: nowrap;
+        cursor: pointer;
+    }
+    
+</style>
+
+
+<div class="row">
+    <div class="col-md-4" style="margin-left:0px;border-right:solid black 1px">
+        <div class="box box-primary">
+
+            <div class="box-body">
+
+                <table cellpadding="0" cellspacing="0" class="sptable table">
+
+                    <thead>
+
+                        <tr class="asth">
+                            <td>Company Document Type</td>
+                            <td>Count</td>
+                        </tr>
+
+                    </thead>
+                    <tbody>
+
+                        @foreach (var item in companydocucment)
+                        {
+                            if (idenListType.Select(x => x.Type).Contains(item.Id))
+                            {
+                                var Idencount = 0;
+                                var IdentificationListTYpe = await sharedHelpers.GetIIdentification();
+
+                                var IdenList = IdentificationListTYpe.Where(I => I.Type == item.Id).ToList();
+                                Idencount = IdenList.Count();
+
+                                <tr id="@item.Id" class="companydocument docu" onclick="GetCompanyDocumnt('@item.Id','@item.Description')">
+                                    <td style="height:10px;">
+                                        <a data-toggle="tab" data-value="@item.Description" style="text-decoration-line:none!important; color :black;" class="companydocumentdesc">
+
+                                            @item.Description
+                                        </a>
+
+                                    </td>
+
+                                    <td>
+                                        @Idencount
+
+                                    </td>
+
+                                </tr>
+
+                            }
+                            else
+                            {
+                                <tr id="@item.Id" class="companydocument docu" onclick="GetCompanyDocumnt('@item.Id','@item.Description')">
+                                    <td style="height:10px;">
+
+                                        <a data-toggle="tab" data-value="@item.Description" style="text-decoration-line:none!important; color :black;" class="companydocumentdesc">
+
+                                            @item.Description
+                                        </a>
+
+                                    </td>
+                                    <td>
+                                        @idencount
+
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+                </table>
+
+
+            </div>
+
+
+
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="row">
+            <div class="col-md-12">
+                <div id="companydoumentData">
+                    @await Html.PartialAsync("companydoumentDetail.cshtml")
+                </div>
+              
+            </div>
+            <br />
+            <br />
+            <div class="col-md-12" id="Display_Attachmentdcotype">
+               
+                <iframe src="" id="dispaly_Company_Document" style="width: 100%; height:58vh;"> </iframe>
+            </div>
+        </div>
+
+      
+
+      
+
+    </div>
+
+</div>
+
+
+<div class="modal fade" id="modal_companyDocument" role="dialog">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 style=" color:dodgerblue; font-weight:bold">
+                    <img src="~/images/Cnets.jpg" />
+                    Company Document
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+
+                    <form class="form-horizontal" id="CompanyDocumentNewFormData" onsubmit="return CompanyDocumentNewFormFunction()" asp-controller="Company" asp-action="createCompanyDocument" method="post">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-app" action="addRow" id="CompanyDocumentSave"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                            <button class="btn btn-app" data-dismiss="modal"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                        </div>
+
+
+                        <div class="col-md-12" style="margin-top:25px">
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="com_description" class="col-md-3 control-label">Description</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="com_description" type="text" class="form-control" autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="com_Idnumber" class="col-md-3 control-label">Id Number</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="com_Idnumber" type="text" class="form-control" autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="com_Type" class="col-md-3 control-label">Type</label>
+                                    <div class="col-md-7">
+                                        <input asp-for="com_Type" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Issued Date</label>
+                                    <div class="col-md-6">
+                                        <input asp-for="com_Issued_Date" class="form-control"  autocomplete="off" />
+                                    </div>
+                                    <div class="spn col-md-2 form-group form-group-sm">
+                                        <input asp-for="com_Issued_Datedisable" type="checkbox" style="margin-left: 0px;" class="companyIssuedDatedisable" />
+                                        N/A
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Expiry Date</label>
+                                    <div class="col-md-6">
+                                        <input asp-for="com_Expiry_Date" class="form-control" />
+                                    </div>
+                                    <div class="spn col-md-2 form-group form-group-sm">
+                                        <input asp-for="com_Expiry_Datedisable" type="checkbox" style="margin-left: 0px;" class="companyExpiryDatedisable" />
+                                        N/A
+                                    </div>
+
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label">Issuer</label>
+                                    <div class="col-md-6">
+                                        <select asp-for="com_Issuer" class="form-control select2" style="width:100%;">
+                                            <option></option>
+                                        </select>
+                                        <span asp-validation-for="com_Issuer"></span>
+                                    </div>
+
+
+                                    <div class="spn form-group form-group-sm">
+                                        <input asp-for="com_Issuerdisable" type="checkbox" style="margin-left: 0px;" class="companyIssuerdisable" />
+                                        N/A
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+
+                            <div class="row">
+                                <div class="form-group  form-group-sm">
+                                    <label asp-for="com_remark" class="col-md-3 control-label"> Remark</label>
+                                    <div class="col-md-7">
+                                        <textarea asp-for="com_remark" style="width:100%; overflow:auto" a></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <input asp-for="idenTypecode" hidden />
+                        <input asp-for="idenTypeEditcode" hidden />
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+</div>
+
+
+<div class="modal fade" id="modal_companyDocumentattachment" >
+    <div class="modal-dialog  attadia">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 style=" color:dodgerblue; font-weight:bold">
+                    <img src="~/images/Cnets.jpg" />
+                    Attacnment
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+
+                        <div class="col-md-12">
+                            <button type="button" style="margin-left:10px" class="btn btn-app" data-toggle="modal" data-target="#modal_attachmentforcompamydocment">
+                                <i class="fa fa-file-o"></i> New
+                            </button>
+
+                            <button type="button" class="btn btn-app" id="datadismisallattachment_com"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-3" style="margin-left:0px ;border-right:solid black 1px">
+                                <ul class="sidebar-men secondNav tree " data-widget="tree" id="com_attachment_nav">
+                                    @foreach (var item in companydocucmentattachdesc)
+                                    {
+                                        <li class="treeview menu-open comattachmentType  nav-item" id="comparent">
+                                            <a href="@item.Description" data-toggle="tab" data-value="@item.Id" data-types="@item.Id" style="text-decoration-line:none!important">
+
+                                            @if (item.Description == "Reference Documents")
+                                                {
+                                                    <i class="fa fa-user"></i>
+                                                    <i class="fa fa-angle-left pull-right" style="visibility:hidden" id="@item.Id+2"></i>
+                                                }
+
+                                            <span class="labelcss">@item.Description</span>
+                                            </a>
+
+                                            <ul class="treeview-menu" style="padding-left:35px; background-color:white;" id="@item.Id+4">
+                                            </ul>
+                                        </li>
+                                    }
+                                </ul>
+
+                                <input type="hidden" asp-for="com_attachmentcatagory" />
+                                <input type="hidden" asp-for="com_attachmentreference" />
+                                <input type="hidden" asp-for="com_attachmentcode" />
+                                <input type="hidden" id="attachment_uniquee" />
+
+                            </div>
+
+                            <div class="col-md-9" id="Display_Attachment_com">
+                                <div class="pull-right">
+                                    <button id="att_edit_com" type="button" class="btn btn-flat btn-primary btn-xs" onclick="EditAttachment()" style="visibility:hidden"><i class="fa fa-pencil">Edit</i></button>
+                                    <button id="att_cleare_com" type="button" class="btn btn-flat btn-primary btn-xs" onclick="CleareAttachment()" style="visibility:hidden"><i class="fa fa-remove">Clear</i></button>
+                                    <button id="att_delete_com" type="button" class="btn btn-danger btn-xs" onclick="DeleteAttachment()" style="visibility:hidden"><i class="fa fa-remove">Delete</i></button>
+                                </div>
+                                <iframe src="" id="dispaly_attach" style="width:100%;height:400px"> </iframe>
+                            </div>
+
+                        </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+</div>
+
+<div class="modal fade" id="modal_attachmentforcompamydocment">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 style=" color:dodgerblue; font-weight:bold">
+                    <img src="~/images/Cnets.jpg" />
+                    New Attachement
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <button type="button" id="attachement_save_docum" class="btn btn-app"> <i style="color:darkblue" class="fa fa-save"></i>Save</button>
+                        <div class="btn btn-app choose_file">
+                            <i style="color:darkblue" class="fa fa-folder-open-o"></i>
+                            <label asp-for="com_file" class=" control-label">Browse</label>
+                            <input asp-for="com_file" style="width:100%;height:100%" class="form-control" />
+                        </div>
+                        <button type="button" class="btn btn-app"> <i style="color:darkblue" class="fa fa-qrcode"></i>Scanner</button>
+                        <button type="button" class="btn btn-app" id="btn_camera"><i style="color:darkblue" class="fa fa-camera"></i> Camera</button>
+                        <button type="button" class="btn btn-app"> <i style="color:darkblue" class="fa fa-sticky-note-o"></i>Edit</button>
+                        <button type="button" class="btn btn-app" id="datadismisall_com"><i style="color:darkred" class="fa fa-remove"></i>Close</button>
+                    </div>
+
+                    <div class="col-md-12">
+                        <form class="form-horizontal">
+                            <input hidden="hidden" asp-for="organizationCode" />
+                            <div class="form-group form-group-sm">
+                                <label asp-for="com_url" class="col-md-1 control-label">url</label>
+                                <div class="col-md-4">
+                                    <input asp-for="com_url" class="form-control" placeholder="File url" readonly />
+                                </div>
+                                <label asp-for="com_attachmentdescription" class="col-md-2 control-label">Description</label>
+                                <div class="col-md-5">
+                                    <input asp-for="com_attachmentdescription" class="form-control " placeholder="Enter discription" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="image_preview">
+                        <iframe src="" id="dispaly_attach_here" style="width:100%;height:290px"></iframe>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<script>
+    function GetCompanyDocumnt(id,desc){
+        $('#@nameof(Model.com_Type)').val(desc);
+        $('#@nameof(Model.organizationType)').val(id);
+        $.ajax({
+            type: "GET",
+            dataType: 'html',
+            url: '@Url.Action("getcompanyDoumentdetail", "Company")',
+            data: { id: id },
+
+            success: function (data) {
+
+                $('#companydoumentData').html(data);
+            }
+        });
+    }
+
+  
+    function CompanyDocumentNewFormFunction() {
+
+        var $form = $('#CompanyDocumentNewFormData');
+        var data = $form.serialize();
+        var action = $('#CompanyDocumentNewFormData').attr("action");
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: data,
+            success: function (data) {
+
+                swal("",data.result,"success");
+              
+                if (data.increament == false) {
+                    $("#btnNewFile").tooltip({
+                        disabled: true
+                    });
+                    
+                }
+                else if (data.increament == true) {
+                   
+                    $("#btnNewFile").removeClass('disabled-link');
+                    ClearcomDCOModal();
+                }
+            },
+        });
+        return false;
+    };
+
+</script>
+
+<script>
+    $(document).on("change", ".companyIssuerdisable", function () {
+
+        if ($(this).prop("checked")) {
+
+            $("#com_Issuer").attr("disabled", true);
+            $('#@nameof(Model.com_Issuer)').val("");
+        }
+        else if ($(this).prop("checked", false)) {
+            $("#com_Issuer").removeAttr('disabled');
+        }
+
+    });
+    $(document).on("change", ".companyExpiryDatedisable", function () {
+
+        if ($(this).prop("checked")) {
+
+            $("#com_Expiry_Date").attr("disabled", true);
+             $('#@nameof(Model.com_Expiry_Date)').val("");
+        }
+        else if ($(this).prop("checked", false)) {
+            $("#com_Expiry_Date").removeAttr('disabled');
+        }
+
+    });
+    $(document).on("change", ".companyIssuedDatedisable", function () {
+
+        if ($(this).prop("checked")) {
+
+            $("#com_Issued_Date").attr("disabled", true);
+             $('#@nameof(Model.com_Issued_Date)').val("");
+        }
+        else if ($(this).prop("checked", false)) {
+            $("#com_Issued_Date").removeAttr('disabled');
+        }
+
+    });
+</script>
+
+<script>
+
+    var documentType = "";
+    var documentTypecode = "";
+    var documentTypecodeatF = "";
+    $(document).ready(function () {
+        $(".companydocument").click(function () {
+            documentType = $(this).attr('id');
+            $('#@nameof(Model.com_attachmentcatagory)').val(documentType);
+
+            $('#@nameof(Model.idenTypecode)').val(documentType);
+            $(".prefrenceheader").removeClass("prefrenceheader");
+            $('#' + documentType).addClass('prefrenceheader');
+           
+        });
+   
+       
+    });
+
+</script>
+
+<script>
+    var documentTypeaf = "";
+
+    $(document).on("click", ".companydocument", function () {
+        documentTypeaf = $(this).attr('id');
+    });
+     function ClearcomDCOModal() {
+            $('#@nameof(Model.idenTypeEditcode)').val("");
+            $('#@nameof(Model.com_description)').val("");
+            $('#@nameof(Model.com_Idnumber)').val("");
+            $('#@nameof(Model.com_Issued_Date)').val("").trigger('change');
+            $('#@nameof(Model.com_Expiry_Date)').val("").trigger('change');
+            $('#@nameof(Model.com_Issuer)').val("").trigger('change');
+            $('#@nameof(Model.com_remark)').val("");
+
+    }
+</script>
+
+<script>
+
+    function EditAttachment()
+    {
+        var ATTCode = $('#@nameof(Model.com_attachmentcode)').val();
+        var ATTref = $('#@nameof(Model.com_attachmentreference)').val();
+        var AttDesc = $('#@nameof(Model.com_attachmentdescription)').val();
+        var Attcategory = $('#@nameof(Model.com_attachmentcatagory)').val();
+        var ATTurl = $('#@nameof(Model.com_url)').val();
+
+        $('#@nameof(Model.com_attachmentcode)').val(ATTCode);
+        $('#@nameof(Model.com_attachmentreference)').val(ATTref);
+        $('#@nameof(Model.com_attachmentdescription)').val(AttDesc);
+        $('#@nameof(Model.com_url)').val(ATTurl);
+        $('#@nameof(Model.com_attachmentcatagory)').val(Attcategory);
+
+        var source = $('#dispaly_attach_here');
+        var baseURL = window.location.origin;
+
+        source[0].src = baseURL + "/images/" + ATTurl;
+        source.parent()[0].load;
+
+        showNewAttachement();
+
+        var elem = document.getElementById("dispaly_attach");
+
+        elem.src ="about:blank";
+        document.getElementById("att_edit").style.visibility = "hidden";
+        document.getElementById("att_delete").style.visibility = "hidden";
+        document.getElementById("att_cleare").style.visibility = "hidden";
+
+        console.log(ATTCode);
+        console.log(ATTref);
+        console.log(AttDesc);
+        console.log(Attcategory);
+        console.log(ATTurl);
+        Attachment_update()
+
+    }
+
+</script>
+
+<script>
+    function DeleteAttachment()
+    {
+        var datastorage = {}
+
+        datastorage.attachmentcode = $('#@nameof(Model.com_attachmentcode)').val();
+        datastorage.url = $('#@nameof(Model.com_url)').val();
+
+        if (confirm('are you sure to delete this attachment?'))
+        {
+            $.ajax({
+                url: '@Url.Action("DeleteAttachment", "Company")',
+                data: datastorage,
+                type: "POST",
+                dataType: 'json',
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                success: function (data) {
+                     CleareAttachment()
+                     Attachment_update()
+                }
+            });
+        }
+    }
+
+</script>
+
+<script>
+    function CleareAttachment() {
+        var elem = document.getElementById("dispaly_attach");
+
+        cleareattachmentModal();
+
+        elem.src = "about:blank";
+
+        document.getElementById("att_edit").style.visibility = "hidden";
+        document.getElementById("att_delete").style.visibility = "hidden";
+        document.getElementById("att_cleare").style.visibility = "hidden";
+
+    }
+
+</script>
+
+<script>
+
+    function cleareattachmentModal()
+    {
+        $('#@nameof(Model.com_attachmentcode)').val("");
+    //  $('#@nameof(Model.com_attachmentcatagory)').val("")
+        $('#@nameof(Model.com_attachmentdescription)').val("");
+        $('#@nameof(Model.com_url)').val("");
+        $('#@nameof(Model.com_file)').val("")
+
+        var ATTurl = $('#@nameof(Model.com_url)').val();
+        var source = $('#dispaly_attach_here');
+        var baseURL = window.location.origin;
+
+        source[0].src = ATTurl;
+        source.parent()[0].load;
+    }
+
+    $('#datadismisall_com').click(function () {
+       
+        $('#modal_attachmentforcompamydocment').modal('hide');
+    });
+    $('.attachmentType').click(function (e) {
+        $('.secondNav .attachmentType').removeClass('active')
+        $(this).addClass('active')
+    });
+
+</script>
+
+<script>
+ 
+    $('#attachement_save_docum').click(function (e) {
+        if (true)
+        {
+            var attachmentDescription = $('#@nameof(Model.com_attachmentdescription)').val();
+            var formdata = new FormData();
+            var files = $('#@nameof(Model.com_file)').get(0).files;
+
+            formdata.append("com_file", files[0]);
+            formdata.append("com_attachmentdescription", $('#@nameof(Model.com_attachmentdescription)').val());
+            formdata.append("com_attachmentcatagory", $('#@nameof(Model.com_attachmentcatagory)').val());
+            formdata.append("com_attachmentcode", $('#@nameof(Model.com_attachmentcode)').val());
+            formdata.append("com_url", $('#@nameof(Model.com_url)').val());
+
+           // var filesize = files[0];
+           // console.log(attachmentDescription);
+
+            var FILE = document.getElementById("dispaly_attach_here");
+            var Filecontent = FILE.contentDocument;
+            if (Filecontent != null && attachmentDescription)
+            {
+                    $.ajax({
+                        url: '@Url.Action("savecompAttachemnt", "Company")',
+                        data: formdata,
+                        type: "POST",
+                        contentType: false, // Not to set any content header
+                        processData: false, // Not to process data
+                        success: function (data)
+                        {
+                            alert(data.message);
+                            Com_Attachment_update();
+                        },
+
+                    });
+                cleareattachmentModal();
+                $('#modal_attachmentforcompamydocment').modal('hide');
+                $('#modal_companyDocumentattachment').modal('hide');
+
+            }
+            else
+            {
+                alert("please fill the attachment properly");
+            }
+
+        }
+
+    })
+
+</script>
+
+<script>
+
+    $('#@nameof(Model.com_file)').on("change", function () {
+
+        var files = $('#@nameof(Model.com_file)').get(0).files;
+
+        console.log(files);
+
+        var filename = files[0].name;
+        var baseURL = window.location.origin;
+        var URLL = baseURL + "/images/" + filename;
+
+        $('#@nameof(Model.com_attachmentdescription)').val(filename);
+        $('#@nameof(Model.com_url)').val(URLL);
+
+        var SRC = $('#dispaly_attach_here');
+
+        SRC[0].src = URL.createObjectURL(this.files[0]);
+        SRC.parent()[0].load;
+
+    });
+
+</script>
+
+<script>
+    var attachcode = "";
+    $(document).on("click", "#datadismisallattachment_com", function () {
+
+        $('#modal_companyDocumentattachment').modal('hide');
+    });
+    $(document).on("click", ".btnshowattachmentCOMPANYDOCUMENT", function () {
+
+             attachcode = $(this).data('code');
+        });
+</script>
+
+
